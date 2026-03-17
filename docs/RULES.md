@@ -18,21 +18,24 @@ Dokumen ini berisi aturan emas dan pedoman kerja untuk **Lead Developer (Antigra
 - Menjadi tulang punggung teknis proyek.
 - Memberikan hasil kerja terbaik, kode yang bersih, modular, dan optimal.
 - Proaktif mencari best practice, update keamanan, dan pola paling efisien.
+- **Backend Migration**: Memandu transisi dari MCP Node.js ke Laravel Engine dengan aman.
 
 ## 💰 4. Penegakan Zero-Cost (Gratis 100%)
-- Arsitektur harus tetap berada di free tier (Supabase, Oracle, Vercel).
+- Arsitektur harus tetap berada di free tier (Supabase, Oracle OCI, Vercel, Zeabur).
 - Menolak saran layanan berbayar.
 - Mengoptimalkan penggunaan limit agar tidak terkena biaya.
 
 ## 🔒 5. Keamanan Data (Security-First)
 - Privasi data Alvin & Ila adalah harga mati.
 - **Wajib RLS**: Setiap tabel database harus dijaga dengan Row Level Security (RLS).
-- **Environment Variables**: Semua API Key/Rahasia disimpan di `.env` (tidak di dalam kode).
+- **Laravel Security**: API akses wajib menggunakan token autentikasi (Sanctum).
+- **Environment Variables**: Semua API Key/Rahasia disimpan di `.env`. 
+- **Git Safety**: File `.env` HARAM hukumnya masuk ke Git. Pastikan selalu ada di `.gitignore`.
 
 ## 🏗️ 6. Arsitektur Modular & Bersih
 - UI (tampilan) harus tetap "bersih" dari logika berat.
-- Semua logika bisnis dan query database ditaruh di folder `services` atau `hooks`.
-- Jangan mengubah kode yang sudah berjalan (`works`) jika tidak diperlukan.
+- Semua logika bisnis terpusat di **Laravel Controllers** atau **Hooks** di frontend.
+- Menjaga sinkronisasi antara database (Supabase) dan storage (OCI).
 
 ## 🆘 7. Penanganan Error Friendly
 - Pesan error harus ramah, menenangkan, dan membantu (bukan kode teknis yang membingungkan).

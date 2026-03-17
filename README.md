@@ -1,37 +1,45 @@
-# 💰 Dompet Kita
+# 💰 Dompet Kita (Evolution Edition)
 
-Aplikasi pencatatan keuangan premium untuk **Alvin & Ila**. Dibangun dengan estetika modern, glassmorphism, dan performa tinggi.
-
-## 🚀 Fitur Utama
-- **Dashboard Interaktif**: Gauge chart kesehatan keuangan yang adaptif.
-- **Pencatatan Transaksi**: Mudah mencatat pemasukan dan pengeluaran.
-- **Integrasi Cloud**: Upload struk transaksi ke Oracle Cloud Storage.
-- **Keamanan**: Dilindungi oleh Supabase Auth & Row Level Security (RLS).
-- **Desain Estetik**: Tema Pantai & Laut Biru dengan komponen shadcn/ui.
-
-## 🛠️ Tech Stack
-- **Frontend**: React, Vite, TypeScript, Tailwind CSS v4.
-- **UI/UX**: Framer Motion, Lucide React, Shadcn/UI.
-- **Backend & Auth**: Supabase.
-- **Storage**: Oracle Cloud Infrastructure (OCI) Object Storage.
-- **State Management**: Zustand.
-
-## 📦 Instalasi & Menjalankan Project
-
-1. **Clone project**
-2. **Instal dependensi**
-   ```bash
-   npm install --legacy-peer-deps
-   ```
-3. **Konfigurasi Environment**
-   Buat file `.env.local` dan isi dengan kredensial Supabase & OCI.
-4. **Jalankan aplikasi**
-   ```bash
-   npm run dev
-   ```
-
-## 📜 Aturan & Pedoman
-Aturan pengembangan dan pedoman desain dapat ditemukan dalam folder [docs/RULES.md](./docs/RULES.md).
+Aplikasi pencatatan keuangan premium untuk **Alvin & Ila**. Dibangun dengan estetika modern, glassmorphism, dan arsitektur **API-First** yang kokoh.
 
 ---
-*Dibuat dengan ❤️ untuk Alvin & Ila.*
+
+## 🏗️ Arsitektur Baru
+Aplikasi ini sekarang menggunakan sistem **Dual-Stack**:
+1.  **Frontend (React)**: Antarmuka pengguna yang cantik dan responsif di-host di Vercel.
+2.  **Backend (Laravel)**: Mesin logika bisnis dan API terpusat di Zeabur (Region Singapore).
+3.  **Database (Supabase)**: Jantung penyimpanan data PostgreSQL dengan RLS aktif.
+4.  **Storage (OCI)**: Gudang penyimpanan file (struk/foto) di Oracle Cloud.
+
+## 🚀 Fitur Unggulan
+- **Dashboard Interaktif**: Gauge chart kesehatan keuangan yang adaptif.
+- **Pencatatan Transaksi**: Integrasi langsung ke Laravel API dengan validasi ketat.
+- **Laporan Otomatis**: Ringkasan bulanan yang di-generate oleh mesin backend.
+- **Security-First**: Proteksi data berlapis menggunakan Laravel Sanctum dan Supabase RLS.
+- **AI-Powered**: Integrasi Google Gemini untuk analisis pengeluaran (Coming Soon).
+
+## 🛠️ Tech Stack
+-   **Frontend**: React 19, Vite, TypeScript, Tailwind CSS v4, Framer Motion.
+-   **Backend**: Laravel 11 (PHP 8.4), Sanctum, Pest Testing.
+-   **Database**: Supabase (PostgreSQL).
+-   **Storage**: Oracle Cloud Infrastructure (OCI) Object Storage.
+-   **Infrastructure**: Zeabur (Backend), Vercel (Frontend).
+
+## 📦 Menjalankan Project
+
+Semua perintah sekarang bisa dijalankan langsung dari folder utama (root):
+
+*   **Instalasi**: `npm run install-all` (Frontend & Backend)
+*   **Jalankan Frontend**: `npm run dev`
+*   **Jalankan Backend**: `npm run backend`
+*   **Update Database**: `npm run migrate`
+
+Untuk detail struktur folder, silakan cek [docs/FOLDER_STRUCTURE.md](./docs/FOLDER_STRUCTURE.md).
+
+## 📜 Dokumentasi Penting
+-   [docs/RULES.md](./docs/RULES.md) - Aturan emas pembangunan.
+-   [docs/SECURITY_SYSTEM.md](./docs/SECURITY_SYSTEM.md) - Detail sistem keamanan.
+-   [docs/FOLDER_STRUCTURE.md](./docs/FOLDER_STRUCTURE.md) - Peta folder project.
+
+---
+*Dibuat dengan ❤️ untuk masa depan Alvin & Ila.*
