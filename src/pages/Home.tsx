@@ -34,7 +34,6 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { useTransactions } from '@/hooks/useTransactions';
 import { useSettings } from '@/hooks/useSettings';
 
 const getCategoryIcon = (category: string, type: string) => {
@@ -58,20 +57,23 @@ const getCategoryIcon = (category: string, type: string) => {
   return <ArrowDownCircle className="w-4 h-4" />;
 };
 
+import { useFinancialSummary } from '@/hooks/useFinancialSummary';
+
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { isEcoMode } = useSettings();
   
-  // Use React Query for fetching the latest transactions
-  const { data: infiniteData, isLoading, refetch } = useTransactions();
-  const transactions = React.useMemo(() => infiniteData?.pages.flat() || [], [infiniteData?.pages]);
-  
+  // Use custom hook for accurate financial stats
+  const { 
+    income: totalIncome, 
+    expense: totalExpense, 
+    balance: totalBalance, 
+    isLoading, 
+    refetch,
+    transactions 
+  } = useFinancialSummary();
 
-  const totals = React.useMemo(() => transactions.reduce((acc, curr) => {
-    if (curr.type === 'income') acc.income += curr.amount;
-    else acc.expense += curr.amount;
-    return acc;
-  }, { income: 0, expense: 0 }), [transactions]);
+  const totals = { income: totalIncome, expense: totalExpense };
 
   const healthPercentage = React.useMemo(() => {
     return totals.income > 0 
@@ -216,9 +218,9 @@ const Home: React.FC = () => {
          {/* Top Section - Stats & Main Chart */}
          <div className="lg:col-span-8 space-y-4 md:space-y-8">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6">
-               <StatCard title="Total Saldo" amount={totals.income - totals.expense} imageSrc="/icons/3d/wallet.webp" variant="saldo" />
-               <StatCard title="Pemasukan" amount={totals.income} imageSrc="/icons/3d/income.webp" variant="income" />
-               <StatCard title="Pengeluaran" amount={totals.expense} imageSrc="/icons/3d/expense.webp" variant="expense" />
+               <StatCard title="Total Saldo" amount={totalBalance} imageSrc="/icons/3d/wallet.webp" variant="saldo" />
+               <StatCard title="Pemasukan" amount={totalIncome} imageSrc="/icons/3d/income.webp" variant="income" />
+               <StatCard title="Pengeluaran" amount={totalExpense} imageSrc="/icons/3d/expense.webp" variant="expense" />
             </div>
             <Card className="glass-premium p-4 md:p-8 shadow-xl rounded-[32px] md:rounded-[40px]">
                <CardHeader className="p-0 mb-4 md:mb-6"><CardTitle className="text-base md:text-lg font-black text-slate-800 tracking-tight">Analisis Pengeluaran Mingguan</CardTitle></CardHeader>

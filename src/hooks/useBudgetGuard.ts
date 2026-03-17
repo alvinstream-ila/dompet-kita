@@ -4,7 +4,8 @@ import { useSettings } from '@/hooks/useSettings';
 
 export function useBudgetGuard() {
   const { monthlyBudgetLimit } = useSettings();
-  const { data: infiniteData } = useTransactions();
+  const now = new Date();
+  const { data: infiniteData } = useTransactions(now.getMonth(), now.getFullYear());
   const transactions = useMemo(() => infiniteData?.pages.flat() || [], [infiniteData?.pages]);
 
   const currentMonthExpenses = useMemo(() => {
