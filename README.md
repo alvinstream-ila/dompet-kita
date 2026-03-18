@@ -1,45 +1,37 @@
-# 💰 Dompet Kita (Evolution Edition)
+# 💰 Dompet Kita (Production Edition)
 
-Aplikasi pencatatan keuangan premium untuk **Alvin & Ila**. Dibangun dengan estetika modern, glassmorphism, dan arsitektur **API-First** yang kokoh.
+Aplikasi pencatatan keuangan premium untuk **Alvin & Ila**. Proyek ini telah melewati fase transformasi total ke arsitektur **API-First** yang modern, aman, dan siap pakai.
 
 ---
 
-## 🏗️ Arsitektur Baru
-Aplikasi ini sekarang menggunakan sistem **Dual-Stack**:
-1.  **Frontend (React)**: Antarmuka pengguna yang cantik dan responsif di-host di Vercel.
-2.  **Backend (Laravel)**: Mesin logika bisnis dan API terpusat di Railway (Region Singapore - asia-southeast1).
-3.  **Database (Supabase)**: Jantung penyimpanan data PostgreSQL dengan RLS aktif.
-4.  **Storage (Storj)**: Gudang penyimpanan file (struk/foto) desentralisasi.
+## 🌐 Live URLs
+- **Frontend (Production)**: [https://dompet-kita-woad.vercel.app/](https://dompet-kita-woad.vercel.app/)
+- **Backend API (Production)**: [https://dompet-kita-official.up.railway.app/](https://dompet-kita-official.up.railway.app/)
+
+## 🏗️ Digital Infrastructure
+Aplikasi ini berjalan di ekosistem cloud modern:
+1.  **Frontend**: React 19 (Vite) di-host di **Vercel** dengan SPA routing.
+2.  **Backend**: Laravel 11 (PHP 8.4) di-host di **Railway** (Singapore Region).
+3.  **Database**: Managed PostgreSQL di **Supabase**.
+4.  **Security**: Proteksi berlapis (CORS, CSP, XSS protection, RLS).
 
 ## 🚀 Fitur Unggulan
-- **Dashboard Interaktif**: Gauge chart kesehatan keuangan yang adaptif.
-- **Pencatatan Transaksi**: Integrasi langsung ke Laravel API dengan validasi ketat.
-- **Laporan Otomatis**: Ringkasan bulanan yang di-generate oleh mesin backend.
-- **Security-First**: Proteksi data berlapis menggunakan Laravel Sanctum dan Supabase RLS.
-- **AI-Powered**: Integrasi Google Gemini untuk analisis pengeluaran (Coming Soon).
+- **Dashboard Glassmorphism**: Visualisasi data premium dengan Framer Motion.
+- **Security Hardening**: Audit keamanan backend & frontend telah selesai dilakukan.
+- **Smart Connectivity**: Koneksi otomatis antara Vercel dan Railway dengan konfigurasi CORS yang aman.
+- **AI-Ready**: Terintegrasi dengan Google Gemini 1.5 Flash (Coming Soon).
 
-## 🛠️ Tech Stack
--   **Frontend**: React 19, Vite, TypeScript, Tailwind CSS v4, Framer Motion.
--   **Backend**: Laravel 11 (PHP 8.4), Sanctum, Pest Testing.
--   **Database**: Supabase (PostgreSQL).
--   **Storage**: Storj Cloud (S3-Compatible) Object Storage.
--   **Infrastructure**: Railway (Backend), Vercel (Frontend).
+## 📜 Dokumentasi Produksi
+Semua log pengembangan dan audit keamanan tersedia di folder `docs/`:
+- [docs/FINAL_WALKTHROUGH.md](./docs/FINAL_WALKTHROUGH.md) - Rekapitulasi fitur & hasil testing.
+- [docs/SECURITY_AUDIT.md](./docs/SECURITY_AUDIT.md) - Laporan hardening keamanan.
+- [docs/PRODUCTION_LOGS.md](./docs/PRODUCTION_LOGS.md) - Detail perjalanan pengembangan fase 1-12.
 
-## 📦 Menjalankan Project
-
-Semua perintah sekarang bisa dijalankan langsung dari folder utama (root):
-
-*   **Instalasi**: `npm run install-all` (Frontend & Backend)
-*   **Jalankan Frontend**: `npm run dev`
-*   **Jalankan Backend**: `npm run backend`
-*   **Update Database**: `npm run migrate`
-
-Untuk detail struktur folder, silakan cek [docs/FOLDER_STRUCTURE.md](./docs/FOLDER_STRUCTURE.md).
-
-## 📜 Dokumentasi Penting
--   [docs/RULES.md](./docs/RULES.md) - Aturan emas pembangunan.
--   [docs/SECURITY_SYSTEM.md](./docs/SECURITY_SYSTEM.md) - Detail sistem keamanan.
--   [docs/FOLDER_STRUCTURE.md](./docs/FOLDER_STRUCTURE.md) - Peta folder project.
+## 🛠️ Pengembangan Lokal
+Jika ingin menjalankan secara lokal:
+1. **Root**: `npm run install-all`
+2. **Frontend**: `npm run dev` (dari root)
+3. **Backend**: `php artisan serve` (dari folder `backend/`)
 
 ---
-*Dibuat dengan ❤️ untuk masa depan Alvin & Ila.*
+*Dibuat dengan ❤️ untuk masa depan Alvin & Ila. Project Status: **LIVE***
