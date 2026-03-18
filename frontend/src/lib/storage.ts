@@ -1,24 +1,17 @@
-import { S3Client } from '@aws-sdk/client-s3';
+/**
+ * 🔐 Security Update: Dompet Kita
+ * Direct cloud storage access from the frontend is DISCONTINUED for security.
+ * All uploads must be routed via the Laravel Media API (/api/media/upload).
+ */
+import api from './axios';
 
-const region = import.meta.env.VITE_OCI_REGION;
-const accessKeyId = import.meta.env.VITE_OCI_ACCESS_KEY;
-const secretAccessKey = import.meta.env.VITE_OCI_SECRET_KEY;
-const namespace = import.meta.env.VITE_OCI_NAMESPACE;
+export const uploadFile = async (file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
 
-// OCI S3 Compatibility endpoint
-const endpoint = `https://${namespace}.compat.objectstorage.${region}.oraclecloud.com`;
-
-export const s3Client = new S3Client({
-  region,
-  endpoint,
-  credentials: {
-    accessKeyId: accessKeyId || '',
-    secretAccessKey: secretAccessKey || '',
-  },
-  forcePathStyle: true, // Required for OCI S3 compatibility
-});
-
-export const OCI_CONFIG = {
-  bucket: import.meta.env.VITE_OCI_BUCKET || '',
-  namespace: namespace || '',
+  return api.post('/media/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
 };

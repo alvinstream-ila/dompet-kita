@@ -42,6 +42,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Goals
     Route::apiResource('goals', GoalController::class);
 
+    // AI & Services (The Gatekeeper)
+    Route::post('/ai/analyze', [\App\Http\Controllers\AIController::class, 'analyzeReceipt']);
+    Route::post('/media/upload', [\App\Http\Controllers\MediaController::class, 'upload']);
+
     // Holidays
     Route::apiResource('holidays', HolidayController::class);
 });

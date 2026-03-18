@@ -1,17 +1,13 @@
-import * as Sentry from "@sentry/react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+/**
+ * 🔐 Security Update: Dompet Kita
+ * Gemini service has been moved to the Backend for security.
+ * This file is kept for backward compatibility but calls the generic proxy.
+ */
+import api from './axios';
 
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-
-// Initialize the Google GenAI client
-const genAI = new GoogleGenerativeAI(apiKey || "MOCK_KEY");
-
-// Instrument the client with Sentry for agent monitoring
-export const geminiClient = Sentry.instrumentGoogleGenAIClient(genAI, {
-  recordInputs: true,
-  recordOutputs: true,
-});
-
-export const getGeminiModel = (modelName: string = "gemini-2.0-flash") => {
-  return geminiClient.getGenerativeModel({ model: modelName });
+export const analyzeReceipt = async (base64Data: string, mimeType: string) => {
+  return api.post('/ai/analyze', {
+    image: base64Data,
+    mime_type: mimeType
+  });
 };

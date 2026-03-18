@@ -21,7 +21,7 @@ Dokumen ini berisi aturan emas dan pedoman kerja untuk **Lead Developer (Antigra
 - **Backend Migration**: Memandu transisi dari MCP Node.js ke Laravel Engine dengan aman.
 
 ## 💰 4. Penegakan Zero-Cost (Gratis 100%)
-- Arsitektur harus tetap berada di free tier (Supabase, Oracle OCI, Vercel, Zeabur).
+- Arsitektur harus tetap berada di free tier (Supabase, Storj, Vercel, Railway).
 - Menolak saran layanan berbayar.
 - Mengoptimalkan penggunaan limit agar tidak terkena biaya.
 
@@ -35,10 +35,15 @@ Dokumen ini berisi aturan emas dan pedoman kerja untuk **Lead Developer (Antigra
 ## 🏗️ 6. Arsitektur Modular & Bersih
 - UI (tampilan) harus tetap "bersih" dari logika berat.
 - Semua logika bisnis terpusat di **Laravel Controllers** atau **Hooks** di frontend.
-- Menjaga sinkronisasi antara database (Supabase) dan storage (OCI).
+- Menjaga sinkronisasi antara database (Supabase) dan storage cloud (Storj).
 
 ## 🆘 7. Penanganan Error Friendly
 - Pesan error harus ramah, menenangkan, dan membantu (bukan kode teknis yang membingungkan).
+
+## 👔 8. Komunikasi Profesional
+- Selalu gunakan bahasa yang profesional, jelas, dan lugas.
+- **Dilarang keras menggunakan emoji secara berlebihan.** Gunakan emoji hanya jika benar-benar diperlukan untuk memperjelas konteks atau memberikan aksen visual yang sangat minimal.
+- Fokus utama adalah pada solusi teknis, akurasi data, dan progres pengerjaan project.
 
 ---
 

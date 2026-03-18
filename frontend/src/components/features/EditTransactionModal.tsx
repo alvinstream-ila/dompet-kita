@@ -12,8 +12,7 @@ import {
 } from 'lucide-react';
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
-import { s3Client, OCI_CONFIG } from '../../lib/storage';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import api from '@/lib/axios';
 
 import {
   Dialog,
@@ -108,25 +107,24 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({ isOp
     }
   }, [transaction, isOpen]);
 
-  const handleFileUpload = async (selectedFile: File) => {
-    const fileExt = selectedFile.name.split('.').pop();
-    const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-    const filePath = `receipts/${fileName}`;
-
+const handleFileUpload = async (selectedFile: File) => {
     try {
-      const command = new PutObjectCommand({
-        Bucket: OCI_CONFIG.bucket,
-        Key: filePath,
-        Body: selectedFile,
-        ContentType: selectedFile.type,
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      const response = await api.post('/media/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
-      await s3Client.send(command);
-      const publicUrl = `https://${OCI_CONFIG.namespace}.objectstorage.${import.meta.env.VITE_OCI_REGION}.oraclecloud.com/n/${OCI_CONFIG.namespace}/b/${OCI_CONFIG.bucket}/o/${filePath}`;
-      return publicUrl;
+      if (response.data.success) {
+        return response.data.url;
+      }
+      throw new Error(response.data.message || 'Gagal mengunggah struk');
     } catch (error) {
-      console.error('Error uploading to OCI:', error);
-      throw new Error('Gagal mengunggah struk ke Oracle Cloud');
+      console.error('Error uploading via backend:', error);
+      throw new Error('Gagal mengunggah struk ke cloud storage');
     }
   };
 

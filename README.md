@@ -7,9 +7,9 @@ Aplikasi pencatatan keuangan premium untuk **Alvin & Ila**. Dibangun dengan este
 ## 🏗️ Arsitektur Baru
 Aplikasi ini sekarang menggunakan sistem **Dual-Stack**:
 1.  **Frontend (React)**: Antarmuka pengguna yang cantik dan responsif di-host di Vercel.
-2.  **Backend (Laravel)**: Mesin logika bisnis dan API terpusat di Zeabur (Region Singapore).
+2.  **Backend (Laravel)**: Mesin logika bisnis dan API terpusat di Railway (Region Singapore - asia-southeast1).
 3.  **Database (Supabase)**: Jantung penyimpanan data PostgreSQL dengan RLS aktif.
-4.  **Storage (OCI)**: Gudang penyimpanan file (struk/foto) di Oracle Cloud.
+4.  **Storage (Storj)**: Gudang penyimpanan file (struk/foto) desentralisasi.
 
 ## 🚀 Fitur Unggulan
 - **Dashboard Interaktif**: Gauge chart kesehatan keuangan yang adaptif.
@@ -22,8 +22,8 @@ Aplikasi ini sekarang menggunakan sistem **Dual-Stack**:
 -   **Frontend**: React 19, Vite, TypeScript, Tailwind CSS v4, Framer Motion.
 -   **Backend**: Laravel 11 (PHP 8.4), Sanctum, Pest Testing.
 -   **Database**: Supabase (PostgreSQL).
--   **Storage**: Oracle Cloud Infrastructure (OCI) Object Storage.
--   **Infrastructure**: Zeabur (Backend), Vercel (Frontend).
+-   **Storage**: Storj Cloud (S3-Compatible) Object Storage.
+-   **Infrastructure**: Railway (Backend), Vercel (Frontend).
 
 ## 📦 Menjalankan Project
 

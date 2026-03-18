@@ -3,8 +3,8 @@
 Project kita menggunakan sistem keamanan berlapis untuk memastikan rahasia (secrets) di file `.env` tidak akan pernah terekspos, baik secara tidak sengaja maupun lewat serangan siber.
 
 ## 🏗️ 1. Strategi "No-File" di Production
-Saat kita men-deploy ke **Zeabur**, kita **TIDAK AKAN** mengunggah file `.env`. 
-*   **Cara Kerja**: Semua variabel (API Keys, DB Password) akan dimasukkan langsung ke Dashboard Zeabur.
+Saat kita men-deploy ke **Railway**, kita **TIDAK AKAN** mengunggah file `.env`. 
+*   **Cara Kerja**: Semua variabel (API Keys, DB Password) akan dimasukkan langsung ke Dashboard Railway.
 *   **Keuntungan**: Karena filenya tidak ada di disk server, maka hacker tidak bisa mencurinya meskipun berhasil menembus celah keamanan tertentu.
 
 ## 🛡️ 2. Production Health Check (Laravel Side)
@@ -13,7 +13,7 @@ Di sisi kode Laravel, aku telah menambahkan "Satpam Digital" di `AppServiceProvi
 *   **Anti-Debug Check**: Jika aplikasi berjalan di mode `production` tapi `APP_DEBUG` dalam keadaan `true` (nyala), aplikasi akan otomatis berhenti (*abort*). Ini mencegah error detail (yang berisi path file/key) tampil ke user.
 *   **Internal Variable Masking**: Laravel secara otomatis melakukan *masking* terhadap variabel sensitif di halaman error (jika terpaksa muncul).
 
-## 🔒 3. Web Server Shield (Zeabur/Nginx)
+## 🔒 3. Web Server Shield (Railway/Nginx)
 Aplikasi kita menggunakan struktur folder `/public` Laravel.
 *   Path publik kita adalah `https://api.dompet-kita.com/`. 
 *   Folder rahasia dan file `.env` (jika ada) berada satu tingkat di ATAS folder public.
@@ -29,7 +29,7 @@ Bagian Frontend (React) juga aku jaga ketat agar tidak ada kebocoran data:
 
 ## 📝 5. Aturan Pengoperasian
 1.  **Local Development**: Pakai `.env` lokal (sudah masuk `.gitignore`).
-2.  **Deployment**: Copy-paste isi `.env` ke Dashboard Zeabur -> Environment Variables.
+2.  **Deployment**: Copy-paste isi `.env` ke Dashboard Railway -> Environment Variables.
 3.  **Audit**: Aku (Antigravity) akan melakukan audit otomatis setiap kali ada perubahan kode untuk memastikan tidak ada key yang "bocor" lewat log.
 
 ---

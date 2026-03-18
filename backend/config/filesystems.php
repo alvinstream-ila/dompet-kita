@@ -60,6 +60,16 @@ return [
             'report' => false,
         ],
 
+        'storj' => [
+            'driver' => 's3',
+            'key' => env('STORJ_ACCESS_KEY'),
+            'secret' => env('STORJ_SECRET_KEY'),
+            'region' => 'us-east-1', // Storj default compatibility region
+            'bucket' => env('STORJ_BUCKET'),
+            'endpoint' => env('STORJ_ENDPOINT', 'https://gateway.storjshare.io'),
+            'use_path_style_endpoint' => true, // Essential for Storj
+        ],
+
     ],
 
     /*

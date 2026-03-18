@@ -11,11 +11,9 @@ import {
   X,
   Sparkles
 } from 'lucide-react';
-import { s3Client, OCI_CONFIG } from '../../lib/storage';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
-import { getGeminiModel } from '../../lib/gemini';
+import api from '@/lib/axios';
 
 import {
   Dialog,
@@ -98,25 +96,24 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
     }
   }, [type]);
 
-  const handleFileUpload = async (selectedFile: File) => {
-    const fileExt = selectedFile.name.split('.').pop();
-    const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-    const filePath = `receipts/${fileName}`;
-
+const handleFileUpload = async (selectedFile: File) => {
     try {
-      const command = new PutObjectCommand({
-        Bucket: OCI_CONFIG.bucket,
-        Key: filePath,
-        Body: selectedFile,
-        ContentType: selectedFile.type,
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      const response = await api.post('/media/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
-      await s3Client.send(command);
-      const publicUrl = `https://${OCI_CONFIG.namespace}.objectstorage.${import.meta.env.VITE_OCI_REGION}.oraclecloud.com/n/${OCI_CONFIG.namespace}/b/${OCI_CONFIG.bucket}/o/${filePath}`;
-      return publicUrl;
+      if (response.data.success) {
+        return response.data.url;
+      }
+      throw new Error(response.data.message || 'Gagal mengunggah struk');
     } catch (error) {
-      console.error('Error uploading to OCI:', error);
-      throw new Error('Gagal mengunggah struk ke Oracle Cloud');
+      console.error('Error uploading via backend:', error);
+      throw new Error('Gagal mengunggah struk ke cloud storage');
     }
   };
 
@@ -125,57 +122,33 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
     setScanning(true);
     
     try {
-      // Use Real AI if API Key exists
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      // Step 1: Read file as base64
+      const reader = new FileReader();
+      const fileBase64 = await new Promise<string>((resolve) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
       
-      if (apiKey) {
-        const model = getGeminiModel();
+      const base64Data = fileBase64.split(',')[1];
+      
+      // Step 2: Call Backend Proxy (Secure Gatekeeper)
+      const response = await api.post('/ai/analyze', {
+        image: base64Data,
+        mime_type: file.type
+      });
+
+      if (response.data.success) {
+        const { amount: extractedAmount, merchant } = response.data.data;
         
-        // Convert file to base64 for Gemini
-        const reader = new FileReader();
-        const fileBase64 = await new Promise<string>((resolve) => {
-          reader.onload = () => resolve(reader.result as string);
-          reader.readAsDataURL(file);
-        });
+        if (extractedAmount) setAmount(formatToRupiah(extractedAmount.toString()));
+        if (merchant) setDescription(merchant);
         
-        const base64Data = fileBase64.split(',')[1];
-        
-        const prompt = "Analyze this receipt and extract: 1. Total Amount (number only), 2. Shop/Merchant Name. Respond in JSON format: { \"amount\": number, \"merchant\": \"string\" }";
-        
-        const result = await model.generateContent([
-          prompt,
-          {
-            inlineData: {
-              data: base64Data,
-              mimeType: file.type
-            }
-          }
-        ]);
-        
-        const response = await result.response;
-        const text = response.text();
-        const cleanText = text.replace(/```json|```/g, '').trim();
-        const data = JSON.parse(cleanText);
-        
-        if (data.amount) setAmount(formatToRupiah(data.amount.toString()));
-        if (data.merchant) setDescription(data.merchant);
+        alert('AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️');
       } else {
-        // Fallback to Mock AI OCR Logic
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        const mockAmounts = ['75000', '125000', '50000', '35000'];
-        const randomAmount = mockAmounts[Math.floor(Math.random() * mockAmounts.length)];
-        
-        setAmount(formatToRupiah(randomAmount));
-        
-        if (!description) {
-          setDescription('Hasil Scan AI ✨');
-        }
+        throw new Error(response.data.message || 'Gagal scan struk');
       }
-      
-      alert('AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️');
     } catch (error) {
-      console.error('Scan error:', error);
+      console.error('Scan error via backend:', error);
       alert('Maaf, AI gagal membaca struk ini. Coba ketik manual ya Sayang! 🥺');
     } finally {
       setScanning(false);
