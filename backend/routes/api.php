@@ -11,14 +11,10 @@ use App\Http\Controllers\WealthHistoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return response()->json(['status' => 'ok', 'service' => 'Dompet Kita API']);
-});
-
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/forgot-password', [\App\Http\Controllers\PasswordResetController::class, 'sendResetLinkEmail']);
-Route::post('/reset-password', [\App\Http\Controllers\PasswordResetController::class, 'reset'])->name('password.reset');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:3,1');
+Route::post('/forgot-password', [\App\Http\Controllers\PasswordResetController::class, 'sendResetLinkEmail'])->middleware('throttle:3,1');
+Route::post('/reset-password', [\App\Http\Controllers\PasswordResetController::class, 'reset'])->name('password.reset')->middleware('throttle:3,1');
 
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -43,7 +39,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::apiResource('goals', GoalController::class);
 
     // AI & Services (The Gatekeeper)
-    Route::post('/ai/analyze', [\App\Http\Controllers\AIController::class, 'analyzeReceipt']);
+    Route::post('/ai/analyze', [\App\Http\Controllers\AIController::class, 'analyzeReceipt'])->middleware('throttle:10,1');
     Route::post('/media/upload', [\App\Http\Controllers\MediaController::class, 'upload']);
 
     // Holidays
