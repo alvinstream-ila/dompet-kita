@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
+import { useAddTransaction } from '@/hooks/useTransactions';
 import { 
   Loader2,
   Image as ImageIcon,
@@ -78,6 +78,7 @@ const INCOME_CATEGORIES = [
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen, onClose, onSuccess }) => {
+  const addTransactionMutation = useAddTransaction();
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState<'expense' | 'income'>('expense');
   const [amount, setAmount] = useState('');
@@ -188,8 +189,6 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
     setLoading(true);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Anda harus login terlebih dahulu');
 
       let receipt_url = null;
       if (file) {
@@ -198,26 +197,27 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
         setUploading(false);
       }
 
-      const { error } = await supabase.from('transactions').insert([
-        {
-          amount: parseInt(amount.replace(/\./g, '')),
-          description,
-          category,
-          sub_category: subCategory,
-          type,
-          date: format(date, "yyyy-MM-dd"),
-          user_id: user.id,
-          receipt_url
+      addTransactionMutation.mutate({
+        amount: parseInt(amount.replace(/\./g, '')),
+        description,
+        category,
+        sub_category: subCategory,
+        type,
+        date: format(date, "yyyy-MM-dd"),
+        receipt_url,
+        note: null
+      }, {
+        onSuccess: () => {
+          onSuccess();
+          onClose();
+          setAmount('');
+          setDescription('');
+          setFile(null);
+        },
+        onError: (error) => {
+          alert(error instanceof Error ? error.message : 'Terjadi kesalahan saat menyimpan transaksi');
         }
-      ]);
-
-      if (error) throw error;
-      
-      onSuccess();
-      onClose();
-      setAmount('');
-      setDescription('');
-      setFile(null);
+      });
     } catch (error) {
       alert(error instanceof Error ? error.message : 'Terjadi kesalahan');
     } finally {

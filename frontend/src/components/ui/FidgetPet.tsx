@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from "@/lib/utils";
-import { useSettings } from '@/hooks/useSettings';
 import { Heart, Sparkles, Star, Ghost, Cat, Rabbit } from 'lucide-react';
 
 type PetType = 'rabbit' | 'cat' | 'ghost';
@@ -15,7 +14,6 @@ interface Particle {
 
 export const FidgetPet: React.FC = () => {
   const constraintsRef = useRef(null);
-  const { isEcoMode } = useSettings();
   const [petType, setPetType] = useState<PetType>('rabbit');
   const [isHappy, setIsHappy] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
@@ -59,8 +57,6 @@ export const FidgetPet: React.FC = () => {
     }
   };
 
-  if (isEcoMode) return null; // Or return a very simplified version
-
   return (
     <div ref={constraintsRef} className="fixed inset-0 z-50 pointer-events-none overflow-hidden">
       <div className="absolute bottom-28 right-6 pointer-events-auto">
@@ -77,13 +73,13 @@ export const FidgetPet: React.FC = () => {
         >
           {/* Pet Base with Squash and Stretch */}
           <motion.div
-            animate={isEcoMode ? {} : {
+            animate={{
               y: isHappy ? [0, -40, 0] : [0, -15, 0],
               scaleX: isHappy ? [1, 1.4, 0.8, 1] : [1, 1.05, 1],
               scaleY: isHappy ? [1, 0.6, 1.3, 1] : [1, 0.95, 1],
               rotate: isHappy ? [0, 15, -15, 0] : [0, -3, 3, 0]
             }}
-            transition={isEcoMode ? {} : {
+            transition={{
               duration: isHappy ? 0.4 : 3,
               repeat: isHappy ? 0 : Infinity,
               ease: "easeInOut"
@@ -158,7 +154,6 @@ export const FidgetPet: React.FC = () => {
           <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-10 h-2 bg-black/10 blur-md rounded-full -z-10" />
         </motion.div>
       </div>
-
     </div>
   );
 };

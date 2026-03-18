@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import React, { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
 import { 
   LogOut, 
   Settings, 
@@ -12,32 +12,15 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import type { User } from '@supabase/supabase-js';
 import { AccountSettingsModal } from './AccountSettingsModal';
-import { format } from 'date-fns';
-import { id } from 'date-fns/locale';
 
 export const UserNavDropdown = React.memo(() => {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, logout } = useAuth();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [initialTab, setInitialTab] = useState('profile');
 
-  useEffect(() => {
-    // Get initial user
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
-    });
-
-    // Listen for changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await logout();
   };
 
   return (
@@ -48,13 +31,9 @@ export const UserNavDropdown = React.memo(() => {
           className="h-10 md:h-12 px-2 md:px-3 rounded-full bg-white shadow-sm border-slate-100 hover:scale-110 active:scale-95 transition-all flex items-center gap-2 group overflow-hidden p-1.5"
         >
           <div className="w-7 h-7 md:w-8 md:h-8 rounded-full shadow-sm overflow-hidden flex items-center justify-center shrink-0 border border-slate-100 bg-blue-50">
-            {user?.user_metadata?.avatar_url ? (
-              <img src={user.user_metadata.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-[12px] md:text-[14px] font-black">
-                {(user?.user_metadata?.display_name || user?.email || '?').charAt(0).toUpperCase()}
-              </div>
-            )}
+            <div className="w-full h-full bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-[12px] md:text-[14px] font-black">
+              {(user?.name || user?.email || '?').charAt(0).toUpperCase()}
+            </div>
           </div>
           <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-data-[state=open]:rotate-180 transition-transform hidden md:block" />
         </Button>
@@ -64,23 +43,13 @@ export const UserNavDropdown = React.memo(() => {
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Account</p>
           <div className="flex flex-col">
             <p className="text-sm font-black text-slate-800 tracking-tight truncate">
-              {user?.user_metadata?.display_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Pengguna'}
+              {user?.name || user?.email?.split('@')[0] || 'Pengguna'}
             </p>
-            <div className="flex items-center gap-2">
-              {user?.email && (
-                <p className="text-[9px] font-bold text-slate-400 truncate opacity-70">
-                  {user.email}
-                </p>
-              )}
-              {user?.created_at && (
-                <>
-                  <div className="w-1 h-1 rounded-full bg-slate-200" />
-                  <p className="text-[9px] font-bold text-slate-400 opacity-70">
-                    Sejak {format(new Date(user.created_at), 'MMM yyyy', { locale: id })}
-                  </p>
-                </>
-              )}
-            </div>
+            {user?.email && (
+              <p className="text-[9px] font-bold text-slate-400 truncate opacity-70">
+                {user.email}
+              </p>
+            )}
           </div>
         </div>
         
@@ -153,7 +122,7 @@ export const UserNavDropdown = React.memo(() => {
       <AccountSettingsModal 
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
-        user={user}
+        user={user as any}
         defaultTab={initialTab}
       />
     </Popover>

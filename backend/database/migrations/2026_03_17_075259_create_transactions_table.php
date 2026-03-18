@@ -11,23 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('transactions')) {
-            Schema::create('transactions', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->timestampTz('created_at')->useCurrent();
-                $table->timestampTz('date');
-                $table->double('amount');
-                $table->text('category');
-                $table->text('sub_category')->nullable();
-                $table->text('type'); // income | expense
-                $table->text('description')->nullable();
-                $table->text('note')->nullable();
-                $table->text('receipt_url')->nullable();
-                $table->uuid('user_id')->nullable();
-                $table->index('user_id');
-                $table->index('date');
-            });
-        }
+        Schema::create('transactions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->timestamp('date');
+            $table->decimal('amount', 15, 2);
+            $table->string('category');
+            $table->string('sub_category')->nullable();
+            $table->string('type'); // income | expense
+            $table->string('description');
+            $table->text('note')->nullable();
+            $table->string('receipt_url')->nullable();
+            $table->timestamps();
+            
+            $table->index('date');
+            $table->index('type');
+        });
     }
 
     /**

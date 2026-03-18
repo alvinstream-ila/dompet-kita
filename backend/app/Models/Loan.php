@@ -2,17 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Loan extends Model
 {
-    use HasFactory, HasUuids;
-
-    const UPDATED_AT = null;
-
     protected $fillable = [
+        'user_id',
         'type',
         'amount',
         'remaining_amount',
@@ -20,13 +16,16 @@ class Loan extends Model
         'contact_name',
         'due_date',
         'status',
-        'user_id',
     ];
 
     protected $casts = [
-        'amount' => 'double',
-        'remaining_amount' => 'double',
+        'amount' => 'float',
+        'remaining_amount' => 'float',
         'due_date' => 'datetime',
-        'created_at' => 'datetime',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

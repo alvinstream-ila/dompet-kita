@@ -9,18 +9,17 @@ import {
   Sparkles,
   TrendingUp as TrendingUpIcon,
   AlertTriangle,
-  Zap,
+  Zap as ZapIcon,
   Utensils,
   Car,
   Home as HomeIcon,
   ShoppingBag,
-  Gamepad,
   Heart,
-  GraduationCap,
-  Zap as ZapIcon,
   Briefcase,
   Gift,
   Coins,
+  Gamepad as GamepadIcon,
+  GraduationCap,
   Plane
 } from 'lucide-react';
 import { UserNavDropdown } from '../components/features/UserNavDropdown';
@@ -34,7 +33,7 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { useSettings } from '@/hooks/useSettings';
+import { useFinancialSummary } from '@/hooks/useFinancialSummary';
 
 const getCategoryIcon = (category: string, type: string) => {
   const cat = category.toLowerCase();
@@ -50,18 +49,15 @@ const getCategoryIcon = (category: string, type: string) => {
   if (cat.includes('transport') || cat.includes('ojek') || cat.includes('bensin')) return <Car className="w-4 h-4" />;
   if (cat.includes('rumah') || cat.includes('kos')) return <HomeIcon className="w-4 h-4" />;
   if (cat.includes('belanja') || cat.includes('market')) return <ShoppingBag className="w-4 h-4" />;
-  if (cat.includes('hiburan') || cat.includes('jalan') || cat.includes('nonton')) return <Gamepad className="w-4 h-4" />;
+  if (cat.includes('hiburan') || cat.includes('jalan') || cat.includes('nonton')) return <GamepadIcon className="w-4 h-4" />;
   if (cat.includes('sehat') || cat.includes('obat') || cat.includes('skincare')) return <Heart className="w-4 h-4" />;
   if (cat.includes('didik') || cat.includes('kuliah') || cat.includes('sekolah')) return <GraduationCap className="w-4 h-4" />;
   if (cat.includes('tagihan') || cat.includes('listrik') || cat.includes('pulsa') || cat.includes('wifi')) return <ZapIcon className="w-4 h-4" />;
   return <ArrowDownCircle className="w-4 h-4" />;
 };
 
-import { useFinancialSummary } from '@/hooks/useFinancialSummary';
-
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const { isEcoMode } = useSettings();
   
   // Use custom hook for accurate financial stats
   const { 
@@ -100,7 +96,7 @@ const Home: React.FC = () => {
     if (p >= 25) return { 
       title: "Duh Sayang, Rem Dikit Yuk.. 🛑🥺", 
       text: "Kayaknya dompet kita lagi minta dipuk-puk nih.. Tahan jajan boba-nya dulu ya Cintaku, biar impian kita beli rumah sendiri cepat terwujud! Semangat Sayang! 💪💕", 
-      icon: <Zap className="w-6 h-6 text-amber-500 fill-amber-100" />,
+      icon: <ZapIcon className="w-6 h-6 text-amber-500 fill-amber-100" />,
       color: "amber" as const,
       gradient: "from-amber-500/10 via-amber-500/5 to-transparent"
     };
@@ -147,7 +143,7 @@ const Home: React.FC = () => {
          </div>
 
          {/* Desktop Greeting */}
-         <div className="hidden lg:flex glass-premium py-6 px-[58px] rounded-[40px] items-center justify-center shadow-2xl transition-transform hover:scale-105 transform-gpu">
+         <div className="hidden lg:flex glass-premium py-6 px-[58px] rounded-[40px] items-center justify-center shadow-2xl transition-transform hover:scale-105 transform-gpu border border-white/50">
             <h2 className="text-2xl font-black text-slate-800 whitespace-nowrap tracking-tight">
                <span className="font-script text-[5rem] mr-4 text-pink-500 block lg:inline-block leading-none">Sayang,</span> 
                <span className="text-slate-600 font-bold">Bangun Masa Depan Kita Yuk... ❤️</span>
@@ -156,58 +152,35 @@ const Home: React.FC = () => {
          </div>
 
          <div className="flex items-center gap-4 md:gap-8">
-            <Button variant="outline" size="icon" className="w-11 h-11 md:w-14 md:h-14 rounded-full bg-white/95 backdrop-blur-lg md:backdrop-blur-xl shadow-xl border-white active:scale-95 transition-all p-0 group overflow-hidden relative transform-gpu">
-               <motion.div 
-                 animate={{ opacity: [0.3, 0.5, 0.3] }}
-                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                 style={{ willChange: 'opacity' }}
-                 className="absolute inset-0 bg-linear-to-tr from-yellow-200/50 via-yellow-100/30 to-white/10 blur-xl"
-               />
-                <div className="w-full h-full flex items-center justify-center z-10 rounded-full overflow-hidden p-2">
-                   {!isEcoMode ? (
-                     <video 
-                       src="/icons/3d/turtle-moon.mp4" 
-                       autoPlay 
-                       loop 
-                       muted 
-                       playsInline
-                       className="w-full h-full object-cover scale-[1.2]" 
-                     />
-                   ) : (
-                     <Sparkles className="w-6 h-6 text-yellow-500" />
-                   )}
-                </div>
-            </Button>
-
             <UserNavDropdown />
          </div>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-8">
          {/* Top Section - Health & Analytics */}
-         <div className="lg:col-span-4 space-y-4 md:space-y-6">
-            <Card className="flex flex-col items-center justify-center relative p-4 md:p-6 glass-premium shadow-xl rounded-[32px] md:rounded-[40px] overflow-hidden transform-gpu min-h-[200px]">
+         <div className="md:col-span-2 lg:col-span-4 space-y-4 md:space-y-6 flex flex-col sm:flex-row lg:flex-col gap-4 sm:gap-6 lg:gap-0">
+            <Card className="flex-1 flex flex-col items-center justify-center relative p-4 md:p-6 glass-premium shadow-xl rounded-[32px] md:rounded-[40px] overflow-hidden transform-gpu min-h-[200px]">
                <div className="w-full aspect-square max-w-[200px] md:max-w-[280px] transform-gpu">
                   <React.Suspense fallback={<div className="w-full h-full flex items-center justify-center text-[10px] font-black text-slate-400 uppercase tracking-widest animate-pulse">Analisis Kesehatan...</div>}>
                     <GaugeChart percentage={healthPercentage} />
                   </React.Suspense>
                </div>
             </Card>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, type: "spring", stiffness: 100 }}>
+            <motion.div className="flex-1" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, type: "spring", stiffness: 100 }}>
               <Card className={cn(
-                "relative overflow-hidden p-6 md:p-10 bg-white shadow-[0_30px_60px_-15px_rgba(30,41,59,0.08)] rounded-[40px] border-none group transition-all hover:-translate-y-1 hover:shadow-[0_45px_100px_-20px_rgba(30,41,59,0.12)]",
+                "relative h-full overflow-hidden p-6 md:p-8 lg:p-10 bg-white shadow-[0_30px_60px_-15px_rgba(30,41,59,0.08)] rounded-[40px] border-none group transition-all hover:-translate-y-1 hover:shadow-[0_45px_100px_-20px_rgba(30,41,59,0.12)]",
                 `before:absolute before:inset-0 before:bg-linear-to-br ${insight.gradient} before:opacity-100`
               )}>
                 <div className="relative z-10">
-                  <div className="flex items-center gap-5 mb-6">
-                     <div className={cn("p-4 rounded-2xl shadow-inner transition-transform group-hover:scale-110 duration-500", `bg-${insight.color}-50`)}>
+                  <div className="flex items-center gap-5 mb-4 md:mb-6">
+                     <div className={cn("p-3 md:p-4 rounded-2xl shadow-inner transition-transform group-hover:scale-110 duration-500", `bg-${insight.color}-50`)}>
                        {insight.icon}
                      </div>
-                     <h4 className={cn("font-black tracking-tight text-lg md:text-xl", `text-${insight.color}-700`)}>
+                     <h4 className={cn("font-black tracking-tight text-base md:text-xl", `text-${insight.color}-700`)}>
                        {insight.title}
                      </h4>
                   </div>
-                  <p className="text-[17px] md:text-[20px] font-medium text-slate-600 leading-relaxed italic pr-4 pl-3 border-l-4 border-slate-100 ml-1">
+                  <p className="text-[14px] md:text-[18px] lg:text-[20px] font-medium text-slate-600 leading-relaxed italic pr-4 pl-3 border-l-4 border-slate-100 ml-1">
                     "{insight.text}"
                   </p>
                 </div>
@@ -216,7 +189,7 @@ const Home: React.FC = () => {
          </div>
 
          {/* Top Section - Stats & Main Chart */}
-         <div className="lg:col-span-8 space-y-4 md:space-y-8">
+         <div className="md:col-span-2 lg:col-span-8 space-y-4 md:space-y-8">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6">
                <StatCard title="Total Saldo" amount={totalBalance} imageSrc="/icons/3d/wallet.webp" variant="saldo" />
                <StatCard title="Pemasukan" amount={totalIncome} imageSrc="/icons/3d/income.webp" variant="income" />
@@ -232,9 +205,9 @@ const Home: React.FC = () => {
                <p className="text-[8px] md:text-[10px] text-slate-400 text-center mt-4 uppercase font-bold tracking-widest leading-normal">Perbandingan performa dengan periode sebelumnya</p>
             </Card>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-8">
                {/* Quick Feature Buttons */}
-               <div className="lg:col-span-3 flex flex-col gap-3">
+               <div className="md:col-span-2 lg:col-span-3 grid grid-cols-3 lg:grid-cols-1 gap-3">
                   {[
                     { id: 'holiday', icon: Plane, label: 'Liburan', path: '/holiday', gradient: 'bg-linear-to-br from-blue-500 to-blue-600', shadow: 'shadow-blue-200' },
                     { id: 'mimpi', icon: Sparkles, label: 'Mimpi', path: '/mimpi-kita', gradient: 'bg-linear-to-br from-pink-500 to-rose-600', shadow: 'shadow-pink-200' },
@@ -246,23 +219,23 @@ const Home: React.FC = () => {
                       whileTap={{ scale: 0.98 }}
                       onClick={() => navigate(btn.path)}
                       className={cn(
-                        "flex items-center gap-4 p-4 rounded-[28px] border-none shadow-lg transition-all group overflow-hidden relative",
+                        "flex flex-col lg:flex-row items-center gap-2 lg:gap-4 p-3 sm:p-4 rounded-[24px] md:rounded-[28px] border-none shadow-lg transition-all group overflow-hidden relative",
                         btn.gradient,
                         btn.shadow
                       )}
                     >
                       <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center shrink-0 backdrop-blur-md">
-                        <btn.icon className="size-5 text-white" strokeWidth={3} />
+                      <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl md:rounded-2xl bg-white/20 flex items-center justify-center shrink-0 backdrop-blur-md">
+                        <btn.icon className="size-4 md:size-5 text-white" strokeWidth={3} />
                       </div>
-                      <span className="font-black uppercase tracking-widest text-[10px] text-white text-left leading-none">
+                      <span className="font-black uppercase tracking-widest text-[8px] sm:text-[10px] text-white text-center lg:text-left leading-none">
                         {btn.label}
                       </span>
                     </motion.button>
                   ))}
                </div>
 
-               <Card className="lg:col-span-4 flex flex-col p-4 md:p-6 bg-white/70 backdrop-blur-xl border-white/60 shadow-lg rounded-[32px] md:rounded-[40px]">
+               <Card className="md:col-span-1 lg:col-span-4 flex flex-col p-4 md:p-6 bg-white/70 backdrop-blur-xl border-white/60 shadow-lg rounded-[32px] md:rounded-[40px]">
                   <CardHeader className="p-0 mb-4"><CardTitle className="text-sm md:text-base font-black text-slate-800 uppercase tracking-tighter">Budgeting</CardTitle></CardHeader>
                   <div className="flex-1 flex flex-col items-center justify-center">
                     <React.Suspense fallback={<div className="w-full h-32 flex items-center justify-center text-[10px] font-black text-slate-400 uppercase tracking-widest animate-pulse">Memuat Budget...</div>}>
@@ -270,7 +243,7 @@ const Home: React.FC = () => {
                     </React.Suspense>
                   </div>
                </Card>
-               <div className="lg:col-span-5">
+               <div className="md:col-span-1 lg:col-span-5">
                   <BudgetGuardCard />
                </div>
             </div>
@@ -309,7 +282,7 @@ const Home: React.FC = () => {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                     {transactions.length > 0 ? transactions.slice(0, 6).map((t, idx) => (
+                     {transactions.length > 0 ? transactions.slice(0, 6).map((t: any, idx: number) => (
                         <motion.div 
                           key={t.id}
                           initial={{ opacity: 0, y: 20 }}

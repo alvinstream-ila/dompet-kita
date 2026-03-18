@@ -1,13 +1,14 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useEffect, useState, lazy, Suspense } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { supabase } from './lib/supabase';
 import { PageLoader } from '@/components/ui/PageLoader';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { LazyMotion, domAnimation } from 'framer-motion';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { SettingsProvider } from './context/SettingsContext';
 import './App.css';
 
-// Lazy load pages for better performance
+// Lazy load pages
 const Login = lazy(() => import('@/pages/Login'));
 const Home = lazy(() => import('@/pages/Home'));
 const Transactions = lazy(() => import('@/pages/Transactions'));
@@ -22,34 +23,15 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      staleTime: 1000 * 60 * 5, // 5 minutes
+      staleTime: 1000 * 60 * 5,
     },
   },
 });
 
-import type { Session } from '@supabase/supabase-js';
-
 function AppContent() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [initialLoading, setInitialLoading] = useState(true);
+  const { isAuthenticated, loading } = useAuth();
   const location = useLocation();
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setInitialLoading(false);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  // Handle background class for body
   useEffect(() => {
     if (location.pathname === '/login') {
       document.body.classList.remove('app-main-bg');
@@ -58,7 +40,7 @@ function AppContent() {
     }
   }, [location.pathname]);
 
-  if (initialLoading) {
+  if (loading) {
     return <PageLoader isLoading={true} message="Mengecek status kita sayang..." />;
   }
 
@@ -67,11 +49,10 @@ function AppContent() {
       <Routes>
         <Route 
           path="/login" 
-          element={!session ? <Login /> : <Navigate to="/" replace />} 
+          element={!isAuthenticated ? <Login /> : <Navigate to="/" replace />} 
         />
         
-        {/* Protected Routes wrapped in a single MainLayout to avoid remounting */}
-        <Route element={session ? <MainLayout /> : <Navigate to="/login" replace />}>
+        <Route element={isAuthenticated ? <MainLayout /> : <Navigate to="/login" replace />}>
           <Route path="/" element={<Home />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/reports" element={<Reports />} />
@@ -88,18 +69,18 @@ function AppContent() {
   );
 }
 
-import { SettingsProvider } from './context/SettingsContext';
-
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <SettingsProvider>
-        <LazyMotion features={domAnimation}>
-          <Router>
-            <AppContent />
-          </Router>
-        </LazyMotion>
-      </SettingsProvider>
+      <AuthProvider>
+        <SettingsProvider>
+          <LazyMotion features={domAnimation}>
+            <Router>
+              <AppContent />
+            </Router>
+          </LazyMotion>
+        </SettingsProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

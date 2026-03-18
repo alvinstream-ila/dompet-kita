@@ -3,30 +3,23 @@ import { useSettings } from '@/hooks/useSettings';
 import { useCurrency } from './useCurrency';
 
 export const useFormatting = () => {
-  const { isPrivacyMode, currencyFormat } = useSettings();
-  const { data: idrToUsd = 0.00006 } = useCurrency();
+  const { isPrivacyMode, currencyFormat, exchangeRate } = useSettings();
 
   const formatAmount = useCallback((amount: number, forceShow: boolean = false) => {
     if (isPrivacyMode && !forceShow) {
       return '••••••';
     }
 
-    if (currencyFormat === 'USD') {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(amount * idrToUsd);
-    }
+    // Default to en-US for non-IDR currencies to ensure standard global formatting
+    const locale = currencyFormat === 'IDR' ? 'id-ID' : 'en-US';
 
-    return new Intl.NumberFormat('id-ID', {
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount);
-  }, [isPrivacyMode, currencyFormat, idrToUsd]);
+      currency: currencyFormat,
+      minimumFractionDigits: currencyFormat === 'IDR' ? 0 : 2,
+      maximumFractionDigits: currencyFormat === 'IDR' ? 0 : 2,
+    }).format(currencyFormat === 'IDR' ? amount : amount * exchangeRate);
+  }, [isPrivacyMode, currencyFormat, exchangeRate]);
 
   return { formatAmount };
 };

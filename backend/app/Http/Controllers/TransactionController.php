@@ -11,11 +11,11 @@ class TransactionController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Transaction::query();
+        $user = $request->user();
+        $query = Transaction::where('user_id', $user->id);
 
-        // Optional filtering by month and year
         if ($request->has(['month', 'year'])) {
-            $month = (int) $request->month + 1; // Frontend uses 0-indexed month
+            $month = (int) $request->month + 1;
             $year = (int) $request->year;
             $budgetCycleStart = (int) ($request->budget_cycle_start ?? 1);
 
@@ -32,12 +32,13 @@ class TransactionController extends Controller
             $query->whereBetween('date', [$startDate, $endDate]);
         }
 
-        return $query->orderBy('date', 'desc')->paginate($request->get('limit', 20));
+        return $query->orderBy('date', 'desc')->paginate($request->input('limit', 20));
     }
 
     public function summary(Request $request)
     {
-        $month = (int) $request->month + 1; // Frontend uses 0-indexed month
+        $user = $request->user();
+        $month = (int) $request->month + 1;
         $year = (int) $request->year;
         $budgetCycleStart = (int) ($request->budget_cycle_start ?? 1);
 
@@ -51,7 +52,8 @@ class TransactionController extends Controller
             $startDate = $endDate->copy()->subMonth()->addDay()->startOfDay();
         }
 
-        $summary = Transaction::whereBetween('date', [$startDate, $endDate])
+        $summary = Transaction::where('user_id', $user->id)
+            ->whereBetween('date', [$startDate, $endDate])
             ->select('type', DB::raw('SUM(amount) as total'))
             ->groupBy('type')
             ->get();
@@ -59,10 +61,17 @@ class TransactionController extends Controller
         $income = $summary->where('type', 'income')->first()?->total ?? 0;
         $expense = $summary->where('type', 'expense')->first()?->total ?? 0;
 
+        $recentTransactions = Transaction::where('user_id', $user->id)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->orderBy('date', 'desc')
+            ->limit(10)
+            ->get();
+
         return response()->json([
             'income' => (float) $income,
             'expense' => (float) $expense,
             'balance' => (float) ($income - $expense),
+            'transactions' => $recentTransactions,
             'period' => [
                 'start' => $startDate->toIso8601String(),
                 'end' => $endDate->toIso8601String(),
@@ -83,6 +92,7 @@ class TransactionController extends Controller
             'receipt_url' => 'nullable|string',
         ]);
 
+        $validated['user_id'] = $request->user()->id;
         $transaction = Transaction::create($validated);
 
         return response()->json($transaction, 201);
@@ -90,6 +100,10 @@ class TransactionController extends Controller
 
     public function update(Request $request, Transaction $transaction)
     {
+        if ($transaction->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
         $validated = $request->validate([
             'date' => 'sometimes|date',
             'amount' => 'sometimes|numeric',
@@ -102,12 +116,15 @@ class TransactionController extends Controller
         ]);
 
         $transaction->update($validated);
-
         return response()->json($transaction);
     }
 
-    public function destroy(Transaction $transaction)
+    public function destroy(Request $request, Transaction $transaction)
     {
+        if ($transaction->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
         $transaction->delete();
         return response()->json(null, 204);
     }

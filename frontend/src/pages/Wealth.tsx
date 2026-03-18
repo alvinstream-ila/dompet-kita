@@ -8,10 +8,8 @@ import {
   Bitcoin, 
   Home, 
   Plus, 
-  ChevronRight,
   Target,
   ArrowUpRight,
-  History as HistoryIcon,
   Info
 } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,33 +19,33 @@ import { cn } from "@/lib/utils";
 import { useFormatting } from '@/hooks/useFormatting';
 import { useAssets, useWealthHistory, useAddAsset } from '@/hooks/useAssets';
 import { PageLoader } from '@/components/ui/PageLoader';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
   DialogFooter
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
-import { supabase } from '@/lib/supabase';
+import { UserNavDropdown } from '../components/features/UserNavDropdown';
 import type { AssetType } from '@/types';
-import { 
-  Chart as ChartJS, 
-  CategoryScale, 
-  LinearScale, 
-  PointElement, 
-  LineElement, 
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
   Title,
-  Tooltip, 
+  Tooltip,
   Legend,
   Filler
 } from 'chart.js';
@@ -55,12 +53,12 @@ import type { TooltipItem, ChartOptions } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
 ChartJS.register(
-  CategoryScale, 
-  LinearScale, 
-  PointElement, 
-  LineElement, 
-  Title, 
-  Tooltip, 
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
   Legend,
   Filler
 );
@@ -89,7 +87,6 @@ const Wealth: React.FC = () => {
     value: ''
   });
 
-  // Use wealthHistory data if available, otherwise fallback to dummy for visual appeal
   const chartLabels = wealthHistory.length > 0 ? (wealthHistory as WealthHistoryItem[]).map(h => h.month) : ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'];
   const chartValues = wealthHistory.length > 0 ? (wealthHistory as WealthHistoryItem[]).map(h => h.value) : [12000000, 15000000, 14500000, 18000000, 22000000, totalWealth || 25000000];
 
@@ -127,21 +124,53 @@ const Wealth: React.FC = () => {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { display: false },
+      legend: {
+        display: false,
+      },
       tooltip: {
-        backgroundColor: '#1e293b',
+        backgroundColor: 'white',
+        titleColor: '#1e293b',
+        bodyColor: '#1e293b',
+        borderColor: '#f1f5f9',
+        borderWidth: 1,
         padding: 12,
-        titleFont: { size: 12, weight: 'bold' },
-        bodyFont: { size: 14 },
-        displayColors: false,
+        boxPadding: 4,
+        usePointStyle: true,
         callbacks: {
-          label: (context: TooltipItem<'line'>) => `Rp ${(context.raw as number).toLocaleString('id-ID')}`
+          label: (context: TooltipItem<'line'>) => {
+            return ` ${formatAmount(Number(context.parsed.y))}`;
+          }
         }
       }
     },
     scales: {
-      x: { display: false },
-      y: { display: false }
+      y: {
+        beginAtZero: false,
+        grid: {
+          display: true,
+          color: '#f8fafc',
+        },
+        ticks: {
+          callback: (value) => formatAmount(Number(value)),
+          font: {
+            size: 10,
+            weight: 'bold'
+          },
+          color: '#94a3b8'
+        }
+      },
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          font: {
+            size: 10,
+            weight: 'bold'
+          },
+          color: '#94a3b8'
+        }
+      }
     },
     animation: {
       duration: 1000,
@@ -151,14 +180,11 @@ const Wealth: React.FC = () => {
 
   const handleAddAsset = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
 
     addAssetMutation.mutate({
       name: newAsset.name,
       type: newAsset.type,
       value: Number(newAsset.value),
-      user_id: user.id
     }, {
       onSuccess: () => {
         setIsAddDialogOpen(false);
@@ -173,284 +199,219 @@ const Wealth: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 pb-32">
-      {/* Premium Header */}
-      <header className="mb-10 relative">
-        <div className="flex justify-between items-start mb-6">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }} 
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <span className="inline-block px-3 py-1 rounded-full bg-pink-50 text-pink-600 text-[10px] font-black uppercase tracking-widest mb-3">
-              Family Fortune ✨
-            </span>
-            <h1 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tighter">
-              Wealth <span className="text-pink-500">Growth</span>
-            </h1>
-          </motion.div>
-          
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="rounded-2xl bg-slate-900 text-white hover:bg-slate-800 h-14 px-6 font-bold shadow-xl">
-                <Plus className="size-5 mr-2" />
-                Tambah Aset
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="rounded-[32px] p-8">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-black text-slate-800 tracking-tight">Tambah Aset Masa Depan ✨</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleAddAsset} className="space-y-6 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nama Aset</Label>
-                  <Input 
-                    id="name" 
-                    placeholder="Contoh: Emas Antam, Saham BBCA..." 
-                    value={newAsset.name}
-                    onChange={(e) => setNewAsset({ ...newAsset, name: e.target.value })}
-                    className="rounded-xl border-slate-100 bg-slate-50 h-12 font-bold"
-                    required
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Tipe Aset</Label>
-                    <Select 
-                      value={newAsset.type} 
-                      onValueChange={(val) => setNewAsset({ ...newAsset, type: val as AssetType })}
-                    >
-                      <SelectTrigger className="rounded-xl border-slate-100 bg-slate-50 h-12 font-bold">
-                        <SelectValue placeholder="Pilih Tipe" />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl">
-                        <SelectItem value="Tabungan">Tabungan</SelectItem>
-                        <SelectItem value="Emas">Emas</SelectItem>
-                        <SelectItem value="Saham">Saham</SelectItem>
-                        <SelectItem value="Kripto">Kripto</SelectItem>
-                        <SelectItem value="Properti">Properti</SelectItem>
-                        <SelectItem value="Lainnya">Lainnya</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                   <div className="space-y-2">
-                     <Label htmlFor="value" className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nilai (Rp)</Label>
-                     <div className="space-y-1.5">
-                       <Input 
-                         id="value" 
-                         type="number"
-                         placeholder="0" 
-                         value={newAsset.value}
-                         onChange={(e) => setNewAsset({ ...newAsset, value: e.target.value })}
-                         className="rounded-xl border-slate-100 bg-slate-50 h-12 font-bold focus:ring-pink-500/20"
-                         required
-                       />
-                       <div className="text-[10px] font-black text-pink-500 bg-pink-50 px-3 py-1.5 rounded-xl border border-pink-100/50 inline-block animate-in fade-in slide-in-from-top-1 duration-200">
-                         Intipan: <span className="opacity-70">{formatAmount(Number(newAsset.value) || 0, true)}</span>
-                       </div>
-                     </div>
-                   </div>
-                </div>
-
-                <DialogFooter className="pt-4">
-                  <Button 
-                    type="submit" 
-                    className="w-full h-14 rounded-2xl bg-pink-500 hover:bg-pink-600 text-white font-black text-sm uppercase tracking-widest shadow-lg shadow-pink-200"
-                    disabled={addAssetMutation.isPending}
-                  >
-                    {addAssetMutation.isPending ? 'Menyimpan...' : 'Simpan Aset Kita 💖'}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
-
-        {/* Total Wealth Hero Card */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative group h-64 md:h-80"
-        >
-          <Card className="h-full rounded-[48px] overflow-hidden border-2 border-white shadow-2xl relative bg-slate-900 text-white transform-gpu">
-            <div className="absolute inset-0 bg-linear-to-br from-pink-500/20 via-transparent to-blue-500/20" />
-            
-            <div className="p-8 md:p-12 h-full flex flex-col justify-between relative z-10">
-              <div>
-                <span className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-2 block">Total Kekayaan Bersih</span>
-                <div className="flex items-baseline gap-4">
-                  <h2 className={cn("text-4xl md:text-6xl font-black tracking-tighter text-white", totalWealth === 0 && "text-white")}>
-                    {formatAmount(totalWealth)}
-                  </h2>
-                  <span className="flex items-center gap-1 text-emerald-400 font-bold bg-emerald-400/10 px-3 py-1 rounded-full text-sm">
-                    <ArrowUpRight className="size-4" />
-                    +12.5%
-                  </span>
-                </div>
-              </div>
-
-              {/* Mini Growth Chart in Card */}
-              <div className="absolute inset-x-0 bottom-0 h-32 opacity-50">
-                <Line data={chartData} options={chartOptions} />
-              </div>
-
-              <div className="flex gap-10 mt-4 relative z-20">
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Aset Aktif</span>
-                  <span className="text-xl font-black text-white">{assets.length} <span className="text-sm font-medium text-slate-500">Unit</span></span>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Update Terakhir</span>
-                  <span className="text-xl font-black text-white">Hari Ini</span>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </motion.div>
-      </header>
-
-      {/* Navigation Tabs */}
-      <div className="flex gap-2 p-1.5 bg-slate-100 rounded-[28px] mb-8 w-fit mx-auto md:mx-0">
-        {[
-          { id: 'overview', label: 'Ringkasan', icon: TrendingUp },
-          { id: 'assets', label: 'Daftar Aset', icon: Coins },
-          { id: 'history', label: 'Riwayat', icon: HistoryIcon },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as 'overview' | 'assets' | 'history')}
-            className={cn(
-              "flex items-center gap-2 px-6 py-2.5 rounded-[22px] text-[11px] font-black uppercase tracking-widest transition-all",
-              activeTab === tab.id 
-                ? "bg-white text-slate-900 shadow-sm" 
-                : "text-slate-500 hover:text-slate-700"
-            )}
-          >
-            <tab.icon className="size-4" />
-            {tab.label}
-          </button>
-        ))}
+      {/* Mobile Greeting */}
+      <div className="lg:hidden flex justify-center mb-6 md:mb-10 text-center">
+         <div className="glass-premium py-4 h-auto md:py-6 px-6 md:px-10 rounded-[24px] md:rounded-[32px] items-center justify-center shadow-2xl w-full transform-gpu border border-white/50">
+            <h2 className="text-xl md:text-3xl font-black text-slate-800 tracking-tight leading-tight">
+               <span className="font-script text-5xl md:text-8xl text-pink-500 block mb-1">Aset & Kekayaan</span>
+               <span className="text-slate-500 font-bold text-xs md:text-lg block tracking-normal">Mencatat Fondasi Masa Depan Kita... 💎💰</span>
+            </h2>
+         </div>
       </div>
 
-      {/* Content Area */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <AnimatePresence mode="wait">
-          {activeTab === 'assets' && (
-            <>
-              {assets.map((asset, idx) => (
-                  <motion.div
-                    key={asset.id}
-                    layout="position"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ 
-                      type: "spring", 
-                      stiffness: 260, 
-                      damping: 20,
-                      delay: Math.min(idx * 0.03, 0.3) 
-                    }}
-                    whileHover={{ y: -5 }}
-                  >
-                    <Card className="rounded-[32px] border-white/60 bg-white/70 backdrop-blur-md shadow-lg overflow-hidden group transform-gpu">
-                    <CardContent className="p-6">
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="size-12 rounded-2xl bg-slate-50 flex items-center justify-center transition-transform group-hover:scale-110">
+      {/* Header Row */}
+      <header className="flex items-center justify-between mb-10 gap-3">
+         <div className="flex items-center gap-3 shrink-0">
+            <div className="w-9 h-9 md:w-12 md:h-12 relative flex items-center justify-center p-1 bg-white rounded-xl md:rounded-2xl shadow-sm border border-slate-100">
+               <img src="/logo-utama.svg" alt="Logo" className="w-full h-full object-contain" />
+            </div>
+            <div className="flex flex-col gap-0.5 md:gap-1">
+              <h1 className="text-sm md:text-2xl font-black text-slate-800 tracking-tight leading-none">
+                Wealth<span className="text-blue-600">Kita</span>
+              </h1>
+              <span className="text-[7px] md:text-[9px] font-black text-slate-500/80 uppercase tracking-[0.2em]">
+                Harta Bersama
+              </span>
+            </div>
+         </div>
+
+         {/* Desktop Greeting */}
+         <div className="hidden lg:flex glass-premium py-6 px-[58px] rounded-[40px] items-center justify-center shadow-2xl transition-transform hover:scale-105 transform-gpu border border-white/50">
+            <h2 className="text-2xl font-black text-slate-800 whitespace-nowrap tracking-tight">
+               <span className="font-script text-[4rem] mr-4 text-pink-500 block lg:inline-block leading-none">Sayang,</span>
+               <span className="text-slate-600 font-bold">Lihat Pertumbuhan Kekayaan Kita Yuk... 🚀💎</span>
+               <span className="ml-2 inline-block animate-pulse">✨</span>
+            </h2>
+         </div>
+
+         <div className="flex items-center gap-4 md:gap-8">
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="rounded-full bg-slate-900 text-white hover:bg-slate-800 h-11 w-11 md:h-14 md:w-14 items-center justify-center p-0 shadow-xl group">
+                  <Plus className="size-5 md:size-6" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="rounded-[32px] p-8">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-black text-slate-800 tracking-tight">Tambah Aset Masa Depan ✨</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleAddAsset} className="space-y-6 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nama Aset</Label>
+                    <Input id="name" value={newAsset.name} onChange={(e) => setNewAsset({ ...newAsset, name: e.target.value })} placeholder="Emas Antam, Tabungan Bank, etc." className="rounded-2xl h-14 border-slate-100 px-6 font-bold" required />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Jenis Aset</Label>
+                      <Select value={newAsset.type} onValueChange={(val) => setNewAsset({ ...newAsset, type: val as AssetType })}>
+                        <SelectTrigger className="rounded-2xl h-14 border-slate-100 px-6 font-bold uppercase transition-all hover:bg-slate-50">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-2xl border-none shadow-2xl p-2">
+                          {['Emas', 'Saham', 'Tabungan', 'Kripto', 'Properti', 'Lainnya'].map((t) => (
+                            <SelectItem key={t} value={t} className="rounded-xl px-4 py-3 font-bold uppercase text-[10px] tracking-widest">{t}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="value" className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nilai Sekarang</Label>
+                      <Input id="value" type="number" value={newAsset.value} onChange={(e) => setNewAsset({ ...newAsset, value: e.target.value })} placeholder="Rp 1.000.000" className="rounded-2xl h-14 border-slate-100 px-6 font-bold" required />
+                    </div>
+                  </div>
+                  <DialogFooter className="sm:justify-start gap-4">
+                    <Button type="button" variant="ghost" onClick={() => setIsAddDialogOpen(false)} className="flex-1 rounded-2xl h-14 font-black uppercase tracking-widest text-slate-400">Batal</Button>
+                    <Button type="submit" disabled={addAssetMutation.isPending} className="flex-1 rounded-2xl h-14 bg-slate-900 font-black uppercase tracking-widest hover:bg-slate-800 shadow-xl shadow-slate-200">Simpan Aset</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+
+
+
+            <UserNavDropdown />
+         </div>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left Column - Growth Chart */}
+        <div className="lg:col-span-8 space-y-8">
+           <Card className="rounded-[40px] border-none shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] overflow-hidden bg-white p-6 md:p-8">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <div>
+                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Grafik Pertumbuhan</h3>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Estimasi Total Kekayaan Kolektif</p>
+                </div>
+                <div className="flex bg-slate-50 p-1.5 rounded-2xl border border-slate-100/50">
+                  {(['overview', 'assets', 'history'] as const).map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveTab(tab)}
+                      className={cn(
+                        "px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                        activeTab === tab ? "bg-white text-slate-900 shadow-md" : "text-slate-400 hover:text-slate-600"
+                      )}
+                    >
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="h-[400px] w-full mt-4">
+                <Line data={chartData} options={chartOptions} />
+              </div>
+           </Card>
+
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="rounded-[32px] border-none shadow-xl bg-linear-to-br from-slate-900 to-slate-800 text-white p-8 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-8 opacity-10 transform group-hover:scale-110 transition-transform duration-700">
+                  <TrendingUp size={120} />
+                </div>
+                <div className="relative z-10">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Total Wealth</p>
+                  <h2 className="text-4xl font-black tracking-tighter mb-6">{formatAmount(totalWealth)}</h2>
+                  <div className="flex items-center gap-3">
+                    <div className="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-400 text-[10px] font-black flex items-center gap-2">
+                       <ArrowUpRight className="size-3" />
+                       +12.5% BULAN INI
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="rounded-[32px] border-none shadow-xl bg-white p-8 relative overflow-hidden group border border-slate-100">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h3 className="text-lg font-black text-slate-800 tracking-tight">Target Kita</h3>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Financial Freedom Path</p>
+                  </div>
+                  <Target className="size-8 text-pink-500 opacity-20" />
+                </div>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-end">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Progress</span>
+                    <span className="text-xl font-black text-slate-800 tracking-tight">45%</span>
+                  </div>
+                  <Progress value={45} className="h-3 rounded-full bg-slate-100" />
+                  <p className="text-[10px] font-bold text-slate-400 italic">Sedikit lagi ya Sayang, kita pasti bisa! ✨</p>
+                </div>
+              </Card>
+           </div>
+        </div>
+
+        {/* Right Column - Assets List */}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="flex items-center justify-between px-2">
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Daftar Aset</h3>
+            <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-widest">{assets.length} Item</span>
+          </div>
+
+          <div className="space-y-4">
+            <AnimatePresence mode="popLayout">
+              {assets.map((asset, index) => (
+                <motion.div
+                  key={asset.id}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  layout
+                >
+                  <Card className="rounded-3xl border-none shadow-md hover:shadow-xl transition-all group overflow-hidden bg-white hover:-translate-y-1 transform-gpu">
+                    <CardContent className="p-5 flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="size-12 rounded-2xl bg-slate-50 flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner">
                           {getAssetIcon(asset.type)}
                         </div>
-                        <Button variant="ghost" size="icon" className="rounded-full text-slate-400">
-                          <ChevronRight className="size-5" />
-                        </Button>
-                      </div>
-                      
-                      <div className="mb-4">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">
-                          {asset.type}
-                        </span>
-                        <h4 className="text-xl font-black text-slate-800 tracking-tight">{asset.name}</h4>
-                      </div>
-
-                      <div className="flex justify-between items-end bg-slate-50 p-4 rounded-2xl">
                         <div>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase block">Nilai Saat Ini</span>
-                          <span className={cn("text-lg font-black", asset.value === 0 ? "text-white" : "text-slate-900")}>
-                            {formatAmount(asset.value)}
-                          </span>
+                          <h4 className="font-black text-slate-800 tracking-tight text-sm uppercase">{asset.name}</h4>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{asset.type}</p>
                         </div>
-                        <div className="text-right">
-                          <span className="text-[9px] font-bold text-emerald-500 uppercase block">Growth</span>
-                          <span className="text-sm font-bold text-emerald-600">+4.2%</span>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-black text-slate-900 tracking-tight">{formatAmount(asset.value)}</p>
+                        <div className="flex items-center justify-end text-[8px] font-black text-emerald-500 mt-0.5">
+                          <TrendingUp size={10} className="mr-1" />
+                          STABLE
                         </div>
                       </div>
                     </CardContent>
                   </Card>
                 </motion.div>
               ))}
-            </>
-          )}
-
-          {activeTab === 'overview' && (
-            <motion.div 
-              className="col-span-1 md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-8"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+            </AnimatePresence>
+            
+            <button
+              onClick={() => setIsAddDialogOpen(true)}
+              className="w-full py-6 rounded-4xl border-2 border-dashed border-slate-200 text-slate-400 hover:border-slate-300 hover:text-slate-600 transition-all flex flex-col items-center justify-center gap-2 group"
             >
-              {/* Asset Allocation Card */}
-              <Card className="rounded-[40px] border-white bg-white/80 backdrop-blur-2xl shadow-2xl p-8">
-                <h3 className="text-xl font-black text-slate-800 mb-6 flex items-center gap-2">
-                  <Target className="size-5 text-pink-500" />
-                  Alokasi Harta Kita
-                </h3>
-                <div className="space-y-6">
-                  {[
-                    { label: 'Emas', value: 40, color: 'bg-amber-400' },
-                    { label: 'Saham', value: 30, color: 'bg-blue-400' },
-                    { label: 'Tabungan', value: 20, color: 'bg-emerald-400' },
-                    { label: 'Lainnya', value: 10, color: 'bg-slate-400' },
-                  ].map((item) => (
-                    <div key={item.label} className="space-y-2">
-                      <div className="flex justify-between text-xs font-black uppercase tracking-widest">
-                        <span>{item.label}</span>
-                        <span>{item.value}%</span>
-                      </div>
-                      <Progress value={item.value} className="h-2.5 rounded-full bg-slate-50">
-                        <div className={cn("h-full rounded-full", item.color)} style={{ width: `${item.value}%` }} />
-                      </Progress>
-                    </div>
-                  ))}
-                </div>
-              </Card>
+              <Plus className="size-6 group-hover:scale-110 transition-transform" />
+              <span className="text-[10px] font-black uppercase tracking-widest">Tambah Aset Baru</span>
+            </button>
+          </div>
 
-              {/* Passive Income Concept Card */}
-              <Card className="rounded-[40px] border-transparent bg-linear-to-br from-indigo-600 to-blue-700 text-white shadow-2xl p-8 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12">
-                  <TrendingUp className="size-48" />
-                </div>
-                <div className="relative z-10">
-                  <h3 className="text-xl font-black mb-6 flex items-center gap-2">
-                    <HistoryIcon className="size-5" />
-                    Insight Cuan
-                  </h3>
-                  <div className="space-y-4">
-                    <p className="text-indigo-100 font-medium leading-relaxed">
-                      Sayang, harta kita tumbuh paling cepat di kategori <span className="text-white font-bold underline decoration-pink-500 underline-offset-4">Emas</span> bulan ini! ✨
-                    </p>
-                    <div className="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10">
-                      <div className="flex items-center gap-4 mb-3">
-                        <div className="size-10 rounded-full bg-white/20 flex items-center justify-center">
-                          <Info className="size-5" />
-                        </div>
-                        <div>
-                          <span className="text-[10px] font-black uppercase tracking-widest opacity-60 block">Rekomendasi Pintar</span>
-                          <span className="text-sm font-bold">Terus konsisten menabung rutin ya!</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          <Card className="rounded-[32px] bg-linear-to-br from-pink-500 to-rose-500 border-none p-8 text-white shadow-xl shadow-rose-200/50 mt-10">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-md">
+                <Info size={24} />
+              </div>
+              <h4 className="font-black tracking-tight text-lg">Catatan Cinta</h4>
+            </div>
+            <p className="text-sm font-bold leading-relaxed opacity-90 italic">
+               "Harta yang paling berharga adalah kamu. Tabungan ini cuma bonus buat kita bisa bahagia lebih lama lagi. Semangat ya Sayang! ❤️"
+            </p>
+          </Card>
+        </div>
       </div>
     </div>
   );

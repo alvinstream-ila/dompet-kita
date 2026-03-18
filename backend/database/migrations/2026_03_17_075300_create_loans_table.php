@@ -11,21 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('loans')) {
-            Schema::create('loans', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->timestampTz('created_at')->useCurrent();
-                $table->text('type'); // utang | piutang
-                $table->double('amount');
-                $table->double('remaining_amount');
-                $table->text('description')->nullable();
-                $table->text('contact_name');
-                $table->timestampTz('due_date')->nullable();
-                $table->text('status')->default('active'); // active | paid
-                $table->uuid('user_id')->nullable();
-                $table->index('user_id');
-            });
-        }
+        Schema::dropIfExists('loans');
+        Schema::create('loans', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('type'); // utang | piutang
+            $table->decimal('amount', 15, 2);
+            $table->decimal('remaining_amount', 15, 2);
+            $table->string('description');
+            $table->string('contact_name');
+            $table->timestamp('due_date')->nullable();
+            $table->string('status')->default('active'); // active, paid
+            $table->timestamps();
+        });
     }
 
     /**

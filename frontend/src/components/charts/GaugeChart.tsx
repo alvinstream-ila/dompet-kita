@@ -9,7 +9,6 @@ import type { ChartOptions } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import { cn } from "@/lib/utils";
 import { motion } from 'framer-motion';
-import { useSettings } from '@/hooks/useSettings';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -47,8 +46,6 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({ percentage }) => {
     ],
   }), [displayPercentage, status.color]);
 
-  const { isEcoMode } = useSettings();
-
   const options: ChartOptions<'doughnut'> = React.useMemo(() => ({
     plugins: {
       tooltip: { enabled: false },
@@ -57,10 +54,10 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({ percentage }) => {
     responsive: true,
     maintainAspectRatio: false,
     animation: {
-      duration: isEcoMode ? 100 : 3000,
+      duration: 3000,
       easing: 'easeOutQuart'
     }
-  }), [isEcoMode]);
+  }), []);
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center pt-4">

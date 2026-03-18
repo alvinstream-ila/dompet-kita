@@ -1,36 +1,43 @@
 <?php
 
+use App\Http\Controllers\AssetController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GoalController;
+use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\LoanController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\WealthHistoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\LoanController;
-use App\Http\Controllers\AssetController;
-use App\Http\Controllers\HolidayController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-*/
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/forgot-password', [\App\Http\Controllers\PasswordResetController::class, 'sendResetLinkEmail']);
+Route::post('/reset-password', [\App\Http\Controllers\PasswordResetController::class, 'reset'])->name('password.reset');
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    Route::put('/user/profile', [UserController::class, 'update']);
+    Route::put('/user/change-password', [UserController::class, 'changePassword']);
 
-// Transactions
-Route::get('/transactions/summary', [TransactionController::class, 'summary']);
-Route::apiResource('transactions', TransactionController::class);
+    // Transactions
+    Route::get('/transactions/summary', [TransactionController::class, 'summary']);
+    Route::apiResource('transactions', TransactionController::class);
 
-// Loans (Ila's Business & Personal)
-Route::apiResource('loans', LoanController::class);
+    // Assets
+    Route::get('/wealth-history', [WealthHistoryController::class, 'index']);
+    Route::apiResource('assets', AssetController::class);
 
-// Assets (Wealth Tracking)
-Route::apiResource('assets', AssetController::class);
+    // Loans
+    Route::apiResource('loans', LoanController::class);
 
-// Holidays (Planning)
-Route::apiResource('holidays', HolidayController::class);
+    // Goals
+    Route::apiResource('goals', GoalController::class);
 
-// Health Check
-Route::get('/health', function () {
-    return response()->json(['status' => 'ok', 'backend' => 'Laravel 11', 'php' => PHP_VERSION]);
+    // Holidays
+    Route::apiResource('holidays', HolidayController::class);
 });

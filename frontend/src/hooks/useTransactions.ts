@@ -1,45 +1,30 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import api from '@/lib/axios';
 import type { Transaction } from '@/types';
 import { useSettings } from '@/hooks/useSettings';
-import { startOfMonth, endOfMonth, setDate, subMonths, startOfDay, endOfDay } from 'date-fns';
 
 export function useTransactions(month?: number, year?: number) {
   const { budgetCycleStart } = useSettings();
 
   return useInfiniteQuery({
     queryKey: ['transactions', month, year, budgetCycleStart],
-    initialPageParam: 0,
-    queryFn: async ({ pageParam = 0 }) => {
-      const pageSize = 20;
-      let query = supabase.from('transactions').select('*');
-      
-      if (month !== undefined && year !== undefined) {
-        let startDate: Date;
-        let endDate: Date;
-        const currentMonthDate = new Date(year, month, 15);
-
-        if (budgetCycleStart === 1) {
-          startDate = startOfMonth(currentMonthDate);
-          endDate = endOfMonth(currentMonthDate);
-        } else {
-          const targetDay = budgetCycleStart;
-          endDate = endOfDay(setDate(currentMonthDate, targetDay - 1));
-          startDate = startOfDay(setDate(subMonths(currentMonthDate, 1), targetDay));
+    initialPageParam: 1,
+    queryFn: async ({ pageParam = 1 }) => {
+      const { data } = await api.get('/transactions', {
+        params: {
+          month,
+          year,
+          page: pageParam,
+          budget_cycle_start: budgetCycleStart,
+          limit: 20
         }
-
-        query = query.gte('date', startDate.toISOString()).lte('date', endDate.toISOString());
-      }
+      });
       
-      const { data, error } = await query
-        .order('date', { ascending: false })
-        .range(pageParam * pageSize, (pageParam + 1) * pageSize - 1);
-      
-      if (error) throw error;
-      return data as Transaction[];
+      // Laravel pagination returns { data: [...], current_page: 1, last_page: X, ... }
+      return data.data as Transaction[];
     },
     getNextPageParam: (lastPage, allPages) => {
-      return lastPage.length === 20 ? allPages.length : undefined;
+      return lastPage.length === 20 ? allPages.length + 1 : undefined;
     },
   });
 }
@@ -49,17 +34,12 @@ export function useAddTransaction() {
   
   return useMutation({
     mutationFn: async (newTransaction: Omit<Transaction, 'id' | 'created_at'>) => {
-      const { data, error } = await supabase
-        .from('transactions')
-        .insert([newTransaction])
-        .select();
-        
-      if (error) throw error;
-      return data[0];
+      const { data } = await api.post('/transactions', newTransaction);
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['wallet_health'] });
+      queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
     }
   });
 }
@@ -69,18 +49,12 @@ export function useUpdateTransaction() {
   
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Transaction> & { id: string }) => {
-      const { data, error } = await supabase
-        .from('transactions')
-        .update(updates)
-        .eq('id', id)
-        .select();
-        
-      if (error) throw error;
-      return data[0];
+      const { data } = await api.put(`/transactions/${id}`, updates);
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['wallet_health'] });
+      queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
     }
   });
 }
@@ -90,16 +64,11 @@ export function useDeleteTransaction() {
   
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('transactions')
-        .delete()
-        .eq('id', id);
-        
-      if (error) throw error;
+      await api.delete(`/transactions/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['wallet_health'] });
+      queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
     }
   });
 }

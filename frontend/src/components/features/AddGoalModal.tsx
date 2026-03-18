@@ -15,7 +15,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAddGoal } from '@/hooks/useGoals';
-import { cn } from "@/lib/utils";
+import { cn, formatToRupiah, getTerbilang } from "@/lib/utils";
 
 interface AddGoalModalProps {
   isOpen: boolean;
@@ -47,7 +47,7 @@ export const AddGoalModal: React.FC<AddGoalModalProps> = ({ isOpen, onClose }) =
 
     await addGoalMutation.mutateAsync({
       name,
-      target_amount: parseFloat(targetAmount),
+      target_amount: parseFloat(targetAmount.replace(/\./g, '')),
       deadline: deadline || null,
       icon: selectedIcon,
       category: 'dream'
@@ -114,13 +114,17 @@ export const AddGoalModal: React.FC<AddGoalModalProps> = ({ isOpen, onClose }) =
                     <span className="text-blue-600 font-bold text-sm">Rp</span>
                   </div>
                   <Input 
-                    type="number"
                     placeholder="0" 
                     value={targetAmount}
-                    onChange={(e) => setTargetAmount(e.target.value)}
+                    onChange={(e) => setTargetAmount(formatToRupiah(e.target.value))}
                     className="h-14 pl-14 bg-slate-50 border-none rounded-2xl font-bold text-slate-700 placeholder:text-slate-300 focus:ring-2 focus:ring-blue-400"
                   />
                 </div>
+                {targetAmount && (
+                  <p className="text-[10px] font-bold text-blue-500 italic px-2 mt-1">
+                    {getTerbilang(Number(targetAmount.replace(/\./g, '')))} Rupiah
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">

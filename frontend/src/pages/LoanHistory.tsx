@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -79,102 +80,64 @@ const LoanHistory: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8 pb-32">
       {/* Mobile Greeting */}
-      <div className="lg:hidden flex justify-center mb-6 md:mb-10 text-center">
-        <div className="bg-white/95 backdrop-blur-md py-4 md:py-6 px-6 md:px-10 rounded-[24px] md:rounded-[32px] items-center justify-center shadow-2xl border border-white w-full transform-gpu">
-          <h2 className="text-xl md:text-3xl font-black text-slate-800 tracking-tight leading-tight">
-            <span className="font-script text-5xl md:text-8xl text-pink-500 block mb-1">Hallo Sayang..</span>
-            <span className="text-slate-500 font-bold text-xs md:text-lg block tracking-normal">Ini Riwayat Titipan Lunas Kita Yaa ✨</span>
-          </h2>
-        </div>
-      </div>
-
-      {/* Header Row with Branding */}
-      <header className="flex items-center justify-between mb-6 md:mb-8 gap-3">
-        <div className="flex items-center gap-2 md:gap-3 shrink-0 cursor-pointer" onClick={() => navigate('/loans')}>
-          <div className="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center bg-white rounded-xl md:rounded-2xl shadow-sm border border-slate-100 hover:bg-slate-50 transition-colors">
-            <ArrowLeft className="size-5 md:size-6 text-slate-600" />
-          </div>
-          <div className="flex flex-col gap-0.5 md:gap-1">
-            <h1 className="text-xs md:text-sm font-black text-slate-800 tracking-tight leading-none uppercase">
-              Balik ke <span className="text-pink-500">Titipan</span>
-            </h1>
-          </div>
-        </div>
-
-        {/* Desktop Greeting */}
-        <div className="hidden lg:flex bg-white/80 backdrop-blur-2xl py-6 px-[58px] rounded-[40px] items-center justify-center border border-white shadow-2xl transition-transform hover:scale-105 text-center transform-gpu">
-          <h2 className="text-2xl font-black text-slate-800 whitespace-nowrap tracking-tight">
-            <span className="font-script text-[5rem] mr-4 text-pink-500 block lg:inline-block leading-none">Hallo Sayang,</span> 
-            <span className="text-slate-600 font-bold italic">Ini Riwayat <span className="text-pink-600 not-italic">Titipan Lunas</span> Kita.. ✨</span>
-            <span className="ml-2 inline-block animate-pulse">💖</span>
-          </h2>
-        </div>
-
-        <div className="flex items-center gap-4 md:gap-8">
-          <Button variant="outline" size="icon" className="w-11 h-11 md:w-14 md:h-14 rounded-full bg-white/95 backdrop-blur-lg md:backdrop-blur-xl shadow-xl border-white active:scale-95 transition-all p-0 group overflow-hidden relative transform-gpu">
-            <motion.div 
-              animate={{ opacity: [0.3, 0.5, 0.3] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              style={{ willChange: 'opacity' }}
-              className="absolute inset-0 bg-linear-to-tr from-yellow-200/50 via-yellow-100/30 to-white/10 blur-xl"
-            />
-            <div className="w-full h-full flex items-center justify-center z-10 rounded-full overflow-hidden">
-                <video 
-                   src="/icons/3d/turtle-moon.mp4" 
-                   autoPlay 
-                   loop 
-                   muted 
-                   playsInline
-                   className="w-full h-full object-cover"
-                />
+      <header className="mb-12">
+        <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-10">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }} 
+            animate={{ opacity: 1, x: 0 }}
+            className="flex flex-col"
+          >
+            <div className="flex items-center gap-3 mb-3" onClick={() => navigate('/loans')} role="button">
+               <div className="p-2 bg-white rounded-xl shadow-sm border border-slate-100 hover:bg-slate-50 transition-colors">
+                 <ArrowLeft className="size-5 text-slate-600" />
+               </div>
+               <span className="inline-block px-3 py-1 rounded-full bg-pink-50 text-pink-600 text-[10px] font-black uppercase tracking-widest border border-pink-100/50 cursor-pointer hover:bg-pink-100 transition-colors">
+                 Arsip Titipan Lunas ✨
+               </span>
             </div>
-          </Button>
+            <h1 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tighter">
+              Riwayat <span className="text-pink-500">Titipan</span>
+            </h1>
+            <p className="text-slate-500 font-bold mt-2 italic">Semua titipan yang udah lunas aman disini ya Sayang! 💖</p>
+          </motion.div>
           <UserNavDropdown />
         </div>
-      </header>
 
-      {/* Main Content Area */}
-      <div className="relative pt-4 pb-12 overflow-hidden">
-
-        {/* Search & Filters Bar Bar (Matches Loans.tsx) */}
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-4 items-center mb-8 px-2">
-          <div className="flex flex-col sm:flex-row gap-2 w-full md:flex-1">
-            <Select value={filterType} onValueChange={setFilterType}>
-              <SelectTrigger className="rounded-2xl border-white/40 bg-white/60 backdrop-blur-md gap-2 font-bold px-4 md:px-6 shadow-sm h-12">
-                <LayoutGrid className="w-4 h-4 text-slate-500" />
-                <SelectValue placeholder="Tipe" />
-              </SelectTrigger>
-              <SelectContent className="rounded-2xl border-white/40 bg-white/90 backdrop-blur-xl">
-                <SelectItem value="all" className="font-bold">Semua Tipe</SelectItem>
-                <SelectItem value="utang" className="font-bold text-rose-500">Hutang Lunas</SelectItem>
-                <SelectItem value="piutang" className="font-bold text-emerald-500">Piutang Lunas</SelectItem>
-              </SelectContent>
-            </Select>
-
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex flex-1 w-full gap-2">
             <div className="relative flex-1 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
-              <input 
-                placeholder="Cari di arsip titipan..." 
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-400 group-focus-within:text-pink-500 transition-colors" />
+              <Input 
+                placeholder="Cari arsip titipan..."
                 value={localSearch}
                 onChange={(e) => setLocalSearch(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && setSearchQuery(localSearch)}
-                className="pl-11 pr-14 py-3 h-12 rounded-2xl border border-white/40 bg-white/60 backdrop-blur-md shadow-sm font-medium focus:ring-2 focus:ring-pink-400/20 w-full outline-hidden"
+                className="h-12 pl-12 rounded-2xl bg-white border-slate-100 font-bold focus:ring-pink-500/10 shadow-sm"
               />
-              <Button 
-                onClick={() => setSearchQuery(localSearch)}
-                variant="ghost" 
-                size="icon" 
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl hover:bg-pink-500 text-slate-400 hover:text-white transition-all duration-300 active:scale-95"
-              >
-                <Search className="w-5 h-5" strokeWidth={3} />
-              </Button>
+            </div>
+            <div className="flex gap-2">
+              <Select value={filterType} onValueChange={setFilterType}>
+                <SelectTrigger className="w-[140px] h-12 rounded-2xl bg-white border-slate-100 font-bold shadow-sm">
+                  <div className="flex items-center gap-2">
+                    <LayoutGrid className="size-4 text-slate-400" />
+                    <SelectValue placeholder="Tipe" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="rounded-2xl border-slate-100">
+                  <SelectItem value="all">Semua</SelectItem>
+                  <SelectItem value="utang">Hutang Lunas</SelectItem>
+                  <SelectItem value="piutang">Piutang Lunas</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
+      </header>
+
 
         {/* Main List Container */}
         <div className="max-w-6xl mx-auto px-2">
-          <div className="bg-white/40 md:bg-white/30 backdrop-blur-lg md:backdrop-blur-2xl rounded-[40px] border border-white/40 shadow-2xl p-5 md:p-10 min-h-[550px] relative overflow-hidden flex flex-col transform-gpu">
+          <div className="bg-white rounded-[40px] border border-slate-100 p-5 md:p-10 min-h-[550px] relative overflow-hidden flex flex-col shadow-2xl transform-gpu">
             
             {/* Background Aesthetic Globs - Optimized blur */}
             <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-400/10 blur-3xl md:blur-[100px] rounded-full -z-10" />
@@ -285,7 +248,6 @@ const LoanHistory: React.FC = () => {
             )}
           </div>
         </div>
-      </div>
 
       {/* Persistence Delete Confirmation (Styled to match Loans.tsx) */}
       <Dialog open={!!loanToDelete} onOpenChange={(open) => !open && setLoanToDelete(null)}>

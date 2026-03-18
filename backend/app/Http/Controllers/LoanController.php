@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 
 class LoanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Loan::orderBy('created_at', 'desc')->get();
+        return Loan::where('user_id', $request->user()->id)->orderBy('created_at', 'desc')->get();
     }
 
     public function store(Request $request)
@@ -24,21 +24,27 @@ class LoanController extends Controller
             'status' => 'required|in:active,paid',
         ]);
 
+        $validated['user_id'] = $request->user()->id;
         return Loan::create($validated);
     }
 
-    public function show(Loan $loan)
+    public function show(Request $request, Loan $loan)
     {
+        if ($loan->user_id !== $request->user()->id) abort(403);
         return $loan;
     }
 
     public function update(Request $request, Loan $loan)
     {
+        if ($loan->user_id !== $request->user()->id) abort(403);
+
         $validated = $request->validate([
+            'type' => 'sometimes|in:utang,piutang',
             'amount' => 'sometimes|numeric',
             'remaining_amount' => 'sometimes|numeric',
             'description' => 'sometimes|string',
             'contact_name' => 'sometimes|string',
+            'due_date' => 'sometimes|nullable|date',
             'status' => 'sometimes|in:active,paid',
         ]);
 
@@ -46,8 +52,9 @@ class LoanController extends Controller
         return $loan;
     }
 
-    public function destroy(Loan $loan)
+    public function destroy(Request $request, Loan $loan)
     {
+        if ($loan->user_id !== $request->user()->id) abort(403);
         $loan->delete();
         return response()->json(null, 204);
     }

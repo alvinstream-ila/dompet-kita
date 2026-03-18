@@ -2,31 +2,29 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Goal extends Model
 {
-    use HasFactory, HasUuids;
-
-    const UPDATED_AT = null;
-
     protected $fillable = [
+        'user_id',
         'name',
         'target_amount',
         'current_amount',
         'deadline',
         'category',
-        'icon',
         'status',
-        'user_id',
     ];
 
     protected $casts = [
-        'target_amount' => 'double',
-        'current_amount' => 'double',
+        'target_amount' => 'float',
+        'current_amount' => 'float',
         'deadline' => 'datetime',
-        'created_at' => 'datetime',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

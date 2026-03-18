@@ -18,7 +18,7 @@ const navItems: NavItem[] = [
   { id: 'home', icon: Home, label: 'Beranda', side: 'left', path: '/' },
   { id: 'report', icon: Calendar, label: 'Laporan', side: 'left', path: '/reports' },
   { id: 'transactions', icon: StickyNote, label: 'Transaksi', side: 'right', path: '/transactions' },
-  { id: 'loans', icon: ArrowRightLeft, label: 'Titipan', side: 'right', path: '/loans' },
+  { id: 'loans', icon: ArrowRightLeft, label: 'Titipan Sayang', side: 'right', path: '/loans' },
 ];
 
 export function BottomNav() {
@@ -43,10 +43,10 @@ export function BottomNav() {
   return (
     <>
       <div className="fixed bottom-4 md:bottom-8 left-0 right-0 z-50 flex justify-center pointer-events-none">
-        <div className="relative flex items-center justify-center w-full px-2 max-w-7xl">
+        <div className="flex items-center justify-center w-full px-4 max-w-7xl gap-2 sm:gap-4 md:gap-6 lg:gap-8">
           {/* LEFT PILL */}
-          <div className="absolute right-[calc(50%+36px)] sm:right-[calc(50%+44px)] md:right-[calc(50%+54px)] lg:right-[calc(50%+64px)]">
-            <motion.div layout className="bg-white/80 backdrop-blur-3xl rounded-[24px] md:rounded-[36px] shadow-2xl border border-white/60 pointer-events-auto flex items-center h-12 md:h-16 px-1.5 md:px-2 gap-0.5 md:gap-1">
+          <div className="pointer-events-auto">
+            <motion.div layout className="bg-white/80 backdrop-blur-3xl rounded-[24px] md:rounded-[36px] shadow-2xl border border-white/60 flex items-center h-12 md:h-16 px-1.5 md:px-2 gap-0.5 md:gap-1">
               {navItems.filter(i => i.side === 'left').map((item) => (
                 <motion.button
                   key={item.id}
@@ -54,7 +54,7 @@ export function BottomNav() {
                   onMouseLeave={() => setHoveredNav(null)}
                   onClick={() => navigate(item.path)}
                   className={cn(
-                    "flex flex-row-reverse items-center gap-1.5 md:gap-2 h-9 md:h-12 px-3 md:px-4.5 rounded-[16px] md:rounded-[22px] transition-all relative shrink-0",
+                    "flex flex-row-reverse items-center gap-1.5 md:gap-2 h-9 md:h-12 px-2.5 sm:px-3 md:px-4.5 rounded-[16px] md:rounded-[22px] transition-all relative shrink-0",
                     activeNav === item.id ? "bg-slate-900 text-white shadow-xl" : "text-slate-400 hover:bg-slate-100/50"
                   )}
                   layout
@@ -67,7 +67,7 @@ export function BottomNav() {
                         animate={{ opacity: 1, width: "auto", x: 0 }}
                         exit={{ opacity: 0, width: 0, x: 10 }}
                         transition={{ duration: 0.45, ease: "easeOut" }}
-                        className="text-[10px] md:text-[13px] font-black uppercase tracking-widest whitespace-nowrap overflow-hidden"
+                        className="hidden sm:inline-block text-[10px] md:text-[13px] font-black uppercase tracking-widest whitespace-nowrap overflow-hidden"
                       >
                         {item.label}
                       </motion.span>
@@ -79,7 +79,7 @@ export function BottomNav() {
           </div>
 
           {/* CENTER ANCHOR */}
-          <div className="z-50 pointer-events-auto shrink-0 relative">
+          <div className="pointer-events-auto shrink-0 relative">
             {/* Glowing Ring Effect */}
             <motion.div 
               animate={{ 
@@ -123,8 +123,8 @@ export function BottomNav() {
           </div>
 
           {/* RIGHT PILL */}
-          <div className="absolute left-[calc(50%+36px)] sm:left-[calc(50%+44px)] md:left-[calc(50%+54px)] lg:left-[calc(50%+64px)]">
-            <motion.div layout className="bg-white/80 backdrop-blur-3xl rounded-[24px] md:rounded-[36px] shadow-2xl border border-white/60 pointer-events-auto flex items-center h-12 md:h-16 px-1.5 md:px-2 gap-0.5 md:gap-1">
+          <div className="pointer-events-auto">
+            <motion.div layout className="bg-white/80 backdrop-blur-3xl rounded-[24px] md:rounded-[36px] shadow-2xl border border-white/60 flex items-center h-12 md:h-16 px-1.5 md:px-2 gap-0.5 md:gap-1">
               {navItems.filter(i => i.side === 'right').map((item) => (
                 <motion.button
                   key={item.id}
@@ -132,7 +132,7 @@ export function BottomNav() {
                   onMouseLeave={() => setHoveredNav(null)}
                   onClick={() => navigate(item.path)}
                   className={cn(
-                    "flex flex-row items-center gap-1.5 md:gap-2 h-9 md:h-12 px-3 md:px-4.5 rounded-[16px] md:rounded-[22px] transition-all relative shrink-0",
+                    "flex flex-row items-center gap-1.5 md:gap-2 h-9 md:h-12 px-2.5 sm:px-3 md:px-4.5 rounded-[16px] md:rounded-[22px] transition-all relative shrink-0",
                     activeNav === item.id ? "bg-slate-900 text-white shadow-xl" : "text-slate-400 hover:bg-slate-100/50"
                   )}
                   layout
@@ -145,7 +145,7 @@ export function BottomNav() {
                         animate={{ opacity: 1, width: "auto", x: 0 }}
                         exit={{ opacity: 0, width: 0, x: -10 }}
                         transition={{ duration: 0.45, ease: "easeOut" }}
-                        className="text-[10px] md:text-[13px] font-black uppercase tracking-widest whitespace-nowrap overflow-hidden"
+                        className="hidden sm:inline-block text-[10px] md:text-[13px] font-black uppercase tracking-widest whitespace-nowrap overflow-hidden"
                       >
                         {item.label}
                       </motion.span>

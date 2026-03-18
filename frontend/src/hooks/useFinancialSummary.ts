@@ -1,31 +1,34 @@
-import { useMemo } from 'react';
-import { useTransactions } from './useTransactions';
+import { useQuery } from '@tanstack/react-query';
+import api from '@/lib/axios';
+import { useSettings } from './useSettings';
 
 export function useFinancialSummary(month?: number, year?: number) {
   const now = new Date();
   const targetMonth = month !== undefined ? month : now.getMonth();
   const targetYear = year !== undefined ? year : now.getFullYear();
+  const { budgetCycleStart } = useSettings();
 
-  const { data: infiniteData, isLoading, refetch } = useTransactions(targetMonth, targetYear);
-  
-  const transactions = useMemo(() => {
-    return infiniteData?.pages.flat() || [];
-  }, [infiniteData?.pages]);
-
-  const summary = useMemo(() => {
-    return transactions.reduce((acc, curr) => {
-      if (curr.type === 'income') acc.income += curr.amount;
-      else acc.expense += curr.amount;
-      return acc;
-    }, { income: 0, expense: 0 });
-  }, [transactions]);
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ['financial_summary', targetMonth, targetYear, budgetCycleStart],
+    queryFn: async () => {
+      const { data } = await api.get('/transactions/summary', {
+        params: {
+          month: targetMonth,
+          year: targetYear,
+          budget_cycle_start: budgetCycleStart
+        }
+      });
+      return data;
+    }
+  });
 
   return {
-    income: summary.income,
-    expense: summary.expense,
-    balance: summary.income - summary.expense,
+    income: data?.income || 0,
+    expense: data?.expense || 0,
+    balance: data?.balance || 0,
+    transactions: data?.transactions || [],
+    period: data?.period,
     isLoading,
     refetch,
-    transactions // Latest transactions for this period
   };
 }

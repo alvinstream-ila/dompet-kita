@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
+import { useUpdateTransaction, useDeleteTransaction } from '@/hooks/useTransactions';
 import { 
   Loader2, 
   ArrowDownCircle, 
@@ -76,9 +76,9 @@ const INCOME_CATEGORIES = [
 ];
 
 export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({ isOpen, onClose, onSuccess, transaction }) => {
-  const [loading, setLoading] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const updateMutation = useUpdateTransaction();
+  const deleteMutation = useDeleteTransaction();
   const [confirmStep, setConfirmStep] = useState(0); // 0: initial, 1: first confirm, 2: second confirm
 
   const [type, setType] = useState<'expense' | 'income'>('expense');
@@ -139,8 +139,6 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({ isOp
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!transaction) return;
-    setLoading(true);
-
     try {
       let receipt_url = existingReceiptUrl;
       
@@ -150,49 +148,35 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({ isOp
         setUploading(false);
       }
 
-      const { error } = await supabase
-        .from('transactions')
-        .update({
-          amount: parseInt(amount.replace(/\./g, '')),
-          description,
-          category,
-          sub_category: subCategory,
-          type,
-          date: format(date, "yyyy-MM-dd"),
-          receipt_url
-        })
-        .eq('id', transaction.id);
-
-      if (error) throw error;
+      await updateMutation.mutateAsync({
+        id: transaction.id,
+        amount: parseInt(amount.replace(/\./g, '')),
+        description,
+        category,
+        sub_category: subCategory,
+        type,
+        date: format(date, "yyyy-MM-dd"),
+        receipt_url
+      });
       
       onSuccess();
       onClose();
     } catch (error) {
       alert(error instanceof Error ? error.message : 'Terjadi kesalahan');
     } finally {
-      setLoading(false);
       setUploading(false);
     }
   };
 
   const handleDelete = async () => {
     if (!transaction) return;
-    setDeleteLoading(true);
-
     try {
-      const { error } = await supabase
-        .from('transactions')
-        .delete()
-        .eq('id', transaction.id);
-
-      if (error) throw error;
+      await deleteMutation.mutateAsync(transaction.id);
       
       onSuccess();
       onClose();
     } catch (error) {
       alert(error instanceof Error ? error.message : 'Terjadi kesalahan');
-    } finally {
-      setDeleteLoading(false);
     }
   };
 
@@ -374,13 +358,13 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({ isOp
 
             <Button
               type="submit"
-              disabled={loading || uploading}
+              disabled={updateMutation.isPending || uploading}
               className={cn(
                 "w-full h-11 rounded-2xl shadow-lg active:scale-[0.98] transition-all text-[12px] font-black tracking-widest text-white uppercase mt-2",
                 type === 'expense' ? "bg-slate-900 hover:bg-black shadow-slate-900/10" : "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/10"
               )}
             >
-              {loading || uploading ? <Loader2 className="size-5 animate-spin" /> : "PERBARUI TRANSAKSI"}
+              {updateMutation.isPending || uploading ? <Loader2 className="size-5 animate-spin" /> : "PERBARUI TRANSAKSI"}
             </Button>
           </form>
         </DialogContent>
@@ -420,11 +404,11 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({ isOp
                 </Button>
               ) : (
                 <Button 
-                   disabled={deleteLoading}
+                   disabled={deleteMutation.isPending}
                    onClick={handleDelete}
                    className="h-12 rounded-2xl bg-slate-900 hover:bg-black text-white font-black uppercase tracking-widest text-[11px] shadow-lg transition-all active:scale-95"
                 >
-                   {deleteLoading ? <Loader2 className="size-5 animate-spin" /> : "YA, HAPUS SEKARANG!"}
+                   {deleteMutation.isPending ? <Loader2 className="size-5 animate-spin" /> : "YA, HAPUS SEKARANG!"}
                 </Button>
               )}
               

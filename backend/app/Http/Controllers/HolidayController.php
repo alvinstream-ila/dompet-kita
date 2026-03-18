@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 
 class HolidayController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Holiday::orderBy('created_at', 'desc')->get();
+        return Holiday::where('user_id', $request->user()->id)->orderBy('created_at', 'desc')->get();
     }
 
     public function store(Request $request)
@@ -17,33 +17,44 @@ class HolidayController extends Controller
         $validated = $request->validate([
             'destination' => 'required|string',
             'budget' => 'required|numeric',
+            'spent' => 'nullable|numeric',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
-            'status' => 'required|in:planning,completed,cancelled',
+            'status' => 'required|in:planning,booked,completed,cancelled',
+            'itinerary' => 'nullable|string',
         ]);
 
+        $validated['user_id'] = $request->user()->id;
         return Holiday::create($validated);
     }
 
-    public function show(Holiday $holiday)
+    public function show(Request $request, Holiday $holiday)
     {
+        if ($holiday->user_id !== $request->user()->id) abort(403);
         return $holiday;
     }
 
     public function update(Request $request, Holiday $holiday)
     {
+        if ($holiday->user_id !== $request->user()->id) abort(403);
+
         $validated = $request->validate([
             'destination' => 'sometimes|string',
             'budget' => 'sometimes|numeric',
-            'status' => 'sometimes|in:planning,completed,cancelled',
+            'spent' => 'sometimes|numeric',
+            'start_date' => 'sometimes|nullable|date',
+            'end_date' => 'sometimes|nullable|date',
+            'status' => 'sometimes|in:planning,booked,completed,cancelled',
+            'itinerary' => 'sometimes|nullable|string',
         ]);
 
         $holiday->update($validated);
         return $holiday;
     }
 
-    public function destroy(Holiday $holiday)
+    public function destroy(Request $request, Holiday $holiday)
     {
+        if ($holiday->user_id !== $request->user()->id) abort(403);
         $holiday->delete();
         return response()->json(null, 204);
     }

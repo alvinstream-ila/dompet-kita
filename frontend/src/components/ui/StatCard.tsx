@@ -10,9 +10,11 @@ interface StatCardProps {
   icon?: LucideIcon;
   imageSrc?: string;
   variant?: 'saldo' | 'income' | 'expense';
+  isCurrency?: boolean;
+  className?: string;
 }
 
-export const StatCard = React.memo(({ title, amount, icon: Icon, imageSrc, variant = 'saldo' }: StatCardProps) => {
+export const StatCard = React.memo(({ title, amount, icon: Icon, imageSrc, variant = 'saldo', isCurrency = true, className }: StatCardProps) => {
   const getVariants = () => {
     switch (variant) {
       case 'income':
@@ -48,7 +50,8 @@ export const StatCard = React.memo(({ title, amount, icon: Icon, imageSrc, varia
   return (
     <Card className={cn(
       "relative overflow-hidden border-none shadow-[0_15px_40px_-15px_rgba(0,0,0,0.08)] transition-all hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.12)] hover:-translate-y-1 active:scale-[0.95] cursor-pointer bg-white group rounded-[32px]",
-      colors.shadow
+      colors.shadow,
+      className
     )}>
       <div className={cn("absolute inset-0 bg-linear-to-br opacity-40", colors.gradient)} />
       <CardContent className="relative z-10 p-6 sm:p-8 flex flex-col items-center text-center gap-5">
@@ -66,7 +69,7 @@ export const StatCard = React.memo(({ title, amount, icon: Icon, imageSrc, varia
         <div className="space-y-1.5">
           <h3 className="text-[11px] sm:text-[12px] font-black text-slate-400 uppercase tracking-[0.25em]">{title}</h3>
           <p className={cn("text-xl sm:text-2xl md:text-3xl font-black tracking-tighter", colors.text)}>
-            {formatAmount(amount)}
+            {isCurrency ? formatAmount(amount) : amount}
           </p>
         </div>
       </CardContent>

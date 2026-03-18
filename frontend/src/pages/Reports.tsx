@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { 
   Calendar, 
   ChevronDown,
@@ -15,6 +14,7 @@ import { UserNavDropdown } from '@/components/features/UserNavDropdown';
 import { PageLoader } from '@/components/ui/PageLoader';
 import { useTransactions } from '@/hooks/useTransactions';
 import type { CategorySummary, Transaction } from '@/types';
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -42,11 +42,11 @@ ChartJS.register(
 );
 
 const Reports: React.FC = () => {
-  const navigate = useNavigate();
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+
 
   // Use React Query for fetching transactions
   const { data: infiniteData, isLoading } = useTransactions(selectedMonth, selectedYear);
@@ -357,77 +357,63 @@ const Reports: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 pb-32">
       <PageLoader isLoading={isLoading} message="Menghitung kepingan kebahagiaan kita, sebentar lagi siap ya Sayang... 📊💖" />
       <PageLoader isLoading={isExporting} message="Lagi menyiapkan laporan spesial buat kamu... ✨📄" />
       
       {/* Mobile Greeting */}
-      <div className="lg:hidden flex justify-center mb-6 md:mb-10">
-        <div className="bg-white/90 backdrop-blur-2xl py-4 md:py-6 px-6 md:px-10 rounded-[24px] md:rounded-[32px] items-center justify-center shadow-2xl border border-white w-full text-center">
-          <h2 className="text-xl md:text-3xl font-black text-slate-800 tracking-tight leading-tight">
-            <span className="font-script text-5xl md:text-8xl text-blue-500 block mb-1">Hallo Sayang..</span>
-            <span className="text-slate-500 font-bold text-xs md:text-lg block tracking-normal">Ini Rangkuman Data Kita Yaa ❤️</span>
-          </h2>
-        </div>
+      <div className="lg:hidden flex justify-center mb-6 md:mb-10 text-center">
+         <div className="glass-premium py-4 h-auto md:py-6 px-6 md:px-10 rounded-[24px] md:rounded-[32px] items-center justify-center shadow-2xl w-full transform-gpu border border-white/50">
+            <h2 className="text-xl md:text-3xl font-black text-slate-800 tracking-tight leading-tight">
+               <span className="font-script text-5xl md:text-8xl text-pink-500 block mb-1">Cinta & Data</span>
+               <span className="text-slate-500 font-bold text-xs md:text-lg block tracking-normal">Melihat Setiap Langkah Cuan Kita... 📊💖</span>
+            </h2>
+         </div>
       </div>
 
-      {/* Header Row */}
-      <header className="flex items-center justify-between mb-6 md:mb-8 gap-3">
-        <div className="flex items-center gap-2 md:gap-3 shrink-0 cursor-pointer" onClick={() => navigate('/')}>
-          <div className="w-9 h-9 md:w-12 md:h-12 relative flex items-center justify-center p-1 bg-white rounded-xl md:rounded-2xl shadow-sm border border-slate-100">
-            <img src="/logo-utama.svg" alt="Logo" className="w-full h-full object-contain" />
-          </div>
-          <div className="flex flex-col gap-0.5 md:gap-1">
-            <h1 className="text-sm md:text-2xl font-black text-slate-800 tracking-tight leading-none">
-              Dompet<span className="text-blue-600">Kita</span>
-            </h1>
-            <span className="text-[7px] md:text-[9px] font-black text-slate-500/80 uppercase tracking-[0.2em]">
-              Financial Hub
-            </span>
-          </div>
-        </div>
-
-        <div className="hidden lg:flex bg-white/80 backdrop-blur-2xl py-6 px-[58px] rounded-[40px] items-center justify-center border border-white shadow-2xl transition-transform hover:scale-105">
-          <h2 className="text-2xl font-black text-slate-800 whitespace-nowrap tracking-tight">
-            <span className="font-script text-[5rem] mr-4 text-blue-500 block lg:inline-block leading-none">Hallo Sayang,</span> 
-            <span className="text-slate-600 font-bold italic">Ini Halaman <span className="text-blue-600 not-italic">Rangkuman Data</span> Kita Yaa ❤️</span>
-            <span className="ml-2 inline-block animate-pulse">✨</span>
-          </h2>
-        </div>
-
-        <div className="flex items-center gap-4 md:gap-8">
-          <Button variant="outline" size="icon" className="w-11 h-11 md:w-14 md:h-14 rounded-full bg-white/95 backdrop-blur-xl shadow-xl border-white active:scale-95 transition-all p-0 group overflow-hidden relative">
-            <motion.div 
-              animate={{ opacity: [0.3, 0.5, 0.3] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute inset-0 bg-linear-to-tr from-yellow-200/50 via-yellow-100/30 to-white/10 blur-xl"
-            />
-            <div className="w-full h-full flex items-center justify-center z-10 rounded-full overflow-hidden">
-              <video 
-                src="/icons/3d/turtle-moon.mp4" 
-                autoPlay 
-                loop 
-                muted 
-                playsInline
-                className="w-full h-full object-cover scale-[1.2]" 
-              />
+      <header className="flex items-center justify-between mb-10 gap-3">
+         <div className="flex items-center gap-3 shrink-0">
+            <div className="w-9 h-9 md:w-12 md:h-12 relative flex items-center justify-center p-1 bg-white rounded-xl md:rounded-2xl shadow-sm border border-slate-100">
+               <img src="/logo-utama.svg" alt="Logo" className="w-full h-full object-contain" />
             </div>
-          </Button>
-          <UserNavDropdown />
-        </div>
+            <div className="flex flex-col gap-0.5 md:gap-1">
+              <h1 className="text-sm md:text-2xl font-black text-slate-800 tracking-tight leading-none">
+                Laporan<span className="text-blue-600">Keuangan</span>
+              </h1>
+              <span className="text-[7px] md:text-[9px] font-black text-slate-500/80 uppercase tracking-[0.2em]">
+                Monthly Highlights
+              </span>
+            </div>
+         </div>
+
+         {/* Desktop Greeting */}
+         <div className="hidden lg:flex glass-premium py-6 px-[58px] rounded-[40px] items-center justify-center shadow-2xl transition-transform hover:scale-105 transform-gpu border border-white/50">
+            <h2 className="text-2xl font-black text-slate-800 whitespace-nowrap tracking-tight">
+               <span className="font-script text-[4rem] mr-4 text-pink-500 block lg:inline-block leading-none">Sayang,</span> 
+               <span className="text-slate-600 font-bold">Ini Laporan Spesial Buat Masa Depan Kita... ✨</span>
+               <span className="ml-2 inline-block animate-pulse">📊</span>
+            </h2>
+         </div>
+
+         <div className="flex items-center gap-4 md:gap-8">
+
+
+            <UserNavDropdown />
+         </div>
       </header>
+
 
       {/* Action Bar */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
         <div className="relative group/period">
           <div 
             onClick={() => setIsPickerOpen(!isPickerOpen)}
-            className="bg-white/80 backdrop-blur-xl border border-white rounded-[24px] px-6 h-14 flex items-center gap-4 shadow-sm min-w-[280px] cursor-pointer hover:bg-white/90 transition-all"
+            className="bg-white border border-slate-100 rounded-[24px] px-6 h-14 flex items-center gap-4 shadow-sm min-w-[280px] cursor-pointer hover:bg-slate-50 transition-all font-bold"
           >
             <Calendar className="w-5 h-5 text-blue-500" />
-            <span className="text-slate-400 font-bold text-sm">Periode</span>
+            <span className="text-slate-400 text-sm">Periode</span>
             <div className="h-8 w-px bg-slate-100" />
-            <span className="font-bold text-slate-700 text-sm">{months[selectedMonth]} {selectedYear}</span>
+            <span className="text-slate-700 text-sm">{months[selectedMonth]} {selectedYear}</span>
             <ChevronDown className={cn("w-4 h-4 text-slate-400 ml-auto transition-transform", isPickerOpen && "rotate-180")} />
           </div>
 
@@ -501,33 +487,33 @@ const Reports: React.FC = () => {
       </div>
 
       {/* Summary Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <StatCard title="Total Pemasukan" amount={totalIncome} imageSrc="/icons/3d/income.webp" variant="income" />
         <StatCard title="Total Pengeluaran" amount={totalExpense} imageSrc="/icons/3d/expense.webp" variant="expense" />
-        <StatCard title="Total Saldo" amount={balance} imageSrc="/icons/3d/wallet.webp" variant="saldo" />
+        <StatCard title="Total Saldo" amount={balance} imageSrc="/icons/3d/wallet.webp" variant="saldo" className="sm:col-span-2 lg:col-span-1" />
       </div>
 
       {/* Categories Breakdown */}
       <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[48px] p-6 md:p-10 mb-8 shadow-2xl">
          <div className="space-y-4">
             {sortedCategories.slice(0, 3).map((cat, i) => (
-              <div key={i} className="bg-white/80 p-6 rounded-[32px] flex items-center justify-between border border-white shadow-sm hover:translate-x-2 transition-transform cursor-pointer group">
+              <div key={i} className="bg-white/80 p-6 rounded-[32px] flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-white shadow-sm hover:translate-x-2 transition-transform cursor-pointer group">
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
                     Kategori {cat.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}
                   </span>
                   <span className="text-lg font-black text-slate-800 tracking-tight">{cat.category}</span>
                 </div>
-                <div className="flex items-center gap-6">
-                  <span className={cn("text-xl font-black tracking-tighter", cat.type === 'income' ? 'text-emerald-500' : 'text-blue-500')}>
+                <div className="flex items-center justify-between sm:justify-end gap-4 md:gap-6">
+                  <span className={cn("text-lg md:text-xl font-black tracking-tighter", cat.type === 'income' ? 'text-emerald-500' : 'text-blue-500')}>
                     Rp. {cat.amount.toLocaleString('id-ID')}
                   </span>
-                  <div className="bg-slate-100 px-4 py-1.5 rounded-full font-black text-[10px] text-slate-500 uppercase tracking-widest">
+                  <div className="bg-slate-100 px-3 md:px-4 py-1.5 rounded-full font-black text-[9px] md:text-[10px] text-slate-500 uppercase tracking-widest shrink-0">
                     {cat.type === 'income' 
                       ? (totalIncome ? Math.round((cat.amount / totalIncome) * 100) : 0)
                       : (totalExpense ? Math.round((cat.amount / totalExpense) * 100) : 0)}%
                   </div>
-                  <ChevronRight className="w-5 h-5 text-slate-200 group-hover:text-blue-500 transition-colors" />
+                  <ChevronRight className="w-5 h-5 text-slate-200 group-hover:text-blue-500 transition-colors hidden sm:block" />
                 </div>
               </div>
             ))}

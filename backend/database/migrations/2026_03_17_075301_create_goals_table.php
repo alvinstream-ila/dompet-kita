@@ -11,21 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('goals')) {
-            Schema::create('goals', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->timestampTz('created_at')->useCurrent();
-                $table->text('name');
-                $table->double('target_amount');
-                $table->double('current_amount')->default(0);
-                $table->timestampTz('deadline')->nullable();
-                $table->text('category')->nullable();
-                $table->text('icon')->nullable();
-                $table->text('status')->default('active'); // active | completed
-                $table->uuid('user_id')->nullable();
-                $table->index('user_id');
-            });
-        }
+        Schema::create('goals', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->decimal('target_amount', 15, 2);
+            $table->decimal('current_amount', 15, 2)->default(0);
+            $table->timestamp('deadline')->nullable();
+            $table->string('category')->nullable();
+            $table->string('status')->default('active'); // active, completed, cancelled
+            $table->timestamps();
+        });
     }
 
     /**

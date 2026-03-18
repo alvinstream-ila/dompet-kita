@@ -4,7 +4,7 @@ export type AssetType = 'Emas' | 'Saham' | 'Tabungan' | 'Kripto' | 'Properti' | 
 
 export interface Asset {
   id: string;
-  user_id: string;
+  user_id?: string;
   name: string;
   type: AssetType;
   value: number;

@@ -10,14 +10,12 @@ import type { ChartOptions } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import { useTransactions } from '@/hooks/useTransactions';
 import { motion } from 'framer-motion';
-import { useSettings } from '@/hooks/useSettings';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export const MonthlyDonutChart: React.FC = () => {
   const { data: infiniteData } = useTransactions();
   const transactions = React.useMemo(() => infiniteData?.pages.flat() || [], [infiniteData?.pages]);
-  const { isEcoMode } = useSettings();
 
   const totals = React.useMemo(() => transactions.reduce((acc, curr) => {
     if (curr.type === 'income') acc.income += curr.amount;
@@ -68,10 +66,10 @@ export const MonthlyDonutChart: React.FC = () => {
     responsive: true,
     maintainAspectRatio: false,
     animation: {
-      duration: isEcoMode ? 100 : 2000,
+      duration: 2000,
       easing: 'easeOutElastic'
     }
-  }), [isEcoMode]);
+  }), []);
 
   const totalAmount = totals.income + totals.expense;
   const incomePercentage = React.useMemo(() => 

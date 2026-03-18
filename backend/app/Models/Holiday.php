@@ -2,16 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Holiday extends Model
 {
-    use HasFactory, HasUuids;
-
-    const UPDATED_AT = null;
-
     protected $fillable = [
         'user_id',
         'destination',
@@ -19,12 +14,19 @@ class Holiday extends Model
         'start_date',
         'end_date',
         'status',
+        'spent',
+        'itinerary',
     ];
 
     protected $casts = [
-        'budget' => 'double',
+        'budget' => 'float',
+        'spent' => 'float',
         'start_date' => 'datetime',
         'end_date' => 'datetime',
-        'created_at' => 'datetime',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 
 class AssetController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Asset::orderBy('type')->get();
+        return Asset::where('user_id', $request->user()->id)->orderBy('type')->get();
     }
 
     public function store(Request $request)
@@ -20,13 +20,17 @@ class AssetController extends Controller
             'value' => 'required|numeric',
         ]);
 
+        $validated['user_id'] = $request->user()->id;
         return Asset::create($validated);
     }
 
     public function update(Request $request, Asset $asset)
     {
+        if ($asset->user_id !== $request->user()->id) abort(403);
+
         $validated = $request->validate([
             'name' => 'sometimes|string',
+            'type' => 'sometimes|string',
             'value' => 'sometimes|numeric',
         ]);
 
@@ -34,8 +38,9 @@ class AssetController extends Controller
         return $asset;
     }
 
-    public function destroy(Asset $asset)
+    public function destroy(Request $request, Asset $asset)
     {
+        if ($asset->user_id !== $request->user()->id) abort(403);
         $asset->delete();
         return response()->json(null, 204);
     }

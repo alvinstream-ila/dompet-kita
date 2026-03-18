@@ -11,19 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('holidays')) {
-            Schema::create('holidays', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->uuid('user_id')->nullable();
-                $table->text('destination');
-                $table->double('budget');
-                $table->timestampTz('start_date')->nullable();
-                $table->timestampTz('end_date')->nullable();
-                $table->text('status')->default('planning'); // planning | completed | cancelled
-                $table->timestampTz('created_at')->useCurrent();
-                $table->index('user_id');
-            });
-        }
+        Schema::create('holidays', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('destination');
+            $table->decimal('budget', 15, 2);
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('end_date')->nullable();
+            $table->string('status')->default('planning'); // planning, booked, completed, cancelled
+            $table->text('itinerary')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**

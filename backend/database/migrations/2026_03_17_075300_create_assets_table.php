@@ -11,17 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('assets')) {
-            Schema::create('assets', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->uuid('user_id')->nullable();
-                $table->text('name');
-                $table->text('type'); // Emas, Saham, etc.
-                $table->double('value');
-                $table->timestampTz('last_updated')->useCurrent();
-                $table->index('user_id');
-            });
-        }
+        Schema::create('assets', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->string('type'); // cash, bank, investment, etc
+            $table->decimal('value', 15, 2);
+            $table->timestamps();
+        });
     }
 
     /**
