@@ -1,19 +1,13 @@
 const https = require('https');
 
 const API_KEY = 'a9c4a92c-64da-415b-b334-a98b95550826';
-const DEPLOYMENT_ID = 'b9ec0bd0-443d-4244-af04-e7af5584fc4d'; // The failed one
-const SUCCESS_DEPLOYMENT_ID = '28f2ccee-aabb-47ee-8d1d-f8f9c6a16fae'; // The successful one
+const SERVICE_ID = '9415fce4-8d0b-4c75-bd92-024e5d78caa0';
+const ENVIRONMENT_ID = '367db267-2566-4dcb-b8cc-70fb54f33f15';
 
-async function getLogs(id) {
-  const query = `
-  query deploymentLogs($id: String!) {
-    deploymentLogs(deploymentId: $id)
-  }
-  `;
-
+async function queryRailway(query, variables = {}) {
   const data = JSON.stringify({ 
       query,
-      variables: { id }
+      variables
   });
 
   const options = {
@@ -39,14 +33,12 @@ async function getLogs(id) {
   });
 }
 
-async function run() {
-    console.log("--- FAILED DEPLOYMENT LOGS ---");
-    const failedLogs = await getLogs(DEPLOYMENT_ID);
-    console.log(failedLogs.data?.deploymentLogs);
-    
-    console.log("\n--- SUCCESSFUL DEPLOYMENT LOGS ---");
-    const successLogs = await getLogs(SUCCESS_DEPLOYMENT_ID);
-    console.log(successLogs.data?.deploymentLogs);
+const redeployMutation = `
+mutation serviceInstanceDeploy($serviceId: String!, $environmentId: String!) {
+  serviceInstanceDeploy(serviceId: $serviceId, environmentId: $environmentId)
 }
+`;
 
-run();
+queryRailway(redeployMutation, { serviceId: SERVICE_ID, environmentId: ENVIRONMENT_ID }).then(res => {
+    console.log(JSON.stringify(res, null, 2));
+}).catch(console.error);

@@ -20,8 +20,7 @@ async function upsertVariable(name, value) {
         environmentId: ENVIRONMENT_ID,
         serviceId: SERVICE_ID,
         name: name,
-        value: value,
-        skipDeploys: false // Set to false so it triggers a redeploy after setting debug to true
+        value: value
       }
     }
   });
@@ -50,4 +49,19 @@ async function upsertVariable(name, value) {
   });
 }
 
-upsertVariable('APP_DEBUG', 'true').then(console.log).catch(console.error);
+(async () => {
+    const dbConfig = {
+        DB_HOST: 'aws-0-ap-southeast-1.pooler.supabase.com',
+        DB_USERNAME: 'postgres.lftxmhvmswxhohchnnkn',
+        DB_PASSWORD: 'bL6J9p4sIsAl4fUX',
+        DB_DATABASE: 'postgres',
+        DB_PORT: '6543', // Supavisor Transaction Port (IPv4 Compatible)
+        // Some apps expect a full DATABASE_URL
+        DATABASE_URL: 'postgres://postgres.lftxmhvmswxhohchnnkn:bL6J9p4sIsAl4fUX@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres'
+    };
+
+    for (const [name, value] of Object.entries(dbConfig)) {
+        console.log(`Setting ${name}...`);
+        console.log(await upsertVariable(name, value));
+    }
+})();
