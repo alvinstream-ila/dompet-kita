@@ -13,6 +13,8 @@ import {
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import api from '@/lib/axios';
+import { motion } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 
 import {
   Dialog,
@@ -89,6 +91,8 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({ isOp
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [existingReceiptUrl, setExistingReceiptUrl] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [scanning, setScanning] = useState(false);
 
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -101,6 +105,8 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({ isOp
       setSubCategory(transaction.sub_category || 'Pribadi');
       setDate(new Date(transaction.date));
       setExistingReceiptUrl(transaction.receipt_url || null);
+      if (transaction.receipt_url) setPreview(transaction.receipt_url);
+      else setPreview(null);
       setFile(null);
       setShowDeleteConfirm(false);
       setConfirmStep(0);
@@ -125,6 +131,39 @@ const handleFileUpload = async (selectedFile: File) => {
     } catch (error) {
       console.error('Error uploading via backend:', error);
       throw new Error('Gagal mengunggah struk ke cloud storage');
+    }
+  };
+
+  const handleScan = async () => {
+    if (!file && !existingReceiptUrl) return;
+    setScanning(true);
+    
+    try {
+      const base64Data = preview?.split(',')[1];
+      if (!base64Data) {
+        throw new Error('Pilih file struk baru untuk scan AI ya Sayang! ❤️');
+      }
+      
+      const response = await api.post('/ai/analyze', {
+        image: base64Data,
+        mime_type: file?.type || 'image/jpeg'
+      });
+
+      if (response.data.success) {
+        const { amount: extractedAmount, merchant } = response.data.data;
+        
+        if (extractedAmount) setAmount(formatToRupiah(extractedAmount.toString()));
+        if (merchant) setDescription(merchant);
+        
+        alert('AI Berhasil membaca struk! Data otomatis terisi ya Sayang! ❤️');
+      } else {
+        throw new Error(response.data.message || 'Gagal scan struk');
+      }
+    } catch (error) {
+      console.error('Scan error:', error);
+      alert(error instanceof Error ? error.message : 'Duh, AI gagal baca struk. Coba manual ya! 🥺');
+    } finally {
+      setScanning(false);
     }
   };
 
@@ -317,6 +356,37 @@ const handleFileUpload = async (selectedFile: File) => {
               </div>
             </div>
 
+            {preview && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="relative aspect-video rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 group"
+              >
+                <img src={preview} alt="Receipt preview" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                  <Button 
+                    type="button" 
+                    variant="destructive" 
+                    size="sm" 
+                    className="rounded-full h-8 px-3 text-[10px] font-black"
+                    onClick={() => {
+                      setFile(null);
+                      setPreview(null);
+                      setExistingReceiptUrl(null);
+                    }}
+                  >
+                    Hapus
+                  </Button>
+                </div>
+                {scanning && (
+                  <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2">
+                    <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                    <span className="text-[10px] font-black text-blue-600 animate-pulse tracking-widest">ANALYZING...</span>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
             <div className="flex items-center justify-between pt-1">
               <div className="flex items-center gap-2">
                 <input
@@ -329,8 +399,14 @@ const handleFileUpload = async (selectedFile: File) => {
                       alert('Ukuran file terlalu besar! Maksimal 5MB ya Sayang.. ❤️');
                       e.target.value = '';
                       setFile(null);
-                    } else {
-                      setFile(selectedFile || null);
+                      setPreview(null);
+                    } else if (selectedFile) {
+                      setFile(selectedFile);
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setPreview(reader.result as string);
+                      };
+                      reader.readAsDataURL(selectedFile);
                     }
                   }}
                   accept="image/*,.pdf"
@@ -351,6 +427,23 @@ const handleFileUpload = async (selectedFile: File) => {
                     </span>
                   </label>
                 </Button>
+
+                {preview && file && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-9 rounded-full border-dashed border-2 px-5 transition-all text-blue-600 border-blue-200 hover:bg-blue-50 bg-white"
+                    disabled={scanning}
+                    onClick={handleScan}
+                  >
+                    <div className="flex items-center space-x-2">
+                      {scanning ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
+                      <span className="text-[9px] font-black uppercase tracking-widest">
+                        {scanning ? 'SCANNING...' : 'SCAN AI'}
+                      </span>
+                    </div>
+                  </Button>
+                )}
               </div>
             </div>
 

@@ -14,6 +14,7 @@ import {
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import api from '@/lib/axios';
+import { motion } from 'framer-motion';
 
 import {
   Dialog,
@@ -85,6 +86,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen
   const [subCategory, setSubCategory] = useState('Pribadi');
   const [date, setDate] = useState<Date>(new Date());
   const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [scanning, setScanning] = useState(false);
 
@@ -122,16 +124,9 @@ const handleFileUpload = async (selectedFile: File) => {
     setScanning(true);
     
     try {
-      // Step 1: Read file as base64
-      const reader = new FileReader();
-      const fileBase64 = await new Promise<string>((resolve) => {
-        reader.onload = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
-      });
+      const base64Data = preview?.split(',')[1];
+      if (!base64Data) throw new Error('Preview data not available');
       
-      const base64Data = fileBase64.split(',')[1];
-      
-      // Step 2: Call Backend Proxy (Secure Gatekeeper)
       const response = await api.post('/ai/analyze', {
         image: base64Data,
         mime_type: file.type
@@ -186,6 +181,7 @@ const handleFileUpload = async (selectedFile: File) => {
           setAmount('');
           setDescription('');
           setFile(null);
+          setPreview(null);
         },
         onError: (error) => {
           alert(error instanceof Error ? error.message : 'Terjadi kesalahan saat menyimpan transaksi');
@@ -347,6 +343,36 @@ const handleFileUpload = async (selectedFile: File) => {
             </div>
           </div>
 
+          {preview && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative aspect-video rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 group"
+            >
+              <img src={preview} alt="Receipt preview" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <Button 
+                  type="button" 
+                  variant="destructive" 
+                  size="sm" 
+                  className="rounded-full h-8 px-3 text-[10px] font-black"
+                  onClick={() => {
+                    setFile(null);
+                    setPreview(null);
+                  }}
+                >
+                  Hapus
+                </Button>
+              </div>
+              {scanning && (
+                <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2">
+                  <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                  <span className="text-[10px] font-black text-blue-600 animate-pulse tracking-widest">ANALYZING...</span>
+                </div>
+              )}
+            </motion.div>
+          )}
+
           <div className="flex items-center justify-between pt-1">
             <div className="flex items-center gap-2">
               <input
@@ -359,8 +385,14 @@ const handleFileUpload = async (selectedFile: File) => {
                     alert('Ukuran file terlalu besar! Maksimal 5MB ya Sayang.. ❤️');
                     e.target.value = '';
                     setFile(null);
-                  } else {
-                    setFile(selectedFile || null);
+                    setPreview(null);
+                  } else if (selectedFile) {
+                    setFile(selectedFile);
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      setPreview(reader.result as string);
+                    };
+                    reader.readAsDataURL(selectedFile);
                   }
                 }}
                 accept="image/*,.pdf"

@@ -8,7 +8,6 @@ import {
   RefreshCcw,
   Sparkles,
   TrendingUp as TrendingUpIcon,
-  AlertTriangle,
   Zap as ZapIcon,
   Utensils,
   Car,
@@ -25,6 +24,7 @@ import {
 import { UserNavDropdown } from '../components/features/UserNavDropdown';
 import { useFormatting } from '@/hooks/useFormatting';
 import { BudgetGuardCard } from '@/components/features/BudgetGuardCard';
+import { AIInsightCard } from '@/components/features/AIInsightCard';
 const GaugeChart = React.lazy(() => import('../components/charts/GaugeChart').then(m => ({ default: m.GaugeChart })));
 const MonthlyDonutChart = React.lazy(() => import('../components/charts/MonthlyDonutChart').then(m => ({ default: m.MonthlyDonutChart })));
 const ComparisonBarChart = React.lazy(() => import('../components/charts/ComparisonBarChart').then(m => ({ default: m.ComparisonBarChart })));
@@ -77,39 +77,6 @@ const Home: React.FC = () => {
       : (totals.expense > 0 ? 0 : 100);
   }, [totals]);
 
-  const financialInsight = React.useMemo(() => {
-    const p = healthPercentage;
-    if (p >= 80) return { 
-      title: "Sultan Kesayangan Aku! 👑💕", 
-      text: "Duh, bangga banget punya Sayang yang pinter jaga uang! Tabungan kita makin gendut, kyk cinta aku ke kamu yang nggak ada habisnya! Muach! 💋", 
-      icon: <Sparkles className="w-6 h-6 text-emerald-500 fill-emerald-100" />,
-      color: "emerald" as const,
-      gradient: "from-emerald-500/10 via-emerald-500/5 to-transparent"
-    };
-    if (p >= 50) return { 
-      title: "Dompet Aman, Hati Nyaman.. ✨🧸", 
-      text: "Uang kita masih cukup buat kencan lucu minggu depan! Makasih ya Sayang udah jago bagi-bagi cuannya. I love you to the moon and back! 🌙💖", 
-      icon: <TrendingUpIcon className="w-6 h-6 text-blue-500" />,
-      color: "blue" as const,
-      gradient: "from-blue-500/10 via-blue-500/5 to-transparent"
-    };
-    if (p >= 25) return { 
-      title: "Duh Sayang, Rem Dikit Yuk.. 🛑🥺", 
-      text: "Kayaknya dompet kita lagi minta dipuk-puk nih.. Tahan jajan boba-nya dulu ya Cintaku, biar impian kita beli rumah sendiri cepat terwujud! Semangat Sayang! 💪💕", 
-      icon: <ZapIcon className="w-6 h-6 text-amber-500 fill-amber-100" />,
-      color: "amber" as const,
-      gradient: "from-amber-500/10 via-amber-500/5 to-transparent"
-    };
-    return { 
-      title: "S.O.S! Peluk Aku Dong Sayang.. 🚨💦", 
-      text: "Waduh, dompet kita lagi 'sakit' nih.. Tapi nggak apa-apa, asal ada Sayang di samping aku, kita pasti bisa lewati badai pengeluaran ini bareng-bareng! Ayo hemat demi masa depan kita! 😭❤️", 
-      icon: <AlertTriangle className="w-6 h-6 text-rose-500 fill-rose-100" />,
-      color: "rose" as const,
-      gradient: "from-rose-500/10 via-rose-500/5 to-transparent"
-    };
-  }, [healthPercentage]);
-
-  const insight = financialInsight;
   const { formatAmount } = useFormatting();
 
   return (
@@ -166,26 +133,9 @@ const Home: React.FC = () => {
                   </React.Suspense>
                </div>
             </Card>
-            <motion.div className="flex-1" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, type: "spring", stiffness: 100 }}>
-              <Card className={cn(
-                "relative h-full overflow-hidden p-6 md:p-8 lg:p-10 bg-white shadow-[0_30px_60px_-15px_rgba(30,41,59,0.08)] rounded-[40px] border-none group transition-all hover:-translate-y-1 hover:shadow-[0_45px_100px_-20px_rgba(30,41,59,0.12)]",
-                `before:absolute before:inset-0 before:bg-linear-to-br ${insight.gradient} before:opacity-100`
-              )}>
-                <div className="relative z-10">
-                  <div className="flex items-center gap-5 mb-4 md:mb-6">
-                     <div className={cn("p-3 md:p-4 rounded-2xl shadow-inner transition-transform group-hover:scale-110 duration-500", `bg-${insight.color}-50`)}>
-                       {insight.icon}
-                     </div>
-                     <h4 className={cn("font-black tracking-tight text-base md:text-xl", `text-${insight.color}-700`)}>
-                       {insight.title}
-                     </h4>
-                  </div>
-                  <p className="text-[14px] md:text-[18px] lg:text-[20px] font-medium text-slate-600 leading-relaxed italic pr-4 pl-3 border-l-4 border-slate-100 ml-1">
-                    "{insight.text}"
-                  </p>
-                </div>
-              </Card>
-            </motion.div>
+            <div className="flex-1">
+              <AIInsightCard />
+            </div>
          </div>
 
          {/* Top Section - Stats & Main Chart */}
@@ -209,6 +159,7 @@ const Home: React.FC = () => {
                {/* Quick Feature Buttons */}
                <div className="md:col-span-2 lg:col-span-3 grid grid-cols-3 lg:grid-cols-1 gap-3">
                   {[
+                    { id: 'scan', icon: Sparkles, label: 'Scan Struk', path: '/scan', gradient: 'bg-linear-to-br from-amber-500 to-orange-600', shadow: 'shadow-amber-200' },
                     { id: 'holiday', icon: Plane, label: 'Liburan', path: '/holiday', gradient: 'bg-linear-to-br from-blue-500 to-blue-600', shadow: 'shadow-blue-200' },
                     { id: 'mimpi', icon: Sparkles, label: 'Mimpi', path: '/mimpi-kita', gradient: 'bg-linear-to-br from-pink-500 to-rose-600', shadow: 'shadow-pink-200' },
                     { id: 'wealth', icon: TrendingUpIcon, label: 'Wealth', path: '/wealth', gradient: 'bg-linear-to-br from-indigo-500 to-violet-600', shadow: 'shadow-indigo-200' },

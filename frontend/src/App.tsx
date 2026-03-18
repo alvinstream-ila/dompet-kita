@@ -6,6 +6,7 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { LazyMotion, domAnimation } from 'framer-motion';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { SettingsProvider } from './context/SettingsContext';
+import { ReceiptScanner } from './pages/ReceiptScanner';
 import './App.css';
 
 // Lazy load pages
@@ -60,6 +61,7 @@ function AppContent() {
           <Route path="/loans/history" element={<LoanHistory />} />
           <Route path="/mimpi-kita" element={<MimpiKita />} />
           <Route path="/holiday" element={<Holiday />} />
+          <Route path="/scan" element={<ReceiptScanner />} />
           <Route path="/wealth" element={<Wealth />} />
         </Route>
 
