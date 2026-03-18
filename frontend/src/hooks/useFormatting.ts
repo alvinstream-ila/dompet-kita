@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { useSettings } from '@/hooks/useSettings';
-import { useCurrency } from './useCurrency';
 
 export const useFormatting = () => {
   const { isPrivacyMode, currencyFormat, exchangeRate } = useSettings();
