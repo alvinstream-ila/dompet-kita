@@ -15,5 +15,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => 'Sayang, kamu belum login ya? Yuk login dulu.. 🌸',
+                    'success' => false
+                ], 401);
+            }
+        });
     })->create();

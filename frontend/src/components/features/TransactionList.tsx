@@ -73,11 +73,11 @@ export const TransactionList: React.FC<TransactionListProps> = ({ transactions, 
                   )}
                 </div>
 
-                <div className="flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                   <button className="p-2 text-slate-400 hover:text-[#ff78a4] hover:bg-pink-50 rounded-full transition-all">
+                <div className="flex flex-col gap-2 opacity-40 group-hover:opacity-100 transition-opacity">
+                   <button className="p-2 text-slate-500 hover:text-[#ff78a4] hover:bg-pink-50 rounded-full transition-all">
                       <Edit3 className="w-5 h-5" />
                    </button>
-                   <button className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all">
+                   <button className="p-2 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-all">
                       <Trash2 className="w-5 h-5" />
                    </button>
                 </div>
