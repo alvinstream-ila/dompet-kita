@@ -225,15 +225,22 @@ const Login: React.FC = () => {
                 )}
               </div>
 
-              {/* Social Login Area */}
               <div className="mt-4">
                 <div className="flex flex-col items-center gap-6">
                   <p className="text-[11px] font-black text-slate-600 uppercase tracking-widest">Or {isSignUp ? 'sign up' : 'sign in'} with</p>
                   <div className="flex items-center gap-4">
-                    <button type="button" className="w-[84px] h-[72px] bg-slate-200/50 rounded-[28px] flex items-center justify-center hover:bg-slate-300 transition-all active:scale-90">
+                    <button 
+                      type="button" 
+                      onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/auth/google`}
+                      className="w-[84px] h-[72px] bg-slate-200/50 rounded-[28px] flex items-center justify-center hover:bg-slate-300 transition-all active:scale-90"
+                    >
                       <GoogleIcon />
                     </button>
-                    <button type="button" className="w-[84px] h-[72px] bg-slate-200/50 rounded-[28px] flex items-center justify-center hover:bg-slate-300 transition-all active:scale-90">
+                    <button 
+                      type="button" 
+                      onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/auth/facebook`}
+                      className="w-[84px] h-[72px] bg-slate-200/50 rounded-[28px] flex items-center justify-center hover:bg-slate-300 transition-all active:scale-90"
+                    >
                       <FacebookLogo />
                     </button>
                     <button type="button" className="w-[84px] h-[72px] bg-slate-200/50 rounded-[28px] flex items-center justify-center hover:bg-slate-300 transition-all active:scale-90">

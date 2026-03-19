@@ -19,6 +19,9 @@ const LoanHistory = lazy(() => import('@/pages/LoanHistory'));
 const MimpiKita = lazy(() => import('@/pages/MimpiKita'));
 const Holiday = lazy(() => import('./pages/Holiday'));
 const Wealth = lazy(() => import('./pages/Wealth'));
+const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const AuthCallback = lazy(() => import('./pages/AuthCallback'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,6 +55,9 @@ function AppContent() {
           path="/login" 
           element={!isAuthenticated ? <Login /> : <Navigate to="/" replace />} 
         />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
         
         <Route element={isAuthenticated ? <MainLayout /> : <Navigate to="/login" replace />}>
           <Route path="/" element={<Home />} />

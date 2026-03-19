@@ -16,6 +16,31 @@ Route::post('/register', [AuthController::class, 'register'])->middleware('throt
 Route::post('/forgot-password', [\App\Http\Controllers\PasswordResetController::class, 'sendResetLinkEmail'])->middleware('throttle:3,1');
 Route::post('/reset-password', [\App\Http\Controllers\PasswordResetController::class, 'reset'])->name('password.reset')->middleware('throttle:3,1');
 
+// Email Verification
+Route::get('/email/verify/{id}/{hash}', function (Request $request) {
+    if (!$request->hasValidSignature()) {
+        return response()->json(['message' => 'Link verifikasi sudah kadaluarsa sayang. 🥺'], 401);
+    }
+
+    $user = \App\Models\User::findOrFail($request->id);
+
+    if (!$user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
+        event(new \Illuminate\Auth\Events\Verified($user));
+    }
+
+    return response()->json(['message' => 'Hore! Email kamu sudah terverifikasi sayang! ✨']);
+})->name('verification.verify');
+
+Route::middleware('auth:sanctum')->post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return response()->json(['message' => 'Link verifikasi baru sudah dikirim sayang! ❤️']);
+})->name('verification.send');
+
+// Social Login
+Route::get('/auth/{provider}', [\App\Http\Controllers\SocialAuthController::class, 'redirectToProvider']);
+Route::get('/auth/{provider}/callback', [\App\Http\Controllers\SocialAuthController::class, 'handleProviderCallback']);
+
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', function (Request $request) {

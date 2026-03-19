@@ -10,9 +10,12 @@ interface MainLayoutProps {
   children?: React.ReactNode;
 }
 
+import { VerificationBanner } from '../auth/VerificationBanner';
+
 export const MainLayout = React.memo(({ children }: MainLayoutProps) => {
   return (
     <div className="min-h-screen w-full relative">
+      <VerificationBanner />
       {/* Page Content with Entry Animation */}
       <AnimatePresence mode="wait">
         <motion.main 

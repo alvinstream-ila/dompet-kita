@@ -5,6 +5,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  email_verified_at: string | null;
 }
 
 interface AuthContextType {
@@ -13,6 +14,7 @@ interface AuthContextType {
   login: (token: string, user: User) => void;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
+  isVerified: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -56,7 +58,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      login, 
+      logout, 
+      isAuthenticated: !!user,
+      isVerified: !!user?.email_verified_at
+    }}>
       {children}
     </AuthContext.Provider>
   );
