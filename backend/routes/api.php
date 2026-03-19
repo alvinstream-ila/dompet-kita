@@ -67,7 +67,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
     // AI & Services (The Gatekeeper)
     Route::get('/ai/insights', [\App\Http\Controllers\AIController::class, 'getDashboardInsight'])->middleware('throttle:5,1');
-    Route::post('/ai/analyze', [\App\Http\Controllers\AIController::class, 'analyzeReceipt'])->middleware('throttle:10,1');
+    Route::post('/ai/analyze-receipt', [\App\Http\Controllers\AIController::class, 'analyzeReceipt'])->middleware('throttle:10,1');
     Route::post('/media/upload', [\App\Http\Controllers\MediaController::class, 'upload']);
 
     // Holidays

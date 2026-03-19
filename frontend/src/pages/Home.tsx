@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { StatCard } from '../components/ui/StatCard';
+import { StatCard } from '@/components/ui/StatCard';
 import { 
   Wallet, 
   ArrowDownCircle, 
@@ -21,14 +21,14 @@ import {
   GraduationCap,
   Plane
 } from 'lucide-react';
-import { UserNavDropdown } from '../components/features/UserNavDropdown';
+import { UserNavDropdown } from '@/components/features/UserNavDropdown';
 import { useFormatting } from '@/hooks/useFormatting';
 import { BudgetGuardCard } from '@/components/features/BudgetGuardCard';
 import { AIInsightCard } from '@/components/features/AIInsightCard';
-const GaugeChart = React.lazy(() => import('../components/charts/GaugeChart').then(m => ({ default: m.GaugeChart })));
-const MonthlyDonutChart = React.lazy(() => import('../components/charts/MonthlyDonutChart').then(m => ({ default: m.MonthlyDonutChart })));
-const ComparisonBarChart = React.lazy(() => import('../components/charts/ComparisonBarChart').then(m => ({ default: m.ComparisonBarChart })));
-import { PageLoader } from '../components/ui/PageLoader';
+const GaugeChart = React.lazy(() => import('@/components/charts/GaugeChart').then(m => ({ default: m.GaugeChart })));
+const MonthlyDonutChart = React.lazy(() => import('@/components/charts/MonthlyDonutChart').then(m => ({ default: m.MonthlyDonutChart })));
+const ComparisonBarChart = React.lazy(() => import('@/components/charts/ComparisonBarChart').then(m => ({ default: m.ComparisonBarChart })));
+import { PageLoader } from '@/components/ui/PageLoader';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";

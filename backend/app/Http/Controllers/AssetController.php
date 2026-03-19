@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asset;
+use App\Models\WealthHistory;
 use Illuminate\Http\Request;
 
 class AssetController extends Controller
@@ -21,7 +22,9 @@ class AssetController extends Controller
         ]);
 
         $validated['user_id'] = $request->user()->id;
-        return Asset::create($validated);
+        $asset = Asset::create($validated);
+        $this->updateWealthSnapshot($request);
+        return $asset;
     }
 
     public function update(Request $request, Asset $asset)
@@ -35,6 +38,7 @@ class AssetController extends Controller
         ]);
 
         $asset->update($validated);
+        $this->updateWealthSnapshot($request);
         return $asset;
     }
 
@@ -42,6 +46,20 @@ class AssetController extends Controller
     {
         if ($asset->user_id !== $request->user()->id) abort(403);
         $asset->delete();
+        $this->updateWealthSnapshot($request);
         return response()->json(null, 204);
+    }
+
+    private function updateWealthSnapshot(Request $request)
+    {
+        $user = $request->user();
+        $month = now()->month;
+        $year = now()->year;
+        $total = Asset::where('user_id', $user->id)->sum('value');
+
+        WealthHistory::updateOrCreate(
+            ['user_id' => $user->id, 'month' => $month, 'year' => $year],
+            ['total_value' => $total]
+        );
     }
 }

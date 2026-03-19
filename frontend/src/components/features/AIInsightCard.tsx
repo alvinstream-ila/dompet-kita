@@ -1,36 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RefreshCcw, Heart, AlertTriangle } from 'lucide-react';
-import api from '../../lib/axios';
-import { cn } from '../../lib/utils';
-
-interface InsightData {
-  title: string;
-  insight: string;
-}
+import { cn } from '@/lib/utils';
+import { useAIInsights } from '@/hooks/useAIInsights';
 
 export const AIInsightCard: React.FC = () => {
-  const [insight, setInsight] = useState<InsightData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  const fetchInsight = async () => {
-    setIsLoading(true);
-    setError(false);
-    try {
-      const response = await api.get('/ai/insights');
-      setInsight(response.data);
-    } catch (err) {
-      console.error('Failed to fetch AI insight', err);
-      setError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchInsight();
-  }, []);
+  const { data: insight, isLoading, isError, refetch, isFetching } = useAIInsights();
 
   return (
     <motion.div 
@@ -52,11 +27,11 @@ export const AIInsightCard: React.FC = () => {
             </h4>
           </div>
           <button 
-            onClick={fetchInsight}
-            disabled={isLoading}
+            onClick={() => refetch()}
+            disabled={isLoading || isFetching}
             className="p-2 rounded-xl hover:bg-slate-100 transition-colors disabled:opacity-50"
           >
-            <RefreshCcw className={cn("w-4 h-4 text-slate-400", isLoading && "animate-spin")} />
+            <RefreshCcw className={cn("w-4 h-4 text-slate-400", (isLoading || isFetching) && "animate-spin")} />
           </button>
         </div>
 
@@ -73,7 +48,7 @@ export const AIInsightCard: React.FC = () => {
                 <div className="h-4 w-3/4 bg-slate-100 animate-pulse rounded-full" />
                 <div className="h-4 w-1/2 bg-slate-100 animate-pulse rounded-full" />
               </motion.div>
-            ) : error ? (
+            ) : isError ? (
               <motion.div 
                 key="error"
                 initial={{ opacity: 0 }}

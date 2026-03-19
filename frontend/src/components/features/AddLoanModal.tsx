@@ -15,6 +15,7 @@ import { id } from "date-fns/locale";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogClose,
@@ -162,6 +163,9 @@ export const AddLoanModal: React.FC<AddLoanModalProps> = ({ isOpen, onClose, loa
                {type === 'utang' ? <ArrowDownCircle className="size-6" /> : <ArrowUpCircle className="size-6" />}
                {loan ? 'BAYAR' : 'TAMBAH'} {type === 'utang' ? 'HUTANG' : 'PIUTANG'}
              </DialogTitle>
+             <DialogDescription className="sr-only">
+               Formulir untuk menambah atau mengupdate data hutang dan piutang.
+             </DialogDescription>
           </div>
           
           {/* Decorative elements */}

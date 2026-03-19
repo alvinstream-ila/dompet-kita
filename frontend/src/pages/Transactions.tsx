@@ -26,10 +26,10 @@ import {
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { EditTransactionModal } from '../components/features/EditTransactionModal';
-import { CategoryManagementModal } from '../components/features/CategoryManagementModal';
-import { UserNavDropdown } from '../components/features/UserNavDropdown';
-import { PageLoader } from '../components/ui/PageLoader';
+import { EditTransactionModal } from '@/components/features/EditTransactionModal';
+import { CategoryManagementModal } from '@/components/features/CategoryManagementModal';
+import { UserNavDropdown } from '@/components/features/UserNavDropdown';
+import { PageLoader } from '@/components/ui/PageLoader';
 import { useFormatting } from '@/hooks/useFormatting';
 import { cn } from "@/lib/utils";
 import { useTransactions, useDeleteTransaction } from '@/hooks/useTransactions';

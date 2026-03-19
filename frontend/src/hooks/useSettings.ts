@@ -1,10 +1,5 @@
-import { useContext } from 'react';
-import { SettingsContext } from '../context/settings-context';
+import { useSettingsStore } from '../context/settingsStore';
 
 export const useSettings = () => {
-  const context = useContext(SettingsContext);
-  if (context === undefined) {
-    throw new Error('useSettings must be used within a SettingsProvider');
-  }
-  return context;
+  return useSettingsStore();
 };

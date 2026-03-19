@@ -16,12 +16,8 @@ export function useWealthHistory() {
   return useQuery({
     queryKey: ['wealth_history'],
     queryFn: async () => {
-      // Mock for now, until history API is built
-      return [
-        { month: 'Jan', value: 10000000 },
-        { month: 'Feb', value: 12000000 },
-        { month: 'Mar', value: 15600000 },
-      ];
+      const { data } = await api.get('/wealth-history');
+      return data as { month: string; value: number }[];
     }
   });
 }

@@ -20,6 +20,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -129,6 +130,9 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
               <ShieldCheck className="w-6 h-6 text-blue-400" />
               PENGATURAN AKUN
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              Kelola profil, keamanan, dan preferensi aplikasi Anda di sini.
+            </DialogDescription>
           </div>
           <div className="absolute -right-10 -top-10 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl" />
           <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-pink-500/10 rounded-full blur-2xl" />

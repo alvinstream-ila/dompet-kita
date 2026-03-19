@@ -5,7 +5,7 @@ import { PageLoader } from '@/components/ui/PageLoader';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { LazyMotion, domAnimation } from 'framer-motion';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { SettingsProvider } from './context/SettingsContext';
+import { useSettingsStore } from './context/settingsStore';
 import { ReceiptScanner } from './pages/ReceiptScanner';
 import './App.css';
 
@@ -22,6 +22,7 @@ const Wealth = lazy(() => import('./pages/Wealth'));
 const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback'));
+const CreateTransaction = lazy(() => import('./pages/CreateTransaction'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,8 +34,13 @@ const queryClient = new QueryClient({
 });
 
 function AppContent() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
+  const { syncWithUser } = useSettingsStore();
   const location = useLocation();
+
+  useEffect(() => {
+    syncWithUser(user);
+  }, [user, syncWithUser]);
 
   useEffect(() => {
     if (location.pathname === '/login') {
@@ -68,6 +74,7 @@ function AppContent() {
           <Route path="/mimpi-kita" element={<MimpiKita />} />
           <Route path="/holiday" element={<Holiday />} />
           <Route path="/scan" element={<ReceiptScanner />} />
+          <Route path="/transactions/create" element={<CreateTransaction />} />
           <Route path="/wealth" element={<Wealth />} />
         </Route>
 
@@ -81,13 +88,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <SettingsProvider>
           <LazyMotion features={domAnimation}>
             <Router>
               <AppContent />
             </Router>
           </LazyMotion>
-        </SettingsProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
