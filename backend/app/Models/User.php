@@ -96,10 +96,6 @@ class User extends Authenticatable implements MustVerifyEmail
         // You might need a custom notification to send this specific URL
         // For simplicity, we can use a custom notification or just Log it for now if we don't want to create too many files.
         // But let's stay standard.
-        $this->notify(new class($frontendUrl) extends \Illuminate\Auth\Notifications\VerifyEmail {
-            public $url;
-            public function __construct($url) { $this->url = $url; }
-            protected function verificationUrl($notifiable) { return $this->url; }
-        });
+        $this->notify(new \App\Notifications\VerifyEmailNotification($frontendUrl));
     }
 }
