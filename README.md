@@ -15,20 +15,58 @@ Aplikasi ini berjalan di ekosistem cloud modern:
 3.  **Database**: Managed PostgreSQL di **Supabase**.
 4.  **Security**: Proteksi berlapis (CORS, CSP, XSS protection, RLS).
 
-## 🚀 Fitur Unggulan
-- **Dashboard Glassmorphism**: Visualisasi data premium dengan Framer Motion.
-- **Security Hardening**: Audit keamanan backend & frontend telah selesai dilakukan.
-- **Smart Connectivity**: Koneksi otomatis antara Vercel dan Railway dengan konfigurasi CORS yang aman.
-- **AI-Ready**: Terintegrasi dengan Google Gemini 1.5 Flash (Coming Soon).
+---
 
-## 📜 Dokumentasi Produksi
+## 💎 Technical Documentation
+
+### 🏦 Backend Architecture
+**Dompet Kita** adalah sistem API-driven yang tangguh untuk mengelola data keuangan kompleks (Income/Expense, Asset, Loans, Planning).
+
+| Component | Technology |
+| :--- | :--- |
+| **Language** | PHP 8.2+ |
+| **Framework** | Laravel 11.x |
+| **Database** | PostgreSQL (Supabase) |
+| **Auth** | Laravel Sanctum & Socialite (Google) |
+| **AI** | Google Gemini AI (via AIController) |
+
+**Key Intelligence**:
+- **Gatekeeper Logic**: Mesin wawasan yang berinteraksi berdasarkan saldo 30 hari terakhir.
+- **Database Model**: Skema terstruktur untuk `users`, `transactions`, `assets`, `loans`, `goals`, dan `holidays`.
+- **API Security**: Semua endpoint publik dilindungi oleh Laravel Sanctum (Bearer Token).
+
+[Lihat Detail Backend Documentation](./docs/BACKEND.md)
+
+---
+
+### 🎨 Frontend Architecture
+Frontend berfokus pada "Aesthetic Precision" dengan performa tinggi.
+
+| Component | Technology |
+| :--- | :--- |
+| **Framework** | React 19 (Stable) |
+| **Build Tool** | Vite 8.x |
+| **Animations** | Framer Motion + Lottie |
+| **3D Engine** | Three.js (@react-three/fiber) |
+| **Styling** | Tailwind CSS 4.x + Shadcn/ui |
+
+**Feature Spotlight**:
+- **Glassmorphism Design System**: Menggunakan `backdrop-blur` dan gradien Indigo/Violet.
+- **3D Wealth Tracker**: Visualisasi aset yang interaktif.
+- **Real-time Query**: Menggunakan `TanStack Query (v5)` untuk sinkronisasi data yang efisien.
+
+[Lihat Detail Frontend Documentation](./docs/FRONTEND.md)
+
+---
+
+## 📜 Dokumentasi Pendukung
 Semua log pengembangan dan audit keamanan tersedia di folder `docs/`:
+- [docs/TECHNICAL_DOCUMENTATION.md](./docs/TECHNICAL_DOCUMENTATION.md) - Gabungan dokumen teknis lengkap.
 - [docs/FINAL_WALKTHROUGH.md](./docs/FINAL_WALKTHROUGH.md) - Rekapitulasi fitur & hasil testing.
 - [docs/SECURITY_AUDIT.md](./docs/SECURITY_AUDIT.md) - Laporan hardening keamanan.
-- [docs/PRODUCTION_LOGS.md](./docs/PRODUCTION_LOGS.md) - Detail perjalanan pengembangan fase 1-12.
+- [docs/PRODUCTION_LOGS.md](./docs/PRODUCTION_LOGS.md) - Detail perjalanan fase 1-12.
 
 ## 🛠️ Pengembangan Lokal
-Jika ingin menjalankan secara lokal:
 1. **Root**: `npm run install-all`
 2. **Frontend**: `npm run dev` (dari root)
 3. **Backend**: `php artisan serve` (dari folder `backend/`)

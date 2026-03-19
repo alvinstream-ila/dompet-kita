@@ -1,0 +1,44 @@
+# 💰 Dompet Kita - Project Rules & Standards
+
+## 🎯 Core Objectives
+Aplikasi keuangan premium untuk Alvin & Ila dengan fokus pada "Aesthetic Precision", keamanan tingkat tinggi, dan performa modern.
+
+## 🏗️ Technology Stack
+- **Frontend**: React 19 (Vite 8.x), Tailwind CSS 4.x, Framer Motion, Three.js (@react-three/fiber).
+- **Backend**: Laravel 11 (PHP 8.4), Laravel Sanctum (Auth), Google Gemini AI integration.
+- **Database**: PostgreSQL (Supabase) dengan Row Level Security (RLS) aktif.
+
+## 🎨 Design & Aesthetic Rules
+- **Theme**: Premium Glassmorphism.
+- **Color Palette**: Dominan Indigo (#4F46E5) dan Violet (#7C3AED) dengan gradien halus.
+- **UI Elements**: 
+    - Gunakan `backdrop-blur` dan gradien Indigo/Violet untuk kartu/modal.
+    - Implementasikan mikro-animasi menggunakan `framer-motion` pada setiap interaksi.
+    - Gunakan komponen `shadcn/ui` yang sudah dikustomisasi (Glassmorphism).
+- **Typography**: Prioritas pada font modern (Inter, Roboto, atau Outfit).
+- **Animations**: Entrance animations (animasi masuk) adalah kewajiban untuk komponen baru.
+
+## 🔒 Security & Backend Rules
+- **API First**: Semua interaksi data harus melalui API endpoint yang terdokumentasi.
+- **Auth**: Gunakan Bearer Token (Laravel Sanctum) untuk setiap request ke backend.
+- **Validation**: Selalu implementasikan Form Request validation di Laravel.
+- **Database**: Jangan pernah memintas RLS. Pastikan setiap query SQL menghormati `user_id`.
+
+## 📂 Project Structure
+- **/frontend**: React/Vite (Modern SPA).
+- **/backend**: Laravel 11 (Monolith API).
+- **/mcp-server**: Model Context Protocol servers.
+- **/docs**: Semua dokumentasi teknis dan log produksi.
+
+## 🤖 AI Interaction Guidelines
+- Selalu cek `docs/BACKEND.md` atau `docs/FRONTEND.md` sebelum melakukan perubahan besar.
+- Jika membuat komponen baru di frontend, pastikan responsif dan memiliki animasi.
+- Gunakan bahasa Indonesia yang sopan dan profesional dalam setiap log atau komentar kode.
+- Proaktif dalam menyarankan optimasi terutama pada render 3D (Three.js) dan TanStack Query.
+- Jangan gunakan placeholder. Gunakan gambar nyata atau hasil render AI jika diperlukan.
+
+## 🛠️ Skills Management (AI Capabilities)
+- **Primary Source**: Selalu baca file `.antigravity/skills/README.md` sebagai panduan utama untuk memahami kapabilitas skill yang tersedia sesuai konteks tugas.
+- **Privacy & Efficiency**: 
+    - Dilarang keras membaca isi file di dalam subfolder `.antigravity/skills/` secara sembarangan jika tidak benar-benar diperlukan oleh perintah user.
+    - Diperbolehkan melihat daftar nama folder di `.antigravity/skills/` untuk mengetahui skill apa saja yang ada, namun **isi file di dalamnya tidak boleh dibuka** kecuali atas instruksi eksplisit atau kebutuhan kritis yang relevan.
