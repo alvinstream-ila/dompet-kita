@@ -31,6 +31,10 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+
+  React.useEffect(() => {
+    console.log('Build Version: af66315-fix-v2');
+  }, []);
   
   // Form States
   const [name, setName] = useState('');
