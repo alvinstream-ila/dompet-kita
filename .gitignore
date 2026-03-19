@@ -45,3 +45,11 @@ yarn-debug.log*
 .continue/
 .vercel
 .env*.local
+
+# Project Specific Workspace & Logs
+Dompet kita.code-workspace
+backend/production_logs.txt
+
+# Automated Testing (Testsprite)
+testsprite_tests/
+backend/testsprite_tests/
