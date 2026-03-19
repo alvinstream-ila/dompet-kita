@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, RefreshCcw, Heart, AlertTriangle } from 'lucide-react';
+import { RefreshCcw, Heart, AlertTriangle } from 'lucide-react';
 import api from '../../lib/axios';
 import { cn } from '../../lib/utils';
 
@@ -45,7 +45,7 @@ export const AIInsightCard: React.FC = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-pink-50 shadow-inner">
-              <Sparkles className="w-5 h-5 text-pink-500 fill-pink-100" />
+              <Heart className="w-5 h-5 text-pink-500 fill-pink-100" />
             </div>
             <h4 className="font-black tracking-tight text-slate-800 text-base md:text-lg">
               Pesan Sayang Buat Kamu ✨
@@ -103,8 +103,8 @@ export const AIInsightCard: React.FC = () => {
         </div>
 
         <div className="mt-4 flex items-center gap-2">
-          <div className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[9px] font-black uppercase tracking-widest rounded-full">
-            Powered by Gemini
+          <div className="px-3 py-1 bg-pink-50 text-pink-600 text-[9px] font-black uppercase tracking-widest rounded-full">
+            Pesan Kasih Sayang
           </div>
           <Heart className="w-3 h-3 text-pink-500 fill-pink-500 animate-pulse" />
         </div>

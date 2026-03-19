@@ -40,6 +40,7 @@ query deployments($serviceId: String!) {
         id
         status
         createdAt
+        meta
       }
     }
   }

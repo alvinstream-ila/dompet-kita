@@ -33,12 +33,15 @@ async function queryRailway(query, variables = {}) {
   });
 }
 
-const redeployMutation = `
-mutation serviceInstanceDeploy($serviceId: String!, $environmentId: String!) {
-  serviceInstanceDeploy(serviceId: $serviceId, environmentId: $environmentId)
+const serviceQuery = `
+query service($id: String!) {
+  service(id: $id) {
+    id
+    name
+  }
 }
 `;
 
-queryRailway(redeployMutation, { serviceId: SERVICE_ID, environmentId: ENVIRONMENT_ID }).then(res => {
+queryRailway(serviceQuery, { id: SERVICE_ID }).then(res => {
     console.log(JSON.stringify(res, null, 2));
 }).catch(console.error);

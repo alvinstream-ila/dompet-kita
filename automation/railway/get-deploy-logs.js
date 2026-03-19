@@ -1,7 +1,7 @@
 const https = require('https');
 
 const API_KEY = 'a9c4a92c-64da-415b-b334-a98b95550826';
-const DEPLOYMENT_ID = '8b8c5b76-27f1-440e-88cf-0c3b5d414573'; 
+const DEPLOYMENT_ID = '08828da7-4b5d-47ba-959f-68d52a919e6e'; 
 
 async function getDeployLogs(id) {
   const query = `

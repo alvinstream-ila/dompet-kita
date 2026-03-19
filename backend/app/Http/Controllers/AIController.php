@@ -70,53 +70,64 @@ class AIController extends Controller
     public function getDashboardInsight(Request $request)
     {
         $user = $request->user();
-        $cacheKey = "ai_insight_{$user->id}";
+        
+        // Aggregate last 30 days data
+        $transactions = Transaction::where('user_id', $user->id)
+            ->where('date', '>=', now()->subDays(30))
+            ->get();
 
-        // Cache for 6 hours to save API usage
-        return Cache::remember($cacheKey, 60 * 6, function () use ($user) {
-            try {
-                $apiKey = config('services.gemini.key');
-                if (!$apiKey) return response()->json(['message' => 'AI Service not configured'], 500);
+        $totalIncome = $transactions->where('type', 'income')->sum('amount');
+        $totalExpense = $transactions->where('type', 'expense')->sum('amount');
+        $savings = $totalIncome - $totalExpense;
 
-                // Aggregate last 30 days data
-                $transactions = Transaction::where('user_id', $user->id)
-                    ->where('date', '>=', now()->subDays(30))
-                    ->get();
+        $templates = [
+            [
+                'condition' => $savings < 0,
+                'options' => [
+                    [
+                        'title' => 'Ups, Semangat Terus Sayang! 🥺',
+                        'insight' => 'Bulan ini pengeluaran kita agak lebih banyak dari pemasukan. Yuk, pelan-pelan kita atur lagi biar tabungan kita buat masa depan makin tebal! ❤️'
+                    ],
+                    [
+                        'title' => 'Sayang, Yuk Kita Saling Jaga.. 🌸',
+                        'insight' => 'Dompet kita lagi agak tipis nih bulan ini. Tapi gapapa, yang penting kita sehat dan bahagia bareng. Besok kita lebih hemat ya, Sayang!'
+                    ]
+                ]
+            ],
+            [
+                'condition' => $savings >= 0 && $savings < 1000000,
+                'options' => [
+                    [
+                        'title' => 'Kerja Bagus Sayang! ✨',
+                        'insight' => 'Alhamdulillah, bulan ini kita masih bisa menabung sedikit. Setiap rupiah yang kita simpan itu langkah kecil buat rumah impian kita nanti. Love you!'
+                    ],
+                    [
+                        'title' => 'Bangga Banget Sama Kamu! ❤️',
+                        'insight' => 'Makasih ya sudah pintar jaga keuangan kita. Tetap semangat kerjanya, aku selalu dukung kamu dari sini. Masa depan kita cerah banget!'
+                    ]
+                ]
+            ],
+            [
+                'condition' => $savings >= 1000000,
+                'options' => [
+                    [
+                        'title' => 'Hore! Tabungan Melimpah! 🥳',
+                        'insight' => 'Wah, tabungan kita bulan ini luar biasa! Kamu hebat banget atur keuangannya. Mungkin kita bisa rencana liburan kecil atau dinner romantis akhir pekan nanti? 🥰'
+                    ],
+                    [
+                        'title' => 'Masa Depan Makin Dekat! 🚀',
+                        'insight' => 'Lihat deh Sayang, tabungan kita makin banyak! Aku makin gak sabar buat wujudin mimpi-mimpi kita bareng. Makasih ya sudah jadi partner terbaik!'
+                    ]
+                ]
+            ]
+        ];
 
-                $totalIncome = $transactions->where('type', 'income')->sum('amount');
-                $totalExpense = $transactions->where('type', 'expense')->sum('amount');
-                $categorySummary = $transactions->where('type', 'expense')
-                    ->groupBy('category')
-                    ->map(fn($items) => $items->sum('amount'));
+        $matched = collect($templates)->firstWhere('condition', true);
+        $selected = $matched ? collect($matched['options'])->random() : [
+            'title' => 'Pesan Sayang Buat Kamu ✨',
+            'insight' => 'Apapun kondisi keuangan kita, yang penting kita selalu bareng-bareng. Aku sayang kamu selamanya! ❤️'
+        ];
 
-                $client = \Gemini::client($apiKey);
-                
-                $prompt = "Kamu adalah asisten keuangan pribadi yang sangat perhatian dan hangat untuk pasangan Alvin & Ila. 
-                Data Keuangan 30 Hari Terakhir:
-                - Nama: {$user->name}
-                - Total Pemasukan: Rp " . number_format($totalIncome, 0, ',', '.') . "
-                - Total Pengeluaran: Rp " . number_format($totalExpense, 0, ',', '.') . "
-                - Breakdown Kategori: " . $categorySummary->toJson() . "
-                
-                Berikan 1 paragraf (maks 3 kalimat) insight yang sangat personal, romantis, dan memberikan semangat/saran membangun. 
-                Gunakan nada bicara seorang istri/suami yang sayang. Fokus pada masa depan bersama.
-                Output harus berupa JSON: { \"title\": \"string judul ceria\", \"insight\": \"string paragraf insight\" }";
-
-                $result = $client->generativeModel(model: 'gemini-1.5-flash')->generateContent($prompt);
-
-                $text = $result->text();
-                $cleanText = preg_replace('/```json|```/i', '', $text);
-                $cleanText = trim($cleanText);
-                
-                return json_decode($cleanText, true);
-
-            } catch (\Exception $e) {
-                Log::error('AI Insight Error: ' . $e->getMessage());
-                return [
-                    'title' => 'Duh Sayang, Maaf Ya.. 🥺',
-                    'insight' => 'Aku lagi agak pusing hitung-hitungannya. Tapi intinya, aku sayang kamu dan kita pasti bisa atur uang bareng-bareng! Semangat!'
-                ];
-            }
-        });
+        return response()->json($selected);
     }
 }
