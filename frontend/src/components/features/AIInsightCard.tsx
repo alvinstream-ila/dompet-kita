@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, RefreshCcw, Heart, TrendingUp, AlertTriangle } from 'lucide-react';
-import { api } from '@/lib/api';
-import { cn } from '@/lib/utils';
+import { Sparkles, RefreshCcw, Heart, AlertTriangle } from 'lucide-react';
+import api from '../../lib/axios';
+import { cn } from '../../lib/utils';
 
 interface InsightData {
   title: string;
