@@ -38,8 +38,8 @@ class TransactionController extends Controller
     public function summary(Request $request)
     {
         $user = $request->user();
-        $month = (int) $request->month + 1;
-        $year = (int) $request->year;
+        $month = (int) ($request->month ?? now()->month - 1) + 1;
+        $year = (int) ($request->year ?? now()->year);
         $budgetCycleStart = (int) ($request->budget_cycle_start ?? 1);
 
         $currentMonthDate = Carbon::create($year, $month, 15);
