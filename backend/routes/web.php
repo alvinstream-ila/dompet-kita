@@ -10,10 +10,3 @@ Route::get('/', function () {
         'health_check' => url('/up')
     ]);
 });
-
-Route::get('/clear-cache', function() {
-    \Illuminate\Support\Facades\Artisan::call('route:clear');
-    \Illuminate\Support\Facades\Artisan::call('config:clear');
-    \Illuminate\Support\Facades\Artisan::call('cache:clear');
-    return "Hore! Cache sudah bersih sayang! ✨";
-});
