@@ -131,7 +131,7 @@ const MimpiKita: React.FC = () => {
               className="h-12 pl-12 rounded-2xl bg-white border-slate-100 font-bold focus:ring-blue-500/10 shadow-sm"
             />
           </div>
-          <Select value={statusFilter} onValueChange={(v: any) => setStatusFilter(v)}>
+          <Select value={statusFilter} onValueChange={(v: 'all' | 'active' | 'completed') => setStatusFilter(v)}>
             <SelectTrigger className="w-[140px] h-12 rounded-2xl bg-white border-slate-100 font-bold">
               <SelectValue placeholder="Status" />
             </SelectTrigger>

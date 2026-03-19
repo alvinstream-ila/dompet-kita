@@ -24,7 +24,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return data.rates[currency] || 1;
     } catch (error) {
       console.error('Failed to fetch exchange rate:', error);
-      return (user as any)?.exchange_rate || 1;
+      return user?.exchange_rate || 1;
     }
   };
 
@@ -32,19 +32,19 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     const sync = async () => {
       if (user) {
-        const cur = (user as any).currency_format || 'IDR';
+        const cur = user.currency_format || 'IDR';
         const rate = await fetchExchangeRate(cur);
         setSettings({
-          budgetCycleStart: (user as any).budget_cycle_start || 1,
-          isPrivacyMode: (user as any).is_privacy_mode || false,
+          budgetCycleStart: user.budget_cycle_start || 1,
+          isPrivacyMode: !!user.is_privacy_mode,
           currencyFormat: cur,
-          exchangeRate: parseFloat((user as any).exchange_rate) || rate,
-          monthlyBudgetLimit: parseFloat((user as any).monthly_budget_limit) || 5000000,
-          fullName: (user as any).full_name || '',
-          avatarUrl: (user as any).avatar_url || '',
-          partnerName: (user as any).partner_name || '',
-          anniversaryDate: (user as any).anniversary_date || '',
-          timezone: (user as any).timezone || 'Asia/Jakarta',
+          exchangeRate: Number(user.exchange_rate) || rate,
+          monthlyBudgetLimit: Number(user.monthly_budget_limit) || 5000000,
+          fullName: user.full_name || '',
+          avatarUrl: user.avatar_url || '',
+          partnerName: user.partner_name || '',
+          anniversaryDate: user.anniversary_date || '',
+          timezone: user.timezone || 'Asia/Jakarta',
         });
       }
       setLoading(false);

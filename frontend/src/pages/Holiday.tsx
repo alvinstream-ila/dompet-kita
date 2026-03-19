@@ -312,7 +312,7 @@ const Holiday: React.FC = () => {
                         <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Status</Label>
                         <Select 
                           value={newTrip.status} 
-                          onValueChange={(v) => setNewTrip({...newTrip, status: v as any})}
+                          onValueChange={(v) => setNewTrip({...newTrip, status: v as HolidayType['status']})}
                         >
                           <SelectTrigger className="rounded-2xl h-14 border-slate-100 bg-slate-50/50 px-6 font-bold text-slate-700">
                             <SelectValue />

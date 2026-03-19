@@ -122,7 +122,7 @@ export const UserNavDropdown = React.memo(() => {
       <AccountSettingsModal 
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
-        user={user as any}
+        user={user}
         defaultTab={initialTab}
       />
     </Popover>

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Gemini;
 use Illuminate\Support\Facades\Log;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Cache;

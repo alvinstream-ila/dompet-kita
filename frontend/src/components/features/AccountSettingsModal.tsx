@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '@/lib/axios';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth, type User as UserType } from '@/context/AuthContext';
 import {
   Loader2,
   User,
@@ -40,7 +40,7 @@ import {
 interface AccountSettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  user: { id: string; name: string; email: string } | null;
+  user: UserType | null;
   defaultTab?: string;
 }
 
@@ -292,8 +292,9 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
                               try {
                                 await api.post('/forgot-password', { email: user?.email });
                                 showSuccess('Link ganti password sudah dikirim ke email kamu, Sayang! ✨');
-                              } catch (error: any) {
-                                alert(error.response?.data?.message || 'Gagal mengirim email, coba lagi ya sayang?');
+                              } catch (error) {
+                                const errorMsg = (error as any).response?.data?.message || 'Gagal mengirim email, coba lagi ya sayang?';
+                                alert(errorMsg);
                               } finally {
                                 setLoading(false);
                               }

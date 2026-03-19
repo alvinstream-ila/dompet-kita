@@ -37,8 +37,9 @@ const ResetPassword: React.FC = () => {
       });
       setSuccess(true);
       setTimeout(() => navigate('/login'), 3000);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Gagal reset password sayang, linknya mungkin sudah basi. Coba minta lagi ya? ❤️');
+    } catch (err) {
+      const errorMsg = (err as any).response?.data?.message || 'Gagal reset password sayang, linknya mungkin sudah basi. Coba minta lagi ya? ❤️';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }

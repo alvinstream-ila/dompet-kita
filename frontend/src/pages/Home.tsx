@@ -34,6 +34,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useFinancialSummary } from '@/hooks/useFinancialSummary';
+import type { Transaction } from '@/types';
 
 const getCategoryIcon = (category: string, type: string) => {
   const cat = category.toLowerCase();
@@ -233,7 +234,7 @@ const Home: React.FC = () => {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                     {transactions.length > 0 ? transactions.slice(0, 6).map((t: any, idx: number) => (
+                     {transactions.length > 0 ? transactions.slice(0, 6).map((t: Transaction, idx: number) => (
                         <motion.div 
                           key={t.id}
                           initial={{ opacity: 0, y: 20 }}

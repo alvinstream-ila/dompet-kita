@@ -1,11 +1,21 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '@/lib/axios';
 
-interface User {
+export interface User {
   id: string;
   name: string;
   email: string;
   email_verified_at: string | null;
+  currency_format?: string;
+  exchange_rate?: number;
+  budget_cycle_start?: number;
+  is_privacy_mode?: boolean;
+  full_name?: string;
+  avatar_url?: string;
+  partner_name?: string;
+  anniversary_date?: string;
+  timezone?: string;
+  monthly_budget_limit?: number;
 }
 
 interface AuthContextType {

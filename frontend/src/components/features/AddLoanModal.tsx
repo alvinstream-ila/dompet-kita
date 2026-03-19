@@ -135,15 +135,16 @@ export const AddLoanModal: React.FC<AddLoanModalProps> = ({ isOpen, onClose, loa
         await updateLoan({
           id: loan.id,
           ...payload
-        } as any);
+        });
       } else {
         await addLoan(payload);
       }
       
       onClose();
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || 'Gagal menyimpan titipan sayang.. 🥺');
+      const errorMsg = (error as any).response?.data?.message || 'Gagal menyimpan titipan sayang.. 🥺';
+      alert(errorMsg);
     } finally {
       setLoading(false);
     }

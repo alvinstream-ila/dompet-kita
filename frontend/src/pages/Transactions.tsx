@@ -158,7 +158,7 @@ const Transactions: React.FC = () => {
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="h-12 pl-12 pr-10 rounded-2xl bg-white border-slate-100 font-bold appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/10 shadow-sm min-w-[160px]"
             >
-              {categories.map((cat: any) => (
+              {categories.map((cat: string) => (
                 <option key={cat} value={cat}>{cat}</option>
               ))}
             </select>
