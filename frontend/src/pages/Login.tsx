@@ -232,7 +232,7 @@ const Login: React.FC = () => {
           </AnimatePresence>
 
           {/* Social Auth - Outside Animation Container for better stability */}
-          <div className="mt-4 pt-6 border-t border-slate-200/50 relative z-[200]">
+          <div className="mt-4 pt-6 border-t border-slate-200/50 relative z-200">
             <div className="flex flex-col items-center gap-6">
               <p className="text-[11px] font-black text-slate-600 uppercase tracking-widest">Or {isSignUp ? 'sign up' : 'sign in'} with</p>
               <div className="flex items-center gap-4">
@@ -240,25 +240,27 @@ const Login: React.FC = () => {
                   type="button" 
                   onClick={() => {
                     const apiUrl = import.meta.env.VITE_API_URL || 'https://dompet-kita-official.up.railway.app/api';
+                    console.log('Redirecting to Google with API:', apiUrl);
                     window.location.href = `${apiUrl}/auth/google`;
                   }}
-                  className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-[300]"
+                  className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-300"
                 >
                   <GoogleIcon />
                 </button>
                 <button 
                   type="button" 
                   onClick={() => {
-                    const apiUrl = import.meta.env.VITE_API_URL || 'https://dompet-kita-official.app/api';
+                    const apiUrl = import.meta.env.VITE_API_URL || 'https://dompet-kita-official.up.railway.app/api';
+                    console.log('Redirecting to Facebook with API:', apiUrl);
                     window.location.href = `${apiUrl}/auth/facebook`;
                   }}
-                  className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-[300]"
+                  className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-300"
                 >
                   <FacebookLogo />
                 </button>
                 <button 
                   type="button" 
-                  className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-[300]"
+                  className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-300"
                 >
                   <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
                     <Mail className="w-6 h-6 text-white" />
