@@ -1,4 +1,5 @@
 <?php
+/** Forced Redeploy: Social Auth Support 2026-03-19 **/
 
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\AuthController;
