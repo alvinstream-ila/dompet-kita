@@ -1,20 +1,13 @@
 const https = require('https');
 
 const API_KEY = 'a9c4a92c-64da-415b-b334-a98b95550826';
-const DEPLOYMENT_ID = 'bb343f6f-10e7-4047-a1d3-c14066ba51dd'; 
+const SERVICE_ID = '9415fce4-8d0b-4c75-bd92-024e5d78caa0';
+const ENVIRONMENT_ID = '367db267-2566-4dcb-b8cc-70fb54f33f15';
 
-async function getDeployLogs(id) {
-  const query = `
-  query deploymentLogs($id: String!) {
-    deploymentLogs(deploymentId: $id) {
-      message
-    }
-  }
-  `;
-
+async function queryRailway(query, variables = {}) {
   const data = JSON.stringify({ 
       query,
-      variables: { id }
+      variables
   });
 
   const options = {
@@ -40,10 +33,13 @@ async function getDeployLogs(id) {
   });
 }
 
-getDeployLogs(DEPLOYMENT_ID).then(res => {
-    if (res.data && res.data.deploymentLogs) {
-        res.data.deploymentLogs.forEach(log => console.log(log.message));
-    } else {
-        console.log(JSON.stringify(res, null, 2));
-    }
+const restartMutation = `
+mutation serviceInstanceRedeploy($serviceId: String!, $environmentId: String!) {
+  serviceInstanceRedeploy(serviceId: $serviceId, environmentId: $environmentId)
+}
+`;
+
+console.log("Restarting service in Railway...");
+queryRailway(restartMutation, { serviceId: SERVICE_ID, environmentId: ENVIRONMENT_ID }).then(res => {
+    console.log(JSON.stringify(res, null, 2));
 }).catch(console.error);

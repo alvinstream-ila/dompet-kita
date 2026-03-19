@@ -34,13 +34,12 @@ async function queryRailway(query, variables = {}) {
 
 const listDeploymentsQuery = `
 query deployments($serviceId: String!) {
-  deployments(input: { serviceId: $serviceId }, first: 1) {
+  deployments(input: { serviceId: $serviceId }, first: 10) {
     edges {
       node {
         id
         status
         createdAt
-        meta
       }
     }
   }
@@ -48,5 +47,11 @@ query deployments($serviceId: String!) {
 `;
 
 queryRailway(listDeploymentsQuery, { serviceId: SERVICE_ID }).then(res => {
-    console.log(JSON.stringify(res, null, 2));
+    if (res.data && res.data.deployments) {
+        res.data.deployments.edges.forEach(edge => {
+            console.log(`${edge.node.createdAt} - ${edge.node.id}: ${edge.node.status}`);
+        });
+    } else {
+        console.log(JSON.stringify(res, null, 2));
+    }
 }).catch(console.error);

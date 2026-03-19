@@ -41,10 +41,10 @@ mutation variableUpsert($input: VariableUpsertInput!) {
 `;
 
 const newVariables = {
-    'DB_HOST': 'aws-1-ap-southeast-1.pooler.supabase.com',
-    'DB_PORT': '6543',
-    'DB_USERNAME': 'postgres.lftxmhvmswxhohchnnkn',
-    'DATABASE_URL': 'postgresql://postgres.lftxmhvmswxhohchnnkn:bL6J9p4sIsAl4fUX@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres'
+    'APP_URL': 'https://dompet-kita-production.up.railway.app',
+    'GOOGLE_REDIRECT_URL': 'https://dompet-kita-production.up.railway.app/api/auth/google/callback',
+    'FACEBOOK_REDIRECT_URL': 'https://dompet-kita-production.up.railway.app/api/auth/facebook/callback',
+    'SESSION_DRIVER': 'database',
 };
 
 async function updateAll() {

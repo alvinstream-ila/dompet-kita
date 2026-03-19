@@ -1,8 +1,8 @@
 const https = require('https');
 
 const API_KEY = 'a9c4a92c-64da-415b-b334-a98b95550826';
-const DEPLOYMENT_ID = '80b7a7ca-ec34-496d-a9a6-e69b42a767cf'; // The latest failed one
-const SUCCESS_DEPLOYMENT_ID = '28f2ccee-aabb-47ee-8d1d-f8f9c6a16fae'; // The last successful one
+const DEPLOYMENT_ID = '01a9a3f8-5a1c-41b4-95fc-5b7f2979cb28'; // The latest failed one
+const SUCCESS_DEPLOYMENT_ID = '1e126a7e-a11e-47e3-892e-03bb7c39e159'; // The last successful one
 
 async function getLogs(id) {
   const query = `
