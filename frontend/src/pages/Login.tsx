@@ -205,7 +205,7 @@ const Login: React.FC = () => {
               </form>
 
               {/* Mode Switcher */}
-              <div className="text-center pt-2">
+              <div className="text-center pt-2 pb-4">
                 <button 
                   onClick={() => {
                     setIsSignUp(!isSignUp);
@@ -224,44 +224,45 @@ const Login: React.FC = () => {
                   </button>
                 )}
               </div>
-
-              <div className="mt-4 relative z-[100]">
-                <div className="flex flex-col items-center gap-6">
-                  <p className="text-[11px] font-black text-slate-600 uppercase tracking-widest">Or {isSignUp ? 'sign up' : 'sign in'} with</p>
-                  <div className="flex items-center gap-4 relative z-[100]">
-                    <button 
-                      type="button" 
-                      onClick={() => {
-                        console.log('Google login clicked');
-                        window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/auth/google`;
-                      }}
-                      className="w-[84px] h-[72px] bg-slate-200/50 rounded-[28px] flex items-center justify-center hover:bg-slate-300 transition-all active:scale-90 cursor-pointer relative z-[100]"
-                    >
-                      <GoogleIcon />
-                    </button>
-                    <button 
-                      type="button" 
-                      onClick={() => {
-                        console.log('Facebook login clicked');
-                        window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/auth/facebook`;
-                      }}
-                      className="w-[84px] h-[72px] bg-slate-200/50 rounded-[28px] flex items-center justify-center hover:bg-slate-300 transition-all active:scale-90 cursor-pointer relative z-[100]"
-                    >
-                      <FacebookLogo />
-                    </button>
-                    <button 
-                      type="button" 
-                      className="w-[84px] h-[72px] bg-slate-200/50 rounded-[28px] flex items-center justify-center hover:bg-slate-300 transition-all active:scale-90 cursor-pointer relative z-[100]"
-                    >
-                      <div className="w-10 h-10 bg-[#FFD700] rounded-full flex items-center justify-center shadow-sm">
-                        <Mail className="w-6 h-6 text-white" />
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </div>
             </motion.div>
           </AnimatePresence>
+
+          {/* Social Auth - Outside Animation Container for better stability */}
+          <div className="mt-4 pt-6 border-t border-slate-200/50 relative z-[200]">
+            <div className="flex flex-col items-center gap-6">
+              <p className="text-[11px] font-black text-slate-600 uppercase tracking-widest">Or {isSignUp ? 'sign up' : 'sign in'} with</p>
+              <div className="flex items-center gap-4">
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    const apiUrl = import.meta.env.VITE_API_URL || 'https://dompet-kita-official.up.railway.app/api';
+                    window.location.href = `${apiUrl}/auth/google`;
+                  }}
+                  className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-[300]"
+                >
+                  <GoogleIcon />
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    const apiUrl = import.meta.env.VITE_API_URL || 'https://dompet-kita-official.app/api';
+                    window.location.href = `${apiUrl}/auth/facebook`;
+                  }}
+                  className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-[300]"
+                >
+                  <FacebookLogo />
+                </button>
+                <button 
+                  type="button" 
+                  className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-[300]"
+                >
+                  <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
+                    <Mail className="w-6 h-6 text-white" />
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
 
         </div>
       </motion.div>
