@@ -81,10 +81,10 @@ const Login: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-[400px] relative z-10"
+        className="w-full max-w-[400px] relative z-50"
       >
         {/* Main Card */}
-        <div className="bg-white/40 backdrop-blur-2xl rounded-[48px] border border-white/60 shadow-2xl p-8 pt-12 md:p-10 md:pt-14 relative overflow-hidden">
+        <div className="bg-white/40 backdrop-blur-2xl rounded-[48px] border border-white/60 shadow-2xl p-8 pt-12 md:p-10 md:pt-14 relative overflow-hidden z-50">
           
           <AnimatePresence mode="wait">
             <motion.div
@@ -93,7 +93,7 @@ const Login: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="space-y-6"
+              className="space-y-6 relative z-50"
             >
               {/* Header Icon & Title */}
               <div className="flex flex-col items-center">
@@ -225,25 +225,34 @@ const Login: React.FC = () => {
                 )}
               </div>
 
-              <div className="mt-4">
+              <div className="mt-4 relative z-[100]">
                 <div className="flex flex-col items-center gap-6">
                   <p className="text-[11px] font-black text-slate-600 uppercase tracking-widest">Or {isSignUp ? 'sign up' : 'sign in'} with</p>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 relative z-[100]">
                     <button 
                       type="button" 
-                      onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/auth/google`}
-                      className="w-[84px] h-[72px] bg-slate-200/50 rounded-[28px] flex items-center justify-center hover:bg-slate-300 transition-all active:scale-90"
+                      onClick={() => {
+                        console.log('Google login clicked');
+                        window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/auth/google`;
+                      }}
+                      className="w-[84px] h-[72px] bg-slate-200/50 rounded-[28px] flex items-center justify-center hover:bg-slate-300 transition-all active:scale-90 cursor-pointer relative z-[100]"
                     >
                       <GoogleIcon />
                     </button>
                     <button 
                       type="button" 
-                      onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/auth/facebook`}
-                      className="w-[84px] h-[72px] bg-slate-200/50 rounded-[28px] flex items-center justify-center hover:bg-slate-300 transition-all active:scale-90"
+                      onClick={() => {
+                        console.log('Facebook login clicked');
+                        window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/auth/facebook`;
+                      }}
+                      className="w-[84px] h-[72px] bg-slate-200/50 rounded-[28px] flex items-center justify-center hover:bg-slate-300 transition-all active:scale-90 cursor-pointer relative z-[100]"
                     >
                       <FacebookLogo />
                     </button>
-                    <button type="button" className="w-[84px] h-[72px] bg-slate-200/50 rounded-[28px] flex items-center justify-center hover:bg-slate-300 transition-all active:scale-90">
+                    <button 
+                      type="button" 
+                      className="w-[84px] h-[72px] bg-slate-200/50 rounded-[28px] flex items-center justify-center hover:bg-slate-300 transition-all active:scale-90 cursor-pointer relative z-[100]"
+                    >
                       <div className="w-10 h-10 bg-[#FFD700] rounded-full flex items-center justify-center shadow-sm">
                         <Mail className="w-6 h-6 text-white" />
                       </div>
