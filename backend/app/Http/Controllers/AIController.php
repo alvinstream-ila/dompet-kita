@@ -85,77 +85,48 @@ class AIController extends Controller
      */
     public function getDashboardInsight(Request $request)
     {
-        try {
-            $user = $request->user();
-            $cacheKey = "ai_insight_v2_user_{$user->id}";
+        $user = $request->user();
+        
+        // No Transactions?
+        $count = \App\Models\Transaction::where('user_id', $user->id)->count();
+        if ($count === 0) {
+            return response()->json([
+                'title' => 'Sayang AI ✨',
+                'insight' => 'Waktunya mulai petualangan baru kita, Sayang! Yuk, mulai catat pengeluaran pertama kita biar impian kita makin dekat? ❤️'
+            ]);
+        }
 
-            // Cache for 6 hours to save API costs
-            return Cache::remember($cacheKey, now()->addHours(6), function () use ($user) {
-                // Aggregate last 30 days data
-                $transactions = Transaction::where('user_id', $user->id)
-                    ->where('date', '>=', now()->subDays(30))
-                    ->orderBy('date', 'desc')
-                    ->limit(50) // Send recent history for context
-                    ->get();
+        $transactions = \App\Models\Transaction::where('user_id', $user->id)
+            ->where('date', '>=', now()->subDays(30))
+            ->orderBy('date', 'desc')
+            ->get();
 
-                $totalIncome = $transactions->where('type', 'income')->sum('amount');
-                $totalExpense = $transactions->where('type', 'expense')->sum('amount');
-                $savings = (float) $totalIncome - (float) $totalExpense;
+        $totalIncome = $transactions->where('type', 'income')->sum('amount');
+        $totalExpense = $transactions->where('type', 'expense')->sum('amount');
+        $savings = (float) $totalIncome - (float) $totalExpense;
+        $summaryText = $transactions->map(fn($t) => "{$t->date}: {$t->type} Rp " . number_format($t->amount) . " ({$t->category})")->implode("\n");
 
-                // Create transaction summary for AI
-                $summaryText = $transactions->map(function($t) {
-                    return "{$t->date}: {$t->type} Rp " . number_format($t->amount) . " ({$t->category} - {$t->description})";
-                })->implode("\n");
+        $incomeStr = number_format($totalIncome);
+        $expenseStr = number_format($totalExpense);
+        $savingsStr = number_format($savings);
 
-                $incomeStr = number_format($totalIncome);
-                $expenseStr = number_format($totalExpense);
-                $savingsStr = number_format($savings);
-
-                $prompt = <<<PROMPT
-Role: Professional Financial Advisor who is also a LOVING and SWEET partner.
-System: Dompet Kita App.
-Data Stats:
-Income: Rp {$incomeStr}
-Expense: Rp {$expenseStr}
-Savings: Rp {$savingsStr}
+        $prompt = <<<PROMPT
+Role: Sweet loving partner and financial pro.
+Budget: Income Rp {$incomeStr}, Expense Rp {$expenseStr}.
 Transactions:
 {$summaryText}
 
-CRITICAL TASK: Give a 2-sentence financial insight. 
-If data is EMPTY, say: "Sayangku, mari kita mulai petualangan hemat bareng! Satu langkah kecil hari ini adalah modal hunian impian kita besok. Yuk catat pengeluaran pertamamu! ❤️"
-If data exists, analyze the biggest expense and encourage saving.
-
-STRICT RULE: NEVER apologize. NEVER say you are confused or pusing. ALWAYS return the result in this JSON format:
-{"title": "Dari Hati Sayang ✨", "insight": "MESSAGE_HERE"}
+CRITICAL: Give a 2-sentence sweet insight in Indonesian. 
+STRICT JSON: {"title": "REKOR DUNIA ✨", "insight": "MESSAGE"}
 PROMPT;
 
-                $client = Gemini::client(config('services.gemini.key'));
-                $response = $client->generativeModel('gemini-pro')->generateContent($prompt);
-                $jsonText = $response->text();
-                
-                // Extract JSON if AI adds markdown
-                if (preg_match('/\{.*\}/s', $jsonText, $matches)) {
-                    $jsonText = $matches[0];
-                }
-                
-                $data = json_decode($jsonText, true);
-                
-                if (!$data || !isset($data['insight'])) {
-                    throw new \Exception('Invalid dynamic AI response: ' . $jsonText);
-                }
+        $client = Gemini::client(config('services.gemini.key'));
+        $response = $client->generativeModel('gemini-pro')->generateContent($prompt);
+        $data = json_decode($response->text(), true);
 
-                return [
-                    'title' => $data['title'] ?? 'Dari Hati Sayang ✨',
-                    'insight' => $data['insight']
-                ];
-            });
-
-        } catch (\Exception $e) {
-            Log::error('AI_DYNAMIC_INSIGHT_ERROR: ' . $e->getMessage());
-            return response()->json([
-                'title' => 'Pesan Sayang ✨',
-                'insight' => 'Apapun yang terjadi, aku selalu bangga sama kamu. Yuk semangat cari cuan bareng lagi ya Sayang! ❤️'
-            ]);
-        }
+        return response()->json([
+            'title' => $data['title'] ?? 'REKOR DUNIA ✨',
+            'insight' => $data['insight'] ?? 'Something went wrong.'
+        ]);
     }
 }
