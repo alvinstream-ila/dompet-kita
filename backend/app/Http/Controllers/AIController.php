@@ -87,7 +87,7 @@ class AIController extends Controller
     {
         try {
             $user = $request->user();
-            $cacheKey = "ai_insight_user_{$user->id}";
+            $cacheKey = "ai_insight_v2_user_{$user->id}";
 
             // Cache for 6 hours to save API costs
             return Cache::remember($cacheKey, now()->addHours(6), function () use ($user) {
@@ -107,22 +107,30 @@ class AIController extends Controller
                     return "{$t->date}: {$t->type} Rp " . number_format($t->amount) . " ({$t->category} - {$t->description})";
                 })->implode("\n");
 
-                $prompt = "You are 'Sayang AI' for 'Dompet Kita' app. 
-                    Based on these transactions from the last 30 days:
-                    Total Income: Rp " . number_format($totalIncome) . "
-                    Total Expense: Rp " . number_format($totalExpense) . "
-                    Savings: Rp " . number_format($savings) . "
-                    
-                    Recent Detailed Transactions:
-                    " . ($summaryText ?: "No transactions recorded yet in the last 30 days.") . "
-                    
-                    TASK: Generate a SHORT financial insight (max 2-3 sentences) for the user.
-                    If they have NO transactions yet, encourage them in a sweet, supportive way to start logging their first transaction (using 'Cintaku', 'Sayang').
-                    The tone must be VERY SWEET, SUPPORTIVE, and like a loving partner (using 'Cintaku', 'Sayang', 'Kita' when referring to family budget).
-                    If they save money, praise them. If they spend too much, encourage them gently to save more for 'Rumah Impian'.
-                    
-                    Format the response STRICTLY as a JSON object: 
-                    {\"title\": \"Title Here\", \"insight\": \"Insight message here\"}.";
+                $incomeStr = number_format($totalIncome);
+                $expenseStr = number_format($totalExpense);
+                $savingsStr = number_format($savings);
+
+                $prompt = <<<PROMPT
+You are 'Sayang AI' for 'Dompet Kita' app. 
+Based on these transactions from the last 30 days:
+Total Income: Rp {$incomeStr}
+Total Expense: Rp {$expenseStr}
+Savings: Rp {$savingsStr}
+
+Recent Detailed Transactions:
+{$summaryText}
+
+TASK: Generate a SHORT financial insight (max 2-3 sentences) for the user.
+If they have NO transactions yet, say something like: "Waktunya mulai petualangan baru kita, Sayang! Yuk, mulai catat pengeluaran pertama kita biar impian kita makin dekat? ❤️."
+If they HAVE data, analyze it properly.
+The tone must be VERY SWEET, SUPPORTIVE, and like a loving partner (using 'Cintaku', 'Sayang', 'Kita').
+NEVER say you are confused or "pusing". Always give a positive, loving message. 
+If they save money, praise them. If they spend too much, encourage them gently to save more for 'Rumah Impian'.
+
+Format the response STRICTLY as a JSON object: 
+{"title": "Title Here", "insight": "Insight message here"}.
+PROMPT;
 
                 $client = Gemini::client(config('services.gemini.key'));
                 $response = $client->generativeModel('gemini-1.5-flash')
