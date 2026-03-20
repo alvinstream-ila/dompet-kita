@@ -86,47 +86,65 @@ class AIController extends Controller
     public function getDashboardInsight(Request $request)
     {
         $user = $request->user();
+        Log::info('DEBUG_AI_START: ' . $user->email);
         
-        // No Transactions?
-        $count = \App\Models\Transaction::where('user_id', $user->id)->count();
-        if ($count === 0) {
-            return response()->json([
-                'title' => 'Sayang AI ✨',
-                'insight' => 'Waktunya mulai petualangan baru kita, Sayang! Yuk, mulai catat pengeluaran pertama kita biar impian kita makin dekat? ❤️'
-            ]);
-        }
+        try {
+            // No Transactions?
+            $count = \App\Models\Transaction::where('user_id', $user->id)->count();
+            if ($count === 0) {
+                return response()->json([
+                    'title' => 'Sayang AI ✨',
+                    'insight' => 'Waktunya mulai petualangan baru kita, Sayang! Yuk, mulai catat pengeluaran pertama kita biar impian kita makin dekat? ❤️'
+                ]);
+            }
 
-        $transactions = \App\Models\Transaction::where('user_id', $user->id)
-            ->where('date', '>=', now()->subDays(30))
-            ->orderBy('date', 'desc')
-            ->get();
+            $transactions = \App\Models\Transaction::where('user_id', $user->id)
+                ->where('date', '>=', now()->subDays(30))
+                ->orderBy('date', 'desc')
+                ->get();
 
-        $totalIncome = $transactions->where('type', 'income')->sum('amount');
-        $totalExpense = $transactions->where('type', 'expense')->sum('amount');
-        $savings = (float) $totalIncome - (float) $totalExpense;
-        $summaryText = $transactions->map(fn($t) => "{$t->date}: {$t->type} Rp " . number_format($t->amount) . " ({$t->category})")->implode("\n");
+            $totalIncome = $transactions->where('type', 'income')->sum('amount');
+            $totalExpense = $transactions->where('type', 'expense')->sum('amount');
+            $savings = (float) $totalIncome - (float) $totalExpense;
+            $summaryText = $transactions->map(fn($t) => "{$t->date}: {$t->type} Rp " . number_format($t->amount) . " ({$t->category})")->implode("\n");
 
-        $incomeStr = number_format($totalIncome);
-        $expenseStr = number_format($totalExpense);
-        $savingsStr = number_format($savings);
+            $incomeStr = number_format($totalIncome);
+            $expenseStr = number_format($totalExpense);
+            $savingsStr = number_format($savings);
 
-        $prompt = <<<PROMPT
+            $prompt = <<<PROMPT
 Role: Sweet loving partner and financial pro.
 Budget: Income Rp {$incomeStr}, Expense Rp {$expenseStr}.
 Transactions:
 {$summaryText}
 
 CRITICAL: Give a 2-sentence sweet insight in Indonesian. 
-STRICT JSON: {"title": "REKOR DUNIA ✨", "insight": "MESSAGE"}
+STRICT JSON: {"title": "Sayang Terharu ✨", "insight": "MESSAGE"}
 PROMPT;
 
-        $client = Gemini::client(config('services.gemini.key'));
-        $response = $client->generativeModel('gemini-pro')->generateContent($prompt);
-        $data = json_decode($response->text(), true);
+            Log::info('DEBUG_AI_PROMPT_SENT');
+            $client = Gemini::client(config('services.gemini.key'));
+            $response = $client->generativeModel('gemini-1.5-flash')->generateContent($prompt);
+            $jsonText = $response->text();
+            
+            Log::info('DEBUG_AI_RESPONSE_RAW: ' . $jsonText);
+            
+            if (preg_match('/\{.*\}/s', $jsonText, $matches)) {
+                $jsonText = $matches[0];
+            }
+            $data = json_decode($jsonText, true);
 
-        return response()->json([
-            'title' => $data['title'] ?? 'REKOR DUNIA ✨',
-            'insight' => $data['insight'] ?? 'Something went wrong.'
-        ]);
+            return response()->json([
+                'title' => $data['title'] ?? 'Sayang Terharu ✨',
+                'insight' => $data['insight'] ?? 'Something went wrong with AI response.'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('DEBUG_AI_CRITICAL_ERROR: ' . $e->getMessage());
+            return response()->json([
+                'title' => 'Sayang Lagi Fokus ✨',
+                'insight' => 'Aku lagi cek catatannya sebentar ya sayang. Nanti aku kabarin lagi update keuangannya. Tetap semangat! ❤️ (CODE_V3)'
+            ]);
+        }
     }
 }

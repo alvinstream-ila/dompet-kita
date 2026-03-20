@@ -1,0 +1,24 @@
+
+Deprecated: swagger_ui_dist_path(): Implicitly marking parameter $asset as nullable is deprecated, the explicit nullable type must be used instead in C:\Programing alvin\Dompet kita\backend\vendor\darkaonline\l5-swagger\src\helpers.php on line 15
+
+   InvalidArgumentException 
+
+  Unexpected end of input
+
+  at vendor\psy\psysh\src\Shell.php:1325
+    1321▕ 
+    1322▕         if (!$this->hasValidCode()) {
+    1323▕             $this->popCodeStack();
+    1324▕ 
+  ➜ 1325▕             throw new \InvalidArgumentException('Unexpected end of input');
+    1326▕         }
+    1327▕     }
+    1328▕ 
+    1329▕     /**
+
+  1   vendor\psy\psysh\src\Shell.php:1865
+      Psy\Shell::setCode("print_r(DB::table('cache')-")
+
+  2   vendor\laravel\tinker\src\Console\TinkerCommand.php:77
+      Psy\Shell::execute("print_r(DB::table('cache')-")
+
