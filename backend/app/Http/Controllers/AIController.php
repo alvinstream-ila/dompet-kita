@@ -114,9 +114,10 @@ class AIController extends Controller
                     Savings: Rp " . number_format($savings) . "
                     
                     Recent Detailed Transactions:
-                    {$summaryText}
+                    " . ($summaryText ?: "No transactions recorded yet in the last 30 days.") . "
                     
                     TASK: Generate a SHORT financial insight (max 2-3 sentences) for the user.
+                    If they have NO transactions yet, encourage them in a sweet, supportive way to start logging their first transaction (using 'Cintaku', 'Sayang').
                     The tone must be VERY SWEET, SUPPORTIVE, and like a loving partner (using 'Cintaku', 'Sayang', 'Kita' when referring to family budget).
                     If they save money, praise them. If they spend too much, encourage them gently to save more for 'Rumah Impian'.
                     
