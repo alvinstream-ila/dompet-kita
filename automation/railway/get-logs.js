@@ -1,13 +1,16 @@
 const https = require('https');
 
 const API_KEY = 'a9c4a92c-64da-415b-b334-a98b95550826';
-const DEPLOYMENT_ID = '01a9a3f8-5a1c-41b4-95fc-5b7f2979cb28'; // The latest failed one
-const SUCCESS_DEPLOYMENT_ID = '1e126a7e-a11e-47e3-892e-03bb7c39e159'; // The last successful one
+const DEPLOYMENT_ID = 'bad8bbe3-6dec-48d3-9d83-cdb975c3b51d'; // The debug one that failed
+const SUCCESS_DEPLOYMENT_ID = '86ee9c7d-59b8-493f-86b9-1a74c9c8e345'; // The latest working one
 
 async function getLogs(id) {
   const query = `
   query deploymentLogs($id: String!) {
-    deploymentLogs(deploymentId: $id)
+    deploymentLogs(deploymentId: $id) {
+      message
+      timestamp
+    }
   }
   `;
 
@@ -42,11 +45,11 @@ async function getLogs(id) {
 async function run() {
     console.log("--- FAILED DEPLOYMENT LOGS ---");
     const failedLogs = await getLogs(DEPLOYMENT_ID);
-    console.log(failedLogs.data?.deploymentLogs);
+    console.log(JSON.stringify(failedLogs, null, 2));
     
     console.log("\n--- SUCCESSFUL DEPLOYMENT LOGS ---");
     const successLogs = await getLogs(SUCCESS_DEPLOYMENT_ID);
-    console.log(successLogs.data?.deploymentLogs);
+    console.log(JSON.stringify(successLogs, null, 2));
 }
 
 run();

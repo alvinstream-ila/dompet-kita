@@ -39,7 +39,10 @@ class AIController extends Controller
 
             $client = Gemini::client(config('services.gemini.key'));
             
-            $response = $client->generativeModel(ModelType::GEMINI_FLASH)
+            // Try 1.5 Flash, fallback to 1.0 Pro if needed
+            $model = 'gemini-1.5-flash'; 
+            
+            $response = $client->generativeModel($model)
                 ->generateContent([
                     $prompt,
                     new Blob(
@@ -121,7 +124,7 @@ class AIController extends Controller
                     {\"title\": \"Title Here\", \"insight\": \"Insight message here\"}.";
 
                 $client = Gemini::client(config('services.gemini.key'));
-                $response = $client->generativeModel(ModelType::GEMINI_FLASH)
+                $response = $client->generativeModel('gemini-1.5-flash')
                     ->generateContent($prompt);
 
                 $jsonText = $response->text();
