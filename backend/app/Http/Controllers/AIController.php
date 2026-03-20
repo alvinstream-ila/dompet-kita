@@ -112,41 +112,41 @@ class AIController extends Controller
                 $savingsStr = number_format($savings);
 
                 $prompt = <<<PROMPT
-You are 'Sayang AI' for 'Dompet Kita' app. 
-Based on these transactions from the last 30 days:
-Total Income: Rp {$incomeStr}
-Total Expense: Rp {$expenseStr}
+Role: Professional Financial Advisor who is also a LOVING and SWEET partner.
+System: Dompet Kita App.
+Data Stats:
+Income: Rp {$incomeStr}
+Expense: Rp {$expenseStr}
 Savings: Rp {$savingsStr}
-
-Recent Detailed Transactions:
+Transactions:
 {$summaryText}
 
-TASK: Generate a SHORT financial insight (max 2-3 sentences) for the user.
-If they have NO transactions yet, say something like: "Waktunya mulai petualangan baru kita, Sayang! Yuk, mulai catat pengeluaran pertama kita biar impian kita makin dekat? ❤️."
-If they HAVE data, analyze it properly.
-The tone must be VERY SWEET, SUPPORTIVE, and like a loving partner (using 'Cintaku', 'Sayang', 'Kita').
-NEVER say you are confused or "pusing". Always give a positive, loving message. 
-If they save money, praise them. If they spend too much, encourage them gently to save more for 'Rumah Impian'.
+CRITICAL TASK: Give a 2-sentence financial insight. 
+If data is EMPTY, say: "Sayangku, mari kita mulai petualangan hemat bareng! Satu langkah kecil hari ini adalah modal hunian impian kita besok. Yuk catat pengeluaran pertamamu! ❤️"
+If data exists, analyze the biggest expense and encourage saving.
 
-Format the response STRICTLY as a JSON object: 
-{"title": "Title Here", "insight": "Insight message here"}.
+STRICT RULE: NEVER apologize. NEVER say you are confused or pusing. ALWAYS return the result in this JSON format:
+{"title": "Dari Hati Sayang ✨", "insight": "MESSAGE_HERE"}
 PROMPT;
 
                 $client = Gemini::client(config('services.gemini.key'));
-                $response = $client->generativeModel('gemini-1.5-flash')
-                    ->generateContent($prompt);
-
+                $response = $client->generativeModel('gemini-pro')->generateContent($prompt);
                 $jsonText = $response->text();
-                $jsonText = preg_replace('/^```json\s*|```$/m', '', $jsonText);
-                $result = json_decode($jsonText, true);
-
-                if (!$result || !isset($result['insight'])) {
-                    throw new \Exception('Invalid dynamic insight AI response');
+                
+                // Extract JSON if AI adds markdown
+                if (preg_match('/\{.*\}/s', $jsonText, $matches)) {
+                    $jsonText = $matches[0];
+                }
+                
+                $data = json_decode($jsonText, true);
+                
+                if (!$data || !isset($data['insight'])) {
+                    throw new \Exception('Invalid dynamic AI response: ' . $jsonText);
                 }
 
                 return [
-                    'title' => $result['title'] ?? 'Pesan Sayang ✨',
-                    'insight' => $result['insight']
+                    'title' => $data['title'] ?? 'Dari Hati Sayang ✨',
+                    'insight' => $data['insight']
                 ];
             });
 
