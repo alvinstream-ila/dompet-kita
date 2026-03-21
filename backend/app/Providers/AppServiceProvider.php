@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
         });
         // Production Security Guard
         // if (app()->environment('production') && config('app.debug')) {
-        //     abort(500, 'Security Breach: Application must not run in DEBUG mode in production.');
+        //     abort(500, 'Security Breach V2: Application must not run in DEBUG mode in production.');
         // }
 
         // Mask sensitive data in case of unexpected exposure
