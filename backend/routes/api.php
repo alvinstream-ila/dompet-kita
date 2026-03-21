@@ -20,11 +20,18 @@ Route::post('/reset-password', [\App\Http\Controllers\PasswordResetController::c
 
 // Email Verification
 Route::get('/email/verify/{id}/{hash}', function (Request $request) {
-    if (!$request->hasValidSignature()) {
-        return response()->json(['message' => 'Link verifikasi sudah kadaluarsa sayang. 🥺'], 401);
+    $user = \App\Models\User::find($request->id);
+    if (!$user) {
+        return response()->json(['message' => 'User tidak ditemukan.'], 404);
     }
 
-    $user = \App\Models\User::findOrFail($request->id);
+    if (!$request->hasValidSignature()) {
+        return response()->json([
+            'message' => 'Link verifikasi tidak valid atau rusak sayang. 🥺',
+            'debug_full_url' => $request->fullUrl(),
+            'debug_signature' => $request->query('signature'),
+        ], 401);
+    }
 
     if (!$user->hasVerifiedEmail()) {
         $user->markEmailAsVerified();
