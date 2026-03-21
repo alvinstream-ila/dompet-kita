@@ -1,7 +1,7 @@
 const https = require('https');
 
 const API_KEY = 'a9c4a92c-64da-415b-b334-a98b95550826';
-const SERVICE_ID = '9415fce4-8d0b-4c75-bd92-024e5d78caa0';
+const TRIGGER_ID = 'dc85529a-be1f-4260-9265-a490e9d328ec';
 
 async function queryRailway(query, variables = {}) {
   const data = JSON.stringify({ query, variables });
@@ -28,24 +28,18 @@ async function queryRailway(query, variables = {}) {
   });
 }
 
-const serviceQuery = `
-query service($id: String!) {
-  service(id: $id) {
+const updateTriggerMutation = `
+mutation deploymentTriggerUpdate($id: String!, $input: DeploymentTriggerUpdateInput!) {
+  deploymentTriggerUpdate(id: $id, input: $input) {
     id
-    name
-    repoTriggers {
-      edges {
-        node {
-          id
-          branch
-          repository
-        }
-      }
-    }
+    branch
   }
 }
 `;
 
-queryRailway(serviceQuery, { id: SERVICE_ID }).then(res => {
+queryRailway(updateTriggerMutation, { 
+    id: TRIGGER_ID, 
+    input: { branch: "main" } 
+}).then(res => {
     console.log(JSON.stringify(res, null, 2));
 }).catch(console.error);

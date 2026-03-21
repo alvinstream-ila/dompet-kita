@@ -28,24 +28,20 @@ async function queryRailway(query, variables = {}) {
   });
 }
 
-const serviceQuery = `
-query service($id: String!) {
-  service(id: $id) {
-    id
-    name
-    repoTriggers {
-      edges {
-        node {
-          id
-          branch
-          repository
-        }
+const deploymentsQuery = `
+query deployments($serviceId: String!) {
+  deployments(input: {serviceId: $serviceId}, first: 5) {
+    edges {
+      node {
+        id
+        status
+        meta
       }
     }
   }
 }
 `;
 
-queryRailway(serviceQuery, { id: SERVICE_ID }).then(res => {
+queryRailway(deploymentsQuery, { serviceId: SERVICE_ID }).then(res => {
     console.log(JSON.stringify(res, null, 2));
 }).catch(console.error);
