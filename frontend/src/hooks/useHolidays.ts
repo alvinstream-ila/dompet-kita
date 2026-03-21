@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/axios';
+import { toast } from 'sonner';
 
 export interface Holiday {
   id: number;
@@ -31,8 +32,16 @@ export function useAddHoliday() {
       const { data } = await api.post('/holidays', newHoliday);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['holidays'] });
+      toast.success('Rencana Dibuat! ✨', {
+        description: `Asik! Kita mau ke ${data.destination} nih Sayang! ❤️`
+      });
+    },
+    onError: () => {
+      toast.error('Gagal Menyimpan 🥺', {
+        description: 'Coba ulangi lagi ya Sayang, maaf ada kendala.'
+      });
     }
   });
 }
@@ -45,8 +54,14 @@ export function useUpdateHoliday() {
       const { data } = await api.put(`/holidays/${id}`, updates);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['holidays'] });
+      toast.success('Berhasil Diupdate! ✨', {
+        description: `Rencana ke ${data.destination} sudah aku catat ya!`
+      });
+    },
+    onError: () => {
+      toast.error('Gagal Update 🥺');
     }
   });
 }
@@ -60,6 +75,9 @@ export function useDeleteHoliday() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['holidays'] });
+      toast.info('Rencana Dihapus 🗑️', {
+        description: 'Gapapa Sayang, kita cari destinasi lain yang lebih seru!'
+      });
     }
   });
 }

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/axios';
 import type { Loan } from '@/types';
+import { toast } from 'sonner';
 
 export function useLoans() {
   return useQuery({
@@ -20,9 +21,13 @@ export function useAddLoan() {
       const { data } = await api.post('/loans', newLoan);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['loans'] });
-    }
+      toast.success('Pinjaman Dicatat! 📝', {
+        description: `Sudah aku bantu catat ya, pinjaman dari ${data.debtor}.`
+      });
+    },
+    onError: () => toast.error('Gagal Menyimpan 🥺')
   });
 }
 
@@ -34,9 +39,17 @@ export function useUpdateLoan() {
       const { data } = await api.put(`/loans/${id}`, updates);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['loans'] });
-    }
+      if (data.status === 'paid') {
+        toast.success('ALHAMDULILLAH LUNAS! 🎉', {
+          description: `Pinjaman ${data.debtor} sudah diselesaikan! ✨`
+        });
+      } else {
+        toast.success('Berhasil Diupdate! ✨');
+      }
+    },
+    onError: () => toast.error('Gagal Update 🥺')
   });
 }
 
@@ -49,6 +62,8 @@ export function useDeleteLoan() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['loans'] });
-    }
+      toast.info('Data Dihapus 🗑️');
+    },
+    onError: () => toast.error('Gagal Menghapus 🥺')
   });
 }

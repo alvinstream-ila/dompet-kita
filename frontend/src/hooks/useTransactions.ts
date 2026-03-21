@@ -2,6 +2,7 @@ import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-q
 import api from '@/lib/axios';
 import type { Transaction } from '@/types';
 import { useSettings } from '@/hooks/useSettings';
+import { toast } from 'sonner';
 
 export function useTransactions(month?: number, year?: number) {
   const { budgetCycleStart } = useSettings();
@@ -19,8 +20,6 @@ export function useTransactions(month?: number, year?: number) {
           limit: 20
         }
       });
-      
-      // Laravel pagination returns { data: [...], current_page: 1, last_page: X, ... }
       return data.data as Transaction[];
     },
     getNextPageParam: (lastPage, allPages) => {
@@ -57,11 +56,19 @@ export function useAddTransaction() {
       if (context?.previousSummary) {
         queryClient.setQueryData(['financial_summary'], context.previousSummary);
       }
+      toast.error('Gagal Mencatat 🥺', {
+        description: 'Tunggu sebentar dan coba lagi ya Sayang.'
+      });
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
       queryClient.invalidateQueries({ queryKey: ['ai_insights'] });
+
+      const isIncome = data.type === 'income';
+      toast.success(isIncome ? 'Uang Masuk! 💰' : 'Pengeluaran Dicatat 💸', {
+        description: isIncome ? "Alhamdulillah rezeki kita nambah lagi! ✨" : "Sudah aku catat ya Sayang, nanti kita evaluasi bareng. ❤️"
+      });
     }
   });
 }
@@ -81,6 +88,10 @@ export function useUpdateTransaction() {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
       queryClient.invalidateQueries({ queryKey: ['ai_insights'] });
+      toast.success('Berhasil Diupdate! ✨');
+    },
+    onError: () => {
+      toast.error('Gagal Update 🥺');
     }
   });
 }
@@ -99,6 +110,10 @@ export function useDeleteTransaction() {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
       queryClient.invalidateQueries({ queryKey: ['ai_insights'] });
+      toast.info('Transaksi Dihapus 🗑️');
+    },
+    onError: () => {
+      toast.error('Gagal Menghapus 🥺');
     }
   });
 }

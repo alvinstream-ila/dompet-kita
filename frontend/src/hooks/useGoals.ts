@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/axios';
 import type { Goal } from '@/types';
+import { toast } from 'sonner';
 
 export function useGoals() {
   return useQuery({
@@ -43,9 +44,13 @@ export function useAddGoal() {
       if (context?.previousGoals) {
         queryClient.setQueryData(['goals'], context.previousGoals);
       }
+      toast.error('Gagal Menambah Mimpi 🥺');
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['goals'] });
+      toast.success('Mimpi Baru Dicatat! ✨', {
+        description: `Yey! Satu lagi langkah buat mewujudkan ${data.name} kita! ❤️`
+      });
     }
   });
 }
@@ -72,9 +77,17 @@ export function useUpdateGoal() {
       if (context?.previousGoals) {
         queryClient.setQueryData(['goals'], context.previousGoals);
       }
+      toast.error('Gagal Update Mimpi 🥺');
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['goals'] });
+      if (data.status === 'completed') {
+        toast.success('BERHASIL TERWUJUD! 🏆🎉', {
+          description: `Mimpi "${data.name}" kita sudah jadi nyata, Sayang! So proud of us! ❤️`
+        });
+      } else {
+        toast.success('Kemajuan Dicatat! ✨');
+      }
     }
   });
 }
@@ -98,9 +111,13 @@ export function useDeleteGoal() {
       if (context?.previousGoals) {
         queryClient.setQueryData(['goals'], context.previousGoals);
       }
+      toast.error('Gagal Menghapus 🥺');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['goals'] });
+      toast.info('Mimpi Dihapus 🗑️', {
+        description: 'Gapapa Sayang, kita buat mimpi yang lebih besar lagi ya!'
+      });
     }
   });
 }

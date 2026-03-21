@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { useSettingsStore } from './context/settingsStore';
 import { ReceiptScanner } from './pages/ReceiptScanner';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { Toaster } from 'sonner';
 import './App.css';
 
 // Lazy load pages
@@ -97,6 +98,7 @@ function App() {
             <LazyMotion features={domAnimation}>
               <Router>
                 <AppContent />
+                <Toaster richColors closeButton position="top-center" />
               </Router>
             </LazyMotion>
         </AuthProvider>

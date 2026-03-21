@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/axios';
 import type { Asset } from '@/types';
+import { toast } from 'sonner';
 
 export function useAssets() {
   return useQuery({
@@ -47,10 +48,14 @@ export function useAddAsset() {
       if (context?.previousAssets) {
         queryClient.setQueryData(['assets'], context.previousAssets);
       }
+      toast.error('Gagal Menambah Aset 🥺');
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
       queryClient.invalidateQueries({ queryKey: ['wealth_history'] });
+      toast.success('Horee, Aset Bertambah! 💎', {
+        description: `Sudah aku bantu catat aset ${data.name} kita ya!`
+      });
     }
   });
 }
@@ -77,10 +82,14 @@ export function useUpdateAsset() {
       if (context?.previousAssets) {
         queryClient.setQueryData(['assets'], context.previousAssets);
       }
+      toast.error('Gagal Update Aset 🥺');
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
       queryClient.invalidateQueries({ queryKey: ['wealth_history'] });
+      toast.success('Aset Berhasil Diupdate! ✨', {
+        description: `Sekarang nilai ${data.name} kita sudah terupdate.`
+      });
     }
   });
 }
@@ -104,10 +113,12 @@ export function useDeleteAsset() {
       if (context?.previousAssets) {
         queryClient.setQueryData(['assets'], context.previousAssets);
       }
+      toast.error('Gagal Hapus Aset 🥺');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
       queryClient.invalidateQueries({ queryKey: ['wealth_history'] });
+      toast.info('Aset Dihapus 🗑️');
     }
   });
 }
