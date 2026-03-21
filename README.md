@@ -5,15 +5,17 @@ Aplikasi pencatatan keuangan premium untuk **Alvin & Ila**. Proyek ini telah mel
 ---
 
 ## 🌐 Live URLs
-- **Frontend (Production)**: [https://dompet-kita-woad.vercel.app/](https://dompet-kita-woad.vercel.app/)
-- **Backend API (Production)**: [https://dompet-kita-official.up.railway.app/](https://dompet-kita-official.up.railway.app/)
+- **Frontend (Production)**: [https://dompet-kita-six.vercel.app/](https://dompet-kita-six.vercel.app/)
+- **Backend API (Production)**: [https://dompet-kita-production.up.railway.app/](https://dompet-kita-production.up.railway.app/)
 
 ## 🏗️ Digital Infrastructure
 Aplikasi ini berjalan di ekosistem cloud modern:
 1.  **Frontend**: React 19 (Vite) di-host di **Vercel** dengan SPA routing.
 2.  **Backend**: Laravel 11 (PHP 8.4) di-host di **Railway** (Singapore Region).
-3.  **Database**: Managed PostgreSQL di **Supabase**.
-4.  **Security**: Proteksi berlapis (CORS, CSP, XSS protection, RLS).
+3.  **Database**: Managed PostgreSQL di **Supabase** (Port 6543 Connection Pooler).
+4.  **Storage**: S3-Compatible Storage via **Storj** (Distributed Cloud Storage).
+5.  **Mail**: SMTP Transactional via **Gmail Official**.
+6.  **Security**: Audit 0 Vulnerabilities, Sentry Error Tracking, & Proteksi Berlapis.
 
 ---
 
@@ -24,11 +26,13 @@ Aplikasi ini berjalan di ekosistem cloud modern:
 
 | Component | Technology |
 | :--- | :--- |
-| **Language** | PHP 8.2+ |
+| **Language** | PHP 8.4 |
 | **Framework** | Laravel 11.x |
 | **Database** | PostgreSQL (Supabase) |
-| **Auth** | Laravel Sanctum & Socialite (Google) |
-| **AI** | Google Gemini AI (via AIController) |
+| **Auth** | Laravel Sanctum & Socialite (Google/Facebook) |
+| **AI** | Google Gemini AI (Insight Generator) |
+| **Mail** | SMTP Gmail (Secure SSL 465) |
+| **Storage** | Storj (S3 Protocol) |
 
 **Key Intelligence**:
 - **Gatekeeper Logic**: Mesin wawasan yang berinteraksi berdasarkan saldo 30 hari terakhir.
@@ -46,14 +50,17 @@ Frontend berfokus pada "Aesthetic Precision" dengan performa tinggi.
 | :--- | :--- |
 | **Framework** | React 19 (Stable) |
 | **Build Tool** | Vite 8.x |
-| **Animations** | Framer Motion + Lottie |
-| **3D Engine** | Three.js (@react-three/fiber) |
-| **Styling** | Tailwind CSS 4.x + Shadcn/ui |
+| **State/Data** | TanStack Query v5 + Zustand |
+| **Notifications** | Sonner (In-App Premium Glassmorphism) |
+| **Animations** | Framer Motion (PopLayout & Layout Transitions) |
+| **Styling** | Tailwind CSS 4.x (OKLCH Colors) |
+| **Monitoring** | Sentry (Production Error Tracking) |
 
 **Feature Spotlight**:
-- **Glassmorphism Design System**: Menggunakan `backdrop-blur` dan gradien Indigo/Violet.
-- **3D Wealth Tracker**: Visualisasi aset yang interaktif.
-- **Real-time Query**: Menggunakan `TanStack Query (v5)` untuk sinkronisasi data yang efisien.
+- **Dynamic Wealth Tracker**: Progress bar "Freedom" yang terhubung otomatis ke tabungan mimpi kita. ✨
+- **Optimistic UI**: Penambahan data instan tanpa menunggu loading server (Assets & Goals).
+- **In-App Notification**: Notifikasi premium di dalam aplikasi tanpa interupsi browser.
+- **Aesthetic Error Boundary**: Halaman error yang cantik dan fungsional jika terjadi kendala teknis.
 
 [Lihat Detail Frontend Documentation](./docs/FRONTEND.md)
 
@@ -63,8 +70,8 @@ Frontend berfokus pada "Aesthetic Precision" dengan performa tinggi.
 Semua log pengembangan dan audit keamanan tersedia di folder `docs/`:
 - [docs/TECHNICAL_DOCUMENTATION.md](./docs/TECHNICAL_DOCUMENTATION.md) - Gabungan dokumen teknis lengkap.
 - [docs/FINAL_WALKTHROUGH.md](./docs/FINAL_WALKTHROUGH.md) - Rekapitulasi fitur & hasil testing.
-- [docs/SECURITY_AUDIT.md](./docs/SECURITY_AUDIT.md) - Laporan hardening keamanan.
-- [docs/PRODUCTION_LOGS.md](./docs/PRODUCTION_LOGS.md) - Detail perjalanan fase 1-12.
+- [docs/SECURITY_AUDIT.md](./docs/SECURITY_AUDIT.md) - Laporan hardening keamanan (0 Vulnerabilities).
+- [docs/PRODUCTION_LOGS.md](./docs/PRODUCTION_LOGS.md) - Detail perjalanan fase 1-13 (Latest Update).
 
 ## 🛠️ Pengembangan Lokal
 1. **Root**: `npm run install-all`
@@ -72,4 +79,4 @@ Semua log pengembangan dan audit keamanan tersedia di folder `docs/`:
 3. **Backend**: `php artisan serve` (dari folder `backend/`)
 
 ---
-*Dibuat dengan ❤️ untuk masa depan Alvin & Ila. Project Status: **LIVE***
+*Dibuat dengan ❤️ untuk masa depan Alvin & Ila. Project Status: **LIVE & SECURED***
