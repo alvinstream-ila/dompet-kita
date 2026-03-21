@@ -13,7 +13,7 @@ import {
   Info,
   Edit2,
   Trash2,
-  ChevronRight
+  Heart
 } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter
-} from "@/dialog";
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -219,7 +219,7 @@ const Wealth: React.FC = () => {
          <div className="glass-premium py-6 px-10 rounded-[32px] items-center justify-center shadow-2xl w-full border border-white/50">
             <h2 className="text-xl md:text-3xl font-black text-slate-800 tracking-tight leading-tight">
                <span className="font-script text-5xl md:text-8xl text-pink-500 block mb-1">Wealth Kita</span>
-               <span className="text-slate-500 font-bold text-xs md:text-lg block tracking-normal uppercase tracking-widest">Fondasi Masa Depan ✨</span>
+               <span className="text-slate-500 font-bold text-xs md:text-lg block tracking-widest">Fondasi Masa Depan ✨</span>
             </h2>
          </div>
       </div>
@@ -245,7 +245,7 @@ const Wealth: React.FC = () => {
          </div>
 
          <div className="flex items-center gap-4">
-            <Dialog open={isAddDialogOpen} onOpenChange={(open) => {
+            <Dialog open={isAddDialogOpen} onOpenChange={(open: boolean) => {
               setIsAddDialogOpen(open);
               if (!open) {
                 setEditingAsset(null);
