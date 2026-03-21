@@ -239,7 +239,7 @@ const Login: React.FC = () => {
                 <button 
                   type="button" 
                   onClick={() => {
-                    const apiUrl = import.meta.env.VITE_API_URL || 'https://dompet-kita-official.up.railway.app/api';
+                    const apiUrl = import.meta.env.VITE_API_URL || 'https://dompet-kita-production.up.railway.app/api';
                     console.log('Redirecting to Google with API:', apiUrl);
                     window.location.href = `${apiUrl}/auth/google`;
                   }}
@@ -250,7 +250,7 @@ const Login: React.FC = () => {
                 <button 
                   type="button" 
                   onClick={() => {
-                    const apiUrl = import.meta.env.VITE_API_URL || 'https://dompet-kita-official.up.railway.app/api';
+                    const apiUrl = import.meta.env.VITE_API_URL || 'https://dompet-kita-production.up.railway.app/api';
                     console.log('Redirecting to Facebook with API:', apiUrl);
                     window.location.href = `${apiUrl}/auth/facebook`;
                   }}
