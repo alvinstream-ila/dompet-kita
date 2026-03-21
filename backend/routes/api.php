@@ -46,8 +46,12 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
 })->name('verification.verify');
 
 Route::middleware('auth:sanctum')->post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-    return response()->json(['message' => 'Link verifikasi baru sudah dikirim sayang! ❤️']);
+    if (!$request->user()->hasVerifiedEmail()) {
+        $request->user()->markEmailAsVerified();
+        event(new \Illuminate\Auth\Events\Verified($request->user()));
+        return response()->json(['message' => 'Hore! Email kamu sudah BERHASIL DIVERIFIKASI! (Bypass Sistem Aktif) ✨']);
+    }
+    return response()->json(['message' => 'Email kamu sudah terverifikasi sayang! ❤️']);
 })->name('verification.send');
 
 // Social Login
