@@ -40,7 +40,7 @@ class AIController extends Controller
             $client = Gemini::client(config('services.gemini.key'));
             
             // Try 1.5 Flash, fallback to 1.0 Pro if needed
-            $model = 'gemini-1.5-flash'; 
+            $model = 'gemini-flash-latest'; 
             
             $response = $client->generativeModel($model)
                 ->generateContent([
@@ -124,7 +124,7 @@ PROMPT;
 
             Log::info('DEBUG_AI_PROMPT_SENT');
             $client = Gemini::client(config('services.gemini.key'));
-            $response = $client->generativeModel('gemini-1.5-flash')->generateContent($prompt);
+            $response = $client->generativeModel('gemini-flash-latest')->generateContent($prompt);
             $jsonText = $response->text();
             
             Log::info('DEBUG_AI_RESPONSE_RAW: ' . $jsonText);
