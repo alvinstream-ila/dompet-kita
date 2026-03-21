@@ -67,5 +67,5 @@ test('it verifies branding variables are set correctly', function () {
 
 test('it verifies secure mail configuration', function () {
     expect(config('mail.mailers.smtp.encryption'))->toBe('tls');
-    expect(config('mail.mailers.smtp.port'))->toBe(587);
+    expect(config('mail.mailers.smtp.port'))->toBe('587');
 });

@@ -118,6 +118,7 @@ class TransactionController extends Controller
         ]);
 
         $transaction->update($validated);
+        $transaction->refresh();
         Cache::forget("ai_insight_{$request->user()->id}");
         return new TransactionResource($transaction);
     }

@@ -86,8 +86,9 @@ test('user can update their own transaction', function () {
                          'amount' => 15000,
                      ]);
 
-    $response->assertStatus(200)
-             ->assertJsonPath('amount', 15000);
+    $response->assertStatus(200);
+    // dd($response->json());
+    $response->assertJsonPath('data.amount', 15000);
 });
 
 test('user can delete their own transaction', function () {

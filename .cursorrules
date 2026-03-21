@@ -34,6 +34,7 @@ Aplikasi keuangan premium untuk Alvin & Ila dengan fokus pada "Aesthetic Precisi
 - Selalu cek `docs/BACKEND.md` atau `docs/FRONTEND.md` sebelum melakukan perubahan besar.
 - Jika membuat komponen baru di frontend, pastikan responsif dan memiliki animasi.
 - Gunakan bahasa Indonesia yang sopan dan profesional dalam setiap log atau komentar kode.
+- Gunakan emotikon secara bijak (maksimal 1-2 per pesan). Dilarang menggunakan barisan emotikon yang berlebihan atau mengganggu keterbacaan.
 - Proaktif dalam menyarankan optimasi terutama pada render 3D (Three.js) dan TanStack Query.
 - Jangan gunakan placeholder. Gunakan gambar nyata atau hasil render AI jika diperlukan.
 
