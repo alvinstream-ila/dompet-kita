@@ -31,6 +31,9 @@ class AppServiceProvider extends ServiceProvider
         //     abort(500, 'Security Breach V2: Application must not run in DEBUG mode in production.');
         // }
 
+        // Force 'Dompet Kita' Branding for Mail
+        config(['mail.from.name' => 'Dompet Kita']);
+
         // Mask sensitive data in case of unexpected exposure
         if (app()->environment('production')) {
             config(['logging.channels.stack.level' => 'info']);
