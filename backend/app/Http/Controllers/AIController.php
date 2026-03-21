@@ -26,8 +26,8 @@ class AIController extends Controller
     public function analyzeReceipt(Request $request)
     {
         $request->validate([
-            'image' => 'required|string', // Base64 encoded string
-            'mime_type' => 'required|string'
+            'image' => 'required|string|max:15000000', // ~10-11MB Base64 limit
+            'mime_type' => 'required|string|max:100'
         ]);
 
         try {

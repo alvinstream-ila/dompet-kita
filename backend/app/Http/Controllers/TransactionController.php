@@ -38,7 +38,8 @@ class TransactionController extends Controller
                 $query->whereBetween('date', [$dates['start'], $dates['end']]);
             }
 
-            $transactions = $query->orderBy('date', 'desc')->paginate($request->input('limit', 20));
+            $limit = min((int) $request->input('limit', 20), 100);
+            $transactions = $query->orderBy('date', 'desc')->paginate($limit);
             return TransactionResource::collection($transactions);
         } catch (\Exception $e) {
             \Log::error('TRANSACTION_INDEX_ERROR: ' . $e->getMessage(), [
@@ -82,12 +83,12 @@ class TransactionController extends Controller
         $validated = $request->validate([
             'date' => 'required|date',
             'amount' => 'required|numeric',
-            'category' => 'required|string',
-            'sub_category' => 'nullable|string',
+            'category' => 'required|string|max:100',
+            'sub_category' => 'nullable|string|max:100',
             'type' => ['required', Rule::enum(TransactionType::class)],
-            'description' => 'required|string',
-            'note' => 'nullable|string',
-            'receipt_url' => 'nullable|string',
+            'description' => 'required|string|max:255',
+            'note' => 'nullable|string|max:1000',
+            'receipt_url' => 'nullable|string|max:2048',
         ]);
 
         $validated['user_id'] = $request->user()->id;
@@ -109,12 +110,12 @@ class TransactionController extends Controller
         $validated = $request->validate([
             'date' => 'sometimes|date',
             'amount' => 'sometimes|numeric',
-            'category' => 'sometimes|string',
-            'sub_category' => 'nullable|string',
+            'category' => 'sometimes|string|max:100',
+            'sub_category' => 'nullable|string|max:100',
             'type' => ['sometimes', Rule::enum(TransactionType::class)],
-            'description' => 'sometimes|string',
-            'note' => 'nullable|string',
-            'receipt_url' => 'nullable|string',
+            'description' => 'sometimes|string|max:255',
+            'note' => 'nullable|string|max:1000',
+            'receipt_url' => 'nullable|string|max:2048',
         ]);
 
         $transaction->update($validated);

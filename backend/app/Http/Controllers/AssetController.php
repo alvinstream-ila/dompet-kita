@@ -16,9 +16,9 @@ class AssetController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string',
-            'type' => 'required|string',
-            'value' => 'required|numeric',
+            'name' => 'required|string|max:100',
+            'type' => 'required|string|max:50',
+            'value' => 'required|numeric|min:0|max:1000000000000',
         ]);
 
         $validated['user_id'] = $request->user()->id;
@@ -32,9 +32,9 @@ class AssetController extends Controller
         if ($asset->user_id !== $request->user()->id) abort(403);
 
         $validated = $request->validate([
-            'name' => 'sometimes|string',
-            'type' => 'sometimes|string',
-            'value' => 'sometimes|numeric',
+            'name' => 'sometimes|string|max:100',
+            'type' => 'sometimes|string|max:50',
+            'value' => 'sometimes|numeric|min:0|max:1000000000000',
         ]);
 
         $asset->update($validated);

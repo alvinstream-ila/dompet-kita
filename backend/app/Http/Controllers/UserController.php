@@ -21,9 +21,9 @@ class UserController extends Controller
             'budget_cycle_start' => 'sometimes|integer|min:1|max:31',
             'is_privacy_mode' => 'sometimes|boolean',
             'is_eco_mode' => 'sometimes|boolean',
-            'currency_format' => 'sometimes|string',
-            'exchange_rate' => 'sometimes|numeric',
-            'monthly_budget_limit' => 'sometimes|numeric',
+            'currency_format' => 'sometimes|string|max:10',
+            'exchange_rate' => 'sometimes|numeric|min:0',
+            'monthly_budget_limit' => 'sometimes|numeric|min:0',
         ]);
 
         $user->update($validated);
