@@ -7,6 +7,7 @@ import { LazyMotion, domAnimation } from 'framer-motion';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { useSettingsStore } from './context/settingsStore';
 import { ReceiptScanner } from './pages/ReceiptScanner';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import './App.css';
 
 // Lazy load pages
@@ -29,7 +30,11 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       staleTime: 1000 * 60 * 5,
+      retry: 1, // Automatic retry for stability
     },
+    mutations: {
+      retry: 1,
+    }
   },
 });
 
@@ -86,15 +91,17 @@ function AppContent() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-          <LazyMotion features={domAnimation}>
-            <Router>
-              <AppContent />
-            </Router>
-          </LazyMotion>
-      </AuthProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+            <LazyMotion features={domAnimation}>
+              <Router>
+                <AppContent />
+              </Router>
+            </LazyMotion>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

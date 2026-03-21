@@ -30,8 +30,27 @@ export function useAddAsset() {
       const { data } = await api.post('/assets', newAsset);
       return data;
     },
+    onMutate: async (newAsset) => {
+      await queryClient.cancelQueries({ queryKey: ['assets'] });
+      const previousAssets = queryClient.getQueryData<Asset[]>(['assets']);
+      queryClient.setQueryData(['assets'], (old: Asset[] | undefined) => {
+        const optimisticAsset = {
+          ...newAsset,
+          id: 'temp-' + Date.now(),
+          last_updated: new Date().toISOString()
+        } as Asset;
+        return old ? [...old, optimisticAsset] : [optimisticAsset];
+      });
+      return { previousAssets };
+    },
+    onError: (_err, _newAsset, context) => {
+      if (context?.previousAssets) {
+        queryClient.setQueryData(['assets'], context.previousAssets);
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
+      queryClient.invalidateQueries({ queryKey: ['wealth_history'] });
     }
   });
 }
@@ -44,8 +63,24 @@ export function useUpdateAsset() {
       const { data } = await api.put(`/assets/${id}`, updates);
       return data;
     },
+    onMutate: async (updatedAsset) => {
+      await queryClient.cancelQueries({ queryKey: ['assets'] });
+      const previousAssets = queryClient.getQueryData<Asset[]>(['assets']);
+      queryClient.setQueryData(['assets'], (old: Asset[] | undefined) => {
+        return old?.map(asset => 
+          asset.id === updatedAsset.id ? { ...asset, ...updatedAsset } : asset
+        );
+      });
+      return { previousAssets };
+    },
+    onError: (_err, _updatedAsset, context) => {
+      if (context?.previousAssets) {
+        queryClient.setQueryData(['assets'], context.previousAssets);
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
+      queryClient.invalidateQueries({ queryKey: ['wealth_history'] });
     }
   });
 }
@@ -57,8 +92,22 @@ export function useDeleteAsset() {
     mutationFn: async (id: string) => {
       await api.delete(`/assets/${id}`);
     },
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ['assets'] });
+      const previousAssets = queryClient.getQueryData<Asset[]>(['assets']);
+      queryClient.setQueryData(['assets'], (old: Asset[] | undefined) => {
+        return old?.filter(asset => asset.id !== id);
+      });
+      return { previousAssets };
+    },
+    onError: (_err, _id, context) => {
+      if (context?.previousAssets) {
+        queryClient.setQueryData(['assets'], context.previousAssets);
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
+      queryClient.invalidateQueries({ queryKey: ['wealth_history'] });
     }
   });
 }

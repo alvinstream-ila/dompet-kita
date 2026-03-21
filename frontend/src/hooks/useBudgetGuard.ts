@@ -1,18 +1,13 @@
 import { useMemo } from 'react';
-import { useTransactions } from './useTransactions';
 import { useSettings } from '@/hooks/useSettings';
+import { useFinancialSummary } from './useFinancialSummary';
 
 export function useBudgetGuard() {
   const { monthlyBudgetLimit } = useSettings();
   const now = new Date();
-  const { data: infiniteData } = useTransactions(now.getMonth(), now.getFullYear());
-  const transactions = useMemo(() => infiniteData?.pages.flat() || [], [infiniteData?.pages]);
-
-  const currentMonthExpenses = useMemo(() => {
-    return transactions
-      .filter(t => t.type === 'expense')
-      .reduce((sum, t) => sum + t.amount, 0);
-  }, [transactions]);
+  
+  // Use financial summary instead of full transaction list (much more efficient)
+  const { expense: currentMonthExpenses } = useFinancialSummary(now.getMonth(), now.getFullYear());
 
   const progress = useMemo(() => {
     if (monthlyBudgetLimit === 0) return 0;
