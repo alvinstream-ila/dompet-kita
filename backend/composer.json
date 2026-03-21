@@ -17,6 +17,7 @@
         "laravel/socialite": "^5.25",
         "laravel/tinker": "^2.10.1",
         "league/flysystem-aws-s3-v3": "3.0",
+        "resend/resend-laravel": "*",
         "sentry/sentry-laravel": "^4.22"
     },
     "require-dev": {
