@@ -12,10 +12,17 @@ class WealthHistoryController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        $now = Carbon::now();
         
-        // Fetch historical data from the new table
-        // We look for last 6 months
+        // Fetch historical data excluding current month
         $histories = WealthHistory::where('user_id', $user->id)
+            ->where(function($query) use ($now) {
+                $query->where('year', '<', $now->year)
+                      ->orWhere(function($q) use ($now) {
+                          $q->where('year', $now->year)
+                            ->where('month', '<', $now->month);
+                      });
+            })
             ->orderBy('year', 'desc')
             ->orderBy('month', 'desc')
             ->limit(5)
@@ -29,14 +36,14 @@ class WealthHistoryController extends Controller
             ];
         })->values()->toArray();
 
-        // Always add current month's real asset sum as the latest point
+        // Always add current real asset sum as the latest point
         $currentWealth = Asset::where('user_id', $user->id)->sum('value');
         
         $formattedHistory[] = [
-            'month' => Carbon::now()->format('M'),
+            'month' => $now->format('M'),
             'value' => (int) $currentWealth
         ];
 
-        return $formattedHistory;
+        return response()->json($formattedHistory);
     }
 }
