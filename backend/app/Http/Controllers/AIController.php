@@ -89,8 +89,7 @@ class AIController extends Controller
         Log::info('DEBUG_AI_START: ' . $user->email);
         
         try {
-            // No Transactions?
-            $count = \App\Models\Transaction::where('user_id', $user->id)->count();
+            $count = Transaction::where('user_id', $user->id)->count();
             if ($count === 0) {
                 return response()->json([
                     'title' => 'Sayang AI ✨',
@@ -98,7 +97,7 @@ class AIController extends Controller
                 ]);
             }
 
-            $transactions = \App\Models\Transaction::where('user_id', $user->id)
+            $transactions = Transaction::where('user_id', $user->id)
                 ->where('date', '>=', now()->subDays(30))
                 ->orderBy('date', 'desc')
                 ->get();
