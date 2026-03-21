@@ -30,16 +30,15 @@ class AIController extends Controller
             $base64Data = $request->image;
             $mimeType = $request->mime_type;
 
-            $prompt = "You are a financial receipt analyzer assistant for 'Dompet Kita' app. 
-                Focus on extracting the 'amount' (numeric integer) and 'merchant' (string) from this receipt image.
-                Identify precisely the total payment amount.
-                Format the response STRICTLY as a JSON object: {\"amount\": 123000, \"merchant\": \"Indomaret\"}.
-                If some values are unclear, make an educated guess. If impossible, return 0 for amount and 'Unknown' for merchant.
+            $prompt = "You are a sweet and smart financial partner for 'Dompet Kita' app. 
+                Your task is to extract 'amount' (numeric integer) and 'merchant' (string) from this receipt image. 
+                Focus ONLY on the final total payment. 
+                Also, provide a one-sentence 'message' in Indonesian that is very cute (gemes) and heartwarming about this purchase (e.g., 'Wah, abis jajan di Alfamart ya Sayang? Udah aku bantu catat ya! ❤️').
+                Format the response STRICTLY as a JSON object: {\"amount\": 123000, \"merchant\": \"Indomaret\", \"message\": \"...\"}.
                 Respond ONLY with the RAW JSON, no markdown formatting.";
 
             $client = Gemini::client(config('services.gemini.key'));
             
-            // Try 1.5 Flash, fallback to 1.0 Pro if needed
             $model = 'gemini-flash-latest'; 
             
             $response = $client->generativeModel($model)
@@ -66,7 +65,8 @@ class AIController extends Controller
                 'success' => true,
                 'data' => [
                     'amount' => (int) $result['amount'],
-                    'merchant' => $result['merchant'] ?? 'Unknown Merchant'
+                    'merchant' => $result['merchant'] ?? 'Unknown Merchant',
+                    'message' => $result['message'] ?? 'AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️'
                 ]
             ]);
 
@@ -113,13 +113,20 @@ class AIController extends Controller
             $savingsStr = number_format($savings);
 
             $prompt = <<<PROMPT
-Role: Sweet loving partner and financial pro.
-Budget: Income Rp {$incomeStr}, Expense Rp {$expenseStr}.
-Transactions:
+Role: Pasangan (Istri/Suami) yang sangat penyayang, manja tapi pinter banget ngatur duit (Financial Pro). 
+Konteks Data:
+- Pemasukan Kita: Rp {$incomeStr}
+- Jajan/Pengeluaran Kita: Rp {$expenseStr}
+- Sisa Tabungan Kita: Rp {$savingsStr}
+- Daftar Belanja Terakhir:
 {$summaryText}
 
-CRITICAL: Give a 2-sentence sweet insight in Indonesian. 
-STRICT JSON: {"title": "Sayang Terharu ✨", "insight": "MESSAGE"}
+INSTRUKSI PENTING:
+1. Panggil "Sayang" atau sebutan gemas lainnya. Gunakan bahasa Indonesia yang super gemas, hangat, tapi tetap memberikan analisis angka yang TAJAM.
+2. Analisis datanya: Kalau jajan (expense) kegedean dibanding pemasukan, ingetin dengan cara "cubit manja". Kalau tabungan naik, puji setinggi langit!
+3. Sebutkan setidaknya SATU kategori belanja yang paling boros dari daftar transaksi kalau ada.
+4. Jangan minta maaf atau bilang bingung. Berikan saran 3-4 kalimat yang sangat detil tapi romantis.
+5. STRICTLY output valid JSON ONLY: {"title": "Judul Gemes ✨", "insight": "Pesan Cinta & Analisis Detail"}
 PROMPT;
 
             Log::info('DEBUG_AI_PROMPT_SENT');

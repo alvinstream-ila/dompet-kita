@@ -154,12 +154,12 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
       });
 
       if (response.data.success) {
-        const { amount: extractedAmount, merchant } = response.data.data;
+        const { amount: extractedAmount, merchant, message } = response.data.data;
         
         if (extractedAmount) setAmount(formatToRupiah(extractedAmount.toString()));
         if (merchant) setDescription(merchant);
         
-        alert('AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️');
+        alert(message || 'AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️');
       } else {
         throw new Error(response.data.message || 'Gagal scan struk');
       }
