@@ -34,6 +34,7 @@ class SocialAuthController extends Controller
                 'social_id' => $socialUser->getId(),
                 'social_type' => $provider,
                 'avatar_url' => $user->avatar_url ?? $socialUser->getAvatar(),
+                'email_verified_at' => $user->email_verified_at ?? now(),
             ]);
         } else {
             $user = User::create([
@@ -43,6 +44,7 @@ class SocialAuthController extends Controller
                 'social_type' => $provider,
                 'avatar_url' => $socialUser->getAvatar(),
                 'password' => null, // No password for social login users
+                'email_verified_at' => now(), 
             ]);
             
             event(new \Illuminate\Auth\Events\Registered($user));
