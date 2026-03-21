@@ -6,9 +6,23 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Enums\TransactionType;
+use App\Http\Resources\TransactionResource;
+use Illuminate\Validation\Rule;
+use App\Services\BudgetService;
+use App\Services\TransactionService;
+use Illuminate\Support\Facades\Cache;
 
 class TransactionController extends Controller
 {
+    protected BudgetService $budgetService;
+    protected TransactionService $transactionService;
+
+    public function __construct(BudgetService $budgetService, TransactionService $transactionService)
+    {
+        $this->budgetService = $budgetService;
+        $this->transactionService = $transactionService;
+    }
     public function index(Request $request)
     {
         try {
@@ -16,24 +30,16 @@ class TransactionController extends Controller
             $query = Transaction::where('user_id', $user->id);
 
             if ($request->has(['month', 'year'])) {
-                $month = (int) $request->month + 1;
-                $year = (int) $request->year;
+                $month = $request->filled('month') ? (int) $request->month : null;
+                $year = $request->filled('year') ? (int) $request->year : null;
                 $budgetCycleStart = (int) ($request->budget_cycle_start ?? 1);
 
-                $currentMonthDate = Carbon::create($year, $month, 15);
-
-                if ($budgetCycleStart === 1) {
-                    $startDate = $currentMonthDate->copy()->startOfMonth();
-                    $endDate = $currentMonthDate->copy()->endOfMonth();
-                } else {
-                    $endDate = Carbon::create($year, $month, $budgetCycleStart - 1)->endOfDay();
-                    $startDate = $endDate->copy()->subMonth()->addDay()->startOfDay();
-                }
-
-                $query->whereBetween('date', [$startDate, $endDate]);
+                $dates = $this->budgetService->getBudgetCycleDates($month, $year, $budgetCycleStart);
+                $query->whereBetween('date', [$dates['start'], $dates['end']]);
             }
 
-            return $query->orderBy('date', 'desc')->paginate($request->input('limit', 20));
+            $transactions = $query->orderBy('date', 'desc')->paginate($request->input('limit', 20));
+            return TransactionResource::collection($transactions);
         } catch (\Exception $e) {
             \Log::error('TRANSACTION_INDEX_ERROR: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
@@ -48,44 +54,18 @@ class TransactionController extends Controller
     {
         try {
             $user = $request->user();
-            $month = (int) ($request->month ?? now()->month - 1) + 1;
-            $year = (int) ($request->year ?? now()->year);
+            $month = $request->filled('month') ? (int) $request->month : null;
+            $year = $request->filled('year') ? (int) $request->year : null;
             $budgetCycleStart = (int) ($request->budget_cycle_start ?? 1);
 
-            $currentMonthDate = Carbon::create($year, $month, 15);
-
-            if ($budgetCycleStart === 1) {
-                $startDate = $currentMonthDate->copy()->startOfMonth();
-                $endDate = $currentMonthDate->copy()->endOfMonth();
-            } else {
-                $endDate = Carbon::create($year, $month, $budgetCycleStart - 1)->endOfDay();
-                $startDate = $endDate->copy()->subMonth()->addDay()->startOfDay();
-            }
-
-            $summary = Transaction::where('user_id', $user->id)
-                ->whereBetween('date', [$startDate, $endDate])
-                ->select('type', DB::raw('SUM(amount) as total'))
-                ->groupBy('type')
-                ->get();
-
-            $income = $summary->where('type', 'income')->first()?->total ?? 0;
-            $expense = $summary->where('type', 'expense')->first()?->total ?? 0;
-
-            $recentTransactions = Transaction::where('user_id', $user->id)
-                ->whereBetween('date', [$startDate, $endDate])
-                ->orderBy('date', 'desc')
-                ->limit(10)
-                ->get();
+            $data = $this->transactionService->getSummary($user->id, $month, $year, $budgetCycleStart);
 
             return response()->json([
-                'income' => (float) $income,
-                'expense' => (float) $expense,
-                'balance' => (float) ($income - $expense),
-                'transactions' => $recentTransactions,
-                'period' => [
-                    'start' => $startDate->toIso8601String(),
-                    'end' => $endDate->toIso8601String(),
-                ]
+                'income' => $data['income'],
+                'expense' => $data['expense'],
+                'balance' => $data['balance'],
+                'transactions' => TransactionResource::collection($data['recentTransactions']),
+                'period' => $data['period']
             ]);
         } catch (\Exception $e) {
             \Log::error('TRANSACTION_SUMMARY_ERROR: ' . $e->getMessage(), [
@@ -104,7 +84,7 @@ class TransactionController extends Controller
             'amount' => 'required|numeric',
             'category' => 'required|string',
             'sub_category' => 'nullable|string',
-            'type' => 'required|string|in:income,expense',
+            'type' => ['required', Rule::enum(TransactionType::class)],
             'description' => 'required|string',
             'note' => 'nullable|string',
             'receipt_url' => 'nullable|string',
@@ -113,7 +93,11 @@ class TransactionController extends Controller
         $validated['user_id'] = $request->user()->id;
         $transaction = Transaction::create($validated);
 
-        return response()->json($transaction, 201);
+        Cache::forget("ai_insight_{$request->user()->id}");
+
+        return (new TransactionResource($transaction))
+                    ->response()
+                    ->setStatusCode(201);
     }
 
     public function update(Request $request, Transaction $transaction)
@@ -127,14 +111,15 @@ class TransactionController extends Controller
             'amount' => 'sometimes|numeric',
             'category' => 'sometimes|string',
             'sub_category' => 'nullable|string',
-            'type' => 'sometimes|string|in:income,expense',
+            'type' => ['sometimes', Rule::enum(TransactionType::class)],
             'description' => 'sometimes|string',
             'note' => 'nullable|string',
             'receipt_url' => 'nullable|string',
         ]);
 
         $transaction->update($validated);
-        return response()->json($transaction);
+        Cache::forget("ai_insight_{$request->user()->id}");
+        return new TransactionResource($transaction);
     }
 
     public function destroy(Request $request, Transaction $transaction)
@@ -144,6 +129,7 @@ class TransactionController extends Controller
         }
 
         $transaction->delete();
+        Cache::forget("ai_insight_{$request->user()->id}");
         return response()->json(null, 204);
     }
 }

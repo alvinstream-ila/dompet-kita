@@ -24,6 +24,7 @@ class Transaction extends Model
     protected $casts = [
         'date' => 'datetime',
         'amount' => 'float',
+        'type' => \App\Enums\TransactionType::class,
     ];
 
     public function user(): BelongsTo
