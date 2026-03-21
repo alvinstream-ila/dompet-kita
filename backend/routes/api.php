@@ -26,10 +26,12 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
     }
 
     if (!$request->hasValidSignature()) {
+        \Illuminate\Support\Facades\Log::error('Signature Mismatch', [
+            'expected_from_url' => $request->fullUrl(),
+            'received_signature' => $request->query('signature'),
+        ]);
         return response()->json([
             'message' => 'Link verifikasi tidak valid atau rusak sayang. 🥺',
-            'debug_full_url' => $request->fullUrl(),
-            'debug_signature' => $request->query('signature'),
         ], 401);
     }
 
