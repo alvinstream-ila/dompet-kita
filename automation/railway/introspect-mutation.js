@@ -1,5 +1,5 @@
 const https = require('https');
-const API_KEY = 'a9c4a92c-64da-415b-b334-a98b95550826';
+const API_KEY = 'a961da69-2c01-4944-835b-24d134890347';
 
 const query = `
 query mutationDetails($name: String!) {

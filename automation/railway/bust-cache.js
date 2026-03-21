@@ -1,7 +1,8 @@
 const https = require('https');
 
 const API_KEY = 'a961da69-2c01-4944-835b-24d134890347';
-const TRIGGER_ID = 'dc85529a-be1f-4260-9265-a490e9d328ec';
+const SERVICE_ID = '9415fce4-8d0b-4c75-bd92-024e5d78caa0';
+const ENVIRONMENT_ID = '367db267-2566-4dcb-b8cc-70fb54f33f15';
 
 async function queryRailway(query, variables = {}) {
   const data = JSON.stringify({ query, variables });
@@ -28,18 +29,19 @@ async function queryRailway(query, variables = {}) {
   });
 }
 
-const updateTriggerMutation = `
-mutation deploymentTriggerUpdate($id: String!, $input: DeploymentTriggerUpdateInput!) {
-  deploymentTriggerUpdate(id: $id, input: $input) {
-    id
-    branch
-  }
+const upsertVarsMutation = `
+mutation variableUpsert($input: VariableUpsertInput!) {
+  variableUpsert(input: $input)
 }
 `;
 
-queryRailway(updateTriggerMutation, { 
-    id: TRIGGER_ID, 
-    input: { branch: "FIX-NOW-V2026" } 
+queryRailway(upsertVarsMutation, { 
+    input: { 
+        serviceId: SERVICE_ID, 
+        environmentId: ENVIRONMENT_ID, 
+        name: "CACHE_BUSTER_V2026", 
+        value: "v_final_1" 
+    } 
 }).then(res => {
     console.log(JSON.stringify(res, null, 2));
 }).catch(console.error);
