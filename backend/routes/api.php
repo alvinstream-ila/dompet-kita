@@ -44,6 +44,9 @@ Route::middleware('auth:sanctum')->post('/email/verification-notification', func
         return response()->json(['message' => 'Email kamu sudah terverifikasi sayang! ❤️']);
     }
     
+    // Increase execution time as SMTP can be slow from certain regions
+    set_time_limit(120);
+    
     $request->user()->sendEmailVerificationNotification();
     
     return response()->json(['message' => 'Link verifikasi baru sudah dikirim ke email kamu sayang! ❤️']);
