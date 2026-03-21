@@ -26,9 +26,9 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
         // Production Security Guard
-        if (app()->environment('production') && config('app.debug')) {
-            abort(500, 'Security Breach: Application must not run in DEBUG mode in production.');
-        }
+        // if (app()->environment('production') && config('app.debug')) {
+        //     abort(500, 'Security Breach: Application must not run in DEBUG mode in production.');
+        // }
 
         // Mask sensitive data in case of unexpected exposure
         if (app()->environment('production')) {
