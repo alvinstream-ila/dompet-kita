@@ -30,7 +30,7 @@ async function queryRailway(query, variables = {}) {
 
 const deploymentsQuery = `
 query deployments($serviceId: String!) {
-  deployments(input: {serviceId: $serviceId}, first: 5) {
+  deployments(input: {serviceId: $serviceId}, first: 10) {
     edges {
       node {
         id
