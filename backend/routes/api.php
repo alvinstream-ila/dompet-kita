@@ -20,22 +20,16 @@ Route::post('/reset-password', [\App\Http\Controllers\PasswordResetController::c
 
 // Email Verification
 Route::get('/email/verify/{id}/{hash}', function (Request $request) {
-    $user = \App\Models\User::find($request->id);
-    if (!$user) {
-        return response()->json(['message' => 'User tidak ditemukan.'], 404);
+    if (!$request->hasValidSignature()) {
+        \Illuminate\Support\Facades\Log::warning('Verification Signature Mismatch', [
+            'url' => $request->fullUrl(),
+            'client_ip' => $request->ip(),
+            'app_url' => config('app.url'),
+        ]);
+        return response()->json(['message' => 'Link verifikasi tidak valid atau sudah kadaluarsa sayang. 🥺'], 401);
     }
 
-    /* 
-    if (!$request->hasValidSignature()) {
-        \Illuminate\Support\Facades\Log::error('Signature Mismatch', [
-            'expected_from_url' => $request->fullUrl(),
-            'received_signature' => $request->query('signature'),
-        ]);
-        return response()->json([
-            'message' => 'Link verifikasi tidak valid atau rusak sayang. 🥺',
-        ], 401);
-    }
-    */
+    $user = \App\Models\User::findOrFail($request->id);
 
     if (!$user->hasVerifiedEmail()) {
         $user->markEmailAsVerified();
@@ -46,12 +40,13 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
 })->name('verification.verify');
 
 Route::middleware('auth:sanctum')->post('/email/verification-notification', function (Request $request) {
-    if (!$request->user()->hasVerifiedEmail()) {
-        $request->user()->markEmailAsVerified();
-        event(new \Illuminate\Auth\Events\Verified($request->user()));
-        return response()->json(['message' => 'Hore! Email kamu sudah BERHASIL DIVERIFIKASI! (Bypass Sistem Aktif) ✨']);
+    if ($request->user()->hasVerifiedEmail()) {
+        return response()->json(['message' => 'Email kamu sudah terverifikasi sayang! ❤️']);
     }
-    return response()->json(['message' => 'Email kamu sudah terverifikasi sayang! ❤️']);
+    
+    $request->user()->sendEmailVerificationNotification();
+    
+    return response()->json(['message' => 'Link verifikasi baru sudah dikirim ke email kamu sayang! ❤️']);
 })->name('verification.send');
 
 // Social Login

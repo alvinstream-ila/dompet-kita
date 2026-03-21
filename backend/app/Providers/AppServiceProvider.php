@@ -39,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
         if (app()->environment('production')) {
             config(['logging.channels.stack.level' => 'info']);
             URL::forceScheme('https');
+            URL::forceRootUrl(config('app.url'));
         }
     }
 }

@@ -90,14 +90,8 @@ class User extends Authenticatable implements MustVerifyEmail
             ]
         );
 
-        // BULLETPROOF FIX: Force HTTPS regardless of Laravel's config because the frontend requires it!
-        $originalUrl = str_replace('http://', 'https://', $originalUrl);
-
         $frontendUrl = (config('app.frontend_url') ?? 'https://dompet-kita-six.vercel.app') . '/verify-email?url=' . urlencode($originalUrl);
         
-        // You might need a custom notification to send this specific URL
-        // For simplicity, we can use a custom notification or just Log it for now if we don't want to create too many files.
-        // But let's stay standard.
         $this->notify(new \App\Notifications\VerifyEmailNotification($frontendUrl));
     }
 }
