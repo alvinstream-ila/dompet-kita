@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Http\Request;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         // Mask sensitive data in case of unexpected exposure
         if (app()->environment('production')) {
             config(['logging.channels.stack.level' => 'info']);
+            URL::forceScheme('https');
         }
     }
 }
