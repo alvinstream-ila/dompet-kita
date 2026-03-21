@@ -25,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+        \Illuminate\Support\Facades\Log::info('Sayang, ini sistem update terbaru V2026!');
         // Production Security Guard
         // if (app()->environment('production') && config('app.debug')) {
         //     abort(500, 'Security Breach V2: Application must not run in DEBUG mode in production.');
