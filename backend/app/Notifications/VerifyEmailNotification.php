@@ -2,16 +2,12 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Log;
 
-class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
+class VerifyEmailNotification extends VerifyEmail
 {
-    use Queueable;
-
     public $verificationUrl;
 
     /**
