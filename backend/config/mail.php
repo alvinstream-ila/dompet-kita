@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'smtp'),
+    'default' => env('MAIL_MAILER', 'google'),
 
     /*
     |--------------------------------------------------------------------------
@@ -48,6 +48,13 @@ return [
             'encryption' => env('MAIL_ENCRYPTION', 'ssl'),
             'timeout' => 30,
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
+        ],
+
+        'google' => [
+            'transport' => 'google',
+            'client_id' => env('GOOGLE_MAIL_CLIENT_ID'),
+            'client_secret' => env('GOOGLE_MAIL_CLIENT_SECRET'),
+            'refresh_token' => env('GOOGLE_MAIL_REFRESH_TOKEN'),
         ],
 
         'ses' => [
