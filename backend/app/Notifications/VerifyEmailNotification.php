@@ -34,14 +34,13 @@ class VerifyEmailNotification extends VerifyEmail
      */
     public function toMail($notifiable)
     {
-        Log::info('Sending verification email to: ' . $notifiable->email);
+        Log::info('Sending PREMIUM verification email to: ' . $notifiable->email);
 
         return (new MailMessage)
             ->subject('Verifikasi Email Dompet Kita ✨')
-            ->greeting('Halo sayang! ❤️')
-            ->line('Klik tombol di bawah ini buat verifikasi email kamu ya, biar kita bisa mulai nabung bareng! 💰')
-            ->action('Verifikasi Email Sekarang', $this->verificationUrl($notifiable))
-            ->line('Kalau kamu nggak merasa daftar di Dompet Kita, cuekin aja pesan ini ya sayang.')
-            ->salutation('Cintamu, Dompet Kita Team');
+            ->view('emails.verify-email', [
+                'verificationUrl' => $this->verificationUrl($notifiable),
+                'notifiable' => $notifiable
+            ]);
     }
 }
