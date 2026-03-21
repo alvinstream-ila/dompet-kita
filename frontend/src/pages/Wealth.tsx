@@ -21,6 +21,7 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useFormatting } from '@/hooks/useFormatting';
 import { useAssets, useWealthHistory, useAddAsset, useUpdateAsset, useDeleteAsset } from '@/hooks/useAssets';
+import { useGoals } from '@/hooks/useGoals';
 import { PageLoader } from '@/components/ui/PageLoader';
 import {
   Dialog,
@@ -75,6 +76,7 @@ const Wealth: React.FC = () => {
   const { formatAmount } = useFormatting();
   const { data: assets = [], isLoading: assetsLoading } = useAssets();
   const { data: wealthHistory = [] } = useWealthHistory();
+  const { data: goals = [] } = useGoals();
   const addAssetMutation = useAddAsset();
   const updateAssetMutation = useUpdateAsset();
   const deleteAssetMutation = useDeleteAsset();
@@ -109,6 +111,23 @@ const Wealth: React.FC = () => {
     if (lastValue === 0) return 0;
     return ((currentValue - lastValue) / lastValue) * 100;
   }, [wealthHistory]);
+
+  const freedomProgress = React.useMemo(() => {
+    if (goals.length === 0) return 0;
+    const totalTarget = goals.reduce((sum, g) => sum + g.target_amount, 0);
+    const totalSaved = goals.reduce((sum, g) => sum + g.current_amount, 0);
+    if (totalTarget === 0) return 0;
+    return Math.min(Math.round((totalSaved / totalTarget) * 100), 100);
+  }, [goals]);
+
+  const freedomMessage = React.useMemo(() => {
+    if (goals.length === 0) return "Ayo tentukan mimpi kita dulu, Sayang! ✨";
+    if (freedomProgress >= 100) return "CARI MIMPI BARU LAGI! Kita sudah merdeka, Sayang! 🎉🏆💖";
+    if (freedomProgress >= 80) return "DIKIT LAGI! Kita hampir merdeka, Sayang! Ayo gas terus! 🎢✨";
+    if (freedomProgress >= 50) return "SETENGAH JALAN! Makin mantap fondasi kita, Sayang! I love you! ❤️";
+    if (freedomProgress >= 20) return "Sabar ya Sayang, pelan tapi pasti! Fondasi kita makin kuat! ✨";
+    return "Langkah awal masa depan kita. Semangat ya Sayang! 👣💎";
+  }, [freedomProgress, goals.length]);
 
   const getAssetIcon = (type: string) => {
     switch (type) {
@@ -335,10 +354,10 @@ const Wealth: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between items-end">
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Progress Freedom</span>
-                    <span className="text-xl font-black text-slate-800">45%</span>
+                    <span className="text-xl font-black text-slate-800">{freedomProgress}%</span>
                   </div>
-                  <Progress value={45} className="h-3 rounded-full bg-slate-100" />
-                  <p className="text-[10px] font-bold text-slate-400 italic">"Sabar ya Sayang, pelan tapi pasti! ✨"</p>
+                  <Progress value={freedomProgress} className="h-3 rounded-full bg-slate-100" />
+                  <p className="text-[10px] font-bold text-slate-400 italic">"{freedomMessage}"</p>
                 </div>
               </Card>
            </div>
