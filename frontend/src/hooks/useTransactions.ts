@@ -37,9 +37,31 @@ export function useAddTransaction() {
       const { data } = await api.post('/transactions', newTransaction);
       return data;
     },
+    onMutate: async (newTransaction) => {
+      await queryClient.cancelQueries({ queryKey: ['financial_summary'] });
+      const previousSummary = queryClient.getQueryData(['financial_summary']);
+      queryClient.setQueryData(['financial_summary'], (old: any) => {
+        if (!old) return old;
+        const amount = Number(newTransaction.amount);
+        const isIncome = newTransaction.type === 'income';
+        return {
+          ...old,
+          income: isIncome ? (old.income || 0) + amount : (old.income || 0),
+          expense: !isIncome ? (old.expense || 0) + amount : (old.expense || 0),
+          balance: isIncome ? (old.balance || 0) + amount : (old.balance || 0) - amount,
+        };
+      });
+      return { previousSummary };
+    },
+    onError: (_err, _newTx, context) => {
+      if (context?.previousSummary) {
+        queryClient.setQueryData(['financial_summary'], context.previousSummary);
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
+      queryClient.invalidateQueries({ queryKey: ['ai_insights'] });
     }
   });
 }
@@ -52,9 +74,13 @@ export function useUpdateTransaction() {
       const { data } = await api.put(`/transactions/${id}`, updates);
       return data;
     },
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['ai_insights'] });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
+      queryClient.invalidateQueries({ queryKey: ['ai_insights'] });
     }
   });
 }
@@ -66,9 +92,13 @@ export function useDeleteTransaction() {
     mutationFn: async (id: string) => {
       await api.delete(`/transactions/${id}`);
     },
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['ai_insights'] });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
+      queryClient.invalidateQueries({ queryKey: ['ai_insights'] });
     }
   });
 }
