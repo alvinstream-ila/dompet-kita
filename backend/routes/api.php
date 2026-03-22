@@ -19,8 +19,9 @@ Route::post('/forgot-password', [\App\Http\Controllers\PasswordResetController::
 Route::post('/reset-password', [\App\Http\Controllers\PasswordResetController::class, 'reset'])->name('password.reset')->middleware('throttle:3,1');
 
 // Email Verification
-Route::get('/email/verify/{id}/{hash}', function (Request $request) {
+Route::any('/email/verify/{id}/{hash}', function (Request $request) {
     \Illuminate\Support\Facades\Log::info('Email Verification Attempt', [
+        'method' => $request->method(),
         'id' => $request->id,
         'hash' => $request->hash,
         'full_url' => $request->fullUrl(),
