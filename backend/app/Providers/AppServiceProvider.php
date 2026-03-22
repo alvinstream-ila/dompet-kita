@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Mail;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 use Symfony\Component\Mailer\Bridge\Google\Transport\GmailSmtpTransport;
 use Google\Client as GoogleClient;
 
@@ -41,16 +42,17 @@ class AppServiceProvider extends ServiceProvider
             $accessTokenResponse = $client->getAccessToken();
             $accessToken = $accessTokenResponse['access_token'];
 
-            // We use GmailSmtpTransport but pass the Access Token as the password
-            // for the XOAuth2 mechanism which is supported by Gmail SMTP.
-            // Using config values to prevent connection timeouts if certain ports are blocked.
-            return new GmailSmtpTransport(
-                config('mail.from.address'),
-                $accessToken,
+            // We use EsmtpTransport to allow custom ports (like 587) because GmailSmtpTransport 
+            // is unfortunately hardcoded to port 465 which is often blocked in cloud environments.
+            $transport = new EsmtpTransport(
                 config('mail.mailers.smtp.host', 'smtp.gmail.com'),
                 config('mail.mailers.smtp.port', 587),
                 config('mail.mailers.smtp.encryption') === 'ssl' ? true : false
             );
+            $transport->setUsername(config('mail.from.address'));
+            $transport->setPassword($accessToken);
+
+            return $transport;
         });
 
         // Force 'Dompet Kita' Branding for Mail
