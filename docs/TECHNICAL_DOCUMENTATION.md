@@ -24,7 +24,7 @@ Welcome to the official technical documentation for the **Dompet Kita** backend.
 
 | Component | Technology |
 | :--- | :--- |
-| **Language** | PHP 8.2+ |
+| **Language** | PHP 8.4 |
 | **Framework** | Laravel 11.x |
 | **Database** | PostgreSQL (Hosted on Supabase) |
 | **Authentication** | Laravel Sanctum (Token-based) |
@@ -76,6 +76,7 @@ All private endpoints require the `Authorization: Bearer <token>` header.
 | `POST` | `/api/login` | User login (Throttled). | No |
 | `POST` | `/api/logout` | Revoke tokens. | Yes |
 | `GET` | `/api/auth/{provider}` | Start Social Login. | No |
+| `ANY` | `/api/email/verify` | Email Verification Callback. | No |
 
 ### 💰 Finance & Wealth
 | Method | Path | Description |
@@ -117,7 +118,7 @@ The `AIController` acts as a financial coach with a personality.
 ---
 
 > [!NOTE]
-> Backend documentation generated on March 19, 2026. This is a living document and should be updated whenever the `routes/api.php` or `migrations` change.
+> Backend documentation generated on March 22, 2026. This is a living document and should be updated whenever the `routes/api.php` or `migrations` change.
 
 ---
 
@@ -215,4 +216,4 @@ The build process includes **Vite Compression** and **Rollup Visualizer** to mai
 ---
 
 > [!TIP]
-> Frontend documentation generated on March 19, 2026. Keep `src/components/ui` updated as the design system evolves!
+> Frontend documentation generated on March 22, 2026. Keep `src/components/ui` updated as the design system evolves!

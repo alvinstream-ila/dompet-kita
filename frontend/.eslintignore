@@ -1,0 +1,9 @@
+# Ignore bundle analysis reports
+docs/analysis/
+node_modules/
+vendor/
+public/
+storage/
+.vercel/
+.agent/
+.agents/

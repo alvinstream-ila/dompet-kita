@@ -1,5 +1,5 @@
-const https = require('https');
-const API_KEY = 'c53d141f-e843-4127-958d-ceb61efdc2c3';
+﻿const https = require('https');
+const API_KEY = process.env.RAILWAY_TOKEN;
 
 const query = `
 query mutationDetails($name: String!) {
