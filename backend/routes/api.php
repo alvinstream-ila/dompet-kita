@@ -20,11 +20,18 @@ Route::post('/reset-password', [\App\Http\Controllers\PasswordResetController::c
 
 // Email Verification
 Route::get('/email/verify/{id}/{hash}', function (Request $request) {
+    \Illuminate\Support\Facades\Log::info('Email Verification Attempt', [
+        'id' => $request->id,
+        'hash' => $request->hash,
+        'full_url' => $request->fullUrl(),
+        'has_valid_signature' => $request->hasValidSignature(),
+    ]);
+
     if (!$request->hasValidSignature()) {
         \Illuminate\Support\Facades\Log::warning('Verification Signature Mismatch', [
-            'url' => $request->fullUrl(),
+            'request_url' => $request->fullUrl(),
+            'config_app_url' => config('app.url'),
             'client_ip' => $request->ip(),
-            'app_url' => config('app.url'),
         ]);
         return response()->json(['message' => 'Link verifikasi tidak valid atau sudah kadaluarsa sayang. 🥺'], 401);
     }

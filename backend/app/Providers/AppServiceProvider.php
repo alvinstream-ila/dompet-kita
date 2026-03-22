@@ -53,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
         config(['mail.from.name' => 'Dompet Kita']);
 
         // Mask sensitive data in case of unexpected exposure
-        if (app()->environment('production')) {
+        if (app()->environment('production') || str_starts_with(config('app.url'), 'https://')) {
             config(['logging.channels.stack.level' => 'info']);
             URL::forceScheme('https');
             URL::forceRootUrl(config('app.url'));
