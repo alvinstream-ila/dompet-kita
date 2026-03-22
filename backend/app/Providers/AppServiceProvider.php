@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
         });
         \Illuminate\Support\Facades\Log::info('Sayang, ini sistem update terbaru V2026!');
         // Production Security Guard
-        // Register Google Mail Transport (OAuth2)
+        // Register Google Mail Transport (OAuth2 Over HTTP API to bypass Railway SMTP blocks)
         Mail::extend('google', function (array $config) {
             $client = new GoogleClient();
             $client->setClientId($config['client_id']);
@@ -42,17 +42,26 @@ class AppServiceProvider extends ServiceProvider
             $accessTokenResponse = $client->getAccessToken();
             $accessToken = $accessTokenResponse['access_token'];
 
-            // We use EsmtpTransport to allow custom ports (like 587) because GmailSmtpTransport 
-            // is unfortunately hardcoded to port 465 which is often blocked in cloud environments.
-            $transport = new EsmtpTransport(
-                config('mail.mailers.smtp.host', 'smtp.gmail.com'),
-                config('mail.mailers.smtp.port', 587),
-                config('mail.mailers.smtp.encryption') === 'ssl' ? true : false
-            );
-            $transport->setUsername(config('mail.from.address'));
-            $transport->setPassword($accessToken);
-
-            return $transport;
+            return new class($accessToken) extends \Symfony\Component\Mailer\Transport\AbstractTransport {
+                private $token;
+                public function __construct($token) {
+                    parent::__construct();
+                    $this->token = $token;
+                }
+                protected function doSend(\Symfony\Component\Mailer\SentMessage $message): void {
+                    $email = \Symfony\Component\Mime\MessageConverter::toEmail($message->getOriginalMessage());
+                    $rawMessage = rtrim(strtr(base64_encode($email->toString()), '+/', '-_'), '=');
+                    
+                    $response = \Illuminate\Support\Facades\Http::withToken($this->token)
+                        ->post('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', [
+                            'raw' => $rawMessage
+                        ]);
+                    if (!$response->successful()) {
+                        throw new \Exception('Gmail HTTP API Error: ' . $response->body());
+                    }
+                }
+                public function __toString(): string { return 'gmail-http'; }
+            };
         });
 
         // Force 'Dompet Kita' Branding for Mail
