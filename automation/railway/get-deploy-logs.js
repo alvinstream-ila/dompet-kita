@@ -1,4 +1,4 @@
-﻿const https = require('https');
+﻿const https = require('node:https');
 
 const API_KEY = process.env.RAILWAY_TOKEN;
 const DEPLOYMENT_ID = 'bb343f6f-10e7-4047-a1d3-c14066ba51dd'; 

@@ -1,4 +1,4 @@
-﻿const https = require('https');
+﻿const https = require('node:https');
 
 const API_KEY = process.env.RAILWAY_TOKEN;
 const TRIGGER_ID = 'dc85529a-be1f-4260-9265-a490e9d328ec';

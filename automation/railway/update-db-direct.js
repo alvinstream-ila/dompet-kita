@@ -1,4 +1,4 @@
-﻿const https = require('https');
+﻿const https = require('node:https');
 
 const API_KEY = process.env.RAILWAY_TOKEN;
 const PROJECT_ID = '6063b6f6-fa15-42c7-aa99-494d7db13ebb';

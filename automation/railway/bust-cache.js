@@ -1,4 +1,4 @@
-﻿const https = require('https');
+﻿const https = require('node:https');
 
 const API_KEY = process.env.RAILWAY_TOKEN;
 const SERVICE_ID = '9415fce4-8d0b-4c75-bd92-024e5d78caa0';
@@ -35,13 +35,16 @@ mutation variableUpsert($input: VariableUpsertInput!) {
 }
 `;
 
-queryRailway(upsertVarsMutation, { 
-    input: { 
-        serviceId: SERVICE_ID, 
-        environmentId: ENVIRONMENT_ID, 
-        name: "CACHE_BUSTER_V2026", 
-        value: "v_final_1" 
-    } 
-}).then(res => {
+try {
+    const res = await queryRailway(upsertVarsMutation, { 
+        input: { 
+            serviceId: SERVICE_ID, 
+            environmentId: ENVIRONMENT_ID, 
+            name: "CACHE_BUSTER_V2026", 
+            value: "v_final_1" 
+        } 
+    });
     console.log(JSON.stringify(res, null, 2));
-}).catch(console.error);
+} catch (error) {
+    console.error(error);
+}

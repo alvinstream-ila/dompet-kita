@@ -1,4 +1,4 @@
-﻿const https = require('https');
+﻿const https = require('node:https');
 const API_KEY = process.env.RAILWAY_TOKEN;
 
 const query = `

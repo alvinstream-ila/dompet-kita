@@ -1,4 +1,4 @@
-﻿const https = require('https');
+﻿const https = require('node:https');
 
 const API_KEY = process.env.RAILWAY_TOKEN;
 const SERVICE_ID = '9415fce4-8d0b-4c75-bd92-024e5d78caa0';
