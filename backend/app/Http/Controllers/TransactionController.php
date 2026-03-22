@@ -43,7 +43,7 @@ class TransactionController extends Controller
             $transactions = $query->orderBy('date', 'desc')->paginate($limit);
             return TransactionResource::collection($transactions);
         } catch (\Exception $e) {
-            \Log::error('TRANSACTION_INDEX_ERROR: ' . $e->getMessage(), [
+            Log::error('TRANSACTION_INDEX_ERROR: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
                 'user' => $request->user()?->id,
                 'params' => $request->all()
@@ -70,7 +70,7 @@ class TransactionController extends Controller
                 'period' => $data['period']
             ]);
         } catch (\Exception $e) {
-            \Log::error('TRANSACTION_SUMMARY_ERROR: ' . $e->getMessage(), [
+            Log::error('TRANSACTION_SUMMARY_ERROR: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
                 'user' => $request->user()?->id,
                 'params' => $request->all()
