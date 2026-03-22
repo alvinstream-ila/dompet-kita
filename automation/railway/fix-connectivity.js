@@ -1,6 +1,6 @@
 const https = require('https');
 
-const API_KEY = 'a961da69-2c01-4944-835b-24d134890347';
+const API_KEY = 'c53d141f-e843-4127-958d-ceb61efdc2c3';
 const PROJECT_ID = '6063b6f6-fa15-42c7-aa99-494d7db13ebb';
 const ENVIRONMENT_ID = '367db267-2566-4dcb-b8cc-70fb54f33f15';
 const SERVICE_ID = '9415fce4-8d0b-4c75-bd92-024e5d78caa0';

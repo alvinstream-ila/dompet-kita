@@ -1,6 +1,6 @@
 const https = require('https');
 
-const API_KEY = 'a961da69-2c01-4944-835b-24d134890347';
+const API_KEY = 'c53d141f-e843-4127-958d-ceb61efdc2c3';
 const DEPLOYMENT_ID = 'bb343f6f-10e7-4047-a1d3-c14066ba51dd'; 
 
 async function getDeployLogs(id) {

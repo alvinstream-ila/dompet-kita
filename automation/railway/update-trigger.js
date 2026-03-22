@@ -1,6 +1,6 @@
 const https = require('https');
 
-const API_KEY = 'a961da69-2c01-4944-835b-24d134890347';
+const API_KEY = 'c53d141f-e843-4127-958d-ceb61efdc2c3';
 const TRIGGER_ID = 'dc85529a-be1f-4260-9265-a490e9d328ec';
 
 async function queryRailway(query, variables = {}) {
