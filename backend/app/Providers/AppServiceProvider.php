@@ -43,9 +43,13 @@ class AppServiceProvider extends ServiceProvider
 
             // We use GmailSmtpTransport but pass the Access Token as the password
             // for the XOAuth2 mechanism which is supported by Gmail SMTP.
+            // Using config values to prevent connection timeouts if certain ports are blocked.
             return new GmailSmtpTransport(
                 config('mail.from.address'),
-                $accessToken
+                $accessToken,
+                config('mail.mailers.smtp.host', 'smtp.gmail.com'),
+                config('mail.mailers.smtp.port', 587),
+                config('mail.mailers.smtp.encryption') === 'ssl' ? true : false
             );
         });
 
