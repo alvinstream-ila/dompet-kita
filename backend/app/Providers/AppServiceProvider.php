@@ -52,6 +52,7 @@ class AppServiceProvider extends ServiceProvider
                     $email = \Symfony\Component\Mime\MessageConverter::toEmail($message->getOriginalMessage());
                     $rawMessage = rtrim(strtr(base64_encode($email->toString()), '+/', '-_'), '=');
                     
+                    /** @var \Illuminate\Http\Client\Response $response */
                     $response = \Illuminate\Support\Facades\Http::withToken($this->token)
                         ->post('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', [
                             'raw' => $rawMessage

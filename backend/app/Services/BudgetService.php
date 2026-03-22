@@ -17,8 +17,8 @@ class BudgetService
      */
     public function getBudgetCycleDates(?int $month, ?int $year, int $budgetCycleStart = 1): array
     {
-        $computedMonth = (int) ($month !== null ? $month : now()->month - 1) + 1;
-        $computedYear = (int) ($year ?? now()->year);
+        $computedMonth = (int) ($month !== null && $month >= 0 && $month <= 11 ? $month : now()->month - 1) + 1;
+        $computedYear = (int) ($year !== null && $year > 1900 && $year < 2100 ? $year : now()->year);
 
         $currentMonthDate = Carbon::create($computedYear, $computedMonth, 15);
 

@@ -18,6 +18,7 @@ class GeminiService
     public function analyzeFinancials(string $prompt)
     {
         try {
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::post($this->baseUrl . '?key=' . $this->apiKey, [
                 'contents' => [
                     [
