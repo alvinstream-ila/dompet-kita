@@ -30,3 +30,4 @@ stats.html
 *.sln
 *.sw?
 .vercel
+.env*.local
