@@ -19,19 +19,39 @@ class AiService
             Format the response STRICTLY as a JSON object: {\"amount\": 123000, \"merchant\": \"Indomaret\", \"message\": \"...\"}.
             Respond ONLY with the RAW JSON, no markdown formatting.";
 
-        $apiKey = \config('services.gemini.key');
-        $client = \Gemini::client($apiKey);
+        // Basic MimeType fix (Ensure Gemini-compatible strings)
+        $validMimes = [
+            'image/png', 'image/jpeg', 'image/webp', 'image/heic', 'image/heif'
+        ];
         
-        $response = $client->generativeModel('gemini-flash-latest')
-            ->generateContent([
-                $prompt,
-                new \Gemini\Data\Blob(
-                    mimeType: \Gemini\Enums\MimeType::from($mimeType),
-                    data: $base64Data
-                )
-            ]);
+        // Convert jpg to jpeg if needed
+        if ($mimeType === 'image/jpg') $mimeType = 'image/jpeg';
+        
+        // If not recognized, default to jpeg as a guess (or let Gemini try)
+        if (!in_array($mimeType, $validMimes)) {
+            \Illuminate\Support\Facades\Log::warning('AI_UNSUPPORTED_MIME_DETECTED: ' . $mimeType . '. Defaulting to image/jpeg.');
+            $mimeType = 'image/jpeg';
+        }
 
-        $jsonText = $response->text();
+        try {
+            $apiKey = \config('services.gemini.key');
+            $client = \Gemini::client($apiKey);
+            
+            $response = $client->generativeModel('gemini-flash-latest')
+                ->generateContent([
+                    $prompt,
+                    new \Gemini\Data\Blob(
+                        mimeType: \Gemini\Enums\MimeType::from($mimeType),
+                        data: $base64Data
+                    )
+                ]);
+
+            $jsonText = $response->text();
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('GEMINI_API_ERROR: ' . $e->getMessage());
+            throw new \Exception('Maaf Sayang, Google Gemini lagi capek. Coba lagi atau input manual ya! ❤️');
+        }
+
         \Illuminate\Support\Facades\Log::debug('RAW_AI_RESPONSE: ' . $jsonText);
         
         // Advanced cleanup: Find the first { and the last } in the response
@@ -78,10 +98,18 @@ INSTRUKSI PENTING:
 5. STRICTLY output valid JSON ONLY: {"title": "Judul Gemes ✨", "insight": "Pesan Cinta & Analisis Detail"}
 PROMPT;
 
-        $apiKey = \config('services.gemini.key');
-        $client = \Gemini::client($apiKey);
-        $response = $client->generativeModel('gemini-flash-latest')->generateContent($prompt);
-        $jsonText = $response->text();
+        try {
+            $apiKey = \config('services.gemini.key');
+            $client = \Gemini::client($apiKey);
+            $response = $client->generativeModel('gemini-flash-latest')->generateContent($prompt);
+            $jsonText = $response->text();
+        } catch (\Exception $e) {
+             \Illuminate\Support\Facades\Log::error('GEMINI_INSIGHT_ERROR: ' . $e->getMessage());
+             return [
+                'title' => 'Sayang Terharu ✨',
+                'insight' => 'Waktunya mulai petualangan baru kita, Sayang! Yuk, mulai catat pengeluaran pertama kita biar impian kita makin dekat? ❤️'
+             ];
+        }
         
         if (preg_match('/\{.*\}/s', $jsonText, $matches)) {
             $jsonText = $matches[0];
