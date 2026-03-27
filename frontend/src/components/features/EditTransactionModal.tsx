@@ -144,7 +144,7 @@ const handleFileUpload = async (selectedFile: File) => {
         throw new Error('Pilih file struk baru untuk scan AI ya Sayang! ❤️');
       }
       
-      const response = await api.post('/ai/analyze', {
+      const response = await api.post('/ai/analyze-receipt', {
         image: base64Data,
         mime_type: file?.type || 'image/jpeg'
       });
@@ -475,20 +475,18 @@ const handleFileUpload = async (selectedFile: File) => {
             <div className="space-y-2">
               <h3 className="text-xl font-black text-slate-800 uppercase tracking-tighter">
                 {confirmStep === 0 && "Hapus Transaksi?"}
-                {confirmStep === 1 && "Yakin Sayang?"}
-                {confirmStep === 2 && "Beneran dihapus?"}
+                {confirmStep === 1 && "Yakin Banget Sayang?"}
               </h3>
               <p className="text-slate-500 font-bold text-[13px] leading-relaxed px-4">
                 {confirmStep === 0 && "Duh, beneran mau dihapus catatannya? Sayang lho datanya ilang nanti..."}
-                {confirmStep === 1 && "Sekali lagi ya, beneran mau dihapus? Nanti nggak bisa balik lagi lho..."}
-                {confirmStep === 2 && "Ini beneran langkah terakhir ya sayang. Klik hapus kalau sudah yakin banget!"}
+                {confirmStep === 1 && "Oke, ini langkah terakhir ya sayang. Klik hapus kalau sudah yakin banget!"}
               </p>
             </div>
 
             <div className="flex flex-col gap-3 pt-2">
-              {confirmStep < 2 ? (
+              {confirmStep < 1 ? (
                 <Button 
-                   onClick={() => setConfirmStep(confirmStep + 1)}
+                   onClick={() => setConfirmStep(1)}
                    className="h-12 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-black uppercase tracking-widest text-[11px] shadow-lg shadow-red-200 transition-all active:scale-95"
                 >
                    IA, SAYA YAKIN
@@ -518,7 +516,7 @@ const handleFileUpload = async (selectedFile: File) => {
           
           {/* Progress Indicator */}
           <div className="h-1.5 w-full bg-slate-100 flex">
-            <div className={cn("h-full bg-red-500 transition-all duration-500", confirmStep === 0 ? "w-1/3" : confirmStep === 1 ? "w-2/3" : "w-full")} />
+            <div className={cn("h-full bg-red-500 transition-all duration-500", confirmStep === 0 ? "w-1/2" : "w-full")} />
           </div>
         </DialogContent>
       </Dialog>

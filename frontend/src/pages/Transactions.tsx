@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { EditTransactionModal } from '@/components/features/EditTransactionModal';
 import { CategoryManagementModal } from '@/components/features/CategoryManagementModal';
+import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { UserNavDropdown } from '@/components/features/UserNavDropdown';
 import { PageLoader } from '@/components/ui/PageLoader';
 import { useFormatting } from '@/hooks/useFormatting';
@@ -41,6 +42,8 @@ const Transactions: React.FC = () => {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null);
 
   const { 
     data, 
@@ -77,8 +80,8 @@ const Transactions: React.FC = () => {
   };
 
   const filteredTransactions = transactions.filter((t: Transaction) => {
-    const description = t.note || t.category;
-    const matchesSearch = description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    const title = t.description || t.category;
+    const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                         t.category.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'Semua' || t.category === selectedCategory;
     return matchesSearch && matchesCategory;
@@ -87,8 +90,14 @@ const Transactions: React.FC = () => {
   const categories = ['Semua', ...Array.from(new Set(transactions.map((t: Transaction) => t.category)))];
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Yakin ingin menghapus transaksi ini, Sayang? 🥺')) {
-      await deleteMutation.mutateAsync(id);
+    setTransactionToDelete(id);
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (transactionToDelete) {
+      await deleteMutation.mutateAsync(transactionToDelete);
+      setTransactionToDelete(null);
     }
   };
 
@@ -203,7 +212,7 @@ const Transactions: React.FC = () => {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="font-black text-slate-800 tracking-tight truncate">
-                  {t.note || t.category}
+                  {t.description || t.category}
                 </h3>
                 <span className={cn(
                   "px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border",
@@ -297,6 +306,13 @@ const Transactions: React.FC = () => {
       <CategoryManagementModal 
         isOpen={isCategoryModalOpen}
         onClose={() => setIsCategoryModalOpen(false)}
+      />
+
+      <DeleteConfirmDialog 
+        isOpen={isDeleteConfirmOpen}
+        onClose={() => setIsDeleteConfirmOpen(false)}
+        onConfirm={confirmDelete}
+        loading={deleteMutation.isPending}
       />
     </div>
   );

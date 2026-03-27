@@ -118,7 +118,7 @@ const Reports: React.FC = () => {
           date: new Date(t.date).toLocaleDateString('id-ID'),
           type: t.type === 'income' ? 'Pemasukan' : 'Pengeluaran',
           category: t.category,
-          note: t.note || '-',
+          note: t.description || t.category,
           amount: t.amount,
           status: 'Sukses'
         });
@@ -254,7 +254,7 @@ const Reports: React.FC = () => {
       const tableData = transactions.map(t => [
         new Date(t.date).toLocaleDateString('id-ID'),
         t.category,
-        t.note || '-',
+        t.description || t.category,
         t.type === 'income' ? 'IN' : 'OUT',
         `Rp ${t.amount.toLocaleString('id-ID')}`
       ]);

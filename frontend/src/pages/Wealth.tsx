@@ -23,6 +23,7 @@ import { useFormatting } from '@/hooks/useFormatting';
 import { useAssets, useWealthHistory, useAddAsset, useUpdateAsset, useDeleteAsset } from '@/hooks/useAssets';
 import { useGoals } from '@/hooks/useGoals';
 import { PageLoader } from '@/components/ui/PageLoader';
+import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import {
   Dialog,
   DialogContent,
@@ -94,6 +95,8 @@ const Wealth: React.FC = () => {
     type: 'Tabungan',
     value: ''
   });
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [assetToDelete, setAssetToDelete] = useState<string | null>(null);
 
   const chartLabels = wealthHistory.length > 0 
     ? (wealthHistory as WealthHistoryItem[]).map(h => h.month) 
@@ -223,8 +226,14 @@ const Wealth: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Yakin ingin menghapus aset ini, Sayang? 🥺')) {
-      await deleteAssetMutation.mutateAsync(id);
+    setAssetToDelete(id);
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (assetToDelete) {
+      await deleteAssetMutation.mutateAsync(assetToDelete);
+      setAssetToDelete(null);
     }
   };
 
@@ -436,9 +445,17 @@ const Wealth: React.FC = () => {
                "Harta yang paling berharga adalah kamu. Tabungan ini cuma bonus buat kita bisa bahagia lebih lama lagi. Semangat ya Sayang! ❤️"
             </p>
           </Card>
-        </div>
-      </div>
+      <DeleteConfirmDialog 
+        isOpen={isDeleteConfirmOpen}
+        onClose={() => setIsDeleteConfirmOpen(false)}
+        onConfirm={confirmDelete}
+        title="Hapus Aset ini?"
+        description="Beneran mau hapus aset ini sayang? Sayang lho pertumbuhannya..."
+        loading={deleteAssetMutation.isPending}
+      />
     </div>
+  </div>
+</div>
   );
 };
 

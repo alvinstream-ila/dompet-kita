@@ -268,7 +268,7 @@ const Home: React.FC = () => {
  
                            <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between mb-1.5">
-                                 <span className="font-black text-slate-800 text-[14px] uppercase tracking-tight">{t.note || t.category}</span>
+                                 <span className="font-black text-slate-800 text-[14px] uppercase tracking-tight">{t.description || t.category}</span>
                                  <span className={cn(
                                     "font-black tracking-tighter text-[15px] whitespace-nowrap drop-shadow-sm",
                                     t.type === 'income' ? 'text-emerald-600' : 'text-pink-600'
