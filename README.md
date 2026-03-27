@@ -11,7 +11,7 @@ Aplikasi pencatatan keuangan premium untuk **Alvin & Ila**. Proyek ini telah mel
 ## 🏗️ Digital Infrastructure
 Aplikasi ini berjalan di ekosistem cloud modern:
 1.  **Frontend**: React 19 (Vite) di-host di **Vercel** dengan SPA routing.
-2.  **Backend**: Laravel 11 (PHP 8.4) di-host di **Railway** (Singapore Region).
+2.  **Backend**: Laravel 12 (PHP 8.4) di-host di **Railway** (Singapore Region).
 3.  **Database**: Managed PostgreSQL di **Supabase** (Port 6543 Connection Pooler).
 4.  **Storage**: S3-Compatible Storage via **Storj** (Distributed Cloud Storage).
 5.  **Mail**: SMTP Transactional via **Gmail Official**.
@@ -27,7 +27,7 @@ Aplikasi ini berjalan di ekosistem cloud modern:
 | Component | Technology |
 | :--- | :--- |
 | **Language** | PHP 8.4 |
-| **Framework** | Laravel 11.x |
+| **Framework** | Laravel 12.x |
 | **Database** | PostgreSQL (Supabase) |
 | **Auth** | Laravel Sanctum & Socialite (Google/Facebook) |
 | **AI** | Google Gemini AI (Insight Generator) |
@@ -39,7 +39,7 @@ Aplikasi ini berjalan di ekosistem cloud modern:
 - **Database Model**: Skema terstruktur untuk `users`, `transactions`, `assets`, `loans`, `goals`, dan `holidays`.
 - **API Security**: Semua endpoint publik dilindungi oleh Laravel Sanctum (Bearer Token).
 
-[Lihat Detail Backend Documentation](./docs/BACKEND.md)
+[Lihat Master Guide Database](./docs/MASTER_GUIDE_DATABASE.md)
 
 ---
 
@@ -49,7 +49,7 @@ Frontend berfokus pada "Aesthetic Precision" dengan performa tinggi.
 | Component | Technology |
 | :--- | :--- |
 | **Framework** | React 19 (Stable) |
-| **Build Tool** | Vite 8.x |
+| **Build Tool** | Vite 6.x |
 | **State/Data** | TanStack Query v5 + Zustand |
 | **Notifications** | Sonner (In-App Premium Glassmorphism) |
 | **Animations** | Framer Motion (PopLayout & Layout Transitions) |
@@ -62,16 +62,17 @@ Frontend berfokus pada "Aesthetic Precision" dengan performa tinggi.
 - **In-App Notification**: Notifikasi premium di dalam aplikasi tanpa interupsi browser.
 - **Aesthetic Error Boundary**: Halaman error yang cantik dan fungsional jika terjadi kendala teknis.
 
-[Lihat Detail Frontend Documentation](./docs/FRONTEND.md)
+[Lihat Detail Technical Documentation](./docs/TECHNICAL_DOCUMENTATION.md)
 
 ---
 
 ## 📜 Dokumentasi Pendukung
 Semua log pengembangan dan audit keamanan tersedia di folder `docs/`:
-- [docs/TECHNICAL_DOCUMENTATION.md](./docs/TECHNICAL_DOCUMENTATION.md) - Gabungan dokumen teknis lengkap.
+- [docs/TECHNICAL_DOCUMENTATION.md](./docs/TECHNICAL_DOCUMENTATION.md) - Dokumentasi teknis lengkap (Frontend & Backend).
+- [docs/MASTER_GUIDE_DATABASE.md](./docs/MASTER_GUIDE_DATABASE.md) - Panduan tunggal database (Awam & Teknis).
+- [docs/SECURITY_OVERVIEW.md](./docs/SECURITY_OVERVIEW.md) - Strategi & Laporan audit keamanan terbaru.
+- [docs/PRODUCTION_LOGS.md](./docs/PRODUCTION_LOGS.md) - Detail perjalanan fase 1-13.
 - [docs/FINAL_WALKTHROUGH.md](./docs/FINAL_WALKTHROUGH.md) - Rekapitulasi fitur & hasil testing.
-- [docs/SECURITY_AUDIT.md](./docs/SECURITY_AUDIT.md) - Laporan hardening keamanan (0 Vulnerabilities).
-- [docs/PRODUCTION_LOGS.md](./docs/PRODUCTION_LOGS.md) - Detail perjalanan fase 1-13 (Latest Update).
 
 ## 🛠️ Pengembangan Lokal
 1. **Root**: `npm run install-all`
