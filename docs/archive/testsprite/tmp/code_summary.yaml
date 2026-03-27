@@ -1,0 +1,98 @@
+version: "2"
+type: frontend
+tech_stack:
+  - TypeScript
+  - React 19
+  - Vite
+  - Tailwind CSS 4
+  - Framer Motion
+  - Radix UI
+  - TanStack Query
+  - Zustand
+  - Laravel (Backend)
+routes:
+  - path: /login
+    file: src/pages/Login.tsx
+    auth_required: false
+    description: User login page
+  - path: /
+    file: src/pages/Home.tsx
+    auth_required: true
+    description: Main dashboard overview
+  - path: /transactions
+    file: src/pages/Transactions.tsx
+    auth_required: true
+    description: List and manage transactions
+  - path: /reports
+    file: src/pages/Reports.tsx
+    auth_required: true
+    description: Financial reports and charts
+  - path: /loans
+    file: src/pages/Loans.tsx
+    auth_required: true
+    description: Current loans management
+  - path: /loans/history
+    file: src/pages/LoanHistory.tsx
+    auth_required: true
+    description: Loans history records
+  - path: /mimpi-kita
+    file: src/pages/MimpiKita.tsx
+    auth_required: true
+    description: Financial goals tracking
+  - path: /holiday
+    file: src/pages/Holiday.tsx
+    auth_required: true
+    description: Holiday planning and expenses
+  - path: /scan
+    file: src/pages/ReceiptScanner.tsx
+    auth_required: true
+    description: OCR receipt scanning
+  - path: /wealth
+    file: src/pages/Wealth.tsx
+    auth_required: true
+    description: Wealth and asset tracking
+features:
+  - name: Dashboard Overview
+    description: View summary of balance, income, and expenses
+    files:
+      - src/pages/Home.tsx
+      - src/hooks/useFinancialSummary.ts
+    entry_route: /
+    user_interactions:
+      - View charts
+      - Check current balance
+    api_calls:
+      - method: GET
+        endpoint: /api/summary
+    auth_required: true
+  - name: Transaction Management
+    description: Add, edit, delete, and view transactions
+    files:
+      - src/pages/Transactions.tsx
+      - src/hooks/useTransactions.ts
+    entry_route: /transactions
+    user_interactions:
+      - Click 'Add Transaction' button
+      - Fill transaction form (amount, category, description)
+      - Submit form
+      - View transaction list
+    api_calls:
+      - method: GET
+        endpoint: /api/transactions
+      - method: POST
+        endpoint: /api/transactions
+    auth_required: true
+  - name: Loan Tracking
+    description: Track money lent to or borrowed from others
+    files:
+      - src/pages/Loans.tsx
+      - src/hooks/useLoans.ts
+    entry_route: /loans
+    user_interactions:
+      - Add new loan record
+      - Mark loan as paid
+    api_calls:
+      - method: GET
+        endpoint: /api/loans
+    auth_required: true
+known_limitations: []

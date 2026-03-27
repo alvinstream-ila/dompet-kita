@@ -1,0 +1,17 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:5173",
+  "executionArgs": {
+    "projectName": "Dompet kita",
+    "projectPath": "c:\\Programing alvin\\Dompet kita",
+    "testIds": [],
+    "additionalInstruction": "Audit the program for bugs and consistency.",
+    "serverMode": "development",
+    "envs": {
+      "API_KEY": "sk-user-MFIq9eaH0zS9pA6K68yt5mbomFT2BjMJjU21ONFWLpZ_Nfh5kynKTmSTjmjahXUd9g0UNT5LAA3lSHnw2B9Bc9g-Rq6cu109kAKe4lEFBbbLLGzuRqGSIfg-TOvZoxzKiv4"
+    }
+  },
+  "serverPort": 62734
+}

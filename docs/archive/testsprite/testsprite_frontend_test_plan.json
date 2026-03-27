@@ -1,0 +1,2178 @@
+[
+  {
+    "id": "TC001",
+    "title": "Dashboard loads summary cards and charts successfully",
+    "description": "Verifies that the dashboard shows a loading state, then renders summary cards (income, expenses, balance) and charts.",
+    "category": "Dashboard Overview",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Login\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"loading indicator for summary\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"summary cards for income, expenses, and balance\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Dashboard charts are visible after summary loads",
+    "description": "Verifies that charts are displayed on the dashboard once the summary has finished loading.",
+    "category": "Dashboard Overview",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Login\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Wait for element \"summary cards for income, expenses, and balance\" to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"charts\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Balance section is visible on the dashboard",
+    "description": "Verifies that the current balance information is visible on the dashboard summary cards.",
+    "category": "Dashboard Overview",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Login\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Wait for element \"summary cards for income, expenses, and balance\" to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Balance\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Add a new transaction successfully from Transactions page",
+    "description": "Verifies a user can add a valid transaction and see it appear in the transaction list.",
+    "category": "Transaction Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Transactions\" in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/transactions\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Add Transaction\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"150000\" into the amount field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Food\" into the category field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Lunch\" into the description field"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Submit\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"150000\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Validate amount field error, then successfully submit after correction",
+    "description": "Verifies invalid amount entry shows validation error and corrected amount allows successful submission.",
+    "category": "Transaction Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Transactions\" in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/transactions\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Add Transaction\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"abc\" into the amount field"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Submit\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Invalid amount\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"25000\" into the amount field"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Submit\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"25000\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Edit an existing transaction and see the updated value in the list",
+    "description": "Verifies a user can open a transaction, edit a field, save, and see the updated information reflected in the list.",
+    "category": "Transaction Management",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Transactions\" in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/transactions\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a transaction item in the list"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Edit\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"Updated description\" into the description field"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Save\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Updated description\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Transaction list loads and is viewable",
+    "description": "Verifies the transactions page loads and the transaction list section is visible to the user.",
+    "category": "Transaction Management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Transactions\" in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/transactions\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Transaction list\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Delete a transaction and handle failure toast message",
+    "description": "Verifies that when deletion fails, the UI shows an error toast message and the user remains on the transactions page.",
+    "category": "Transaction Management",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Transactions\" in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/transactions\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Delete\" on a transaction item"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Confirm\" to confirm deletion"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Could not delete transaction\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/transactions\""
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Add a new loan and see it in the loans list",
+    "description": "Verifies a user can add a new loan and the newly created loan appears in the loan list.",
+    "category": "Loan Tracking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Loans\" in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/loans\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Add Loan\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Add Loan\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Alex QA\" into the Borrower/Lender field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"150000\" into the Amount field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"E2E test loan\" into the Notes field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Save\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Alex QA\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"150000\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Mark an active loan as paid and verify status updates in the list",
+    "description": "Verifies a user can mark an active loan as paid and see the loan status reflect the change in the list.",
+    "category": "Loan Tracking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Loans\" in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/loans\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Mark as paid\" on an active loan"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Confirm\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Confirm\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Paid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Cancel marking a loan as paid leaves the loan unchanged",
+    "description": "Verifies a user can cancel the confirmation dialog and the loan remains active/unpaid.",
+    "category": "Loan Tracking",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Loans\" in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/loans\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Mark as paid\" on an active loan"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Confirm\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Cancel\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Paid\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Attempt to add a loan with missing required fields shows a validation message",
+    "description": "Verifies the loan form prevents saving when required fields are missing and shows a visible validation message.",
+    "category": "Loan Tracking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Loans\" in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/loans\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Add Loan\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Add Loan\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Save\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Amount\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"required\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Attempt to add a loan with a non-numeric amount shows a validation message",
+    "description": "Verifies the loan form rejects a non-numeric amount and shows a visible validation message.",
+    "category": "Loan Tracking",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Loans\" in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/loans\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Add Loan\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Jamie QA\" into the Borrower/Lender field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"one hundred\" into the Amount field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Save\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Amount\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"valid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Paid loans do not offer a Mark as paid action",
+    "description": "Verifies a loan already marked as paid does not present the \"Mark as paid\" action in the list.",
+    "category": "Loan Tracking",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Loans\" in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/loans\""
+      },
+      {
+        "type": "action",
+        "description": "Scroll to a loan row that shows status \"Paid\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Mark as paid\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Generate reports for a valid date range and view populated charts/tables",
+    "description": "Verifies that a user can generate a report for a valid date range and see charts/tables populated.",
+    "category": "Reports",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Reports\" navigation link/menu item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports\""
+      },
+      {
+        "type": "action",
+        "description": "Select a valid start date in the report start date field"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid end date (after the start date) in the report end date field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Generate\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Report charts\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Report table\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Date range validation: start date after end date shows error",
+    "description": "Verifies that generating a report with an invalid date range shows an 'Invalid date range' validation error.",
+    "category": "Reports",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Reports\" navigation link/menu item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports\""
+      },
+      {
+        "type": "action",
+        "description": "Select an end date in the report end date field"
+      },
+      {
+        "type": "action",
+        "description": "Select a start date that is after the selected end date in the report start date field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Generate\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Invalid date range\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Fix invalid date range and successfully generate report",
+    "description": "Verifies that after seeing the invalid date range error, the user can correct dates and generate the report successfully.",
+    "category": "Reports",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Reports\" navigation link/menu item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports\""
+      },
+      {
+        "type": "action",
+        "description": "Select an end date in the report end date field"
+      },
+      {
+        "type": "action",
+        "description": "Select a start date that is after the selected end date in the report start date field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Generate\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Invalid date range\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Select a new start date that is before the selected end date in the report start date field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Generate\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Report charts\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Report table\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Generate report with same start and end date (single-day report)",
+    "description": "Verifies that generating a report for a single day (start date equals end date) works and shows report output.",
+    "category": "Reports",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Reports\" navigation link/menu item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports\""
+      },
+      {
+        "type": "action",
+        "description": "Select a date in the report start date field"
+      },
+      {
+        "type": "action",
+        "description": "Select the same date in the report end date field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Generate\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Report charts\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Required fields validation: attempt to generate with missing dates",
+    "description": "Verifies that the page prevents report generation when required date fields are missing and shows a visible validation message.",
+    "category": "Reports",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Reports\" navigation link/menu item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Generate\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Start date\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"End date\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"required\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Export action is available after generating a report (visibility check)",
+    "description": "Verifies that after generating a report, an Export control is visible to the user.",
+    "category": "Reports",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Reports\" navigation link/menu item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/reports\""
+      },
+      {
+        "type": "action",
+        "description": "Select a valid start date in the report start date field"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid end date (after the start date) in the report end date field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Generate\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Report charts\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Export\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "OCR receipt upload populates results and saves as a new transaction",
+    "description": "Verifies a user can upload a receipt, see OCR results populated, and save them as a transaction that appears in the Transactions list.",
+    "category": "Receipt Scanner (OCR)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Receipt Scanner\" or \"Scan\" navigation item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/scan\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Upload Receipt\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Save OCR results as transaction and verify it appears in Transactions list",
+    "description": "Verifies that after OCR results appear, saving creates a transaction and it is visible in the Transactions page list.",
+    "category": "Receipt Scanner (OCR)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Receipt Scanner\" or \"Scan\" navigation item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Save as Transaction\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Save as Transaction\" button"
+      }
+    ]
+  },
+  {
+    "id": "TC023",
+    "title": "After saving from OCR, navigate to Transactions and confirm a new entry is visible",
+    "description": "Verifies that the user can open Transactions after saving and see a new transaction row added (using visible list change/confirmation).",
+    "category": "Receipt Scanner (OCR)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Transactions\" navigation item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/transactions\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Transactions list/table\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC024",
+    "title": "Retry OCR from error state keeps user on Scan page and shows status updates",
+    "description": "Verifies the Retry OCR button can be clicked from the error state and the user sees a processing/uploading indication.",
+    "category": "Receipt Scanner (OCR)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Receipt Scanner\" or \"Scan\" navigation item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Retry OCR\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Retry OCR\" button"
+      }
+    ]
+  },
+  {
+    "id": "TC025",
+    "title": "Repeated OCR failure shows manual-entry suggestion and routes user to Transactions",
+    "description": "Verifies that when OCR continues to fail, the UI suggests manual entry and provides a working path to Transactions.",
+    "category": "Receipt Scanner (OCR)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Receipt Scanner\" or \"Scan\" navigation item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Enter transaction manually\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click the button or link that opens Transactions for manual entry"
+      }
+    ]
+  },
+  {
+    "id": "TC026",
+    "title": "Manual-entry redirect lands on Transactions page from Scan OCR failure state",
+    "description": "Verifies the manual-entry CTA from the OCR failure state opens the Transactions route successfully.",
+    "category": "Receipt Scanner (OCR)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Sign in\" or \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Transactions\" navigation item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/transactions\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Transactions\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC027",
+    "title": "Create a new financial goal and verify it appears in the list with initial progress",
+    "description": "Verifies a user can create a goal from Mimpi Kita and sees it listed with 0% (or equivalent initial) progress.",
+    "category": "Financial Goals (Mimpi Kita)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Mimpi Kita\" navigation link/menu item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/mimpi-kita\""
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create Goal\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Emergency Fund\" into the goal name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5000000\" into the target amount field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"2030-12-31\" into the target date field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Save\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Emergency Fund\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC028",
+    "title": "Create a goal and verify initial progress shows as 0% (or equivalent)",
+    "description": "Verifies that after creating a goal, the UI indicates no contributions yet (0% progress or 0 contributed).",
+    "category": "Financial Goals (Mimpi Kita)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Mimpi Kita\" navigation link/menu item"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create Goal\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"New Laptop\" into the goal name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"15000000\" into the target amount field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"2029-06-30\" into the target date field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Save\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"New Laptop\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"0%\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC029",
+    "title": "Validation: Attempt to create a goal with all required fields empty",
+    "description": "Verifies required-field validation messages appear when saving a new goal without providing mandatory inputs.",
+    "category": "Financial Goals (Mimpi Kita)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Mimpi Kita\" navigation link/menu item"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create Goal\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Save\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"required\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC030",
+    "title": "Validation: Create goal missing target amount shows an error and does not create the goal",
+    "description": "Verifies missing target amount triggers validation and prevents the goal from being added to the list.",
+    "category": "Financial Goals (Mimpi Kita)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Mimpi Kita\" navigation link/menu item"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Create Goal\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Trip Fund\" into the goal name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"2028-10-10\" into the target date field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Save\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"target amount\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC031",
+    "title": "Create a new holiday plan with valid details",
+    "description": "Verifies a user can create a holiday plan and see it listed with a budget summary.",
+    "category": "Holiday Planning",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Holiday\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/holiday\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Create Holiday Plan\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"Bali Trip\" into the trip name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5000\" into the budget field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"2026-06-01\" into the start date field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"2026-06-10\" into the end date field"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Save\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Bali Trip\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"5000\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC032",
+    "title": "Validate budget must be positive when creating a holiday plan",
+    "description": "Verifies creating a holiday plan with a negative budget shows a validation error and does not create the plan.",
+    "category": "Holiday Planning",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Holiday\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/holiday\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Create Holiday Plan\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"Negative Budget Test\" into the trip name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"-100\" into the budget field"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Save\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Budget must be positive\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Negative Budget Test\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC033",
+    "title": "Cancel creating a holiday plan without saving",
+    "description": "Verifies the user can exit the create holiday plan flow without creating a new plan.",
+    "category": "Holiday Planning",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Holiday\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/holiday\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Create Holiday Plan\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"Should Not Save\" into the trip name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"1234\" into the budget field"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Cancel\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/holiday\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Should Not Save\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC034",
+    "title": "Required field validation when creating a holiday plan with missing trip name",
+    "description": "Verifies the create plan form shows a validation message when required fields are missing.",
+    "category": "Holiday Planning",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Log in\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Holiday\" in the main navigation menu"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/holiday\""
+      },
+      {
+        "type": "action",
+        "description": "Click \"Create Holiday Plan\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"3000\" into the budget field"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Save\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Trip name\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC035",
+    "title": "Add a new asset and see it reflected in the asset list and net worth",
+    "description": "Verifies a user can add an asset from the Wealth page and that the asset appears in the list with net worth updated.",
+    "category": "Wealth & Asset Tracking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Wealth\" in the main navigation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/wealth\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Wealth\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC036",
+    "title": "Open Add Asset form from Wealth page",
+    "description": "Verifies the Add Asset entry point is present and opens the asset creation form.",
+    "category": "Wealth & Asset Tracking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Wealth\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Add Asset\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Add Asset\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Save\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC037",
+    "title": "Save a valid asset entry",
+    "description": "Verifies completing the Add Asset form with valid values saves successfully and shows the new asset in the list.",
+    "category": "Wealth & Asset Tracking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Wealth\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Add Asset\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"QA Asset - Gold\" into the asset name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"2500000\" into the current value field"
+      }
+    ]
+  },
+  {
+    "id": "TC038",
+    "title": "Complete asset creation by selecting a category and saving",
+    "description": "Verifies selecting a category and saving creates the asset and updates visible net worth text/value.",
+    "category": "Wealth & Asset Tracking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Wealth\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Add Asset\" button"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Investment\" from the category dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Save\" button"
+      }
+    ]
+  },
+  {
+    "id": "TC039",
+    "title": "Validation error when entering non-numeric value for asset current value",
+    "description": "Verifies the form blocks saving when the value field is non-numeric and shows the specified validation message.",
+    "category": "Wealth & Asset Tracking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Wealth\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Add Asset\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"QA Asset - Invalid Value\" into the asset name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"abc\" into the current value field"
+      }
+    ]
+  },
+  {
+    "id": "TC040",
+    "title": "Show validation message after attempting to save with invalid numeric input",
+    "description": "Verifies clicking Save with an invalid value displays the exact error text 'Enter a numeric value'.",
+    "category": "Wealth & Asset Tracking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Wealth\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Add Asset\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"abc\" into the current value field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Save\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Enter a numeric value\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC041",
+    "title": "Correct invalid value and successfully save asset",
+    "description": "Verifies a user can fix the invalid value and save, resulting in the asset appearing in the list.",
+    "category": "Wealth & Asset Tracking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Wealth\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Add Asset\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"QA Asset - Corrected\" into the asset name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"99999\" into the current value field"
+      }
+    ]
+  },
+  {
+    "id": "TC042",
+    "title": "Finish corrected save and verify asset is listed",
+    "description": "Verifies saving after correction completes without validation errors and the asset is visible on the Wealth page.",
+    "category": "Wealth & Asset Tracking",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email/username field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Login\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Wealth\" in the main navigation"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Add Asset\" button"
+      },
+      {
+        "type": "action",
+        "description": "Type \"100000\" into the current value field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Save\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Enter a numeric value\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC_SEC_001",
+    "title": "Security: Verify file upload restrictions (MIME Type)",
+    "description": "Ensures that only safe file types (jpg, jpeg, png, pdf) are allowed in the receipt scanner.",
+    "category": "Security & OCR",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /scan"
+      },
+      {
+        "type": "action",
+        "description": "Pick a non-image file (e.g., test.txt) to upload"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error message contains \"invalid file type\" or \"must be an image/pdf\""
+      },
+      {
+        "type": "action",
+        "description": "Pick a valid image file (e.g., receipt.jpg) to upload"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify upload proceeds successfully without type error"
+      }
+    ]
+  },
+  {
+    "id": "TC_UI_001",
+    "title": "Branding: Verify 'Dompet Kita' consistency",
+    "description": "Ensures the application name is correctly displayed as 'Dompet Kita' and not as a variable like ${APP_NAME}.",
+    "category": "UI/UX Consistency",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify documentation title or meta name is \"Dompet Kita\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Dompet Kita\" is present in the sidebar or header"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"${APP_NAME}\" is NOT present anywhere on the page"
+      }
+    ]
+  }
+]

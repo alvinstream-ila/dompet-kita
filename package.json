@@ -5,10 +5,12 @@
   "description": "Premium Financial App for Alvin & Ila",
   "scripts": {
     "dev": "npm run dev --prefix frontend",
+    "start": "npx concurrently \"npm run dev\" \"php backend/artisan serve\"",
     "backend": "php backend/artisan serve",
     "frontend-install": "npm install --prefix frontend",
     "backend-install": "composer install --working-dir=backend",
     "install-all": "npm run frontend-install && npm run backend-install",
+    "setup": "npm run install-all && php backend/artisan key:generate && php backend/artisan migrate",
     "migrate": "php backend/artisan migrate"
   },
   "keywords": [],
