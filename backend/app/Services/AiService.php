@@ -21,7 +21,8 @@ class AiService
             Format the response STRICTLY as a JSON object: {\"amount\": 123000, \"merchant\": \"Indomaret\", \"message\": \"...\"}.
             Respond ONLY with the RAW JSON, no markdown formatting.";
 
-        $client = Gemini::client(config('services.gemini.key'));
+        $apiKey = \config('services.gemini.key');
+        $client = Gemini::client($apiKey);
         
         $response = $client->generativeModel('gemini-flash-latest')
             ->generateContent([
@@ -79,7 +80,8 @@ INSTRUKSI PENTING:
 5. STRICTLY output valid JSON ONLY: {"title": "Judul Gemes ✨", "insight": "Pesan Cinta & Analisis Detail"}
 PROMPT;
 
-        $client = Gemini::client(config('services.gemini.key'));
+        $apiKey = \config('services.gemini.key');
+        $client = Gemini::client($apiKey);
         $response = $client->generativeModel('gemini-flash-latest')->generateContent($prompt);
         $jsonText = $response->text();
         
