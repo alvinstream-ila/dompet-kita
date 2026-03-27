@@ -2,11 +2,9 @@
 
 namespace App\Services;
 
-use Gemini;
-use Gemini\Data\Blob;
-use Gemini\Enums\MimeType;
-use Illuminate\Support\Facades\Log;
-
+/**
+ * AiService handles financial insights and receipt scanning using Google Gemini.
+ */
 class AiService
 {
     /**
@@ -22,19 +20,19 @@ class AiService
             Respond ONLY with the RAW JSON, no markdown formatting.";
 
         $apiKey = \config('services.gemini.key');
-        $client = Gemini::client($apiKey);
+        $client = \Gemini::client($apiKey);
         
         $response = $client->generativeModel('gemini-flash-latest')
             ->generateContent([
                 $prompt,
-                new Blob(
-                    mimeType: MimeType::from($mimeType),
+                new \Gemini\Data\Blob(
+                    mimeType: \Gemini\Enums\MimeType::from($mimeType),
                     data: $base64Data
                 )
             ]);
 
         $jsonText = $response->text();
-        Log::debug('RAW_AI_RESPONSE: ' . $jsonText);
+        \Illuminate\Support\Facades\Log::debug('RAW_AI_RESPONSE: ' . $jsonText);
         
         // Advanced cleanup: Find the first { and the last } in the response
         if (preg_match('/\{.*\}/s', $jsonText, $matches)) {
@@ -47,7 +45,7 @@ class AiService
         $result = json_decode(trim($jsonText), true);
 
         if (!$result || !isset($result['amount'])) {
-            Log::error('AI_SCAN_PARSING_FAILED', ['raw' => $jsonText]);
+            \Illuminate\Support\Facades\Log::error('AI_SCAN_PARSING_FAILED', ['raw' => $jsonText]);
             throw new \Exception('Maaf Sayang, AI lagi bingung baca struknya. Coba ketik manual ya! ❤️');
         }
 
@@ -81,7 +79,7 @@ INSTRUKSI PENTING:
 PROMPT;
 
         $apiKey = \config('services.gemini.key');
-        $client = Gemini::client($apiKey);
+        $client = \Gemini::client($apiKey);
         $response = $client->generativeModel('gemini-flash-latest')->generateContent($prompt);
         $jsonText = $response->text();
         
