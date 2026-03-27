@@ -33,19 +33,26 @@ class AiService
             ]);
 
         $jsonText = $response->text();
+        Log::debug('RAW_AI_RESPONSE: ' . $jsonText);
         
-        // Basic cleanup in case Gemini returns markdown
-        $jsonText = preg_replace('/^```json\s*|```$/m', '', $jsonText);
+        // Advanced cleanup: Find the first { and the last } in the response
+        if (preg_match('/\{.*\}/s', $jsonText, $matches)) {
+            $jsonText = $matches[0];
+        } else {
+            // Last resort: Clean markdown markers if pattern didn't match cleanly
+            $jsonText = preg_replace('/```(?:json)?\s*|```/i', '', $jsonText);
+        }
         
-        $result = json_decode($jsonText, true);
+        $result = json_decode(trim($jsonText), true);
 
         if (!$result || !isset($result['amount'])) {
-            throw new \Exception('Invalid JSON response from AI: ' . $jsonText);
+            Log::error('AI_SCAN_PARSING_FAILED', ['raw' => $jsonText]);
+            throw new \Exception('Maaf Sayang, AI lagi bingung baca struknya. Coba ketik manual ya! ❤️');
         }
 
         return [
             'amount' => (int) $result['amount'],
-            'merchant' => $result['merchant'] ?? 'Unknown Merchant',
+            'merchant' => $result['merchant'] ?? 'Toko Tidak Terbaca',
             'message' => $result['message'] ?? 'AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️'
         ];
     }
