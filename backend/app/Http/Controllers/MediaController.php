@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class MediaController extends Controller
 {
     /**
-     * Upload a file to Storj Object Storage.
+     * Upload a file to Object Storage.
      * 
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -17,29 +17,39 @@ class MediaController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120', // 5MB limit with MIME type check
+            'file' => 'required|image|max:10240', // 10MB limit with universal image check
         ]);
 
         try {
             $file = $request->file('file');
-            $fileName = Str::random(10) . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $fileName = \Illuminate\Support\Str::random(10) . '-' . time() . '.' . $file->getClientOriginalExtension();
             $filePath = "receipts/{$fileName}";
 
-            // Store onto 'storj' disk
-            Storage::disk('storj')->put($filePath, file_get_contents($file), 'public');
+            $diskName = \config('filesystems.default', 'public');
 
-            // Construct Storj Public URL
-            $bucket = config('filesystems.disks.storj.bucket');
-            $url = "https://gateway.storjshare.io/{$bucket}/{$filePath}";
+            // Store onto current disk
+            \Illuminate\Support\Facades\Storage::disk($diskName)->put($filePath, file_get_contents($file), 'public');
 
-            return response()->json([
+            // Construct Public URL
+            if ($diskName === 'storj') {
+                $bucket = \config('filesystems.disks.storj.bucket');
+                $url = "https://gateway.storjshare.io/{$bucket}/{$filePath}";
+            } else {
+                $url = \Illuminate\Support\Facades\Storage::disk($diskName)->url($filePath);
+                // Ensure Absolute URL if relative
+                if (!str_starts_with($url, 'http')) {
+                    $url = \config('app.url') . $url;
+                }
+            }
+
+            return \response()->json([
                 'success' => true,
                 'url' => $url,
                 'path' => $filePath
             ]);
 
         } catch (\Exception $e) {
-            return response()->json([
+            return \response()->json([
                 'success' => false,
                 'message' => 'Gagal mengunggah ke cloud: ' . $e->getMessage()
             ], 500);
