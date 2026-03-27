@@ -19,36 +19,27 @@ class AiService
             Format the response STRICTLY as a JSON object: {\"amount\": 123000, \"merchant\": \"Indomaret\", \"message\": \"...\"}.
             Respond ONLY with the RAW JSON, no markdown formatting.";
 
-        // Basic MimeType fix (Ensure Gemini-compatible strings)
-        $validMimes = [
-            'image/png', 'image/jpeg', 'image/webp', 'image/heic', 'image/heif'
-        ];
-        
-        // Convert jpg to jpeg if needed
-        if ($mimeType === 'image/jpg') $mimeType = 'image/jpeg';
-        
-        // If not recognized, default to jpeg as a guess (or let Gemini try)
-        if (!in_array($mimeType, $validMimes)) {
-            \Illuminate\Support\Facades\Log::warning('AI_UNSUPPORTED_MIME_DETECTED: ' . $mimeType . '. Defaulting to image/jpeg.');
-            $mimeType = 'image/jpeg';
-        }
-
         try {
             $apiKey = \config('services.gemini.key');
             $client = \Gemini::client($apiKey);
             
+            // Hardcode mimeType to IMAGE_JPEG as a reliable fallback for Gemini
+            // This avoids Enum mismatches for HEIC/WEBP if the SDK version is limited
             $response = $client->generativeModel('gemini-flash-latest')
                 ->generateContent([
                     $prompt,
                     new \Gemini\Data\Blob(
-                        mimeType: \Gemini\Enums\MimeType::from($mimeType),
+                        mimeType: \Gemini\Enums\MimeType::IMAGE_JPEG,
                         data: $base64Data
                     )
                 ]);
 
             $jsonText = $response->text();
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('GEMINI_API_ERROR: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('GEMINI_API_ERROR (Receipt Scan): ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'mime' => $mimeType
+            ]);
             throw new \Exception('Maaf Sayang, Google Gemini lagi capek. Coba lagi atau input manual ya! ❤️');
         }
 
