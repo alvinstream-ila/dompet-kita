@@ -8,13 +8,13 @@ import {
   Trash2,
   AlertTriangle,
   Image as ImageIcon,
-  Check
+  Check,
+  Sparkles
 } from 'lucide-react';
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import api from '@/lib/axios';
 import { motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
 
 import {
   Dialog,
@@ -173,7 +173,7 @@ const handleFileUpload = async (selectedFile: File) => {
     setAmount(formatted);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!transaction) return;
     try {
@@ -187,7 +187,7 @@ const handleFileUpload = async (selectedFile: File) => {
 
       await updateMutation.mutateAsync({
         id: transaction.id,
-        amount: parseInt(amount.replace(/\./g, '')),
+        amount: Number.parseInt(amount.replaceAll(/\./g, ''), 10),
         description,
         category,
         sub_category: subCategory,
@@ -219,6 +219,12 @@ const handleFileUpload = async (selectedFile: File) => {
 
   const categoriesToDisplay = type === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
   const activeColorClass = type === 'expense' ? 'bg-slate-900 border-slate-900' : 'bg-emerald-600 border-emerald-600';
+
+  const receiptLabel = file 
+    ? file.name 
+    : existingReceiptUrl 
+      ? 'STRUK ADA' 
+      : 'STRUK';
 
   return (
     <>
@@ -285,7 +291,7 @@ const handleFileUpload = async (selectedFile: File) => {
                       mode="single"
                       selected={date}
                       onSelect={(d) => d && setDate(d)}
-                      initialFocus
+                      autoFocus
                       className="bg-white"
                     />
                   </PopoverContent>
@@ -339,7 +345,7 @@ const handleFileUpload = async (selectedFile: File) => {
               <div className="flex justify-between items-end px-1">
                 <Label className="text-[10px] font-black text-slate-800 uppercase tracking-widest">Nominal (Rp)</Label>
                 <span className="text-[10px] font-bold text-blue-500 italic">
-                  {amount && getTerbilang(parseInt(amount.replace(/\./g, '')))}
+                  {amount && getTerbilang(Number.parseInt(amount.replaceAll(/\./g, ''), 10))}
                 </span>
               </div>
               <div className="relative">
@@ -423,7 +429,7 @@ const handleFileUpload = async (selectedFile: File) => {
                   <label htmlFor="edit-receipt-upload" className="cursor-pointer space-x-2">
                     {(file || existingReceiptUrl) ? <Check className="size-3.5 shrink-0" /> : <ImageIcon className="size-3.5 shrink-0" />}
                     <span className="text-[9px] font-black uppercase tracking-widest truncate max-w-[80px]">
-                      {file ? file.name : existingReceiptUrl ? 'STRUK ADA' : 'STRUK'}
+                      {receiptLabel}
                     </span>
                   </label>
                 </Button>

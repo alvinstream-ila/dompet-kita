@@ -44,12 +44,8 @@ export const ReceiptScanner: React.FC = () => {
       const receipt_url = uploadResponse.data.url;
 
       // 2. Analyze using AI
-      const base64Data = image.split(',')[1];
-      const mimeType = image.split(';')[0].split(':')[1];
-      
       const aiResponse = await api.post('/ai/analyze-receipt', {
-        image: base64Data,
-        mime_type: mimeType
+        receipt_url: receipt_url
       });
       
       if (aiResponse.data.success) {

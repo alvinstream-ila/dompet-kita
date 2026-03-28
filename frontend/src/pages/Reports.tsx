@@ -222,12 +222,16 @@ const Reports: React.FC = () => {
       doc.setFontSize(11);
       doc.text("INSIGHT KATEGORI TERBESAR", 15, yPos);
       
-      const catData = (sortedCategories as CategorySummary[]).slice(0, 5).map(c => [
-        c.category.toUpperCase(),
-        c.type === 'income' ? 'PEMASUKAN' : 'PENGELUARAN',
-        `Rp ${c.amount.toLocaleString('id-ID')}`,
-        `${c.type === 'income' ? (totalIncome ? Math.round((c.amount / totalIncome) * 100) : 0) : (totalExpense ? Math.round((c.amount / totalExpense) * 100) : 0)}%`
-      ]);
+      const catData = sortedCategories.slice(0, 5).map(c => {
+        const total = c.type === 'income' ? totalIncome : totalExpense;
+        const percentage = total > 0 ? Math.round((c.amount / total) * 100) : 0;
+        return [
+          c.category.toUpperCase(),
+          c.type === 'income' ? 'PEMASUKAN' : 'PENGELUARAN',
+          `Rp ${c.amount.toLocaleString('id-ID')}`,
+          `${percentage}%`
+        ];
+      });
 
       autoTable(doc, {
         startY: yPos + 5,
@@ -406,16 +410,17 @@ const Reports: React.FC = () => {
       {/* Action Bar */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
         <div className="relative group/period">
-          <div 
-            onClick={() => setIsPickerOpen(!isPickerOpen)}
-            className="bg-white border border-slate-100 rounded-[24px] px-6 h-14 flex items-center gap-4 shadow-sm min-w-[280px] cursor-pointer hover:bg-slate-50 transition-all font-bold"
-          >
+        <button 
+          type="button"
+          onClick={() => setIsPickerOpen(!isPickerOpen)}
+          className="bg-white border border-slate-100 rounded-[24px] px-6 h-14 flex items-center gap-4 shadow-sm min-w-[280px] cursor-pointer hover:bg-slate-50 transition-all font-bold w-full md:w-auto"
+        >
             <Calendar className="w-5 h-5 text-blue-500" />
             <span className="text-slate-400 text-sm">Periode</span>
-            <div className="h-8 w-px bg-slate-100" />
+            <span className="h-8 w-px bg-slate-100" />
             <span className="text-slate-700 text-sm">{months[selectedMonth]} {selectedYear}</span>
             <ChevronDown className={cn("w-4 h-4 text-slate-400 ml-auto transition-transform", isPickerOpen && "rotate-180")} />
-          </div>
+        </button>
 
           <AnimatePresence>
             {isPickerOpen && (
@@ -496,27 +501,29 @@ const Reports: React.FC = () => {
       {/* Categories Breakdown */}
       <div className="bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[48px] p-6 md:p-10 mb-8 shadow-2xl">
          <div className="space-y-4">
-            {sortedCategories.slice(0, 3).map((cat, i) => (
-              <div key={i} className="bg-white/80 p-6 rounded-[32px] flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-white shadow-sm hover:translate-x-2 transition-transform cursor-pointer group">
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
-                    Kategori {cat.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}
-                  </span>
-                  <span className="text-lg font-black text-slate-800 tracking-tight">{cat.category}</span>
-                </div>
-                <div className="flex items-center justify-between sm:justify-end gap-4 md:gap-6">
-                  <span className={cn("text-lg md:text-xl font-black tracking-tighter", cat.type === 'income' ? 'text-emerald-500' : 'text-blue-500')}>
-                    Rp. {cat.amount.toLocaleString('id-ID')}
-                  </span>
-                  <div className="bg-slate-100 px-3 md:px-4 py-1.5 rounded-full font-black text-[9px] md:text-[10px] text-slate-500 uppercase tracking-widest shrink-0">
-                    {cat.type === 'income' 
-                      ? (totalIncome ? Math.round((cat.amount / totalIncome) * 100) : 0)
-                      : (totalExpense ? Math.round((cat.amount / totalExpense) * 100) : 0)}%
+            {sortedCategories.slice(0, 3).map((cat) => {
+              const total = cat.type === 'income' ? totalIncome : totalExpense;
+              const percentage = total > 0 ? Math.round((cat.amount / total) * 100) : 0;
+              return (
+                <div key={`${cat.type}-${cat.category}`} className="bg-white/80 p-6 rounded-[32px] flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-white shadow-sm hover:translate-x-2 transition-transform cursor-pointer group">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                      Kategori {cat.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}
+                    </span>
+                    <span className="text-lg font-black text-slate-800 tracking-tight">{cat.category}</span>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-slate-200 group-hover:text-blue-500 transition-colors hidden sm:block" />
+                  <div className="flex items-center justify-between sm:justify-end gap-4 md:gap-6">
+                    <span className={cn("text-lg md:text-xl font-black tracking-tighter", cat.type === 'income' ? 'text-emerald-500' : 'text-blue-500')}>
+                      Rp. {cat.amount.toLocaleString('id-ID')}
+                    </span>
+                    <div className="bg-slate-100 px-3 md:px-4 py-1.5 rounded-full font-black text-[9px] md:text-[10px] text-slate-500 uppercase tracking-widest shrink-0">
+                      {percentage}%
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-slate-200 group-hover:text-blue-500 transition-colors hidden sm:block" />
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
          </div>
       </div>
 

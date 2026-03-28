@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Transaction;
 use App\Enums\TransactionType;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use App\Services\AiService;
 
 class AIController extends Controller
@@ -26,13 +27,31 @@ class AIController extends Controller
     public function analyzeReceipt(Request $request)
     {
         $request->validate([
-            'image' => 'required|string|max:15000000', // ~10-11MB Base64 limit
-            'mime_type' => 'required|string|max:100'
+            'image' => 'nullable|string|max:15000000', // ~10-11MB Base64 limit
+            'mime_type' => 'nullable|string|max:100',
+            'receipt_url' => 'nullable|url'
         ]);
 
         try {
-            $base64Data = $request->image;
-            $mimeType = $request->mime_type;
+            $base64Data = '';
+            $mimeType = 'image/jpeg';
+
+            if ($request->filled('receipt_url')) {
+                $response = \Illuminate\Support\Facades\Http::get($request->receipt_url);
+                if (!$response->successful()) {
+                    throw new \Exception('Gagal membaca file dari storage.');
+                }
+                $fileContents = $response->body();
+                $base64Data = base64_encode($fileContents);
+                $ext = pathinfo(parse_url($request->receipt_url, PHP_URL_PATH), PATHINFO_EXTENSION);
+                if (strtolower($ext) === 'png') $mimeType = 'image/png';
+                elseif (strtolower($ext) === 'webp') $mimeType = 'image/webp';
+            } elseif ($request->filled('image')) {
+                $base64Data = $request->image;
+                $mimeType = $request->mime_type ?? 'image/jpeg';
+            } else {
+                throw new \Exception('Data gambar tidak valid.');
+            }
 
             $result = $this->aiService->analyzeReceipt($base64Data, $mimeType);
 

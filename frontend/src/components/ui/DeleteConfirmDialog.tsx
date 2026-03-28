@@ -75,7 +75,13 @@ export const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
                  confirmStep === 0 ? "bg-red-500 hover:bg-red-600 shadow-red-200" : "bg-slate-900 hover:bg-black"
                )}
             >
-               {loading ? <Loader2 className="size-5 animate-spin" /> : (confirmStep === 0 ? "IA, SAYA YAKIN" : confirmLabel)}
+               {loading ? (
+                 <Loader2 className="size-5 animate-spin" />
+               ) : confirmStep === 0 ? (
+                 "IA, SAYA YAKIN"
+               ) : (
+                 confirmLabel
+               )}
             </Button>
             
             <Button 

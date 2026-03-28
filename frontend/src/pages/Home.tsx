@@ -36,16 +36,15 @@ import { cn } from "@/lib/utils";
 import { useFinancialSummary } from '@/hooks/useFinancialSummary';
 import type { Transaction } from '@/types';
 
-const getCategoryIcon = (category: string, type: string) => {
-  const cat = category.toLowerCase();
-  if (type === 'income') {
-    if (cat.includes('gaji')) return <Briefcase className="w-4 h-4" />;
-    if (cat.includes('investasi') || cat.includes('tabungan')) return <TrendingUpIcon className="w-4 h-4" />;
-    if (cat.includes('hadiah') || cat.includes('bonus')) return <Gift className="w-4 h-4" />;
-    if (cat.includes('bisnis') || cat.includes('jual')) return <Coins className="w-4 h-4" />;
-    return <ArrowUpCircle className="w-4 h-4" />;
-  }
-  
+const getIncomeIcon = (cat: string) => {
+  if (cat.includes('gaji')) return <Briefcase className="w-4 h-4" />;
+  if (cat.includes('investasi') || cat.includes('tabungan')) return <TrendingUpIcon className="w-4 h-4" />;
+  if (cat.includes('hadiah') || cat.includes('bonus')) return <Gift className="w-4 h-4" />;
+  if (cat.includes('bisnis') || cat.includes('jual')) return <Coins className="w-4 h-4" />;
+  return <ArrowUpCircle className="w-4 h-4" />;
+};
+
+const getExpenseIcon = (cat: string) => {
   if (cat.includes('makan') || cat.includes('minum')) return <Utensils className="w-4 h-4" />;
   if (cat.includes('transport') || cat.includes('ojek') || cat.includes('bensin')) return <Car className="w-4 h-4" />;
   if (cat.includes('rumah') || cat.includes('kos')) return <HomeIcon className="w-4 h-4" />;
@@ -55,6 +54,11 @@ const getCategoryIcon = (category: string, type: string) => {
   if (cat.includes('didik') || cat.includes('kuliah') || cat.includes('sekolah')) return <GraduationCap className="w-4 h-4" />;
   if (cat.includes('tagihan') || cat.includes('listrik') || cat.includes('pulsa') || cat.includes('wifi')) return <ZapIcon className="w-4 h-4" />;
   return <ArrowDownCircle className="w-4 h-4" />;
+};
+
+const getCategoryIcon = (category: string, type: string) => {
+  const cat = category.toLowerCase();
+  return type === 'income' ? getIncomeIcon(cat) : getExpenseIcon(cat);
 };
 
 const Home: React.FC = () => {
@@ -73,9 +77,10 @@ const Home: React.FC = () => {
   const totals = { income: totalIncome, expense: totalExpense };
 
   const healthPercentage = React.useMemo(() => {
-    return totals.income > 0 
-      ? Math.max(0, ((totals.income - totals.expense) / totals.income) * 100) 
-      : (totals.expense > 0 ? 0 : 100);
+    if (totals.income > 0) {
+      return Math.max(0, ((totals.income - totals.expense) / totals.income) * 100);
+    }
+    return totals.expense > 0 ? 0 : 100;
   }, [totals]);
 
   const { formatAmount } = useFormatting();

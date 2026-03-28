@@ -109,8 +109,8 @@ const Wealth: React.FC = () => {
   const growthPercentage = React.useMemo(() => {
     if (wealthHistory.length < 2) return 0;
     const history = wealthHistory as WealthHistoryItem[];
-    const lastValue = history[history.length - 2].value;
-    const currentValue = history[history.length - 1].value;
+    const lastValue = history.at(-2)?.value ?? 0;
+    const currentValue = history.at(-1)?.value ?? 0;
     if (lastValue === 0) return 0;
     return ((currentValue - lastValue) / lastValue) * 100;
   }, [wealthHistory]);
@@ -196,7 +196,7 @@ const Wealth: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (editingAsset) {
       updateAssetMutation.mutate({
