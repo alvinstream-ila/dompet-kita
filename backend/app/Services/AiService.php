@@ -30,13 +30,13 @@ class AiService
             $apiKey = \config('services.gemini.key');
             $client = \Gemini::client($apiKey);
             
-            // Hardcode mimeType to IMAGE_JPEG as a reliable fallback for Gemini
-            // This avoids Enum mismatches for HEIC/WEBP if the SDK version is limited
+            $enumMimeType = \Gemini\Enums\MimeType::tryFrom($mimeType) ?? \Gemini\Enums\MimeType::IMAGE_JPEG;
+
             $response = $client->generativeModel('gemini-flash-latest')
                 ->generateContent([
                     $prompt,
                     new \Gemini\Data\Blob(
-                        mimeType: \Gemini\Enums\MimeType::IMAGE_JPEG,
+                        mimeType: $enumMimeType,
                         data: $base64Data
                     )
                 ]);

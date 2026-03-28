@@ -36,14 +36,35 @@ class AIController extends Controller
             $base64Data = '';
             $mimeType = 'image/jpeg';
 
-            if ($request->filled('receipt_url')) {
-                $response = \Illuminate\Support\Facades\Http::get($request->receipt_url);
-                if (!$response->successful()) {
-                    throw new \Exception('Gagal membaca file dari storage.');
+            if ($request->filled('receipt_url') || $request->filled('receipt_path')) {
+                $filePath = $request->receipt_path;
+                
+                // Fallback extract path if only receipt_url given
+                if (!$filePath && str_contains($request->receipt_url, 'gateway.storjshare.io')) {
+                    $bucket = \config('filesystems.disks.storj.bucket');
+                    $filePath = str_replace("https://gateway.storjshare.io/{$bucket}/", '', $request->receipt_url);
                 }
-                $fileContents = $response->body();
+
+                if ($filePath) {
+                    $disk = \config('filesystems.default', 'public');
+                    // Workaround to ensure correct config reading if missing
+                    if ($disk === 'storj' && !\config('filesystems.disks.storj')) {
+                         $disk = 's3';
+                    }
+                    $fileContents = \Illuminate\Support\Facades\Storage::disk($disk)->get($filePath);
+                    if (!$fileContents) {
+                        throw new \Exception('Gagal membaca file dari internal storage path: ' . $filePath);
+                    }
+                } else {
+                    $response = \Illuminate\Support\Facades\Http::get($request->receipt_url);
+                    if (!$response->successful()) {
+                        throw new \Exception('Gagal membaca file dari storage eksternal.');
+                    }
+                    $fileContents = $response->body();
+                }
+                
                 $base64Data = base64_encode($fileContents);
-                $ext = pathinfo(parse_url($request->receipt_url, PHP_URL_PATH), PATHINFO_EXTENSION);
+                $ext = pathinfo($filePath ? parse_url($filePath, PHP_URL_PATH) : parse_url($request->receipt_url, PHP_URL_PATH), PATHINFO_EXTENSION);
                 if (strtolower($ext) === 'png') $mimeType = 'image/png';
                 elseif (strtolower($ext) === 'webp') $mimeType = 'image/webp';
             } elseif ($request->filled('image')) {

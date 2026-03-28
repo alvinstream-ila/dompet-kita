@@ -45,7 +45,8 @@ export const ReceiptScanner: React.FC = () => {
 
       // 2. Analyze using AI
       const aiResponse = await api.post('/ai/analyze-receipt', {
-        receipt_url: receipt_url
+        receipt_url: receipt_url,
+        receipt_path: uploadResponse.data.path
       });
       
       if (aiResponse.data.success) {
@@ -54,11 +55,12 @@ export const ReceiptScanner: React.FC = () => {
             receipt_url: receipt_url
         });
       } else {
-        throw new Error('Gagal menganalisis struk.');
+        throw new Error(aiResponse.data.message || 'Gagal menganalisis struk.');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Scan error', err);
-      alert('Maaf Sayang, ada kendala pas scan struknya. Coba lagi atau upload manual ya! ❤️');
+      const backendMessage = err?.response?.data?.message || err.message;
+      alert(`Maaf Sayang, ada kendala: ${backendMessage}. Coba lagi atau upload manual ya! ❤️`);
     } finally {
       setIsScanning(false);
     }
