@@ -90,7 +90,7 @@ class AIController extends Controller
             
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menganalisis struk sayang. Coba lagi atau input manual ya! ❤️'
+                'message' => 'Detail Error: ' . $e->getMessage()
             ], 500);
         }
     }
