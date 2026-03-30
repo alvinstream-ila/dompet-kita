@@ -1,26 +1,17 @@
 import React, { useState } from 'react';
 import { 
   Plus, 
-  Search,
+  Heart
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from "@/components/ui/button";
 import { PageLoader } from '../components/ui/PageLoader';
 import { useGoals, useDeleteGoal } from '@/hooks/useGoals';
 import { AddGoalModal } from '../components/features/AddGoalModal';
-import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
 import { UserNavDropdown } from '../components/features/UserNavDropdown';
 import { Card } from "@/components/ui/card";
 import { GoalCard } from '../components/features/GoalCard';
 import { GoalStats } from '../components/features/GoalStats';
+import { GoalFilters } from '../components/features/GoalFilters';
 
 const MimpiKita: React.FC = () => {
   const { data: goals = [], isLoading } = useGoals();
@@ -99,36 +90,13 @@ const MimpiKita: React.FC = () => {
       />
 
       {/* Search and Filters View */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-10 bg-white p-5 rounded-[32px] shadow-sm border border-slate-50">
-        <div className="flex flex-1 w-full gap-3">
-          <div className="relative flex-1 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
-            <Input 
-              placeholder="Cari mimpi kita..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-12 pl-12 rounded-2xl bg-slate-50/50 border-none font-bold focus:ring-blue-500/10 shadow-inner"
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={(v: 'all' | 'active' | 'completed') => setStatusFilter(v)}>
-            <SelectTrigger className="w-[160px] h-12 rounded-2xl bg-slate-50/50 border-none font-black text-[10px] uppercase tracking-widest text-slate-500">
-              <SelectValue placeholder="STATUS" />
-            </SelectTrigger>
-            <SelectContent className="rounded-2xl border-none shadow-2xl">
-              <SelectItem value="all" className="rounded-xl font-black text-[10px] uppercase tracking-widest py-3">Semua Mimpi</SelectItem>
-              <SelectItem value="active" className="rounded-xl font-black text-[10px] uppercase tracking-widest py-3 text-blue-500">Masih Berjalan</SelectItem>
-              <SelectItem value="completed" className="rounded-xl font-black text-[10px] uppercase tracking-widest py-3 text-emerald-500">Mimpi Mewujud</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Button 
-          onClick={() => setIsAddModalOpen(true)}
-          className="w-full md:w-auto h-12 px-10 rounded-2xl bg-slate-900 text-white hover:bg-slate-800 font-black uppercase tracking-widest flex items-center gap-2 shadow-xl shadow-slate-200 transition-all active:scale-95"
-        >
-          <Plus size={18} strokeWidth={3} />
-          Tambah Mimpi Kita
-        </Button>
-      </div>
+      <GoalFilters 
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        onAddGoal={() => setIsAddModalOpen(true)}
+      />
 
       {/* Grid of Goals */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -149,6 +117,7 @@ const MimpiKita: React.FC = () => {
           whileTap={{ scale: 0.98 }}
           onClick={() => setIsAddModalOpen(true)}
           className="rounded-[40px] border-2 border-dashed border-slate-200 p-10 flex flex-col items-center justify-center gap-6 text-slate-400 transition-all hover:bg-slate-50 hover:border-slate-300 min-h-[350px] group bg-white/50"
+          type="button"
         >
           <div className="size-20 rounded-[32px] bg-white shadow-xl flex items-center justify-center text-slate-300 group-hover:scale-110 transition-transform active:rotate-90 duration-500">
              <Plus size={40} />

@@ -89,8 +89,9 @@ const ResetPassword: React.FC = () => {
             )}
 
             <div className="space-y-1">
-              <label className="text-[11px] font-black text-slate-400 uppercase ml-4">Password Baru</label>
+              <label htmlFor="new-password" className="text-[11px] font-black text-slate-400 uppercase ml-4">Password Baru</label>
               <input 
+                id="new-password"
                 type="password"
                 placeholder="Password minimal 8 karakter"
                 className="w-full h-14 bg-slate-100 border-none rounded-full px-6 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20"
@@ -101,8 +102,9 @@ const ResetPassword: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[11px] font-black text-slate-400 uppercase ml-4">Konfirmasi Password</label>
+              <label htmlFor="confirm-password" className="text-[11px] font-black text-slate-400 uppercase ml-4">Konfirmasi Password</label>
               <input 
+                id="confirm-password"
                 type="password"
                 placeholder="Ketik ulang passwordnya"
                 className="w-full h-14 bg-slate-100 border-none rounded-full px-6 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20"

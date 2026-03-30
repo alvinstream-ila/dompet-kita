@@ -143,25 +143,7 @@ export const ReceiptScanner: React.FC = () => {
                 </button>
               </div>
 
-              {!scanResult ? (
-                <Button 
-                  onClick={processImage} 
-                  disabled={isScanning}
-                  className="w-full h-14 rounded-2xl bg-linear-to-r from-pink-500 to-rose-600 font-black uppercase tracking-widest text-lg shadow-pink-200 shadow-xl active:scale-[0.98] transition-all"
-                >
-                  {isScanning ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-3 animate-spin" />
-                      Mencerna Struk... ✨
-                    </>
-                  ) : (
-                    <>
-                      <ScanText className="w-5 h-5 mr-3" />
-                      Analisis Pake AI
-                    </>
-                  )}
-                </Button>
-              ) : (
+              {scanResult ? (
                 <motion.div 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -184,6 +166,24 @@ export const ReceiptScanner: React.FC = () => {
                     Lanjut Simpan ❤️
                   </Button>
                 </motion.div>
+              ) : (
+                <Button 
+                  onClick={processImage} 
+                  disabled={isScanning}
+                  className="w-full h-14 rounded-2xl bg-linear-to-r from-pink-500 to-rose-600 font-black uppercase tracking-widest text-lg shadow-pink-200 shadow-xl active:scale-[0.98] transition-all"
+                >
+                  {isScanning ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-3 animate-spin" />
+                      Mencerna Struk... ✨
+                    </>
+                  ) : (
+                    <>
+                      <ScanText className="w-5 h-5 mr-3" />
+                      Analisis Pake AI
+                    </>
+                  )}
+                </Button>
               )}
             </motion.div>
           )}

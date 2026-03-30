@@ -242,7 +242,7 @@ const Login: React.FC = () => {
                   onClick={() => {
                     const apiUrl = import.meta.env.VITE_API_URL || 'https://dompet-kita-production.up.railway.app/api';
                     console.log('Redirecting to Google with API:', apiUrl);
-                    window.location.href = `${apiUrl}/auth/google`;
+                    globalThis.location.href = `${apiUrl}/auth/google`;
                   }}
                   className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-300"
                 >
@@ -253,7 +253,7 @@ const Login: React.FC = () => {
                   onClick={() => {
                     const apiUrl = import.meta.env.VITE_API_URL || 'https://dompet-kita-production.up.railway.app/api';
                     console.log('Redirecting to Facebook with API:', apiUrl);
-                    window.location.href = `${apiUrl}/auth/facebook`;
+                    globalThis.location.href = `${apiUrl}/auth/facebook`;
                   }}
                   className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-300"
                 >

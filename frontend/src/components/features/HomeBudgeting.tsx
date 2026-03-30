@@ -7,7 +7,7 @@ const MonthlyDonutChart = React.lazy(() => import('@/components/charts/MonthlyDo
 export const HomeBudgeting: React.FC = () => {
   return (
     <div className="md:col-span-1 lg:col-span-9 grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8 lg:mt-0 mt-6">
-      <Card className="md:col-span-1 lg:col-span-5 flex flex-col p-6 md:p-10 bg-white/70 backdrop-blur-3xl border-white/60 shadow-2xl rounded-[40px] md:rounded-[48px] border border-white/80 group">
+      <Card className="md:col-span-1 lg:col-span-5 flex flex-col p-6 md:p-10 bg-white/70 backdrop-blur-3xl shadow-2xl rounded-[40px] md:rounded-[48px] border border-white/60 group">
          <CardHeader className="p-0 mb-8 flex flex-row items-center justify-between">
             <div>
                 <CardTitle className="text-base md:text-lg font-black text-slate-800 uppercase tracking-tighter mb-1">Budgeting Tracker</CardTitle>

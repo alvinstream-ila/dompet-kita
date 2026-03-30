@@ -32,7 +32,7 @@ export const ReportPeriodPicker: React.FC<ReportPeriodPickerProps> = ({
       <button 
         type="button"
         onClick={onToggle}
-        className="bg-white border border-slate-100/80 rounded-[28px] px-8 h-16 flex items-center gap-5 shadow-sm min-w-[320px] cursor-pointer hover:bg-slate-50 hover:border-blue-100 transition-all font-black text-slate-700 w-full md:w-auto group/btn transition-colors overflow-hidden"
+        className="bg-white border border-slate-100/80 rounded-[28px] px-8 h-16 flex items-center gap-5 shadow-sm min-w-[320px] cursor-pointer hover:bg-slate-50 hover:border-blue-100 transition-all font-black text-slate-700 w-full md:w-auto group/btn overflow-hidden"
       >
         <div className="size-10 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0 group-hover/btn:scale-110 transition-transform">
           <Calendar className="w-5 h-5" />
@@ -66,6 +66,7 @@ export const ReportPeriodPicker: React.FC<ReportPeriodPickerProps> = ({
                           ? "bg-slate-900 text-white shadow-xl shadow-slate-200" 
                           : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                       )}
+                      type="button"
                     >
                       {m}
                     </button>
@@ -85,6 +86,7 @@ export const ReportPeriodPicker: React.FC<ReportPeriodPickerProps> = ({
                           ? "bg-blue-600 text-white shadow-xl shadow-blue-100" 
                           : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                       )}
+                      type="button"
                     >
                       {y}
                     </button>

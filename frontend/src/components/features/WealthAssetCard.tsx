@@ -11,7 +11,6 @@ import {
   Trash2 
 } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 import type { Asset } from '@/types';
 
 interface WealthAssetCardProps {
@@ -47,7 +46,7 @@ export const WealthAssetCard: React.FC<WealthAssetCardProps> = ({
         transition={{ delay: index * 0.1 }}
         layout
     >
-        <Card className="rounded-[28px] border-none shadow-md hover:shadow-xl transition-all group bg-white overflow-hidden border border-slate-50 border-white/50">
+        <Card className="rounded-[28px] border-none shadow-md hover:shadow-xl transition-all group bg-white overflow-hidden border border-white/50">
             <CardContent className="p-5 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                 <div className="size-12 rounded-2xl bg-slate-50 flex items-center justify-center group-hover:scale-110 transition-all border border-slate-100 shadow-inner group-hover:shadow-md">
@@ -64,10 +63,10 @@ export const WealthAssetCard: React.FC<WealthAssetCardProps> = ({
                     <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest mt-1">Current Value</p>
                 </div>
                 <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                    <button onClick={() => onEdit(asset)} className="p-2 hover:bg-blue-50 text-blue-500 rounded-xl transition-all active:scale-90">
+                    <button onClick={() => onEdit(asset)} className="p-2 hover:bg-blue-50 text-blue-500 rounded-xl transition-all active:scale-90" type="button">
                         <Edit2 size={13} strokeWidth={2.5} />
                     </button>
-                    <button onClick={() => onDelete(asset.id)} className="p-2 hover:bg-rose-50 text-rose-500 rounded-xl transition-all active:scale-90">
+                    <button onClick={() => onDelete(asset.id)} className="p-2 hover:bg-rose-50 text-rose-500 rounded-xl transition-all active:scale-90" type="button">
                         <Trash2 size={13} strokeWidth={2.5} />
                     </button>
                 </div>

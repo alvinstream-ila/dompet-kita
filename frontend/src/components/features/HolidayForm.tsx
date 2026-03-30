@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Calendar as CalendarIcon,
   Loader2,
@@ -43,6 +43,13 @@ export const HolidayForm: React.FC<HolidayFormProps> = ({
     status: initialData?.status || 'planning',
   });
 
+  const isEditing = !!initialData?.destination;
+  const submitLabel = isLoading ? (
+    <Loader2 className="animate-spin mx-auto" />
+  ) : (
+    isEditing ? 'Simpan Perubahan' : 'Buat Rencana'
+  );
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
@@ -70,8 +77,8 @@ export const HolidayForm: React.FC<HolidayFormProps> = ({
               placeholder="Berapa kira-kira biayanya?" 
               value={formData.budget > 0 ? formatToRupiah(formData.budget.toString()) : ''}
               onChange={(e) => {
-                const val = e.target.value.replace(/[^0-9]/g, '');
-                setFormData({...formData, budget: val ? parseInt(val) : 0});
+                const val = e.target.value.replaceAll(/\D/g, '');
+                setFormData({...formData, budget: val ? Number.parseInt(val) : 0});
               }}
               className="rounded-2xl h-14 border-slate-100 bg-slate-50/50 pl-14 pr-6 font-bold text-slate-700"
               required
@@ -111,7 +118,7 @@ export const HolidayForm: React.FC<HolidayFormProps> = ({
                     setFormData({ ...formData, start_date: date.toISOString().split('T')[0] });
                   }
                 }}
-                initialFocus
+                autoFocus
                 className="p-4"
               />
             </PopoverContent>
@@ -144,7 +151,7 @@ export const HolidayForm: React.FC<HolidayFormProps> = ({
           Batal
         </Button>
         <Button type="submit" disabled={isLoading} className="flex-1 h-14 rounded-2xl bg-slate-900 hover:bg-slate-800 font-black uppercase tracking-widest text-white shadow-xl shadow-slate-200">
-          {isLoading ? <Loader2 className="animate-spin" /> : (initialData?.destination ? 'Simpan Perubahan' : 'Buat Rencana')}
+          {submitLabel}
         </Button>
       </div>
     </form>

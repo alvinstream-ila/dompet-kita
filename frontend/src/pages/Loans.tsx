@@ -5,7 +5,7 @@ import {
   Clock,
   CheckCircle2
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useLoans, useDeleteLoan } from '@/hooks/useLoans';

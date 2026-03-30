@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, type FormEvent } from 'react';
 import { useAddTransaction, useUpdateTransaction } from '@/hooks/useTransactions';
 import { 
   Loader2,
@@ -157,7 +157,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
@@ -170,7 +170,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
       }
 
       const payload = {
-        amount: parseInt(amount.replace(/\./g, '')),
+        amount: Number.parseInt(amount.replaceAll('.', '')),
         description,
         category,
         sub_category: subCategory,
@@ -182,7 +182,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
 
       if (mode === 'edit' && transactionId) {
         await updateTransactionMutation.mutateAsync({
-          id: transactionId,
+          id: transactionId.toString(),
           ...payload
         });
       } else {
@@ -255,7 +255,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
                 mode="single"
                 selected={date}
                 onSelect={(d) => d && setDate(d)}
-                initialFocus
+                autoFocus
                 className="bg-white"
               />
             </PopoverContent>
@@ -310,7 +310,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         <div className="flex justify-between items-end px-1">
           <Label className="text-[10px] font-black text-slate-800 uppercase tracking-widest">Nominal (Rp)</Label>
           <span className="text-[10px] font-bold text-blue-500 italic">
-            {amount && getTerbilang(parseInt(amount.replace(/\./g, '')))}
+            {amount && getTerbilang(Number.parseInt(amount.replaceAll('.', '')))}
           </span>
         </div>
         <div className="relative">
@@ -393,7 +393,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
             <label htmlFor="receipt-upload" className="cursor-pointer space-x-2">
               {(file || (mode === 'edit' && preview)) ? <Check className="size-3.5 shrink-0" /> : <ImageIcon className="size-3.5 shrink-0" />}
               <span className="text-[9px] font-black uppercase tracking-widest truncate max-w-[80px]">
-                {file ? file.name : (mode === 'edit' && preview ? 'STRUK ADA' : 'STRUK')}
+                {file ? file.name : (mode === 'edit' ? 'STRUK ADA' : 'STRUK')}
               </span>
             </label>
           </Button>
