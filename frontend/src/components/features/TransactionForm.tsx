@@ -1,4 +1,4 @@
-import React, { useState, useEffect, type FormEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAddTransaction, useUpdateTransaction } from '@/hooks/useTransactions';
 import { 
   Loader2,
@@ -79,6 +79,13 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
   const [uploading, setUploading] = useState(false);
   const [scanning, setScanning] = useState(false);
 
+  const isPending = loading || uploading || addTransactionMutation.isPending || updateTransactionMutation.isPending;
+  const submitLabel = isPending ? (
+    <Loader2 className="size-5 animate-spin mx-auto" />
+  ) : (
+    mode === 'create' ? "SIMPAN TRANSAKSI" : "PERBARUI TRANSAKSI"
+  );
+
   useEffect(() => {
     if (onTypeChange) onTypeChange(type);
   }, [type, onTypeChange]);
@@ -157,7 +164,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
     }
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
@@ -436,17 +443,13 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         )}
         <Button
             type="submit"
-            disabled={loading || uploading || addTransactionMutation.isPending || updateTransactionMutation.isPending}
+            disabled={isPending}
             className={cn(
             "flex-1 h-11 rounded-2xl shadow-lg active:scale-[0.98] transition-all text-[12px] font-black tracking-widest text-white uppercase",
             type === 'expense' ? "bg-slate-900 hover:bg-black shadow-slate-900/10" : "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/10"
             )}
         >
-            {loading || uploading || addTransactionMutation.isPending || updateTransactionMutation.isPending ? (
-            <Loader2 className="size-5 animate-spin" />
-            ) : (
-            mode === 'create' ? "SIMPAN TRANSAKSI" : "PERBARUI TRANSAKSI"
-            )}
+            {submitLabel}
         </Button>
       </div>
     </form>
