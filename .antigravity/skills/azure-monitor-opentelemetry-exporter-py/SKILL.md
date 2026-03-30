@@ -3,7 +3,7 @@ name: azure-monitor-opentelemetry-exporter-py
 description: Azure Monitor OpenTelemetry Exporter for Python. Use for low-level OpenTelemetry export to Application Insights.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Monitor OpenTelemetry Exporter for Python
@@ -24,10 +24,10 @@ APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=xxx;IngestionEndpoint=h
 
 ## When to Use
 
-| Scenario | Use |
-|----------|-----|
-| Quick setup, auto-instrumentation | `azure-monitor-opentelemetry` (distro) |
-| Custom OpenTelemetry pipeline | `azure-monitor-opentelemetry-exporter` (this) |
+| Scenario                            | Use                                           |
+| ----------------------------------- | --------------------------------------------- |
+| Quick setup, auto-instrumentation   | `azure-monitor-opentelemetry` (distro)        |
+| Custom OpenTelemetry pipeline       | `azure-monitor-opentelemetry-exporter` (this) |
 | Fine-grained control over telemetry | `azure-monitor-opentelemetry-exporter` (this) |
 
 ## Trace Exporter
@@ -182,20 +182,20 @@ exporter = AzureMonitorTraceExporter(
 
 ## Exporter Types
 
-| Exporter | Telemetry Type | Application Insights Table |
-|----------|---------------|---------------------------|
-| `AzureMonitorTraceExporter` | Traces/Spans | requests, dependencies, exceptions |
-| `AzureMonitorMetricExporter` | Metrics | customMetrics, performanceCounters |
-| `AzureMonitorLogExporter` | Logs | traces, customEvents |
+| Exporter                     | Telemetry Type | Application Insights Table         |
+| ---------------------------- | -------------- | ---------------------------------- |
+| `AzureMonitorTraceExporter`  | Traces/Spans   | requests, dependencies, exceptions |
+| `AzureMonitorMetricExporter` | Metrics        | customMetrics, performanceCounters |
+| `AzureMonitorLogExporter`    | Logs           | traces, customEvents               |
 
 ## Configuration Options
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `connection_string` | Application Insights connection string | From env var |
-| `credential` | Azure credential for AAD auth | None |
-| `disable_offline_storage` | Disable retry storage | False |
-| `storage_directory` | Custom storage path | Temp directory |
+| Parameter                 | Description                            | Default        |
+| ------------------------- | -------------------------------------- | -------------- |
+| `connection_string`       | Application Insights connection string | From env var   |
+| `credential`              | Azure credential for AAD auth          | None           |
+| `disable_offline_storage` | Disable retry storage                  | False          |
+| `storage_directory`       | Custom storage path                    | Temp directory |
 
 ## Best Practices
 

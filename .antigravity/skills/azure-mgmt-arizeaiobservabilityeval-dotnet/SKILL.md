@@ -3,7 +3,7 @@ name: azure-mgmt-arizeaiobservabilityeval-dotnet
 description: Azure Resource Manager SDK for Arize AI Observability and Evaluation (.NET).
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure.ResourceManager.ArizeAIObservabilityEval
@@ -18,12 +18,12 @@ dotnet add package Azure.ResourceManager.ArizeAIObservabilityEval --version 1.0.
 
 ## Package Info
 
-| Property | Value |
-|----------|-------|
-| Package | `Azure.ResourceManager.ArizeAIObservabilityEval` |
-| Version | `1.0.0` (GA) |
-| API Version | `2024-10-01` |
-| ARM Type | `ArizeAi.ObservabilityEval/organizations` |
+| Property     | Value                                                     |
+| ------------ | --------------------------------------------------------- |
+| Package      | `Azure.ResourceManager.ArizeAIObservabilityEval`          |
+| Version      | `1.0.0` (GA)                                              |
+| API Version  | `2024-10-01`                                              |
+| ARM Type     | `ArizeAi.ObservabilityEval/organizations`                 |
 | Dependencies | `Azure.Core` >= 1.46.2, `Azure.ResourceManager` >= 1.13.1 |
 
 ## Environment Variables
@@ -162,26 +162,26 @@ await org.Value.DeleteAsync(WaitUntil.Completed);
 
 ## Key Types
 
-| Type | Purpose |
-|------|---------|
-| `ArizeAIObservabilityEvalOrganizationResource` | Main ARM resource for Arize organizations |
-| `ArizeAIObservabilityEvalOrganizationCollection` | Collection for CRUD operations |
-| `ArizeAIObservabilityEvalOrganizationData` | Resource data model |
-| `ArizeAIObservabilityEvalOrganizationProperties` | Organization properties |
-| `ArizeAIObservabilityEvalMarketplaceDetails` | Azure Marketplace subscription info |
-| `ArizeAIObservabilityEvalOfferDetails` | Marketplace offer configuration |
-| `ArizeAIObservabilityEvalUserDetails` | User contact information |
-| `ArizeAIObservabilityEvalOrganizationPatch` | Patch model for updates |
-| `ArizeAIObservabilityEvalSingleSignOnPropertiesV2` | SSO configuration |
+| Type                                               | Purpose                                   |
+| -------------------------------------------------- | ----------------------------------------- |
+| `ArizeAIObservabilityEvalOrganizationResource`     | Main ARM resource for Arize organizations |
+| `ArizeAIObservabilityEvalOrganizationCollection`   | Collection for CRUD operations            |
+| `ArizeAIObservabilityEvalOrganizationData`         | Resource data model                       |
+| `ArizeAIObservabilityEvalOrganizationProperties`   | Organization properties                   |
+| `ArizeAIObservabilityEvalMarketplaceDetails`       | Azure Marketplace subscription info       |
+| `ArizeAIObservabilityEvalOfferDetails`             | Marketplace offer configuration           |
+| `ArizeAIObservabilityEvalUserDetails`              | User contact information                  |
+| `ArizeAIObservabilityEvalOrganizationPatch`        | Patch model for updates                   |
+| `ArizeAIObservabilityEvalSingleSignOnPropertiesV2` | SSO configuration                         |
 
 ## Enums
 
-| Enum | Values |
-|------|--------|
-| `ArizeAIObservabilityEvalOfferProvisioningState` | `Succeeded`, `Failed`, `Canceled`, `Provisioning`, `Updating`, `Deleting`, `Accepted` |
-| `ArizeAIObservabilityEvalMarketplaceSubscriptionStatus` | `PendingFulfillmentStart`, `Subscribed`, `Suspended`, `Unsubscribed` |
-| `ArizeAIObservabilityEvalSingleSignOnState` | `Initial`, `Enable`, `Disable` |
-| `ArizeAIObservabilityEvalSingleSignOnType` | `Saml`, `OpenId` |
+| Enum                                                    | Values                                                                                |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `ArizeAIObservabilityEvalOfferProvisioningState`        | `Succeeded`, `Failed`, `Canceled`, `Provisioning`, `Updating`, `Deleting`, `Accepted` |
+| `ArizeAIObservabilityEvalMarketplaceSubscriptionStatus` | `PendingFulfillmentStart`, `Subscribed`, `Suspended`, `Unsubscribed`                  |
+| `ArizeAIObservabilityEvalSingleSignOnState`             | `Initial`, `Enable`, `Disable`                                                        |
+| `ArizeAIObservabilityEvalSingleSignOnType`              | `Saml`, `OpenId`                                                                      |
 
 ## Best Practices
 
@@ -229,4 +229,5 @@ var data = await org.GetAsync();
 - [Arize AI](https://arize.com/)
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

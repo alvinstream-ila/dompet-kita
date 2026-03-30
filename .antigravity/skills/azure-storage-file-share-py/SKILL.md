@@ -3,7 +3,7 @@ name: azure-storage-file-share-py
 description: Azure Storage File Share SDK for Python. Use for SMB file shares, directories, and file operations in the cloud.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Storage File Share SDK for Python
@@ -209,24 +209,24 @@ from azure.identity.aio import DefaultAzureCredential
 async def upload_file():
     credential = DefaultAzureCredential()
     service = ShareServiceClient(account_url, credential=credential)
-    
+
     share = service.get_share_client("my-share")
     file_client = share.get_file_client("test.txt")
-    
+
     await file_client.upload_file("Hello!")
-    
+
     await service.close()
     await credential.close()
 ```
 
 ## Client Types
 
-| Client | Purpose |
-|--------|---------|
-| `ShareServiceClient` | Account-level operations |
-| `ShareClient` | Share operations |
-| `ShareDirectoryClient` | Directory operations |
-| `ShareFileClient` | File operations |
+| Client                 | Purpose                  |
+| ---------------------- | ------------------------ |
+| `ShareServiceClient`   | Account-level operations |
+| `ShareClient`          | Share operations         |
+| `ShareDirectoryClient` | Directory operations     |
+| `ShareFileClient`      | File operations          |
 
 ## Best Practices
 
@@ -239,4 +239,5 @@ async def upload_file():
 7. **Close async clients** explicitly
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

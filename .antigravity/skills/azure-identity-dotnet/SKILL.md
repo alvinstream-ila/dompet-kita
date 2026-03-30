@@ -3,7 +3,7 @@ name: azure-identity-dotnet
 description: Azure Identity SDK for .NET. Authentication library for Azure SDK clients using Microsoft Entra ID. Use for DefaultAzureCredential, managed identity, service principals, and developer credentials.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure.Identity (.NET)
@@ -27,6 +27,7 @@ dotnet add package Azure.Identity.Broker
 ## Environment Variables
 
 ### Service Principal with Secret
+
 ```bash
 AZURE_CLIENT_ID=<application-client-id>
 AZURE_TENANT_ID=<directory-tenant-id>
@@ -34,6 +35,7 @@ AZURE_CLIENT_SECRET=<client-secret-value>
 ```
 
 ### Service Principal with Certificate
+
 ```bash
 AZURE_CLIENT_ID=<application-client-id>
 AZURE_TENANT_ID=<directory-tenant-id>
@@ -42,6 +44,7 @@ AZURE_CLIENT_CERTIFICATE_PASSWORD=<certificate-password>  # Optional
 ```
 
 ### Managed Identity
+
 ```bash
 AZURE_CLIENT_ID=<user-assigned-managed-identity-client-id>  # Only for user-assigned
 ```
@@ -50,17 +53,17 @@ AZURE_CLIENT_ID=<user-assigned-managed-identity-client-id>  # Only for user-assi
 
 The recommended credential for most scenarios. Tries multiple authentication methods in order:
 
-| Order | Credential | Enabled by Default |
-|-------|------------|-------------------|
-| 1 | EnvironmentCredential | Yes |
-| 2 | WorkloadIdentityCredential | Yes |
-| 3 | ManagedIdentityCredential | Yes |
-| 4 | VisualStudioCredential | Yes |
-| 5 | VisualStudioCodeCredential | Yes |
-| 6 | AzureCliCredential | Yes |
-| 7 | AzurePowerShellCredential | Yes |
-| 8 | AzureDeveloperCliCredential | Yes |
-| 9 | InteractiveBrowserCredential | **No** |
+| Order | Credential                   | Enabled by Default |
+| ----- | ---------------------------- | ------------------ |
+| 1     | EnvironmentCredential        | Yes                |
+| 2     | WorkloadIdentityCredential   | Yes                |
+| 3     | ManagedIdentityCredential    | Yes                |
+| 4     | VisualStudioCredential       | Yes                |
+| 5     | VisualStudioCodeCredential   | Yes                |
+| 6     | AzureCliCredential           | Yes                |
+| 7     | AzurePowerShellCredential    | Yes                |
+| 8     | AzureDeveloperCliCredential  | Yes                |
+| 9     | InteractiveBrowserCredential | **No**             |
 
 ### Basic Usage
 
@@ -86,7 +89,7 @@ builder.Services.AddAzureClients(clientBuilder =>
         new Uri("https://myaccount.blob.core.windows.net"));
     clientBuilder.AddSecretClient(
         new Uri("https://myvault.vault.azure.net"));
-    
+
     // Uses DefaultAzureCredential by default
     clientBuilder.UseCredential(new DefaultAzureCredential());
 });
@@ -206,23 +209,23 @@ var credential = new DefaultAzureCredential(
 
 ## Credential Types Reference
 
-| Category | Credential | Purpose |
-|----------|------------|---------|
-| **Chains** | `DefaultAzureCredential` | Preconfigured chain for dev-to-prod |
-| | `ChainedTokenCredential` | Custom credential chain |
-| **Azure-Hosted** | `ManagedIdentityCredential` | Azure managed identity |
-| | `WorkloadIdentityCredential` | Kubernetes workload identity |
-| | `EnvironmentCredential` | Environment variables |
-| **Service Principal** | `ClientSecretCredential` | Client ID + secret |
-| | `ClientCertificateCredential` | Client ID + certificate |
-| | `ClientAssertionCredential` | Signed client assertion |
-| **User** | `InteractiveBrowserCredential` | Browser-based auth |
-| | `DeviceCodeCredential` | Device code flow |
-| | `OnBehalfOfCredential` | Delegated identity |
-| **Developer** | `AzureCliCredential` | Azure CLI |
-| | `AzurePowerShellCredential` | Azure PowerShell |
-| | `AzureDeveloperCliCredential` | Azure Developer CLI |
-| | `VisualStudioCredential` | Visual Studio |
+| Category              | Credential                     | Purpose                             |
+| --------------------- | ------------------------------ | ----------------------------------- |
+| **Chains**            | `DefaultAzureCredential`       | Preconfigured chain for dev-to-prod |
+|                       | `ChainedTokenCredential`       | Custom credential chain             |
+| **Azure-Hosted**      | `ManagedIdentityCredential`    | Azure managed identity              |
+|                       | `WorkloadIdentityCredential`   | Kubernetes workload identity        |
+|                       | `EnvironmentCredential`        | Environment variables               |
+| **Service Principal** | `ClientSecretCredential`       | Client ID + secret                  |
+|                       | `ClientCertificateCredential`  | Client ID + certificate             |
+|                       | `ClientAssertionCredential`    | Signed client assertion             |
+| **User**              | `InteractiveBrowserCredential` | Browser-based auth                  |
+|                       | `DeviceCodeCredential`         | Device code flow                    |
+|                       | `OnBehalfOfCredential`         | Delegated identity                  |
+| **Developer**         | `AzureCliCredential`           | Azure CLI                           |
+|                       | `AzurePowerShellCredential`    | Azure PowerShell                    |
+|                       | `AzureDeveloperCliCredential`  | Azure Developer CLI                 |
+|                       | `VisualStudioCredential`       | Visual Studio                       |
 
 ## Best Practices
 
@@ -300,15 +303,16 @@ catch (CredentialUnavailableException e)
 
 ## Key Exceptions
 
-| Exception | Description |
-|-----------|-------------|
-| `AuthenticationFailedException` | Base exception for authentication errors |
-| `CredentialUnavailableException` | Credential cannot authenticate in current environment |
-| `AuthenticationRequiredException` | Interactive authentication is required |
+| Exception                         | Description                                           |
+| --------------------------------- | ----------------------------------------------------- |
+| `AuthenticationFailedException`   | Base exception for authentication errors              |
+| `CredentialUnavailableException`  | Credential cannot authenticate in current environment |
+| `AuthenticationRequiredException` | Interactive authentication is required                |
 
 ## Managed Identity Support
 
 Supported Azure services:
+
 - Azure App Service and Azure Functions
 - Azure Arc
 - Azure Cloud Shell
@@ -323,21 +327,22 @@ All credential implementations are thread-safe. A single credential instance can
 
 ## Related SDKs
 
-| SDK | Purpose | Install |
-|-----|---------|---------|
-| `Azure.Identity` | Authentication (this SDK) | `dotnet add package Azure.Identity` |
-| `Microsoft.Extensions.Azure` | DI integration | `dotnet add package Microsoft.Extensions.Azure` |
-| `Azure.Identity.Broker` | Brokered auth (Windows) | `dotnet add package Azure.Identity.Broker` |
+| SDK                          | Purpose                   | Install                                         |
+| ---------------------------- | ------------------------- | ----------------------------------------------- |
+| `Azure.Identity`             | Authentication (this SDK) | `dotnet add package Azure.Identity`             |
+| `Microsoft.Extensions.Azure` | DI integration            | `dotnet add package Microsoft.Extensions.Azure` |
+| `Azure.Identity.Broker`      | Brokered auth (Windows)   | `dotnet add package Azure.Identity.Broker`      |
 
 ## Reference Links
 
-| Resource | URL |
-|----------|-----|
-| NuGet Package | https://www.nuget.org/packages/Azure.Identity |
-| API Reference | https://learn.microsoft.com/dotnet/api/azure.identity |
-| Credential Chains | https://learn.microsoft.com/dotnet/azure/sdk/authentication/credential-chains |
-| Best Practices | https://learn.microsoft.com/dotnet/azure/sdk/authentication/best-practices |
-| GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/identity/Azure.Identity |
+| Resource          | URL                                                                              |
+| ----------------- | -------------------------------------------------------------------------------- |
+| NuGet Package     | https://www.nuget.org/packages/Azure.Identity                                    |
+| API Reference     | https://learn.microsoft.com/dotnet/api/azure.identity                            |
+| Credential Chains | https://learn.microsoft.com/dotnet/azure/sdk/authentication/credential-chains    |
+| Best Practices    | https://learn.microsoft.com/dotnet/azure/sdk/authentication/best-practices       |
+| GitHub Source     | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/identity/Azure.Identity |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

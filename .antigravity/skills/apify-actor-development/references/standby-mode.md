@@ -11,13 +11,13 @@ You can recognize a standby Actor by checking the `usesStandbyMode` property in 
 
 ```javascript
 // Apify standby readiness probe at root path
-app.get('/', (req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    if (req.headers['x-apify-container-server-readiness-probe']) {
-        res.end('Readiness probe OK\n');
-    } else {
-        res.end('Actor is ready\n');
-    }
+app.get("/", (req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  if (req.headers["x-apify-container-server-readiness-probe"]) {
+    res.end("Readiness probe OK\n");
+  } else {
+    res.end("Actor is ready\n");
+  }
 });
 ```
 

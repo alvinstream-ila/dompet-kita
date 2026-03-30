@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, ArrowDownCircle, ArrowUpCircle } from 'lucide-react';
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 import {
   Dialog,
   DialogContent,
@@ -8,8 +8,8 @@ import {
   DialogTitle,
   DialogClose,
   DialogDescription,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { LoanForm } from './LoanForm';
 import type { Loan } from '@/types';
 
@@ -19,43 +19,70 @@ interface AddLoanModalProps {
   loan?: Loan | null;
 }
 
-export const AddLoanModal: React.FC<AddLoanModalProps> = ({ isOpen, onClose, loan }) => {
-  const [currentType, setCurrentType] = useState<'utang' | 'piutang'>(loan?.type || 'utang');
+export const AddLoanModal: React.FC<AddLoanModalProps> = ({
+  isOpen,
+  onClose,
+  loan,
+}) => {
+  const [currentType, setCurrentType] = useState<'utang' | 'piutang'>(
+    loan?.type || 'utang'
+  );
 
-  const activeColorClass = currentType === 'utang' ? 'bg-rose-500 border-rose-500' : 'bg-emerald-600 border-emerald-600';
+  const activeColorClass =
+    currentType === 'utang'
+      ? 'bg-rose-500 border-rose-500'
+      : 'bg-emerald-600 border-emerald-600';
 
   return (
     <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
-      <DialogContent showCloseButton={false} className="sm:max-w-[440px] p-0 overflow-hidden rounded-[40px] border-none shadow-2xl bg-white">
-        <DialogHeader className={cn("p-6 pb-8 text-white relative overflow-hidden transition-colors duration-500 min-h-[120px] flex flex-col justify-end", activeColorClass)}>
+      <DialogContent
+        showCloseButton={false}
+        className="overflow-hidden rounded-[40px] border-none bg-white p-0 shadow-2xl sm:max-w-[440px]"
+      >
+        <DialogHeader
+          className={cn(
+            'relative flex min-h-[120px] flex-col justify-end overflow-hidden p-6 pb-8 text-white transition-colors duration-500',
+            activeColorClass
+          )}
+        >
           <div className="relative z-10 space-y-1">
-             <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-90">{loan ? 'Update Progress Pelunasan' : 'Catat Titipan Baru'}</p>
-             <DialogTitle className="text-2xl font-black flex items-center gap-2.5 tracking-tighter text-white">
-               {currentType === 'utang' ? <ArrowDownCircle className="size-6" /> : <ArrowUpCircle className="size-6" />}
-               {loan ? 'BAYAR' : 'TAMBAH'} {currentType === 'utang' ? 'HUTANG' : 'PIUTANG'}
-             </DialogTitle>
-             <DialogDescription className="sr-only">
-               Formulir untuk menambah atau mengupdate data hutang dan piutang.
-             </DialogDescription>
+            <p className="text-[10px] font-black tracking-[0.2em] uppercase opacity-90">
+              {loan ? 'Update Progress Pelunasan' : 'Catat Titipan Baru'}
+            </p>
+            <DialogTitle className="flex items-center gap-2.5 text-2xl font-black tracking-tighter text-white">
+              {currentType === 'utang' ? (
+                <ArrowDownCircle className="size-6" />
+              ) : (
+                <ArrowUpCircle className="size-6" />
+              )}
+              {loan ? 'BAYAR' : 'TAMBAH'}{' '}
+              {currentType === 'utang' ? 'HUTANG' : 'PIUTANG'}
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              Formulir untuk menambah atau mengupdate data hutang dan piutang.
+            </DialogDescription>
           </div>
-          
-          <div className="absolute -right-6 -top-6 w-32 h-32 bg-white/20 rounded-full blur-2xl" />
-          <div className="absolute -left-10 bottom-0 w-24 h-24 bg-black/10 rounded-full blur-xl" />
-          
+
+          <div className="absolute -top-6 -right-6 h-32 w-32 rounded-full bg-white/20 blur-2xl" />
+          <div className="absolute bottom-0 -left-10 h-24 w-24 rounded-full bg-black/10 blur-xl" />
+
           <DialogClose asChild>
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={onClose}
-              className="absolute top-4 right-4 w-10 h-10 rounded-full text-white hover:bg-white/20 hover:text-white transition-all active:scale-90 z-50 group"
+              className="group absolute top-4 right-4 z-50 h-10 w-10 rounded-full text-white transition-all hover:bg-white/20 hover:text-white active:scale-90"
             >
-              <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" strokeWidth={3} />
+              <X
+                className="h-5 w-5 transition-transform duration-300 group-hover:rotate-90"
+                strokeWidth={3}
+              />
             </Button>
           </DialogClose>
         </DialogHeader>
 
-        <div className="max-h-[75vh] overflow-y-auto scrollbar-none px-6 pb-8 -mt-4 relative z-20">
-          <LoanForm 
+        <div className="scrollbar-none relative z-20 -mt-4 max-h-[75vh] overflow-y-auto px-6 pb-8">
+          <LoanForm
             loan={loan}
             onTypeChange={setCurrentType}
             onSuccess={onClose}

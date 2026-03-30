@@ -4,216 +4,122 @@ Welcome to the comprehensive technical documentation for **Dompet Kita**, a secu
 
 ---
 
-# 🏦 Backend Documentation
+## 🏗️ 1. System Architecture & Philosophy
 
-Welcome to the official technical documentation for the **Dompet Kita** backend. This system is designed as a secure, AI-powered personal and couple finance manager, specifically tailored for Alvin & Ila.
+Project ini menggunakan pendekatan **"Core-First CLI"**. Semua logika bisnis penting (Keuangan, Aset, Audit) wajib berada di dalam **Laravel Artisan CLI**.
 
----
-
-## 🚀 1. Introduction & Overview
-
-**Dompet Kita** is a robust API-driven backend built to manage complex financial data, including income/expense tracking, asset management, loan monitoring, and goal planning. It features a unique "Gatekeeper" AI integration that provides emotional and practical financial insights.
-
-- **Primary Goal**: Centralize financial management with a personal touch.
-- **Key Users**: Alvin (Partner 1) & Ila (Partner 2).
-- **Core Principle**: Security, transparency, and AI-driven growth.
+- **MCP Server**: Berperan sebagai jembatan (bridge) murni antara AI Agent dan CLI.
+- **User Interface**: Frontend React berinteraksi dengan API, sementara pengembang (Developer) berinteraksi via terminal.
 
 ---
 
-## 🛠️ 2. Technical Stack
+## 🏦 2. Backend Documentation (Laravel 12.x)
 
-| Component | Technology |
-| :--- | :--- |
-| **Language** | PHP 8.4 |
-| **Framework** | Laravel 11.x |
-| **Database** | PostgreSQL (Hosted on Supabase) |
-| **Authentication** | Laravel Sanctum (Token-based) |
-| **Social Auth** | Laravel Socialite (Google Support) |
-| **AI Integration** | Google Gemini AI (via AIController) |
+### 🛠️ Technical Stack
 
----
+| Component     | Technology                    |
+| :------------ | :---------------------------- |
+| **Language**  | PHP 8.4 (JIT Enabled)         |
+| **Framework** | Laravel 12.x                  |
+| **Database**  | PostgreSQL (Supabase)         |
+| **Auth**      | Laravel Sanctum (Token-based) |
+| **Storage**   | Storj (S3 Compatible)         |
 
-## 📊 3. Database Schema & Models
+### ⚡ Professional Developer Suite
 
-The database is structured to support multi-user operations and historical tracking.
+Project ini dilengkapi dengan alat bantu otomatis untuk menjaga kualitas kode (Code Quality):
 
-### `users` Table
-Stores user profiles, settings, and partner information.
-- `social_id`, `social_type`: For OAuth integration.
-- `partner_name`, `anniversary_date`: Personalization fields.
-- `monthly_budget_limit`: User-defined guardrail.
+- **Laravel Pint**: Formatting kode otomatis sesuai standar PSR-12.
+- **Larastan**: Analisis statis untuk mencegah bug sebelum runtime.
+- **PHP Insights**: Audit kualitas, arsitektur, dan kompleksitas kode.
+- **Enlightn**: Audit keamanan (Security) khusus ekosistem Laravel.
+- **Rector**: Refactoring otomatis untuk menjaga kode tetap modern.
+- **Laravel Pail**: Live debugging logs langsung di terminal.
 
-### `transactions` Table
-The core ledger of the application.
-- `type`: `income` or `expense`.
-- `amount`: Precision decimal (15,2).
-- `receipt_url`: Link to uploaded media.
+### 🛡️ System Audit Command
 
-### `assets` Table
-Tracks net worth components.
-- `type`: `cash`, `bank`, `investment`, `property`.
-- `value`: Current valuation.
+Gunakan satu perintah untuk mengecek seluruh kesehatan sistem:
 
-### `loans` Table
-Tracks debt and lending.
-- `type`: `utang` (debt) or `piutang` (loaned out).
-- `remaining_amount`: Tracks partial repayments.
-
-### `goals` & `holidays` Table
-- **Goals**: Target-based savings tracking.
-- **Holidays**: Trip planning and budget allocation.
-
----
-
-## 🌐 4. API Endpoints
-
-All private endpoints require the `Authorization: Bearer <token>` header.
-
-### 🔑 Authentication
-| Method | Path | Description | Auth |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/register` | User signup. | No |
-| `POST` | `/api/login` | User login (Throttled). | No |
-| `POST` | `/api/logout` | Revoke tokens. | Yes |
-| `GET` | `/api/auth/{provider}` | Start Social Login. | No |
-| `ANY` | `/api/email/verify` | Email Verification Callback. | No |
-
-### 💰 Finance & Wealth
-| Method | Path | Description |
-| :--- | :--- | :--- |
-| `GET` | `/api/transactions` | List all transactions. |
-| `POST` | `/api/transactions` | Add new record. |
-| `GET` | `/api/wealth-history` | Fetch net worth trends. |
-| `GET` | `/api/loans` | Track debts/loans. |
-
-### 🧠 AI & Services
-| Method | Path | Description |
-| :--- | :--- | :--- |
-| `GET` | `/api/ai/insights` | Fetch AI personal insights. |
-| `POST` | `/api/ai/analyze` | Scan receipt (Maintenance). |
-| `POST` | `/api/media/upload` | Upload files to storage. |
-
----
-
-## 🤖 5. AI "The Gatekeeper" Logic
-
-The `AIController` acts as a financial coach with a personality.
-- **Insight Engine**: Analyzes the last 30 days of `transactions`.
-- **Dynamic Templates**:
-    - **Deficit**: Encouraging messages about saving.
-    - **Buffer**: Pride-filled messages about small savings.
-    - **Surplus**: Celebration and date-night suggestions.
-- **Tone**: Romantic, supportive, and "sayang-centric".
-
----
-
-## ⚙️ 6. Deployment & Setup
-
-### Installation
-1. `composer install`
-2. `php artisan migrate`
-3. `php artisan key:generate`
-4. `php artisan serve`
-
----
-
-> [!NOTE]
-> Backend documentation generated on March 22, 2026. This is a living document and should be updated whenever the `routes/api.php` or `migrations` change.
-
----
-
-# 🎨 Frontend Documentation
-
-Welcome to the official technical documentation for the **Dompet Kita** frontend. This is a high-performance, immersive React application designed to provide a premium financial management experience.
-
----
-
-## 🚀 1. Introduction & UI/UX Vision
-
-The **Dompet Kita** frontend is built with a focus on "Aesthetic Precision" and "Functional Warmth." It combines modern glassmorphism, 3D elements, and smooth micro-animations to create a platform that feels alive and supportive.
-
-- **Frontend Goal**: Turn boring financial data into a beautiful, interactive journey.
-- **Key Features**: 3D Wealth visualizations, real-time budget guardrails, and mobile-first responsive design.
-
----
-
-## 🛠️ 2. Technology Stack
-
-| Component | Technology |
-| :--- | :--- |
-| **Framework** | React 19 (Stable) |
-| **Build Tool** | Vite 8.x |
-| **Language** | TypeScript (Strict Mode) |
-| **Styling** | Tailwind CSS 4.x + PostCSS |
-| **Animations** | Framer Motion + Lottie |
-| **3D Engine** | Three.js (@react-three/fiber & @react-three/drei) |
-
----
-
-## 🏗️ 3. Application Architecture
-
-### Entry Point & Layout
-- **Root**: `src/main.tsx` initializes Sentry and React.
-- **Routing**: `react-router-dom` v7 with **Lazy Loading** for all major pages to optimize performance.
-- **Main Layout**: `src/components/layout/MainLayout.tsx` provides the common Sidebar and Navigation structure.
-
-### State Management
-- **AuthContext**: Manages login state, user session, and redirection.
-- **SettingsContext**: Handles theme preferences, currency formatting, and partner settings.
-- **Zustand**: Used for specific light-weight global states (e.g., UI toggles).
-
-### Data Fetching
-- **TanStack Query (v5)**: Centralized data fetching with 5-minute stale-time caching.
-- **Axios**: Configured with interceptors for automatic JWT attachment.
-
----
-
-## 📄 4. Core Pages & Features
-
-### 🏠 Home (Dashboard)
-- **Financial Summary**: Real-time income vs. expense cards.
-- **AI Insights**: Romantic and practical tips from "The Gatekeeper."
-- **3D Hero**: Interactive elements using `@react-three/fiber`.
-
-### 💰 Transactions & Wealth
-- **Transaction Logs**: Sortable, filterable list of all financial records.
-- **Wealth Tracker**: Visual breakdown of assets (Cash, Bank, Investments).
-- **Charts**: Integrated with `Chart.js` for monthly analytics.
-
-### 🤝 Loans & Goals
-- **Loans**: Track "Utang" and "Piutang" with contact names.
-- **Mimpi Kita**: Goal-based progress bars with target amounts.
-
-### 🌴 Holiday Planner
-- **Budget Tracking**: Dedicated view for trip planning.
-- **Itinerary Management**: Rich text itinerary editor.
-
----
-
-## 🎨 5. Design System (Shadcn/ui)
-
-The project uses a custom-themed **Shadcn/ui** design system stored in `src/components/ui`.
-- **Primary Colors**: Indigo/Violet gradients for a premium feel.
-- **Typography**: Inter (Modern Sans-serif).
-- **Glassmorphism**: Subtle blurs (`backdrop-blur-md`) used on cards and navigation.
-
----
-
-## ⚙️ 6. Development & Build
-
-### Development
 ```bash
-npm install
-npm run dev
+php artisan maintenance:verify
 ```
 
-### Build for Production
-```bash
-npm run build
-```
-The build process includes **Vite Compression** and **Rollup Visualizer** to maintain a lean bundle size.
+Perintah ini akan menjalankan: Check Style -> Static Analysis -> Security Audit -> Cloud Sync -> Database Optimize.
 
 ---
 
-> [!TIP]
-> Frontend documentation generated on March 22, 2026. Keep `src/components/ui` updated as the design system evolves!
+## 🔐 3. Data Security & Privacy (The Fortress)
+
+Dompet Kita menggunakan standar keamanan setara aplikasi perbankan (Defense-in-depth):
+
+### 🛡️ 7 Pilar Keamanan
+
+1. **Row Level Security (RLS)**: Proteksi di level database (Supabase) yang menjamin data hanya bisa diakses oleh pemilik aslinya.
+2. **Field-Level Encryption**: Data sensitif (`social_id`, `partner_name`, `description`) dienkripsi sebelum masuk ke database menggunakan Laravel Encrypted Casts.
+3. **Private Storage Visibility**: Semua file (struk) di Storj bersifat **Private** secara default.
+4. **Temporal Signed URLs**: Akses ke file privat hanya diperbolehkan melalui "Kunci Sementara" (Signed URL) yang berlaku selama 15 menit.
+5. **Honeypot Protection**: Menggunakan `spatie/laravel-honeypot` untuk memblokir pendaftaran bot otomatis.
+6. **Strict Rate Limiting**: Batasan percobaan login (5x/menit) dan aktivitas API untuk mencegah serangan Brute Force.
+7. **Login History & Device Tracking**: Mencatat IP Address dan User Agent setiap kali terjadi akses login.
+
+### 🕵️ Audit Trail (CCTV Digital)
+
+Setiap perubahan pada data finansial (`Transaction`, `Asset`, `Loan`) dicatat oleh **Spatie Activity Log**. Admin dapat melihat riwayat perubahan data (nilai lama vs nilai baru).
+
+---
+
+## 🎨 4. Frontend Documentation (React 19)
+
+### 🛠️ Technical Stack
+
+| Component         | Technology                                  |
+| :---------------- | :------------------------------------------ |
+| **Framework**     | React 19 (Vite 6.x)                         |
+| **Language**      | TypeScript (Strict Mode)                    |
+| **Styling**       | Tailwind CSS 4.x + Framer Motion            |
+| **Data Fetching** | TanStack Query v5                           |
+| **Security**      | `eslint-plugin-security` (Continuous Audit) |
+
+### 💂‍♂️ Git Hooks & Automation (Husky)
+
+Kami menggunakan **Husky** dan **lint-staged** untuk menjamin kualitas kode di setiap `git commit`:
+
+- Komit akan ditolak jika kode berantakan (tidak lolos Prettier).
+- Komit akan ditolak jika backend audit (`maintenance:verify`) gagal.
+- _Hasil_: Repository selalu dalam keadaan "Green" (Sehat).
+
+---
+
+## 🛠️ 5. Power-User CLI Suite (The Command Center)
+
+Daftar perintah Artisan khusus untuk pengelolaan tingkat tinggi:
+
+| Command                             | Description                                                               |
+| :---------------------------------- | :------------------------------------------------------------------------ |
+| `php artisan app:wealth-status`     | **Financial Dashboard**: Ringkasan Harta, Goals, dan Utang/Piutang.       |
+| `php artisan app:security-audit`    | **Security Scanner**: Mencari login mencurigakan & skor kesehatan sistem. |
+| `php artisan app:database-optimize` | **Pro Maintenance**: Membersihkan cache & log lama secara otomatis.       |
+| `php artisan maintenance:verify`    | **Unified Audit**: Menjalankan seluruh rangkaian tes kesehatan sistem.    |
+
+---
+
+## 🌐 6. Infrastructure & Deployment
+
+- **Frontend**: Vercel (Singapore)
+- **Backend**: Railway (Singapore)
+- **Database**: Supabase
+- **Object Storage**: Storj (Gateway.io)
+- **Monitoring**: Sentry (Error Tracking) & Google Search Console (SEO)
+
+---
+
+## ⚙️ 7. Development Workflow
+
+1. **Instalasi**: `npm run setup` (Menginstall frontend & backend sekaligus).
+2. **Menjalankan Dev**: `npm run start` (Frontend & Backend berjalan paralel).
+3. **Audit Manual**: `php artisan maintenance:verify` (Lakukan ini sebelum melakukan Push).
+
+---
+
+> [!IMPORTANT]
+> Dokumentasi ini diperbarui pada 30 Maret 2026. Prioritaskan penggunaan CLI untuk tugas-tugas administratif sistem guna menjaga konsistensi data dan integritas keamanan.

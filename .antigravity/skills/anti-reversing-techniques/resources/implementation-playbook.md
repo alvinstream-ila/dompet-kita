@@ -50,6 +50,7 @@ if (debugFlags == 0) exit(1);  // 0 means being debugged
 ```
 
 **Bypass Approaches:**
+
 ```python
 # x64dbg: ScyllaHide plugin
 # Patches common anti-debug checks
@@ -88,6 +89,7 @@ if (*heapFlags & 0x50000062) exit(1);
 ```
 
 **Bypass Approaches:**
+
 ```assembly
 ; In debugger, modify PEB directly
 ; x64dbg: dump at gs:[60] (x64) or fs:[30] (x86)
@@ -120,6 +122,7 @@ if (GetTickCount() - start > 1000) exit(1);
 ```
 
 **Bypass Approaches:**
+
 ```
 - Use hardware breakpoints instead of software
 - Patch timing checks
@@ -177,6 +180,7 @@ if (getppid() != 1 && strcmp(get_process_name(getppid()), "bash") != 0) {
 ```
 
 **Bypass Approaches:**
+
 ```bash
 # LD_PRELOAD to hook ptrace
 # Compile: gcc -shared -fPIC -o hook.so hook.c
@@ -244,6 +248,7 @@ if ((end - start) > 500) {
 ```
 
 **Bypass Approaches:**
+
 ```
 - Use bare-metal analysis environment
 - Harden VM (remove guest tools, change MAC)
@@ -289,6 +294,7 @@ while (1) {
 ```
 
 **Analysis Approach:**
+
 - Identify state variable
 - Map state transitions
 - Reconstruct original flow
@@ -312,6 +318,7 @@ if ((x * (x + 1)) % 2 == 1) {  // Product of consecutive = even
 ```
 
 **Analysis Approach:**
+
 - Identify constant expressions
 - Symbolic execution to prove predicates
 - Pattern matching for known opaque predicates
@@ -339,6 +346,7 @@ url[4] = ':'; url[5] = '/'; url[6] = '/';
 ```
 
 **Analysis Approach:**
+
 ```python
 # FLOSS for automatic string deobfuscation
 floss malware.exe
@@ -375,6 +383,7 @@ DWORD hash_api(char *name) {
 ```
 
 **Analysis Approach:**
+
 - Identify hash algorithm
 - Build hash database of known APIs
 - Use HashDB plugin for IDA
@@ -527,6 +536,7 @@ Symbolic execution:  angr, Triton
 ### Ethical Considerations
 
 This knowledge should only be used for:
+
 - Authorized security research
 - Malware analysis (defensive)
 - CTF competitions
@@ -534,6 +544,7 @@ This knowledge should only be used for:
 - Educational purposes
 
 Never use to bypass protections for:
+
 - Software piracy
 - Unauthorized access
 - Malicious purposes

@@ -3,7 +3,7 @@ name: azure-storage-blob-py
 description: Azure Blob Storage SDK for Python. Use for uploading, downloading, listing blobs, managing containers, and blob lifecycle.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Blob Storage SDK for Python
@@ -38,11 +38,11 @@ blob_service_client = BlobServiceClient(account_url, credential=credential)
 
 ## Client Hierarchy
 
-| Client | Purpose | Get From |
-|--------|---------|----------|
-| `BlobServiceClient` | Account-level operations | Direct instantiation |
-| `ContainerClient` | Container operations | `blob_service_client.get_container_client()` |
-| `BlobClient` | Single blob operations | `container_client.get_blob_client()` |
+| Client              | Purpose                  | Get From                                     |
+| ------------------- | ------------------------ | -------------------------------------------- |
+| `BlobServiceClient` | Account-level operations | Direct instantiation                         |
+| `ContainerClient`   | Container operations     | `blob_service_client.get_container_client()` |
+| `BlobClient`        | Single blob operations   | `container_client.get_blob_client()`         |
 
 ## Core Workflow
 
@@ -192,10 +192,10 @@ from azure.storage.blob.aio import BlobServiceClient
 
 async def upload_async():
     credential = DefaultAzureCredential()
-    
+
     async with BlobServiceClient(account_url, credential=credential) as client:
         blob_client = client.get_blob_client("mycontainer", "sample.txt")
-        
+
         with open("./file.txt", "rb") as data:
             await blob_client.upload_blob(data, overwrite=True)
 
@@ -203,7 +203,7 @@ async def upload_async():
 async def download_async():
     async with BlobServiceClient(account_url, credential=credential) as client:
         blob_client = client.get_blob_client("mycontainer", "sample.txt")
-        
+
         stream = await blob_client.download_blob()
         data = await stream.readall()
 ```
@@ -219,4 +219,5 @@ async def download_async():
 7. **Set appropriate content types** for web-served blobs
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

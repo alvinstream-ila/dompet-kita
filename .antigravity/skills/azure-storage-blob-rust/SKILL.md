@@ -3,7 +3,7 @@ name: azure-storage-blob-rust
 description: Azure Blob Storage SDK for Rust. Use for uploading, downloading, and managing blobs and containers.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Blob Storage SDK for Rust
@@ -41,11 +41,11 @@ let blob_client = BlobClient::new(
 
 ## Client Types
 
-| Client | Purpose |
-|--------|---------|
-| `BlobServiceClient` | Account-level operations, list containers |
-| `BlobContainerClient` | Container operations, list blobs |
-| `BlobClient` | Individual blob operations |
+| Client                | Purpose                                   |
+| --------------------- | ----------------------------------------- |
+| `BlobServiceClient`   | Account-level operations, list containers |
+| `BlobContainerClient` | Container operations, list blobs          |
+| `BlobClient`          | Individual blob operations                |
 
 ## Core Operations
 
@@ -119,17 +119,19 @@ while let Some(blob) = pager.try_next().await? {
 ## RBAC Permissions
 
 For Entra ID auth, assign one of these roles:
+
 - `Storage Blob Data Reader` — read-only
 - `Storage Blob Data Contributor` — read/write
 - `Storage Blob Data Owner` — full access including RBAC
 
 ## Reference Links
 
-| Resource | Link |
-|----------|------|
-| API Reference | https://docs.rs/azure_storage_blob |
-| Source Code | https://github.com/Azure/azure-sdk-for-rust/tree/main/sdk/storage/azure_storage_blob |
-| crates.io | https://crates.io/crates/azure_storage_blob |
+| Resource      | Link                                                                                 |
+| ------------- | ------------------------------------------------------------------------------------ |
+| API Reference | https://docs.rs/azure_storage_blob                                                   |
+| Source Code   | https://github.com/Azure/azure-sdk-for-rust/tree/main/sdk/storage/azure_storage_blob |
+| crates.io     | https://crates.io/crates/azure_storage_blob                                          |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

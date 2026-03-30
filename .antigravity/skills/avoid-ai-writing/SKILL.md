@@ -24,6 +24,7 @@ Detects and fixes AI writing patterns ("AI-isms") that make text sound machine-g
 ## Example
 
 **Prompt:**
+
 ```
 Audit this for AI writing patterns:
 
@@ -31,6 +32,7 @@ Audit this for AI writing patterns:
 ```
 
 **Output:** The skill returns four sections:
+
 1. **Issues found** — every AI-ism quoted (landscape, embarking, pivotal, leverage, cutting-edge, streamline, robust, serves as, testament to, fostering, seamless, Moreover, In today's rapidly evolving...)
 2. **Rewritten version** — "Developers are starting to use newer AI tools to simplify their work. These tools are reliable, and they're making development less painful."
 3. **What changed** — summary of edits

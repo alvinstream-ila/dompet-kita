@@ -3,7 +3,7 @@ name: azure-data-tables-py
 description: Azure Tables SDK for Python (Storage and Cosmos DB). Use for NoSQL key-value storage, entity CRUD, and batch operations.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Tables SDK for Python
@@ -44,10 +44,10 @@ table_client = TableClient(endpoint=endpoint, table_name="mytable", credential=c
 
 ## Client Types
 
-| Client | Purpose |
-|--------|---------|
+| Client               | Purpose                           |
+| -------------------- | --------------------------------- |
 | `TableServiceClient` | Create/delete tables, list tables |
-| `TableClient` | Entity CRUD, queries |
+| `TableClient`        | Entity CRUD, queries              |
 
 ## Table Operations
 
@@ -199,7 +199,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 async def table_operations():
     credential = DefaultAzureCredential()
-    
+
     async with TableClient(
         endpoint="https://<account>.table.core.windows.net",
         table_name="mytable",
@@ -211,7 +211,7 @@ async def table_operations():
             "RowKey": "1",
             "data": "test"
         })
-        
+
         # Query
         async for entity in client.query_entities("PartitionKey eq 'async'"):
             print(entity)
@@ -223,14 +223,14 @@ asyncio.run(table_operations())
 ## Data Types
 
 | Python Type | Table Storage Type |
-|-------------|-------------------|
-| `str` | String |
-| `int` | Int64 |
-| `float` | Double |
-| `bool` | Boolean |
-| `datetime` | DateTime |
-| `bytes` | Binary |
-| `UUID` | Guid |
+| ----------- | ------------------ |
+| `str`       | String             |
+| `int`       | Int64              |
+| `float`     | Double             |
+| `bool`      | Boolean            |
+| `datetime`  | DateTime           |
+| `bytes`     | Binary             |
+| `UUID`      | Guid               |
 
 ## Best Practices
 
@@ -243,4 +243,5 @@ asyncio.run(table_operations())
 7. **Use async client** for high-throughput scenarios
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

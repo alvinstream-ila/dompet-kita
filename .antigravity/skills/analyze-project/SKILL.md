@@ -52,6 +52,7 @@ Classify the primary session intent from objective + artifacts:
 - `AUDIT_ANALYSIS`
 
 Record:
+
 - `session_intent`
 - `session_intent_confidence`
 
@@ -81,19 +82,23 @@ Output: indexed list of conversations to analyze.
 For each conversation, read if present:
 
 ### Core artifacts
+
 - `task.md`
 - `implementation_plan.md`
 - `walkthrough.md`
 
 ### Metadata
+
 - `*.metadata.json`
 
 ### Version snapshots
+
 - `task.md.resolved.0 ... N`
 - `implementation_plan.md.resolved.0 ... N`
 - `walkthrough.md.resolved.0 ... N`
 
 ### Additional signals
+
 - other `.md` artifacts
 - timestamps across artifact updates
 - file/folder/subsystem names mentioned in plans/walkthroughs
@@ -103,6 +108,7 @@ For each conversation, read if present:
 Record per conversation:
 
 #### Lifecycle
+
 - `has_task`
 - `has_plan`
 - `has_walkthrough`
@@ -110,12 +116,14 @@ Record per conversation:
 - `is_abandoned_candidate` = task exists but no walkthrough
 
 #### Revision / change volume
+
 - `task_versions`
 - `plan_versions`
 - `walkthrough_versions`
 - `extra_artifacts`
 
 #### Scope
+
 - `task_items_initial`
 - `task_items_final`
 - `task_completed_pct`
@@ -123,11 +131,13 @@ Record per conversation:
 - `scope_creep_pct_raw`
 
 #### Timing
+
 - `created_at`
 - `completed_at`
 - `duration_minutes`
 
 #### Content / quality
+
 - `objective_text`
 - `initial_plan_summary`
 - `final_plan_summary`
@@ -156,6 +166,7 @@ Score the opening request on a 0–2 scale for:
 - **Dependency awareness**
 
 Create:
+
 - `prompt_sufficiency_score`
 - `prompt_sufficiency_band` = High / Medium / Low
 
@@ -174,12 +185,14 @@ Classify scope change into:
 - **Agent-introduced scope** — likely unnecessary work introduced by the agent
 
 Record:
+
 - `scope_change_type_primary`
 - `scope_change_type_secondary` (optional)
 - `scope_change_confidence`
 - evidence
 
 Keep one short example in mind for calibration:
+
 - Human-added: “also refactor nearby code while you’re here”
 - Necessary discovered: hidden dependency must be fixed for original task to work
 - Agent-introduced: extra cleanup or redesign not requested and not required
@@ -199,6 +212,7 @@ Classify each session into one primary pattern:
 - **Exploratory / research session**
 
 Record:
+
 - `rework_shape`
 - `rework_shape_confidence`
 - evidence
@@ -210,7 +224,9 @@ Record:
 For every non-clean session, assign:
 
 ### Primary root cause
+
 One of:
+
 - `SPEC_AMBIGUITY`
 - `HUMAN_SCOPE_CHANGE`
 - `REPO_FRAGILITY`
@@ -219,9 +235,11 @@ One of:
 - `LEGITIMATE_TASK_COMPLEXITY`
 
 ### Secondary root cause
+
 Optional if materially relevant
 
 ### Root-cause guidance
+
 - **SPEC_AMBIGUITY**: opening ask lacked boundaries, targets, criteria, or constraints
 - **HUMAN_SCOPE_CHANGE**: scope expanded because the user broadened the task
 - **REPO_FRAGILITY**: hidden coupling, brittle files, unclear architecture, or environment issues forced extra work
@@ -230,6 +248,7 @@ Optional if materially relevant
 - **LEGITIMATE_TASK_COMPLEXITY**: revisions were expected for the difficulty and not clearly avoidable
 
 Every root-cause assignment must include:
+
 - evidence
 - why stronger alternative causes were rejected
 - confidence
@@ -241,6 +260,7 @@ Every root-cause assignment must include:
 Assign each session a severity score to prioritize attention.
 
 Components (sum, clamp 0–100):
+
 - **Completion failure**: 0–25 (`abandoned = 25`)
 - **Replanning intensity**: 0–15
 - **Scope instability**: 0–15
@@ -250,6 +270,7 @@ Components (sum, clamp 0–100):
 - **Hotspot recurrence**: 0–10
 
 Bands:
+
 - **0–19 Low**
 - **20–39 Moderate**
 - **40–59 Significant**
@@ -257,6 +278,7 @@ Bands:
 - **80–100 Critical**
 
 Record:
+
 - `session_severity_score`
 - `severity_band`
 - `severity_drivers` = top 2–4 contributors
@@ -272,6 +294,7 @@ Contextualize severity using session intent so research/exploration sessions are
 Across all conversations, cluster repeated struggle by file, folder, or subsystem.
 
 For each cluster, calculate:
+
 - number of conversations touching it
 - average revisions
 - completion rate
@@ -286,6 +309,7 @@ Goal: identify whether friction is mostly prompt-driven, agent-driven, or concen
 ## Step 8: Comparative Cohorts
 
 Compare:
+
 - first-shot successes vs re-planned sessions
 - completed vs abandoned
 - high prompt sufficiency vs low prompt sufficiency
@@ -294,6 +318,7 @@ Compare:
 - low-friction subsystems vs high-friction subsystems
 
 For each comparison, identify:
+
 - what differs materially
 - which prompt traits correlate with smoother execution
 - which repo traits correlate with repeated struggle
@@ -307,12 +332,14 @@ Do not just restate averages; extract cautious evidence-backed patterns.
 Generate 3–7 findings that are not simple metric restatements.
 
 Each finding must include:
+
 - observation
 - why it matters
 - evidence
 - confidence
 
 Examples of strong findings:
+
 - replans cluster around weak file targeting rather than weak acceptance criteria
 - scope growth often begins after initial success, suggesting post-success human expansion
 - auth-related struggle is driven more by repo fragility than agent hallucination
@@ -331,22 +358,24 @@ Create `session_analysis_report.md` with this structure:
 
 ## Executive Summary
 
-| Metric | Value | Rating |
-|:---|:---|:---|
-| First-Shot Success Rate | X% | 🟢/🟡/🔴 |
-| Completion Rate | X% | 🟢/🟡/🔴 |
-| Avg Scope Growth | X% | 🟢/🟡/🔴 |
-| Replan Rate | X% | 🟢/🟡/🔴 |
-| Median Duration | Xm | — |
-| Avg Session Severity | X | 🟢/🟡/🔴 |
-| High-Severity Sessions | X / N | 🟢/🟡/🔴 |
+| Metric                  | Value | Rating   |
+| :---------------------- | :---- | :------- |
+| First-Shot Success Rate | X%    | 🟢/🟡/🔴 |
+| Completion Rate         | X%    | 🟢/🟡/🔴 |
+| Avg Scope Growth        | X%    | 🟢/🟡/🔴 |
+| Replan Rate             | X%    | 🟢/🟡/🔴 |
+| Median Duration         | Xm    | —        |
+| Avg Session Severity    | X     | 🟢/🟡/🔴 |
+| High-Severity Sessions  | X / N | 🟢/🟡/🔴 |
 
 Thresholds:
+
 - First-shot: 🟢 >70 / 🟡 40–70 / 🔴 <40
 - Scope growth: 🟢 <15 / 🟡 15–40 / 🔴 >40
 - Replan rate: 🟢 <20 / 🟡 20–50 / 🔴 >50
 
 Avg severity guidance:
+
 - 🟢 <25
 - 🟡 25–50
 - 🔴 >50
@@ -357,34 +386,43 @@ Then add a short narrative summary of what is going well, what is breaking down,
 
 ## Root Cause Breakdown
 
-| Root Cause | Count | % | Notes |
-|:---|:---|:---|:---|
+| Root Cause | Count | %   | Notes |
+| :--------- | :---- | :-- | :---- |
 
 ## Prompt Sufficiency Analysis
+
 - common traits of high-sufficiency prompts
 - common missing inputs in low-sufficiency prompts
 - which missing prompt ingredients correlate most with replanning or abandonment
 
 ## Scope Change Analysis
+
 Separate:
+
 - Human-added scope
 - Necessary discovered scope
 - Agent-introduced scope
 
 ## Rework Shape Analysis
+
 Summarize the main failure patterns across sessions.
 
 ## Friction Hotspots
+
 Show the files/folders/subsystems most associated with replanning, abandonment, verification churn, and high severity.
 
 ## First-Shot Successes
+
 List the cleanest sessions and extract what made them work.
 
 ## Non-Obvious Findings
+
 List 3–7 evidence-backed findings with confidence.
 
 ## Severity Triage
+
 List the highest-severity sessions and say whether the best intervention is:
+
 - prompt improvement
 - scope discipline
 - targeted skill/workflow
@@ -392,7 +430,9 @@ List the highest-severity sessions and say whether the best intervention is:
 - validation/test harness improvement
 
 ## Recommendations
+
 For each recommendation, use:
+
 - **Observed pattern**
 - **Likely cause**
 - **Evidence**
@@ -402,14 +442,15 @@ For each recommendation, use:
 
 ## Per-Conversation Breakdown
 
-| # | Title | Intent | Duration | Scope Δ | Plan Revs | Task Revs | Root Cause | Rework Shape | Severity | Complete? |
-|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
+| #   | Title | Intent | Duration | Scope Δ | Plan Revs | Task Revs | Root Cause | Rework Shape | Severity | Complete? |
+| :-- | :---- | :----- | :------- | :------ | :-------- | :-------- | :--------- | :----------- | :------- | :-------- |
 
 ---
 
 ## Step 11: Optional Post-Analysis Improvements
 
 If appropriate, also:
+
 - update any local project-health or memory artifact (if present) with recurring failure modes and fragile subsystems
 - generate `prompt_improvement_tips.md` from high-sufficiency / first-shot-success sessions
 - suggest missing skills or workflows when the same subsystem or task sequence repeatedly causes struggle
@@ -421,6 +462,7 @@ Only recommend workflows/skills when the pattern appears repeatedly.
 ## Final Output Standard
 
 The workflow must produce:
+
 1. metrics summary
 2. root-cause diagnosis
 3. prompt-sufficiency assessment

@@ -3,19 +3,19 @@ name: claude-code-expert
 description: Especialista profundo em Claude Code - CLI da Anthropic. Maximiza produtividade com atalhos, hooks, MCPs, configuracoes avancadas, workflows, CLAUDE.md, memoria, sub-agentes, permissoes e...
 risk: none
 source: community
-date_added: '2026-03-06'
+date_added: "2026-03-06"
 author: renat
 tags:
-- claude-code
-- productivity
-- cli
-- configuration
+  - claude-code
+  - productivity
+  - cli
+  - configuration
 tools:
-- claude-code
-- antigravity
-- cursor
-- gemini-cli
-- codex-cli
+  - claude-code
+  - antigravity
+  - cursor
+  - gemini-cli
+  - codex-cli
 ---
 
 <!-- security-allowlist: curl-pipe-bash -->
@@ -47,6 +47,7 @@ cada sessao em uma experiencia 10x mais poderosa, rapida e inteligente.
 
 Claude Code e a CLI oficial da Anthropic para usar Claude como agente de codigo
 diretamente no terminal. Diferente do Claude.ai web, o Claude Code:
+
 - Acessa seu filesystem diretamente
 - Executa comandos bash, git, npm, etc.
 - Persiste contexto via CLAUDE.md e memory files
@@ -85,14 +86,13 @@ E a forma mais poderosa de dar contexto e instrucoes persistentes ao Claude Code
 
 ## Hierarquia De Claude.Md
 
-1. ~/.claude/CLAUDE.md          global, carregado em todo projeto
-2. /projeto/CLAUDE.md           nivel de projeto
-3. /projeto/subpasta/CLAUDE.md  nivel de subpasta, carregado ao navegar
+1. ~/.claude/CLAUDE.md global, carregado em todo projeto
+2. /projeto/CLAUDE.md nivel de projeto
+3. /projeto/subpasta/CLAUDE.md nivel de subpasta, carregado ao navegar
 
 ## Estrutura Recomendada
 
 ```markdown
-
 ## Contexto
 
 O que e este projeto, tecnologias, arquitetura
@@ -151,7 +151,8 @@ Para projetos ativos: memory/ai-personas.md
 
 Ao final de sessoes longas, execute:
 python context-agent/scripts/context_manager.py save
-```
+
+````
 
 ## Context Guardian - Prevenir Perda De Contexto
 
@@ -197,7 +198,7 @@ Hooks executam comandos automaticamente em eventos do Claude Code.
     ]
   }
 }
-```
+````
 
 ## Exemplo: Hook De Log De Acoes Bash
 
@@ -267,14 +268,14 @@ claude mcp remove nome          # remover um MCP
 
 ## Mcps Mais Uteis
 
-| MCP | Funcao Principal |
-|-----|------------------|
-| filesystem | Acesso expandido a arquivos alem do projeto |
-| github | PRs, issues, commits, reviews via Claude |
-| postgres / sqlite | Consultas SQL diretas sem sair do Claude |
-| puppeteer / playwright | Automacao de browser e web scraping |
-| slack | Notificacoes e mensagens em canais |
-| fetch | HTTP requests diretos para APIs |
+| MCP                    | Funcao Principal                            |
+| ---------------------- | ------------------------------------------- |
+| filesystem             | Acesso expandido a arquivos alem do projeto |
+| github                 | PRs, issues, commits, reviews via Claude    |
+| postgres / sqlite      | Consultas SQL diretas sem sair do Claude    |
+| puppeteer / playwright | Automacao de browser e web scraping         |
+| slack                  | Notificacoes e mensagens em canais          |
+| fetch                  | HTTP requests diretos para APIs             |
 
 ## Criar Mcp Server Customizado Em Node.Js
 
@@ -311,12 +312,14 @@ Cada sub-agente roda de forma independente com seu proprio contexto.
 **Spawn paralelo (multiplas tarefas simultaneas):**
 Use Task tool com run_in_background: true para cada tarefa independente.
 Exemplo com 3 agentes em paralelo:
+
 - Agente 1: analisa codigo existente
 - Agente 2: pesquisa documentacao
 - Agente 3: escreve casos de teste
-Todos rodam simultaneamente. Resultado chega via TaskOutput.
+  Todos rodam simultaneamente. Resultado chega via TaskOutput.
 
 **Tipos de sub-agente:**
+
 - general-purpose: pesquisa, analise e codigo geral
 - Bash: apenas execucao de comandos de terminal
 - Explore: exploracao rapida de codebase
@@ -341,17 +344,8 @@ Ideal para: experimentos, refatoracoes arriscadas, POCs sem risco ao main.
 ```json
 {
   "permissions": {
-    "allow": [
-      "Bash(git *)",
-      "Bash(npm *)",
-      "Read(*)",
-      "Write(src/**)"
-    ],
-    "deny": [
-      "Bash(rm -rf *)",
-      "Bash(sudo *)",
-      "Bash(curl * | bash)"
-    ]
+    "allow": ["Bash(git *)", "Bash(npm *)", "Read(*)", "Write(src/**)"],
+    "deny": ["Bash(rm -rf *)", "Bash(sudo *)", "Bash(curl * | bash)"]
   }
 }
 ```
@@ -409,7 +403,6 @@ claude -p "leia memory/MEMORY.md e me da um briefing completo do estado atual"
 ## Pipeline Ci/Cd Com Claude Code
 
 ```yaml
-
 ## .Github/Workflows/Claude-Review.Yml
 
 - name: Claude Code Review
@@ -423,16 +416,16 @@ claude -p "leia memory/MEMORY.md e me da um briefing completo do estado atual"
 
 ## Tabela De Problemas Comuns
 
-| Problema | Causa Provavel | Solucao |
-|----------|----------------|----------|
-| API key not found | ANTHROPIC_API_KEY nao configurada | export ANTHROPIC_API_KEY=sk-ant-... |
-| Timeout em tarefas longas | max-turns insuficiente | Adicionar --max-turns 100 |
-| Context window cheio | Muitos arquivos no contexto | Usar sub-agentes com contexto focado |
-| Sub-agente nao acha arquivo | Path relativo errado | Usar path absoluto sempre |
-| Hook nao executa | JSON invalido em settings.json | python -m json.tool ~/.claude/settings.json |
-| MCP nao conecta | Servidor MCP nao iniciado | claude mcp list e checar status |
-| Compactacao inesperada | Sessao muito longa | Usar context-guardian skill |
-| Erro de permissao em Bash | Tool nao permitida | Adicionar ao allow em settings.json |
+| Problema                    | Causa Provavel                    | Solucao                                     |
+| --------------------------- | --------------------------------- | ------------------------------------------- |
+| API key not found           | ANTHROPIC_API_KEY nao configurada | export ANTHROPIC_API_KEY=sk-ant-...         |
+| Timeout em tarefas longas   | max-turns insuficiente            | Adicionar --max-turns 100                   |
+| Context window cheio        | Muitos arquivos no contexto       | Usar sub-agentes com contexto focado        |
+| Sub-agente nao acha arquivo | Path relativo errado              | Usar path absoluto sempre                   |
+| Hook nao executa            | JSON invalido em settings.json    | python -m json.tool ~/.claude/settings.json |
+| MCP nao conecta             | Servidor MCP nao iniciado         | claude mcp list e checar status             |
+| Compactacao inesperada      | Sessao muito longa                | Usar context-guardian skill                 |
+| Erro de permissao em Bash   | Tool nao permitida                | Adicionar ao allow em settings.json         |
 
 ## Ver Logs E Historico De Sessoes
 
@@ -508,6 +501,7 @@ python context-agent/scripts/context_manager.py load        # carregar contexto
 ## Quando Esta Skill E Ativada
 
 Esta skill e ativada automaticamente quando o usuario quer:
+
 - Configurar ou otimizar o Claude Code CLI
 - Criar, debugar ou otimizar hooks
 - Adicionar ou configurar MCP servers
@@ -521,17 +515,17 @@ Esta skill e ativada automaticamente quando o usuario quer:
 
 ## 12. Slash Commands No Claude Code
 
-| Comando | Acao |
-|---------|------|
-| /status | Ver estado atual da sessao e contexto |
-| /clear | Limpar historico da conversa atual |
+| Comando  | Acao                                           |
+| -------- | ---------------------------------------------- |
+| /status  | Ver estado atual da sessao e contexto          |
+| /clear   | Limpar historico da conversa atual             |
 | /compact | Compactar contexto (Claude resume o historico) |
-| /memory | Ver e editar arquivos de memoria |
-| /hooks | Ver hooks configurados e ativos |
-| /mcp | Ver MCPs conectados e seus status |
-| /cost | Ver custo em tokens e USD da sessao |
-| /model | Trocar modelo em uso (opus, sonnet, haiku) |
-| /help | Ver todos os comandos e atalhos disponiveis |
+| /memory  | Ver e editar arquivos de memoria               |
+| /hooks   | Ver hooks configurados e ativos                |
+| /mcp     | Ver MCPs conectados e seus status              |
+| /cost    | Ver custo em tokens e USD da sessao            |
+| /model   | Trocar modelo em uso (opus, sonnet, haiku)     |
+| /help    | Ver todos os comandos e atalhos disponiveis    |
 
 ---
 

@@ -1,48 +1,55 @@
-# 🛡️ Dompet Kita: Security Overview & Audit
+# 🔐 Dompet Kita: Security Architecture Overview (Blueprint)
 
-Dokumen ini menggabungkan strategi keamanan sistem dan hasil audit terbaru untuk memastikan seluruh data Alvin & Ila terlindungi dengan standar tinggi.
-
----
-
-## 🏗️ 1. Strategi Keamanan (Security Strategy)
-
-Aplikasi kita menggunakan sistem keamanan berlapis untuk memastikan rahasia (*secrets*) di file `.env` tidak akan pernah terekspos.
-
-### A. Strategi "No-File" di Production
-Saat men-deploy ke **Railway**, kita **TIDAK** mengunggah file `.env`. 
-*   **Cara Kerja**: Semua variabel (API Keys, DB Password) dimasukkan langsung ke Dashboard Railway.
-*   **Keuntungan**: Hacker tidak bisa mencuri file kredensial meskipun berhasil menembus celah keamanan tertentu karena filenya tidak ada di disk server.
-
-### B. Satpam Digital (Laravel Side)
-Di sisi kode Laravel (`AppServiceProvider.php`), terdapat pengecekan otomatis:
-*   **Anti-Debug Check**: Jika berjalan di mode `production` tapi `APP_DEBUG` menyala, aplikasi akan otomatis berhenti (*abort*). Ini mencegah bocornya path file atau key lewat pesan error.
-*   **Internal Variable Masking**: Laravel otomatis menyembunyikan variabel sensitif di halaman error.
-
-### C. Shielding the Browser (Frontend Armor)
-*   **Vite Prefix Guard**: Hanya variabel berawalan `VITE_` yang bisa dibaca frontend. Rahasia backend tetap terkunci di server.
-*   **No Sensitive Logs**: Audit rutin dilakukan untuk memastikan tidak ada `console.log()` data sensitif di versi production.
+Project **Dompet Kita** menerapkan strategi **"Defense in Depth"** (Pertahanan Berlapis). Keamanan tidak hanya diletakkan pada satu titik, melainkan menyebar dari kodingan (Frontend/Backend) hingga ke level Infrastruktur (Database/Storage).
 
 ---
 
-## 📊 2. Hasil Audit Keamanan (Technical Audit Status)
+## 🏗️ 1. Database Level: Row Level Security (RLS)
 
-Berdasarkan audit terakhir per Maret 2026:
+Kami tidak hanya mengandalkan filter `WHERE user_id = ?` di kodingan. Kami menerapkan **RLS** langsung di PostgreSQL (Supabase).
 
-| Area | Status | Detail Tindakan |
-| :--- | :--- | :--- |
-| **Auth & Session** | 🟢 MITIGATED | Penggunaan CSP strict untuk melindungi token di `localStorage`. |
-| **Security Headers** | ✅ FIXED | Implemetasi `X-Frame-Options`, `nosniff`, dan `Referrer-Policy`. |
-| **CORS Config** | ✅ FIXED | Origin dibatasi hanya untuk domain resmi via `CORS_ALLOWED_ORIGINS`. |
-| **Rate Limiting** | ✅ FIXED | Throttling ketat: Login (5/menit), Register (3/menit), AI (10/menit). |
-| **SQL Injection** | ✅ GOOD | Penggunaan Eloquent & Parameter Binding di seluruh query. |
-| **XSS Protection** | ✅ GOOD | React automatic escaping & CSP Header. |
+- **Mekanisme**: Setiap tabel utama (`transactions`, `assets`, `loans`, `goals`, `holidays`) memiliki kebijakan (Policy) PostgreSQL.
+- **Keunggulan**: Sekalipun ada bug di kodingan Laravel yang lupa memfilter user, database akan menolak memberikan data jika `auth.uid()` tidak sesuai dengan pemilik baris data tersebut.
 
 ---
 
-## 📝 3. Aturan Operasional Keamanan
-1.  **Local Dev**: Gunakan `.env` lokal (sudah masuk `.gitignore`).
-2.  **Deployment**: Update variabel hanya melalui Dashboard Railway.
-3.  **Audit Mandiri**: Antigravity akan melakukan scan rutin pada folder `src/` untuk memastikan tidak ada key yang tertulis manual di kode.
+## 🔒 2. Data Level: Field-Level Encryption
+
+Data yang bersifat sangat privat tidak disimpan dalam bentuk teks biasa (Plaintext).
+
+- **Data yang Dienkripsi**:
+  - `users.social_id`: ID unik dari Google Login.
+  - `users.partner_name`: Informasi pasangan.
+  - `transactions.description`: Detail pengeluaran yang mungkin bersifat rahasia.
+- **Mekanisme**: Menggunakan algoritma **AES-256-CBC Encrypted Casts** bawaan Laravel. Kunci enkripsi (`APP_KEY`) disimpan aman di variabel lingkungan (Environment Variables) Railway.
 
 ---
-*Status Keamanan: **Strong & Armed** 🛡️*
+
+## 📦 3. Storage Level: Private Vault & Signed URLs
+
+Semua file struk belanja (`Receipts`) dikelola dengan standar akses ketat:
+
+- **Visibility: Private**: File tidak bisa diakses via URL publik (`403 Forbidden`).
+- **Temporary Access**: Aplikasi akan membuatkan **Signed URL** (Token unik) setiap kali user ingin melihat file. Token ini hanya berlaku selama **15 menit**.
+- **Distributed Storage**: Menggunakan **Storj** yang terdesentralisasi, menjamin redundansi data tinggi dan ketersediaan global.
+
+---
+
+## 🚦 4. Traffic & Access Control
+
+- **Rate Limiting (Throttling)**: API membatasi jumlah request per menit untuk mencegah serangan Brute Force dan DoS.
+- **Honeypot Protection**: Menggunakan "Field Siluman" pada form registrasi dan ganti password. Bot otomatis akan mengisi field ini, yang memicu penolakan otomatis dari server.
+- **Sanctum Authentication**: Menggunakan token API yang aman dan dapat ditarik kembali (Revocable) kapan saja.
+
+---
+
+## 🕵️ 5. Monitoring & Accountability
+
+- **Full Audit Trail**: Setiap aksi `Create`, `Update`, dan `Delete` dicatat dengan detail (Siapa, Kapan, Data Sebelum, Data Sesudah).
+- **Exception Tracking**: Menggunakan **Sentry** untuk menangkap error keamanan di produksi secara real-time.
+- **Security Audit CLI**: Perintah `php artisan app:security-audit` memungkinkan pemindaian kesehatan sistem secara mandiri.
+
+---
+
+> [!CAUTION]
+> Jangan pernah membagikan `.env` file atau `APP_KEY` kepada siapa pun. Kehilangan kunci enkripsi berarti kehilangan seluruh data finansial yang telah terenkripsi selamanya.

@@ -9,7 +9,7 @@ export function useAssets() {
     queryFn: async () => {
       const { data } = await api.get('/assets');
       return data as Asset[];
-    }
+    },
   });
 }
 
@@ -19,13 +19,13 @@ export function useWealthHistory() {
     queryFn: async () => {
       const { data } = await api.get('/wealth-history');
       return data as { month: string; value: number }[];
-    }
+    },
   });
 }
 
 export function useAddAsset() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (newAsset: Omit<Asset, 'id' | 'last_updated'>) => {
       const { data } = await api.post('/assets', newAsset);
@@ -38,7 +38,7 @@ export function useAddAsset() {
         const optimisticAsset = {
           ...newAsset,
           id: 'temp-' + Date.now(),
-          last_updated: new Date().toISOString()
+          last_updated: new Date().toISOString(),
         } as Asset;
         return old ? [...old, optimisticAsset] : [optimisticAsset];
       });
@@ -54,15 +54,15 @@ export function useAddAsset() {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
       queryClient.invalidateQueries({ queryKey: ['wealth_history'] });
       toast.success('Horee, Aset Bertambah! 💎', {
-        description: `Sudah aku bantu catat aset ${data.name} kita ya!`
+        description: `Sudah aku bantu catat aset ${data.name} kita ya!`,
       });
-    }
+    },
   });
 }
 
 export function useUpdateAsset() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Asset> & { id: string }) => {
       const { data } = await api.put(`/assets/${id}`, updates);
@@ -72,7 +72,7 @@ export function useUpdateAsset() {
       await queryClient.cancelQueries({ queryKey: ['assets'] });
       const previousAssets = queryClient.getQueryData<Asset[]>(['assets']);
       queryClient.setQueryData(['assets'], (old: Asset[] | undefined) => {
-        return old?.map(asset => 
+        return old?.map((asset) =>
           asset.id === updatedAsset.id ? { ...asset, ...updatedAsset } : asset
         );
       });
@@ -88,15 +88,15 @@ export function useUpdateAsset() {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
       queryClient.invalidateQueries({ queryKey: ['wealth_history'] });
       toast.success('Aset Berhasil Diupdate! ✨', {
-        description: `Sekarang nilai ${data.name} kita sudah terupdate.`
+        description: `Sekarang nilai ${data.name} kita sudah terupdate.`,
       });
-    }
+    },
   });
 }
 
 export function useDeleteAsset() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id: string) => {
       await api.delete(`/assets/${id}`);
@@ -105,7 +105,7 @@ export function useDeleteAsset() {
       await queryClient.cancelQueries({ queryKey: ['assets'] });
       const previousAssets = queryClient.getQueryData<Asset[]>(['assets']);
       queryClient.setQueryData(['assets'], (old: Asset[] | undefined) => {
-        return old?.filter(asset => asset.id !== id);
+        return old?.filter((asset) => asset.id !== id);
       });
       return { previousAssets };
     },
@@ -119,6 +119,6 @@ export function useDeleteAsset() {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
       queryClient.invalidateQueries({ queryKey: ['wealth_history'] });
       toast.info('Aset Dihapus 🗑️');
-    }
+    },
   });
 }

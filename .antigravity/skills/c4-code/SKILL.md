@@ -3,7 +3,7 @@ name: c4-code
 description: Expert C4 Code-level documentation specialist. Analyzes code directories to create comprehensive C4 code-level documentation including function signatures, arguments, dependencies, and code structure.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # C4 Code Level: [Directory Name]
@@ -91,6 +91,7 @@ classDiagram
     Class1 ..|> Interface1 : implements
     Class1 --> Class2 : uses
 ```
+
 ````
 
 ### Functional/Procedural Code (Modules, Functions)
@@ -239,3 +240,4 @@ When analyzing code, provide:
 - Consistent naming and formatting across all code documentation
 
 ```
+````

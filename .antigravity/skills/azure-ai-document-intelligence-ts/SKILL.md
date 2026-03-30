@@ -35,7 +35,7 @@ import { DefaultAzureCredential } from "@azure/identity";
 
 const client = DocumentIntelligence(
   process.env.DOCUMENT_INTELLIGENCE_ENDPOINT!,
-  new DefaultAzureCredential()
+  new DefaultAzureCredential(),
 );
 ```
 
@@ -46,7 +46,7 @@ import DocumentIntelligence from "@azure-rest/ai-document-intelligence";
 
 const client = DocumentIntelligence(
   process.env.DOCUMENT_INTELLIGENCE_ENDPOINT!,
-  { key: process.env.DOCUMENT_INTELLIGENCE_API_KEY! }
+  { key: process.env.DOCUMENT_INTELLIGENCE_API_KEY! },
 );
 ```
 
@@ -56,7 +56,7 @@ const client = DocumentIntelligence(
 import DocumentIntelligence, {
   isUnexpected,
   getLongRunningPoller,
-  AnalyzeOperationOutput
+  AnalyzeOperationOutput,
 } from "@azure-rest/ai-document-intelligence";
 
 const initialResponse = await client
@@ -64,9 +64,9 @@ const initialResponse = await client
   .post({
     contentType: "application/json",
     body: {
-      urlSource: "https://example.com/document.pdf"
+      urlSource: "https://example.com/document.pdf",
     },
-    queryParameters: { locale: "en-US" }
+    queryParameters: { locale: "en-US" },
   });
 
 if (isUnexpected(initialResponse)) {
@@ -92,7 +92,7 @@ const initialResponse = await client
   .path("/documentModels/{modelId}:analyze", "prebuilt-invoice")
   .post({
     contentType: "application/json",
-    body: { base64Source }
+    body: { base64Source },
   });
 
 if (isUnexpected(initialResponse)) {
@@ -105,17 +105,17 @@ const result = (await poller.pollUntilDone()).body as AnalyzeOperationOutput;
 
 ## Prebuilt Models
 
-| Model ID | Description |
-|----------|-------------|
-| `prebuilt-read` | OCR - text and language extraction |
-| `prebuilt-layout` | Text, tables, selection marks, structure |
-| `prebuilt-invoice` | Invoice fields |
-| `prebuilt-receipt` | Receipt fields |
-| `prebuilt-idDocument` | ID document fields |
-| `prebuilt-tax.us.w2` | W-2 tax form fields |
-| `prebuilt-healthInsuranceCard.us` | Health insurance card fields |
-| `prebuilt-contract` | Contract fields |
-| `prebuilt-bankStatement.us` | Bank statement fields |
+| Model ID                          | Description                              |
+| --------------------------------- | ---------------------------------------- |
+| `prebuilt-read`                   | OCR - text and language extraction       |
+| `prebuilt-layout`                 | Text, tables, selection marks, structure |
+| `prebuilt-invoice`                | Invoice fields                           |
+| `prebuilt-receipt`                | Receipt fields                           |
+| `prebuilt-idDocument`             | ID document fields                       |
+| `prebuilt-tax.us.w2`              | W-2 tax form fields                      |
+| `prebuilt-healthInsuranceCard.us` | Health insurance card fields             |
+| `prebuilt-contract`               | Contract fields                          |
+| `prebuilt-bankStatement.us`       | Bank statement fields                    |
 
 ## Extract Invoice Fields
 
@@ -124,7 +124,7 @@ const initialResponse = await client
   .path("/documentModels/{modelId}:analyze", "prebuilt-invoice")
   .post({
     contentType: "application/json",
-    body: { urlSource: invoiceUrl }
+    body: { urlSource: invoiceUrl },
   });
 
 if (isUnexpected(initialResponse)) {
@@ -149,7 +149,7 @@ const initialResponse = await client
   .path("/documentModels/{modelId}:analyze", "prebuilt-receipt")
   .post({
     contentType: "application/json",
-    body: { urlSource: receiptUrl }
+    body: { urlSource: receiptUrl },
   });
 
 const poller = getLongRunningPoller(client, initialResponse);
@@ -159,7 +159,7 @@ const receipt = result.analyzeResult?.documents?.[0];
 if (receipt) {
   console.log("Merchant:", receipt.fields?.MerchantName?.content);
   console.log("Total:", receipt.fields?.Total?.content);
-  
+
   for (const item of receipt.fields?.Items?.values || []) {
     console.log("Item:", item.properties?.Description?.content);
     console.log("Price:", item.properties?.TotalPrice?.content);
@@ -170,7 +170,10 @@ if (receipt) {
 ## List Document Models
 
 ```typescript
-import DocumentIntelligence, { isUnexpected, paginate } from "@azure-rest/ai-document-intelligence";
+import DocumentIntelligence, {
+  isUnexpected,
+  paginate,
+} from "@azure-rest/ai-document-intelligence";
 
 const response = await client.path("/documentModels").get();
 
@@ -190,12 +193,12 @@ const initialResponse = await client.path("/documentModels:build").post({
   body: {
     modelId: "my-custom-model",
     description: "Custom model for purchase orders",
-    buildMode: "template",  // or "neural"
+    buildMode: "template", // or "neural"
     azureBlobSource: {
       containerUrl: process.env.TRAINING_CONTAINER_SAS_URL!,
-      prefix: "training-data/"
-    }
-  }
+      prefix: "training-data/",
+    },
+  },
 });
 
 if (isUnexpected(initialResponse)) {
@@ -220,13 +223,13 @@ const initialResponse = await client.path("/documentClassifiers:build").post({
     description: "Invoice vs Receipt classifier",
     docTypes: {
       invoices: {
-        azureBlobSource: { containerUrl: containerSasUrl, prefix: "invoices/" }
+        azureBlobSource: { containerUrl: containerSasUrl, prefix: "invoices/" },
       },
       receipts: {
-        azureBlobSource: { containerUrl: containerSasUrl, prefix: "receipts/" }
-      }
-    }
-  }
+        azureBlobSource: { containerUrl: containerSasUrl, prefix: "receipts/" },
+      },
+    },
+  },
 });
 
 if (isUnexpected(initialResponse)) {
@@ -234,7 +237,8 @@ if (isUnexpected(initialResponse)) {
 }
 
 const poller = getLongRunningPoller(client, initialResponse);
-const result = (await poller.pollUntilDone()).body as DocumentClassifierBuildOperationDetailsOutput;
+const result = (await poller.pollUntilDone())
+  .body as DocumentClassifierBuildOperationDetailsOutput;
 console.log("Classifier:", result.result?.classifierId);
 ```
 
@@ -246,7 +250,7 @@ const initialResponse = await client
   .post({
     contentType: "application/json",
     body: { urlSource: documentUrl },
-    queryParameters: { split: "auto" }
+    queryParameters: { split: "auto" },
   });
 
 if (isUnexpected(initialResponse)) {
@@ -277,7 +281,7 @@ console.log("Custom model count:", response.body.customDocumentModels.count);
 import DocumentIntelligence, {
   isUnexpected,
   getLongRunningPoller,
-  AnalyzeOperationOutput
+  AnalyzeOperationOutput,
 } from "@azure-rest/ai-document-intelligence";
 
 // 1. Start operation
@@ -311,7 +315,7 @@ import DocumentIntelligence, {
   paginate,
   parseResultIdFromResponse,
   AnalyzeOperationOutput,
-  DocumentClassifierBuildOperationDetailsOutput
+  DocumentClassifierBuildOperationDetailsOutput,
 } from "@azure-rest/ai-document-intelligence";
 ```
 
@@ -325,4 +329,5 @@ import DocumentIntelligence, {
 6. **Prefer neural mode** - For custom models, neural handles more variation than template
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

@@ -8,6 +8,6 @@ import api from './axios';
 export const analyzeReceipt = async (base64Data: string, mimeType: string) => {
   return api.post('/ai/analyze', {
     image: base64Data,
-    mime_type: mimeType
+    mime_type: mimeType,
   });
 };

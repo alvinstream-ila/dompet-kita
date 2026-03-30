@@ -3,7 +3,7 @@ name: c4-container
 description: Expert C4 Container-level documentation specialist.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # C4 Container Level: System Deployment
@@ -96,7 +96,8 @@ C4Container
     Rel(api, messageQueue, "Publishes messages to")
     Rel(api, external, "Uses", "API")
 ```
-````
+
+```
 
 **Key Principles** (from [c4model.com](https://c4model.com/diagrams/container)):
 
@@ -106,7 +107,7 @@ C4Container
 - Show **communication protocols** between containers
 - Include **external systems** that containers interact with
 
-````
+```
 
 ## API Specification Template
 
@@ -138,7 +139,7 @@ paths:
             application/json:
               schema:
                 type: object
-````
+```
 
 ## Example Interactions
 

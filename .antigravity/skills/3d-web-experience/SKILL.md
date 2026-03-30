@@ -47,6 +47,7 @@ Choosing the right 3D approach
 
 ### Decision Tree
 ```
+
 Need quick 3D element?
 └── Yes → Spline
 └── No → Continue
@@ -58,7 +59,8 @@ Using React?
 Need max performance/control?
 └── Yes → Three.js vanilla
 └── No → Spline or R3F
-```
+
+````
 
 ### Spline (Fastest Start)
 ```jsx
@@ -69,15 +71,16 @@ export default function Scene() {
     <Spline scene="https://prod.spline.design/xxx/scene.splinecode" />
   );
 }
-```
+````
 
 ### React Three Fiber
+
 ```jsx
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF } from '@react-three/drei';
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, useGLTF } from "@react-three/drei";
 
 function Model() {
-  const { scene } = useGLTF('/model.glb');
+  const { scene } = useGLTF("/model.glb");
   return <primitive object={scene} />;
 }
 
@@ -91,7 +94,8 @@ export default function Scene() {
   );
 }
 ```
-```
+
+````
 
 ### 3D Model Pipeline
 
@@ -111,14 +115,16 @@ Getting models web-ready
 | USDZ | Apple AR | Medium |
 
 ### Optimization Pipeline
-```
+````
+
 1. Model in Blender/etc
 2. Reduce poly count (< 100K for web)
 3. Bake textures (combine materials)
 4. Export as GLB
 5. Compress with gltf-transform
 6. Test file size (< 5MB ideal)
-```
+
+````
 
 ### GLTF Compression
 ```bash
@@ -129,12 +135,13 @@ npm install -g @gltf-transform/cli
 gltf-transform optimize input.glb output.glb \
   --compress draco \
   --texture-compress webp
-```
+````
 
 ### Loading in R3F
+
 ```jsx
-import { useGLTF, useProgress, Html } from '@react-three/drei';
-import { Suspense } from 'react';
+import { useGLTF, useProgress, Html } from "@react-three/drei";
+import { Suspense } from "react";
 
 function Loader() {
   const { progress } = useProgress();
@@ -151,7 +158,8 @@ export default function Scene() {
   );
 }
 ```
-```
+
+````
 
 ### Scroll-Driven 3D
 
@@ -188,16 +196,17 @@ export default function Scene() {
     </Canvas>
   );
 }
-```
+````
 
 ### GSAP + Three.js
+
 ```javascript
-import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
+import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
 
 gsap.to(camera.position, {
   scrollTrigger: {
-    trigger: '.section',
+    trigger: ".section",
     scrub: true,
   },
   z: 5,
@@ -206,11 +215,13 @@ gsap.to(camera.position, {
 ```
 
 ### Common Scroll Effects
+
 - Camera movement through scene
 - Model rotation on scroll
 - Reveal/hide elements
 - Color/material changes
 - Exploded view animations
+
 ```
 
 ## Anti-Patterns
@@ -257,3 +268,4 @@ Works well with: `scroll-experience`, `interactive-portfolio`, `frontend`, `land
 
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
+```

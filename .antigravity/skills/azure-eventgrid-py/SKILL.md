@@ -3,7 +3,7 @@ name: azure-eventgrid-py
 description: Azure Event Grid SDK for Python. Use for publishing events, handling CloudEvents, and event-driven architectures.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Event Grid SDK for Python
@@ -37,10 +37,10 @@ client = EventGridPublisherClient(endpoint, credential)
 
 ## Event Types
 
-| Format | Class | Use Case |
-|--------|-------|----------|
-| Cloud Events 1.0 | `CloudEvent` | Standard, interoperable (recommended) |
-| Event Grid Schema | `EventGridEvent` | Azure-native format |
+| Format            | Class            | Use Case                              |
+| ----------------- | ---------------- | ------------------------------------- |
+| Cloud Events 1.0  | `CloudEvent`     | Standard, interoperable (recommended) |
+| Event Grid Schema | `EventGridEvent` | Azure-native format                   |
 
 ## Publish CloudEvents
 
@@ -124,7 +124,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 async def publish_events():
     credential = DefaultAzureCredential()
-    
+
     async with EventGridPublisherClient(endpoint, credential) as client:
         event = CloudEvent(
             type="MyApp.Events.Test",
@@ -168,4 +168,5 @@ async with EventGridPublisherClient(
 6. **Set appropriate event types** for routing and filtering
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

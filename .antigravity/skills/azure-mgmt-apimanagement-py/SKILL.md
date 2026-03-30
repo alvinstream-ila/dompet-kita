@@ -3,7 +3,7 @@ name: azure-mgmt-apimanagement-py
 description: Azure API Management SDK for Python. Use for managing APIM services, APIs, products, subscriptions, and policies.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure API Management SDK for Python
@@ -253,20 +253,20 @@ user = client.user.create_or_update(
 
 ## Operation Groups
 
-| Group | Purpose |
-|-------|---------|
+| Group                    | Purpose                  |
+| ------------------------ | ------------------------ |
 | `api_management_service` | APIM instance management |
-| `api` | API operations |
-| `api_operation` | API operation details |
-| `api_policy` | API-level policies |
-| `product` | Product management |
-| `product_api` | Product-API associations |
-| `subscription` | Subscription management |
-| `user` | User management |
-| `named_value` | Named values/secrets |
-| `backend` | Backend services |
-| `certificate` | Certificates |
-| `gateway` | Self-hosted gateways |
+| `api`                    | API operations           |
+| `api_operation`          | API operation details    |
+| `api_policy`             | API-level policies       |
+| `product`                | Product management       |
+| `product_api`            | Product-API associations |
+| `subscription`           | Subscription management  |
+| `user`                   | User management          |
+| `named_value`            | Named values/secrets     |
+| `backend`                | Backend services         |
+| `certificate`            | Certificates             |
+| `gateway`                | Self-hosted gateways     |
 
 ## Best Practices
 
@@ -278,4 +278,5 @@ user = client.user.create_or_update(
 6. **Version your APIs** using APIM's versioning features
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

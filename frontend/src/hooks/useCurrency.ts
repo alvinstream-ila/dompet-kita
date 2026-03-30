@@ -21,7 +21,7 @@ export const useCurrency = () => {
         const response = await fetch('https://open.er-api.com/v6/latest/IDR');
         if (!response.ok) throw new Error('Failed to fetch exchange rate');
         const data: ExchangeRateResponse = await response.json();
-        
+
         // Return the IDR -> USD rate
         return data.rates.USD || 0.00006; // Fallback to ~16,666 IDR/USD
       } catch (error) {

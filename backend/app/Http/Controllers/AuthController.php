@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\LoginHistory;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,18 +16,14 @@ class AuthController extends Controller
      * @OA\Post(
      *     path="/api/register",
      *     summary="Register a new user",
-     *
      *     @OA\RequestBody(
      *         required=true,
-     *
      *         @OA\JsonContent(
-     *
      *             @OA\Property(property="name", type="string", example="John Doe"),
      *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
      *             @OA\Property(property="password", type="string", format="password", example="password")
      *         )
      *     ),
-     *
      *     @OA\Response(response=200, description="Successful registration"),
      *     @OA\Response(response=422, description="Validation error")
      * )
@@ -45,6 +42,15 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // 🕵️ Log initial registration access
+        LoginHistory::create([
+            'user_id' => $user->id,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'login_at' => now()->toDateTimeString(),
+            'status' => 'registered',
+        ]);
+
         \event(new Registered($user));
 
         return \response()->json([
@@ -57,17 +63,13 @@ class AuthController extends Controller
      * @OA\Post(
      *     path="/api/login",
      *     summary="Login to the application",
-     *
      *     @OA\RequestBody(
      *         required=true,
-     *
      *         @OA\JsonContent(
-     *
      *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
      *             @OA\Property(property="password", type="string", format="password", example="password")
      *         )
      *     ),
-     *
      *     @OA\Response(response=200, description="Successful login"),
      *     @OA\Response(response=401, description="Invalid credentials")
      * )
@@ -82,10 +84,20 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
+            // 🚨 Optional: Log failed attempt for security audit
             throw ValidationException::withMessages([
                 'email' => ['Kredensial yang Anda berikan salah, Sayang.'],
             ]);
         }
+
+        // 🕵️ Log successful login activity
+        LoginHistory::create([
+            'user_id' => $user->id,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'login_at' => now()->toDateTimeString(),
+            'status' => 'success',
+        ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -101,7 +113,6 @@ class AuthController extends Controller
      *     path="/api/logout",
      *     summary="Logout from the application",
      *     security={{"sanctum":{}}},
-     *
      *     @OA\Response(response=200, description="Successful logout"),
      *     @OA\Response(response=401, description="Unauthenticated")
      * )

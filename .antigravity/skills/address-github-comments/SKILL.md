@@ -58,4 +58,5 @@ gh pr comment <PR_NUMBER> --body "Addressed in latest commit."
 - **Not verifying auth**: Check `gh auth status` before starting.
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

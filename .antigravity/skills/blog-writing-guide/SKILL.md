@@ -52,9 +52,7 @@ Structure every post around what the reader is actually wondering, not your inte
 3. **What were the trade-offs or alternatives?** (This separates good from great)
 4. **How do I use/try/implement this?** (Concrete next steps)
 
-For engineering deep-dives, also address:
-5. **What did we try that didn't work?** (Builds trust)
-6. **What are the known limitations?** (Shows intellectual honesty)
+For engineering deep-dives, also address: 5. **What did we try that didn't work?** (Builds trust) 6. **What are the known limitations?** (Shows intellectual honesty)
 
 ## Section Headings Must Convey Information
 
@@ -65,10 +63,11 @@ For engineering deep-dives, also address:
 ## Technical Quality Standards
 
 **Numbers over adjectives.** If you make a performance claim, include the number.
+
 - Bad: "This significantly reduced our error processing time."
 - Good: "This reduced our p99 error processing time from 340ms to 45ms — a 7.5× improvement."
 
-**Code must work.** If a post includes code, test it. Include imports, configuration, and context. Comments should explain *why*, not *what*.
+**Code must work.** If a post includes code, test it. Include imports, configuration, and context. Comments should explain _why_, not _what_.
 
 **Diagrams for systems.** If you describe a system with more than two interacting components, include a diagram. Label with real service names, not generic boxes.
 
@@ -79,11 +78,13 @@ For engineering deep-dives, also address:
 The title is the highest-leverage sentence in the post. It must stop a developer scrolling through their RSS feed or Twitter.
 
 **Strong titles** make a specific claim, tell a story, or promise a specific payoff:
+
 - "The metrics product we built worked. But we killed it and started over anyway"
 - "How we reduced release delays by 5% by fixing Salt"
 - "Your JavaScript bundle has 47% dead code. Here's how to find it."
 
 **Weak titles** are vague announcements:
+
 - "Introducing our new metrics product"
 - "Performance improvements in Sentry"
 - "AI-powered debugging with Seer"
@@ -96,19 +97,20 @@ End with something useful — a link to docs, a way to try it, a call to give fe
 
 Here's the quick map by post type:
 
-| Type | Goal | Byline |
-|------|------|--------|
-| Engineering Deep Dive | Explain a technical system/decision so other engineers learn | The engineer(s) who built it. Always. |
-| Product Launch | Explain what shipped, why it matters, how to use it | PM, engineer, or DevEx. Not PMM unless marketing built it. |
-| Postmortem | Transparent failure analysis with timeline and fixes | Engineering leadership |
-| Data / Research | Original insights from Sentry's unique data position | Data team, engineering, or research |
-| Tutorial / Guide | Help a developer accomplish something specific | DevEx, engineer, or community contributor |
+| Type                  | Goal                                                         | Byline                                                     |
+| --------------------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
+| Engineering Deep Dive | Explain a technical system/decision so other engineers learn | The engineer(s) who built it. Always.                      |
+| Product Launch        | Explain what shipped, why it matters, how to use it          | PM, engineer, or DevEx. Not PMM unless marketing built it. |
+| Postmortem            | Transparent failure analysis with timeline and fixes         | Engineering leadership                                     |
+| Data / Research       | Original insights from Sentry's unique data position         | Data team, engineering, or research                        |
+| Tutorial / Guide      | Help a developer accomplish something specific               | DevEx, engineer, or community contributor                  |
 
 ## The "Would I Share This?" Test
 
 Before publishing, ask: Would a developer share this post? Does it have a shot at getting on Hacker News? If the answer is no, the post either needs more depth, more original insight, or it belongs in the changelog instead.
 
 Posts worth sharing contain at least one of:
+
 - A technical decision explained with trade-offs
 - Original data or research not found elsewhere
 - A real-world debugging story with specific details
@@ -133,6 +135,7 @@ Posts worth sharing contain at least one of:
 Run through both checklists:
 
 **Technical Review:**
+
 - All technical claims accurate
 - Code samples work
 - Architecture descriptions match reality
@@ -140,6 +143,7 @@ Run through both checklists:
 - No oversimplifications that would make an expert cringe
 
 **Editorial Review:**
+
 - Opening hooks reader within 2 sentences
 - Passes the "would I share this?" test
 - No corporate language, filler, or fluff
@@ -148,6 +152,7 @@ Run through both checklists:
 - Title is specific and compelling
 
 **Final Check:**
+
 - Author byline is correct (real person's name)
 - Links to docs/getting-started included
 - Post doesn't duplicate what's in the changelog

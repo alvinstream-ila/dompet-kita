@@ -10,8 +10,9 @@ BusyBox is a single binary that implements many common Unix tools.
 
 Use this skill only on Windows. If you are on UNIX, then stop here.
 
-Run the following steps only if you cannot find a `busybox.exe` file in the same directory as this document is. 
+Run the following steps only if you cannot find a `busybox.exe` file in the same directory as this document is.
 These are PowerShell commands, if you have a classic `cmd.exe` terminal, then you must use `powershell -Command "..."` to run them.
+
 1. Print the type of CPU: `Get-CimInstance -ClassName Win32_Processor | Select-Object Name, NumberOfCores, MaxClockSpeed`
 2. Print the OS versions: `Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" | Select-Object ProductName, DisplayVersion, CurrentBuild`
 3. Download a suitable build of BusyBox by running one of these PowerShell commands:
@@ -21,6 +22,7 @@ These are PowerShell commands, if you have a classic `cmd.exe` terminal, then yo
    - 64-bit ARM (Unicode): `$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://frippery.org/files/busybox/busybox64a.exe -OutFile busybox.exe`
 
 Useful commands:
+
 - Help: `busybox.exe --list`
 - Available UNIX commands: `busybox.exe --list`
 
@@ -32,4 +34,5 @@ Documentation: https://frippery.org/busybox/
 Original BusyBox: https://busybox.net/
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

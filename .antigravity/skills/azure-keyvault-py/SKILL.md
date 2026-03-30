@@ -3,7 +3,7 @@ name: azure-keyvault-py
 description: Azure Key Vault SDK for Python. Use for secrets, keys, and certificates management with secure storage.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Key Vault SDK for Python
@@ -195,12 +195,12 @@ deleted = poller.result()
 
 ## Client Types Table
 
-| Client | Package | Purpose |
-|--------|---------|---------|
-| `SecretClient` | `azure-keyvault-secrets` | Store/retrieve secrets |
-| `KeyClient` | `azure-keyvault-keys` | Manage cryptographic keys |
-| `CryptographyClient` | `azure-keyvault-keys` | Encrypt/decrypt/sign/verify |
-| `CertificateClient` | `azure-keyvault-certificates` | Manage certificates |
+| Client               | Package                       | Purpose                     |
+| -------------------- | ----------------------------- | --------------------------- |
+| `SecretClient`       | `azure-keyvault-secrets`      | Store/retrieve secrets      |
+| `KeyClient`          | `azure-keyvault-keys`         | Manage cryptographic keys   |
+| `CryptographyClient` | `azure-keyvault-keys`         | Encrypt/decrypt/sign/verify |
+| `CertificateClient`  | `azure-keyvault-certificates` | Manage certificates         |
 
 ## Async Clients
 
@@ -211,7 +211,7 @@ from azure.keyvault.secrets.aio import SecretClient
 async def get_secret():
     credential = DefaultAzureCredential()
     client = SecretClient(vault_url=vault_url, credential=credential)
-    
+
     async with client:
         secret = await client.get_secret("my-secret")
         print(secret.value)
@@ -247,4 +247,5 @@ except HttpResponseError as e:
 8. **Use async clients** for high-throughput scenarios
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

@@ -61,12 +61,14 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'social_id' => 'encrypted',
             'anniversary_date' => 'date',
             'budget_cycle_start' => 'integer',
             'is_privacy_mode' => 'boolean',
             'is_eco_mode' => 'boolean',
             'exchange_rate' => 'float',
             'monthly_budget_limit' => 'float',
+            'partner_name' => 'encrypted',
         ];
     }
 

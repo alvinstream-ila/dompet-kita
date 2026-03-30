@@ -3,29 +3,45 @@ import api from '../lib/axios';
 import { useAuth } from '../context/AuthContext';
 import { Mail, Lock, Loader2, LogIn, User, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export type AuthMode = 'forgot' | 'signup' | 'login';
 
 const CustomLogo: React.FC = () => (
-  <div className="w-9 h-9 md:w-12 md:h-12 relative flex items-center justify-center p-1.5 bg-white/95 backdrop-blur-md rounded-xl shadow-sm border border-white/50">
-    <img src="/logo-utama.svg" alt="Dompet Kita Logo" className="w-full h-full object-contain" />
+  <div className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-white/50 bg-white/95 p-1.5 shadow-sm backdrop-blur-md md:h-12 md:w-12">
+    <img
+      src="/logo-utama.svg"
+      alt="Dompet Kita Logo"
+      className="h-full w-full object-contain"
+    />
   </div>
 );
 
 const GoogleIcon = () => (
-  <svg viewBox="0 0 24 24" className="w-6 h-6">
-    <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115z" />
-    <path fill="#34A853" d="M16.04 18.013c-1.09.613-2.346.987-3.791.987-2.73 0-5.06-1.745-6.142-4.168l-4.015 3.109C4.305 21.282 7.9 24 12 24c3.08 0 5.86-1.06 8.01-2.85l-3.97-3.137z" />
-    <path fill="#4285F4" d="M19.834 24c2.618-2.175 4.166-5.4 4.166-9.109a15.8 15.8 0 0 0-.25-2.891H12v5.474h6.758c-.312 1.625-1.196 3.012-2.344 3.79l3.96 3.14c.14.11.28.22.42.33C21.78 22.1 22 20.6 22 19.1c0-1-.3-1.9-.8-2.7z" />
-    <path fill="#FBBC05" d="M5.266 14.235a7.1 7.1 0 0 1-.36-2.235c0-.78.13-1.53.36-2.235L1.24 6.65A11.96 11.96 0 0 0 0 12c0 1.92.44 3.73 1.22 5.34l4.046-3.105z" />
+  <svg viewBox="0 0 24 24" className="h-6 w-6">
+    <path
+      fill="#EA4335"
+      d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115z"
+    />
+    <path
+      fill="#34A853"
+      d="M16.04 18.013c-1.09.613-2.346.987-3.791.987-2.73 0-5.06-1.745-6.142-4.168l-4.015 3.109C4.305 21.282 7.9 24 12 24c3.08 0 5.86-1.06 8.01-2.85l-3.97-3.137z"
+    />
+    <path
+      fill="#4285F4"
+      d="M19.834 24c2.618-2.175 4.166-5.4 4.166-9.109a15.8 15.8 0 0 0-.25-2.891H12v5.474h6.758c-.312 1.625-1.196 3.012-2.344 3.79l3.96 3.14c.14.11.28.22.42.33C21.78 22.1 22 20.6 22 19.1c0-1-.3-1.9-.8-2.7z"
+    />
+    <path
+      fill="#FBBC05"
+      d="M5.266 14.235a7.1 7.1 0 0 1-.36-2.235c0-.78.13-1.53.36-2.235L1.24 6.65A11.96 11.96 0 0 0 0 12c0 1.92.44 3.73 1.22 5.34l4.046-3.105z"
+    />
   </svg>
 );
 
 const FacebookLogo = () => (
-  <svg viewBox="0 0 24 24" className="w-8 h-8 text-[#1877F2] fill-current">
-    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+  <svg viewBox="0 0 24 24" className="h-8 w-8 fill-current text-[#1877F2]">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
   </svg>
 );
 
@@ -34,7 +50,7 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
-  
+
   // Form States
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -45,7 +61,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setSuccessMessage(null);
-    
+
     try {
       if (isForgotPassword) {
         const { data } = await api.post('/forgot-password', { email });
@@ -54,7 +70,7 @@ const Login: React.FC = () => {
       } else if (isSignUp) {
         const { data } = await api.post('/register', { name, email, password });
         setSuccessMessage(data.message);
-        setIsSignUp(false); 
+        setIsSignUp(false);
       } else {
         const { data } = await api.post('/login', { email, password });
         setAuthData(data.access_token, data.user);
@@ -63,7 +79,7 @@ const Login: React.FC = () => {
       const defaultErrors: Record<AuthMode, string> = {
         forgot: 'Gagal kirim link, coba lagi ya sayang? ❤️',
         signup: 'Gagal daftar, Sayang. Cek lagi datanya ya? ❤️',
-        login: 'Email atau password salah, Sayang. Coba lagi ya? ❤️'
+        login: 'Email atau password salah, Sayang. Coba lagi ya? ❤️',
       };
 
       const message = error.response?.data?.message || defaultErrors[mode];
@@ -81,16 +97,15 @@ const Login: React.FC = () => {
   const mode = getMode();
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-transparent font-inter">
+    <div className="font-inter relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-transparent p-4">
       <Branding />
 
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-[400px] relative z-50"
+        className="relative z-50 w-full max-w-[400px]"
       >
-        <div className="bg-white/40 backdrop-blur-2xl rounded-[48px] border border-white/60 shadow-2xl p-8 pt-12 md:p-10 md:pt-14 relative overflow-hidden z-50">
-          
+        <div className="relative z-50 overflow-hidden rounded-[48px] border border-white/60 bg-white/40 p-8 pt-12 shadow-2xl backdrop-blur-2xl md:p-10 md:pt-14">
           <AnimatePresence mode="wait">
             <motion.div
               key={mode}
@@ -98,7 +113,7 @@ const Login: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="space-y-6 relative z-50"
+              className="relative z-50 space-y-6"
             >
               <AuthHeader mode={mode} />
 
@@ -106,8 +121,8 @@ const Login: React.FC = () => {
 
               <form onSubmit={handleAuth} className="space-y-4">
                 {isSignUp && (
-                  <AuthInput 
-                    icon={<User className="w-5 h-5" />}
+                  <AuthInput
+                    icon={<User className="h-5 w-5" />}
                     placeholder="Your Panggilan Sayang"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -116,8 +131,8 @@ const Login: React.FC = () => {
                   />
                 )}
 
-                <AuthInput 
-                  icon={<Mail className="w-5 h-5" />}
+                <AuthInput
+                  icon={<Mail className="h-5 w-5" />}
                   placeholder="Email Address"
                   type="email"
                   value={email}
@@ -127,8 +142,8 @@ const Login: React.FC = () => {
                 />
 
                 {!isForgotPassword && (
-                  <AuthInput 
-                    icon={<Lock className="w-5 h-5" />}
+                  <AuthInput
+                    icon={<Lock className="h-5 w-5" />}
                     placeholder="Password"
                     type="password"
                     value={password}
@@ -140,23 +155,20 @@ const Login: React.FC = () => {
 
                 {!isSignUp && !isForgotPassword && (
                   <div className="flex justify-end pr-4">
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={() => setIsForgotPassword(true)}
-                      className="text-[11px] font-black text-slate-800 hover:text-blue-600 transition-colors uppercase tracking-tight"
+                      className="text-[11px] font-black tracking-tight text-slate-800 uppercase transition-colors hover:text-blue-600"
                     >
                       Forgot Password ?
                     </button>
                   </div>
                 )}
 
-                <SubmitButton 
-                  loading={loading}
-                  mode={mode}
-                />
+                <SubmitButton loading={loading} mode={mode} />
               </form>
 
-              <ModeSwitcher 
+              <ModeSwitcher
                 mode={mode}
                 onSignUpToggle={() => {
                   setIsSignUp(!isSignUp);
@@ -175,45 +187,58 @@ const Login: React.FC = () => {
 };
 
 const Branding = () => (
-  <div className="absolute top-4 md:top-8 left-1/2 -translate-x-1/2 md:left-8 md:translate-x-0 flex items-center gap-3 z-20">
+  <div className="absolute top-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 md:top-8 md:left-8 md:translate-x-0">
     <CustomLogo />
     <div className="flex flex-col">
-      <h1 className="text-lg md:text-xl font-black text-slate-900 tracking-tighter leading-none text-left">Dompet Kita</h1>
-      <span className="text-[12px] font-script text-pink-500 drop-shadow-sm transform -rotate-1">Financial Planner</span>
+      <h1 className="text-left text-lg leading-none font-black tracking-tighter text-slate-900 md:text-xl">
+        Dompet Kita
+      </h1>
+      <span className="font-script -rotate-1 transform text-[12px] text-pink-500 drop-shadow-sm">
+        Financial Planner
+      </span>
     </div>
   </div>
 );
 
 const AuthHeader = ({ mode }: { mode: AuthMode }) => {
-  const config: Record<AuthMode, { icon: React.ReactNode, title: string, sub: string }> = {
+  const config: Record<
+    AuthMode,
+    { icon: React.ReactNode; title: string; sub: string }
+  > = {
     forgot: {
-      icon: <Lock className="w-10 h-10 text-yellow-500 group-hover:scale-110 transition-transform" />,
+      icon: (
+        <Lock className="h-10 w-10 text-yellow-500 transition-transform group-hover:scale-110" />
+      ),
       title: 'Reset Password',
-      sub: 'Biar Kami Bantu Ingat Kembali'
+      sub: 'Biar Kami Bantu Ingat Kembali',
     },
     signup: {
-      icon: <User className="w-10 h-10 text-pink-500 group-hover:scale-110 transition-transform" />,
+      icon: (
+        <User className="h-10 w-10 text-pink-500 transition-transform group-hover:scale-110" />
+      ),
       title: 'Create New Account',
-      sub: 'Join Us To Start Managing Better'
+      sub: 'Join Us To Start Managing Better',
     },
     login: {
-      icon: <LogIn className="w-10 h-10 text-slate-900 group-hover:scale-110 transition-transform" />,
+      icon: (
+        <LogIn className="h-10 w-10 text-slate-900 transition-transform group-hover:scale-110" />
+      ),
       title: 'Sign In With Email',
-      sub: 'Make Your Dream Come True With Planning Your Finance'
-    }
+      sub: 'Make Your Dream Come True With Planning Your Finance',
+    },
   };
 
   const { icon, title, sub } = config[mode];
 
   return (
     <div className="flex flex-col items-center">
-      <div className="w-20 h-20 bg-white/90 backdrop-blur-xl rounded-[28px] shadow-xl border border-white flex items-center justify-center mb-6 transform hover:rotate-6 transition-transform cursor-pointer group">
+      <div className="group mb-6 flex h-20 w-20 transform cursor-pointer items-center justify-center rounded-[28px] border border-white bg-white/90 shadow-xl backdrop-blur-xl transition-transform hover:rotate-6">
         {icon}
       </div>
-      <h2 className="text-2xl font-black text-slate-800 tracking-tight text-center uppercase">
+      <h2 className="text-center text-2xl font-black tracking-tight text-slate-800 uppercase">
         {title}
       </h2>
-      <p className="text-slate-600 font-bold text-[12px] text-center mt-1 uppercase tracking-wider">
+      <p className="mt-1 text-center text-[12px] font-bold tracking-wider text-slate-600 uppercase">
         {sub}
       </p>
     </div>
@@ -223,15 +248,15 @@ const AuthHeader = ({ mode }: { mode: AuthMode }) => {
 const SuccessAlert = ({ message }: { message: string | null }) => {
   if (!message) return null;
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex items-start gap-3"
+      className="flex items-start gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 p-4"
     >
-      <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 text-emerald-600">
-        <CheckCircle className="w-4 h-4" />
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+        <CheckCircle className="h-4 w-4" />
       </div>
-      <p className="text-[11px] font-bold text-emerald-700 leading-relaxed">
+      <p className="text-[11px] leading-relaxed font-bold text-emerald-700">
         {message}
       </p>
     </motion.div>
@@ -248,21 +273,38 @@ interface AuthInputProps {
   focusColor: 'pink' | 'blue';
 }
 
-const AuthInput = ({ icon, placeholder, type = 'text', value, onChange, required, focusColor }: AuthInputProps) => {
-  const ringColor = focusColor === 'pink' ? 'focus:ring-pink-500/20' : 'focus:ring-blue-500/20';
-  const iconColor = focusColor === 'pink' ? 'group-focus-within:text-pink-500' : 'group-focus-within:text-blue-500';
+const AuthInput = ({
+  icon,
+  placeholder,
+  type = 'text',
+  value,
+  onChange,
+  required,
+  focusColor,
+}: AuthInputProps) => {
+  const ringColor =
+    focusColor === 'pink' ? 'focus:ring-pink-500/20' : 'focus:ring-blue-500/20';
+  const iconColor =
+    focusColor === 'pink'
+      ? 'group-focus-within:text-pink-500'
+      : 'group-focus-within:text-blue-500';
 
   return (
-    <div className="relative group">
-      <div className={cn("absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 transition-colors", iconColor)}>
+    <div className="group relative">
+      <div
+        className={cn(
+          'absolute top-1/2 left-5 -translate-y-1/2 text-slate-400 transition-colors',
+          iconColor
+        )}
+      >
         {icon}
       </div>
-      <input 
+      <input
         type={type}
         placeholder={placeholder}
         className={cn(
-          "w-full h-14 bg-slate-200/50 border-none rounded-full pl-14 pr-6 font-bold text-slate-700 placeholder:text-slate-400 outline-none transition-all",
-          "focus:ring-4",
+          'h-14 w-full rounded-full border-none bg-slate-200/50 pr-6 pl-14 font-bold text-slate-700 transition-all outline-none placeholder:text-slate-400',
+          'focus:ring-4',
           ringColor
         )}
         value={value}
@@ -273,20 +315,26 @@ const AuthInput = ({ icon, placeholder, type = 'text', value, onChange, required
   );
 };
 
-const SubmitButton = ({ loading, mode }: { loading: boolean, mode: AuthMode }) => {
-  const config: Record<AuthMode, { bg: string, label: string }> = {
+const SubmitButton = ({
+  loading,
+  mode,
+}: {
+  loading: boolean;
+  mode: AuthMode;
+}) => {
+  const config: Record<AuthMode, { bg: string; label: string }> = {
     forgot: {
-      bg: "bg-yellow-500 hover:bg-yellow-600 shadow-yellow-500/30 text-slate-900",
-      label: 'Send Reset Link'
+      bg: 'bg-yellow-500 hover:bg-yellow-600 shadow-yellow-500/30 text-slate-900',
+      label: 'Send Reset Link',
     },
     signup: {
-      bg: "bg-pink-500 hover:bg-pink-600 shadow-pink-500/30 text-white",
-      label: 'Create Account'
+      bg: 'bg-pink-500 hover:bg-pink-600 shadow-pink-500/30 text-white',
+      label: 'Create Account',
     },
     login: {
-      bg: "bg-blue-500 hover:bg-blue-600 shadow-blue-500/30 text-white",
-      label: 'Log In'
-    }
+      bg: 'bg-blue-500 hover:bg-blue-600 shadow-blue-500/30 text-white',
+      label: 'Log In',
+    },
   };
 
   const { bg, label } = config[mode];
@@ -296,34 +344,42 @@ const SubmitButton = ({ loading, mode }: { loading: boolean, mode: AuthMode }) =
       type="submit"
       disabled={loading}
       className={cn(
-        "w-full h-14 rounded-full font-black text-lg tracking-tight shadow-xl transition-all active:scale-[0.98] uppercase mt-2",
+        'mt-2 h-14 w-full rounded-full text-lg font-black tracking-tight uppercase shadow-xl transition-all active:scale-[0.98]',
         bg
       )}
     >
-      {loading ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : label}
+      {loading ? <Loader2 className="mx-auto h-6 w-6 animate-spin" /> : label}
     </Button>
   );
 };
 
-const ModeSwitcher = ({ mode, onSignUpToggle, onCancelForgot }: { mode: AuthMode, onSignUpToggle: () => void, onCancelForgot: () => void }) => {
+const ModeSwitcher = ({
+  mode,
+  onSignUpToggle,
+  onCancelForgot,
+}: {
+  mode: AuthMode;
+  onSignUpToggle: () => void;
+  onCancelForgot: () => void;
+}) => {
   const labels: Record<AuthMode, string> = {
     forgot: 'Sudah Ingat? Masuk Lagi',
     signup: 'Sudah Punya Akun? Masuk Di Sini',
-    login: 'Belum Punya Akun? Daftar Sekarang'
+    login: 'Belum Punya Akun? Daftar Sekarang',
   };
-  
+
   return (
-    <div className="text-center pt-2 pb-4">
-      <button 
+    <div className="pt-2 pb-4 text-center">
+      <button
         onClick={onSignUpToggle}
-        className="text-[11px] font-black text-slate-500 hover:text-slate-900 uppercase tracking-widest transition-all"
+        className="text-[11px] font-black tracking-widest text-slate-500 uppercase transition-all hover:text-slate-900"
       >
         {labels[mode]}
       </button>
       {mode === 'forgot' && (
-        <button 
+        <button
           onClick={onCancelForgot}
-          className="block mx-auto mt-4 text-[11px] font-black text-slate-400 hover:text-slate-800 uppercase tracking-widest transition-all"
+          className="mx-auto mt-4 block text-[11px] font-black tracking-widest text-slate-400 uppercase transition-all hover:text-slate-800"
         >
           Batal
         </button>
@@ -333,29 +389,52 @@ const ModeSwitcher = ({ mode, onSignUpToggle, onCancelForgot }: { mode: AuthMode
 };
 
 const SocialAuth = ({ isSignUp }: { isSignUp: boolean }) => (
-  <div className="mt-4 pt-6 border-t border-slate-200/50 relative z-200">
+  <div className="relative z-200 mt-4 border-t border-slate-200/50 pt-6">
     <div className="flex flex-col items-center gap-6">
-      <p className="text-[11px] font-black text-slate-600 uppercase tracking-widest">Or {isSignUp ? 'sign up' : 'sign in'} with</p>
+      <p className="text-[11px] font-black tracking-widest text-slate-600 uppercase">
+        Or {isSignUp ? 'sign up' : 'sign in'} with
+      </p>
       <div className="flex items-center gap-4">
-        <SocialButton onClick={() => handleSocialAuth('google')} icon={<GoogleIcon />} />
-        <SocialButton onClick={() => handleSocialAuth('facebook')} icon={<FacebookLogo />} />
-        <SocialButton onClick={() => {}} icon={<div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm"><Mail className="w-6 h-6 text-white" /></div>} />
+        <SocialButton
+          onClick={() => handleSocialAuth('google')}
+          icon={<GoogleIcon />}
+        />
+        <SocialButton
+          onClick={() => handleSocialAuth('facebook')}
+          icon={<FacebookLogo />}
+        />
+        <SocialButton
+          onClick={() => {}}
+          icon={
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-400 shadow-sm">
+              <Mail className="h-6 w-6 text-white" />
+            </div>
+          }
+        />
       </div>
     </div>
   </div>
 );
 
 const handleSocialAuth = (provider: 'google' | 'facebook') => {
-  const apiUrl = import.meta.env.VITE_API_URL || 'https://dompet-kita-production.up.railway.app/api';
+  const apiUrl =
+    import.meta.env.VITE_API_URL ||
+    'https://dompet-kita-production.up.railway.app/api';
   console.log(`Redirecting to ${provider} with API:`, apiUrl);
   globalThis.location.href = `${apiUrl}/auth/${provider}`;
 };
 
-const SocialButton = ({ onClick, icon }: { onClick: () => void, icon: React.ReactNode }) => (
-  <button 
-    type="button" 
+const SocialButton = ({
+  onClick,
+  icon,
+}: {
+  onClick: () => void;
+  icon: React.ReactNode;
+}) => (
+  <button
+    type="button"
     onClick={onClick}
-    className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-300"
+    className="relative z-300 flex h-[72px] w-[84px] cursor-pointer items-center justify-center rounded-[28px] border border-slate-200/50 bg-slate-100/80 shadow-sm transition-all hover:bg-white hover:shadow-md active:scale-95"
   >
     {icon}
   </button>

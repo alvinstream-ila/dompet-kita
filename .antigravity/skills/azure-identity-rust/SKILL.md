@@ -3,7 +3,7 @@ name: azure-identity-rust
 description: Azure Identity SDK for Rust authentication. Use for DeveloperToolsCredential, ManagedIdentityCredential, ClientSecretCredential, and token-based authentication.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Identity SDK for Rust
@@ -46,24 +46,24 @@ let client = SecretClient::new(
 
 ### Credential Chain Order
 
-| Order | Credential | Environment |
-|-------|-----------|-------------|
-| 1 | AzureCliCredential | `az login` |
-| 2 | AzureDeveloperCliCredential | `azd auth login` |
+| Order | Credential                  | Environment      |
+| ----- | --------------------------- | ---------------- |
+| 1     | AzureCliCredential          | `az login`       |
+| 2     | AzureDeveloperCliCredential | `azd auth login` |
 
 ## Credential Types
 
-| Credential | Usage |
-|------------|-------|
-| `DeveloperToolsCredential` | Local development - tries CLI tools |
-| `ManagedIdentityCredential` | Azure VMs, App Service, Functions, AKS |
-| `WorkloadIdentityCredential` | Kubernetes workload identity |
-| `ClientSecretCredential` | Service principal with secret |
-| `ClientCertificateCredential` | Service principal with certificate |
-| `AzureCliCredential` | Direct Azure CLI auth |
-| `AzureDeveloperCliCredential` | Direct azd CLI auth |
-| `AzurePipelinesCredential` | Azure Pipelines service connection |
-| `ClientAssertionCredential` | Custom assertions (federated identity) |
+| Credential                    | Usage                                  |
+| ----------------------------- | -------------------------------------- |
+| `DeveloperToolsCredential`    | Local development - tries CLI tools    |
+| `ManagedIdentityCredential`   | Azure VMs, App Service, Functions, AKS |
+| `WorkloadIdentityCredential`  | Kubernetes workload identity           |
+| `ClientSecretCredential`      | Service principal with secret          |
+| `ClientCertificateCredential` | Service principal with certificate     |
+| `AzureCliCredential`          | Direct Azure CLI auth                  |
+| `AzureDeveloperCliCredential` | Direct azd CLI auth                    |
+| `AzurePipelinesCredential`    | Azure Pipelines service connection     |
+| `ClientAssertionCredential`   | Custom assertions (federated identity) |
 
 ## ManagedIdentityCredential
 
@@ -108,11 +108,12 @@ let credential = ClientSecretCredential::new(
 
 ## Reference Links
 
-| Resource | Link |
-|----------|------|
-| API Reference | https://docs.rs/azure_identity |
-| Source Code | https://github.com/Azure/azure-sdk-for-rust/tree/main/sdk/identity/azure_identity |
-| crates.io | https://crates.io/crates/azure_identity |
+| Resource      | Link                                                                              |
+| ------------- | --------------------------------------------------------------------------------- |
+| API Reference | https://docs.rs/azure_identity                                                    |
+| Source Code   | https://github.com/Azure/azure-sdk-for-rust/tree/main/sdk/identity/azure_identity |
+| crates.io     | https://crates.io/crates/azure_identity                                           |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

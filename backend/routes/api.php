@@ -20,10 +20,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
+use Spatie\Honeypot\Http\Middleware\ProtectAgainstSpam;
+
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
-Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:3,1');
-Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->middleware('throttle:3,1');
-Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.reset')->middleware('throttle:3,1');
+Route::post('/register', [AuthController::class, 'register'])->middleware(['throttle:3,1', ProtectAgainstSpam::class]);
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->middleware(['throttle:3,1', ProtectAgainstSpam::class]);
+Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.reset')->middleware(['throttle:3,1', ProtectAgainstSpam::class]);
 
 // Email Verification
 Route::any('/email/verify/{id}/{hash}', function (Request $request) {

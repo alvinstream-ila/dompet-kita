@@ -4,19 +4,20 @@ Comprehensive comparison of audio transcription engines supported by the audio-t
 
 ## Overview
 
-| Tool | Type | Speed | Quality | Cost | Privacy | Offline | Languages |
-|------|------|-------|---------|------|---------|---------|-----------|
-| **Faster-Whisper** | Open-source | ⚡⚡⚡⚡⚡ | ⭐⭐⭐⭐⭐ | Free | 100% | ✅ | 99 |
-| **Whisper** | Open-source | ⚡⚡⚡ | ⭐⭐⭐⭐⭐ | Free | 100% | ✅ | 99 |
-| Google Speech-to-Text | Commercial API | ⚡⚡⚡⚡ | ⭐⭐⭐⭐⭐ | $0.006/15s | Partial | ❌ | 125+ |
-| Azure Speech | Commercial API | ⚡⚡⚡⚡ | ⭐⭐⭐⭐ | $1/hour | Partial | ❌ | 100+ |
-| AssemblyAI | Commercial API | ⚡⚡⚡⚡ | ⭐⭐⭐⭐⭐ | $0.00025/s | Partial | ❌ | 99 |
+| Tool                  | Type           | Speed      | Quality    | Cost       | Privacy | Offline | Languages |
+| --------------------- | -------------- | ---------- | ---------- | ---------- | ------- | ------- | --------- |
+| **Faster-Whisper**    | Open-source    | ⚡⚡⚡⚡⚡ | ⭐⭐⭐⭐⭐ | Free       | 100%    | ✅      | 99        |
+| **Whisper**           | Open-source    | ⚡⚡⚡     | ⭐⭐⭐⭐⭐ | Free       | 100%    | ✅      | 99        |
+| Google Speech-to-Text | Commercial API | ⚡⚡⚡⚡   | ⭐⭐⭐⭐⭐ | $0.006/15s | Partial | ❌      | 125+      |
+| Azure Speech          | Commercial API | ⚡⚡⚡⚡   | ⭐⭐⭐⭐   | $1/hour    | Partial | ❌      | 100+      |
+| AssemblyAI            | Commercial API | ⚡⚡⚡⚡   | ⭐⭐⭐⭐⭐ | $0.00025/s | Partial | ❌      | 99        |
 
 ---
 
 ## Faster-Whisper (Recommended)
 
 ### Pros
+
 ✅ **4-5x faster** than original Whisper  
 ✅ **Same quality** as original Whisper  
 ✅ **Lower memory usage** (50-60% less RAM)  
@@ -26,6 +27,7 @@ Comprehensive comparison of audio transcription engines supported by the audio-t
 ✅ **Drop-in replacement** for Whisper
 
 ### Cons
+
 ❌ Requires Python 3.8+  
 ❌ Initial model download (~100MB-1.5GB)  
 ❌ GPU optional but speeds up significantly
@@ -54,13 +56,13 @@ for segment in segments:
 
 ### Model Sizes
 
-| Model | Size | RAM | Speed (CPU) | Quality |
-|-------|------|-----|-------------|---------|
-| `tiny` | 39 MB | ~1 GB | Very fast (~10x realtime) | Basic |
-| `base` | 74 MB | ~1 GB | Fast (~7x realtime) | Good |
-| `small` | 244 MB | ~2 GB | Moderate (~4x realtime) | Very good |
-| `medium` | 769 MB | ~5 GB | Slow (~2x realtime) | Excellent |
-| `large` | 1550 MB | ~10 GB | Very slow (~1x realtime) | Best |
+| Model    | Size    | RAM    | Speed (CPU)               | Quality   |
+| -------- | ------- | ------ | ------------------------- | --------- |
+| `tiny`   | 39 MB   | ~1 GB  | Very fast (~10x realtime) | Basic     |
+| `base`   | 74 MB   | ~1 GB  | Fast (~7x realtime)       | Good      |
+| `small`  | 244 MB  | ~2 GB  | Moderate (~4x realtime)   | Very good |
+| `medium` | 769 MB  | ~5 GB  | Slow (~2x realtime)       | Excellent |
+| `large`  | 1550 MB | ~10 GB | Very slow (~1x realtime)  | Best      |
 
 **Recommendation:** `small` or `medium` for production use.
 
@@ -69,6 +71,7 @@ for segment in segments:
 ## Whisper (Original)
 
 ### Pros
+
 ✅ **Official OpenAI model**  
 ✅ **Excellent quality**  
 ✅ **Free and open-source**  
@@ -77,6 +80,7 @@ for segment in segments:
 ✅ **Large community**
 
 ### Cons
+
 ❌ **Slower** than Faster-Whisper (4-5x)  
 ❌ **Higher memory usage**  
 ❌ Requires PyTorch (large dependency)  
@@ -106,11 +110,13 @@ print(result["text"])
 ### When to Use Whisper vs. Faster-Whisper
 
 **Use Faster-Whisper if:**
+
 - Speed is important
 - Limited RAM available
 - Processing many files
 
 **Use Original Whisper if:**
+
 - Faster-Whisper installation issues
 - Need exact OpenAI implementation
 - Already have Whisper in project dependencies
@@ -120,6 +126,7 @@ print(result["text"])
 ## Google Cloud Speech-to-Text
 
 ### Pros
+
 ✅ **Very accurate** (industry-leading)  
 ✅ **Fast processing** (cloud infrastructure)  
 ✅ **125+ languages**  
@@ -128,6 +135,7 @@ print(result["text"])
 ✅ **Speaker diarization** (premium)
 
 ### Cons
+
 ❌ **Requires internet** (cloud-only)  
 ❌ **Costs money** (after free tier)  
 ❌ **Privacy concerns** (audio uploaded to Google)  
@@ -184,6 +192,7 @@ for result in response.results:
 ## Azure Speech Services
 
 ### Pros
+
 ✅ **High accuracy**  
 ✅ **100+ languages**  
 ✅ **Real-time transcription**  
@@ -191,6 +200,7 @@ for result in response.results:
 ✅ **Good Microsoft ecosystem integration**
 
 ### Cons
+
 ❌ **Requires internet**  
 ❌ **Costs money** (after free tier)  
 ❌ **Privacy concerns** (cloud processing)  
@@ -244,6 +254,7 @@ print(result.text)
 ## AssemblyAI
 
 ### Pros
+
 ✅ **Modern, developer-friendly API**  
 ✅ **Excellent accuracy**  
 ✅ **Advanced features** (sentiment, topic detection, PII redaction)  
@@ -252,6 +263,7 @@ print(result.text)
 ✅ **Good documentation**
 
 ### Cons
+
 ❌ **Requires internet**  
 ❌ **Costs money** (no free tier, only trial credits)  
 ❌ **Privacy concerns** (cloud processing)  
@@ -299,6 +311,7 @@ for utterance in transcript.utterances:
 ## Recommendation Matrix
 
 ### Use Faster-Whisper if:
+
 - ✅ Privacy is critical (local processing)
 - ✅ Want zero cost (free forever)
 - ✅ Need offline capability
@@ -306,18 +319,21 @@ for utterance in transcript.utterances:
 - ✅ Limited budget
 
 ### Use Google Speech-to-Text if:
+
 - ✅ Need absolute best accuracy
 - ✅ Have budget for cloud services
 - ✅ Want advanced features (punctuation, diarization)
 - ✅ Already using GCP ecosystem
 
 ### Use Azure Speech if:
+
 - ✅ In Microsoft ecosystem
 - ✅ Need custom model training
 - ✅ Want real-time transcription
 - ✅ Have Azure credits
 
 ### Use AssemblyAI if:
+
 - ✅ Need advanced features (sentiment, topics)
 - ✅ Want easiest API experience
 - ✅ Need automatic PII redaction
@@ -329,15 +345,15 @@ for utterance in transcript.utterances:
 
 **Test:** 1-hour podcast (MP3, 44.1kHz, stereo)
 
-| Tool | Processing Time | Accuracy | Cost |
-|------|----------------|----------|------|
-| Faster-Whisper (small) | 8 min | 94% | $0 |
-| Whisper (small) | 32 min | 94% | $0 |
-| Google Speech | 2 min | 96% | $1.44 |
-| Azure Speech | 3 min | 95% | $1.00 |
-| AssemblyAI | 4 min | 96% | $0.90 |
+| Tool                   | Processing Time | Accuracy | Cost  |
+| ---------------------- | --------------- | -------- | ----- |
+| Faster-Whisper (small) | 8 min           | 94%      | $0    |
+| Whisper (small)        | 32 min          | 94%      | $0    |
+| Google Speech          | 2 min           | 96%      | $1.44 |
+| Azure Speech           | 3 min           | 95%      | $1.00 |
+| AssemblyAI             | 4 min           | 96%      | $0.90 |
 
-*Benchmarks run on MacBook Pro M1, 16GB RAM*
+_Benchmarks run on MacBook Pro M1, 16GB RAM_
 
 ---
 

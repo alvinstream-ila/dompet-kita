@@ -3,7 +3,7 @@ name: azure-storage-file-datalake-py
 description: Azure Data Lake Storage Gen2 SDK for Python. Use for hierarchical file systems, big data analytics, and file/directory operations.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Data Lake Storage Gen2 SDK for Python
@@ -36,12 +36,12 @@ service_client = DataLakeServiceClient(account_url=account_url, credential=crede
 
 ## Client Hierarchy
 
-| Client | Purpose |
-|--------|---------|
-| `DataLakeServiceClient` | Account-level operations |
-| `FileSystemClient` | Container (file system) operations |
-| `DataLakeDirectoryClient` | Directory operations |
-| `DataLakeFileClient` | File operations |
+| Client                    | Purpose                            |
+| ------------------------- | ---------------------------------- |
+| `DataLakeServiceClient`   | Account-level operations           |
+| `FileSystemClient`        | Container (file system) operations |
+| `DataLakeDirectoryClient` | Directory operations               |
+| `DataLakeFileClient`      | File operations                    |
 
 ## File System Operations
 
@@ -183,16 +183,16 @@ from azure.identity.aio import DefaultAzureCredential
 
 async def datalake_operations():
     credential = DefaultAzureCredential()
-    
+
     async with DataLakeServiceClient(
         account_url="https://<account>.dfs.core.windows.net",
         credential=credential
     ) as service_client:
         file_system_client = service_client.get_file_system_client("myfilesystem")
         file_client = file_system_client.get_file_client("test.txt")
-        
+
         await file_client.upload_data(b"async content", overwrite=True)
-        
+
         download = await file_client.download_file()
         content = await download.readall()
 
@@ -211,4 +211,5 @@ asyncio.run(datalake_operations())
 7. **Consider Blob API** for simple object storage use cases
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

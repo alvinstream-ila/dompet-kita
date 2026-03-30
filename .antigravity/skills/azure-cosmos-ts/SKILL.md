@@ -3,7 +3,7 @@ name: azure-cosmos-ts
 description: Azure Cosmos DB JavaScript/TypeScript SDK (@azure/cosmos) for data plane operations. Use for CRUD operations on documents, queries, bulk operations, and container management.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # @azure/cosmos (TypeScript/JavaScript)
@@ -11,6 +11,7 @@ date_added: '2026-02-27'
 Data plane SDK for Azure Cosmos DB NoSQL API operations — CRUD on documents, queries, bulk operations.
 
 > **⚠️ Data vs Management Plane**
+>
 > - **This SDK (@azure/cosmos)**: CRUD operations on documents, queries, stored procedures
 > - **Management SDK (@azure/arm-cosmosdb)**: Create accounts, databases, containers via ARM
 
@@ -186,7 +187,8 @@ const { resources } = await container.items
 import { SqlQuerySpec } from "@azure/cosmos";
 
 const querySpec: SqlQuerySpec = {
-  query: "SELECT * FROM c WHERE c.partitionKey = @category AND c.price < @maxPrice",
+  query:
+    "SELECT * FROM c WHERE c.partitionKey = @category AND c.price < @maxPrice",
   parameters: [
     { name: "@category", value: "electronics" },
     { name: "@maxPrice", value: 1000 },
@@ -216,10 +218,9 @@ while (queryIterator.hasMoreResults()) {
 
 ```typescript
 const { resources } = await container.items
-  .query<Product>(
-    "SELECT * FROM c WHERE c.price > 500",
-    { enableCrossPartitionQuery: true }
-  )
+  .query<Product>("SELECT * FROM c WHERE c.price > 500", {
+    enableCrossPartitionQuery: true,
+  })
   .fetchAll();
 ```
 
@@ -356,7 +357,7 @@ const { resource, etag } = await container
 
 if (resource && etag) {
   resource.price = 899.99;
-  
+
   try {
     // Replace only if ETag matches
     await container.item("product-1", "electronics").replace(resource, {
@@ -380,27 +381,27 @@ import {
   Container,
   Item,
   Items,
-  
+
   // Operations
   OperationInput,
   BulkOperationType,
   PatchOperation,
-  
+
   // Queries
   SqlQuerySpec,
   SqlParameter,
   FeedOptions,
-  
+
   // Partition Keys
   PartitionKeyDefinition,
   PartitionKeyDefinitionVersion,
   PartitionKeyKind,
-  
+
   // Responses
   ItemResponse,
   FeedResponse,
   ResourceResponse,
-  
+
   // Errors
   ErrorResponse,
 } from "@azure/cosmos";
@@ -465,11 +466,12 @@ export class ProductService {
 
 ## Related SDKs
 
-| SDK | Purpose | Install |
-|-----|---------|---------|
-| `@azure/cosmos` | Data plane (this SDK) | `npm install @azure/cosmos` |
+| SDK                   | Purpose                | Install                           |
+| --------------------- | ---------------------- | --------------------------------- |
+| `@azure/cosmos`       | Data plane (this SDK)  | `npm install @azure/cosmos`       |
 | `@azure/arm-cosmosdb` | Management plane (ARM) | `npm install @azure/arm-cosmosdb` |
-| `@azure/identity` | Authentication | `npm install @azure/identity` |
+| `@azure/identity`     | Authentication         | `npm install @azure/identity`     |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

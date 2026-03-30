@@ -27,6 +27,7 @@ Dompet Kita/
 ```
 
 ### 🎮 Cara Mengendalikan (Root Commands)
+
 Sayang tidak perlu masuk-keluar folder. Cukup dari folder utama, jalankan:
 
 1.  **Jalankan Frontend**: `npm run dev`
@@ -34,4 +35,5 @@ Sayang tidak perlu masuk-keluar folder. Cukup dari folder utama, jalankan:
 3.  **Update Semua**: `npm run update-all`
 
 ---
-*Peta ini akan selalu diperbarui setiap ada gedung baru!* 🚀🫡💕
+
+_Peta ini akan selalu diperbarui setiap ada gedung baru!_ 🚀🫡💕

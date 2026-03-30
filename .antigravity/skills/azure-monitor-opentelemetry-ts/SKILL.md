@@ -38,8 +38,8 @@ import { useAzureMonitor } from "@azure/monitor-opentelemetry";
 
 useAzureMonitor({
   azureMonitorExporterOptions: {
-    connectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING
-  }
+    connectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING,
+  },
 });
 
 // Now import your application
@@ -54,6 +54,7 @@ node --import @azure/monitor-opentelemetry/loader ./dist/index.js
 ```
 
 **package.json:**
+
 ```json
 {
   "scripts": {
@@ -65,24 +66,27 @@ node --import @azure/monitor-opentelemetry/loader ./dist/index.js
 ## Full Configuration
 
 ```typescript
-import { useAzureMonitor, AzureMonitorOpenTelemetryOptions } from "@azure/monitor-opentelemetry";
+import {
+  useAzureMonitor,
+  AzureMonitorOpenTelemetryOptions,
+} from "@azure/monitor-opentelemetry";
 import { resourceFromAttributes } from "@opentelemetry/resources";
 
 const options: AzureMonitorOpenTelemetryOptions = {
   azureMonitorExporterOptions: {
     connectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING,
     storageDirectory: "/path/to/offline/storage",
-    disableOfflineStorage: false
+    disableOfflineStorage: false,
   },
-  
+
   // Sampling
-  samplingRatio: 1.0,  // 0-1, percentage of traces
-  
+  samplingRatio: 1.0, // 0-1, percentage of traces
+
   // Features
   enableLiveMetrics: true,
   enableStandardMetrics: true,
   enablePerformanceCounters: true,
-  
+
   // Instrumentation libraries
   instrumentationOptions: {
     azureSdk: { enabled: true },
@@ -92,11 +96,11 @@ const options: AzureMonitorOpenTelemetryOptions = {
     postgreSql: { enabled: true },
     redis: { enabled: true },
     bunyan: { enabled: false },
-    winston: { enabled: false }
+    winston: { enabled: false },
   },
-  
+
   // Custom resource
-  resource: resourceFromAttributes({ "service.name": "my-service" })
+  resource: resourceFromAttributes({ "service.name": "my-service" }),
 };
 
 useAzureMonitor(options);
@@ -114,9 +118,8 @@ try {
   span.setAttribute("component", "worker");
   span.setAttribute("operation.id", "42");
   span.addEvent("processing started");
-  
+
   // Your work here
-  
 } catch (error) {
   span.recordException(error as Error);
   span.setStatus({ code: 2, message: (error as Error).message });
@@ -153,14 +156,17 @@ gauge.addCallback((result) => {
 
 ```typescript
 import { AzureMonitorTraceExporter } from "@azure/monitor-opentelemetry-exporter";
-import { NodeTracerProvider, BatchSpanProcessor } from "@opentelemetry/sdk-trace-node";
+import {
+  NodeTracerProvider,
+  BatchSpanProcessor,
+} from "@opentelemetry/sdk-trace-node";
 
 const exporter = new AzureMonitorTraceExporter({
-  connectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING
+  connectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING,
 });
 
 const provider = new NodeTracerProvider({
-  spanProcessors: [new BatchSpanProcessor(exporter)]
+  spanProcessors: [new BatchSpanProcessor(exporter)],
 });
 
 provider.register();
@@ -170,15 +176,18 @@ provider.register();
 
 ```typescript
 import { AzureMonitorMetricExporter } from "@azure/monitor-opentelemetry-exporter";
-import { PeriodicExportingMetricReader, MeterProvider } from "@opentelemetry/sdk-metrics";
+import {
+  PeriodicExportingMetricReader,
+  MeterProvider,
+} from "@opentelemetry/sdk-metrics";
 import { metrics } from "@opentelemetry/api";
 
 const exporter = new AzureMonitorMetricExporter({
-  connectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING
+  connectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING,
 });
 
 const meterProvider = new MeterProvider({
-  readers: [new PeriodicExportingMetricReader({ exporter })]
+  readers: [new PeriodicExportingMetricReader({ exporter })],
 });
 
 metrics.setGlobalMeterProvider(meterProvider);
@@ -188,11 +197,14 @@ metrics.setGlobalMeterProvider(meterProvider);
 
 ```typescript
 import { AzureMonitorLogExporter } from "@azure/monitor-opentelemetry-exporter";
-import { BatchLogRecordProcessor, LoggerProvider } from "@opentelemetry/sdk-logs";
+import {
+  BatchLogRecordProcessor,
+  LoggerProvider,
+} from "@opentelemetry/sdk-logs";
 import { logs } from "@opentelemetry/api-logs";
 
 const exporter = new AzureMonitorLogExporter({
-  connectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING
+  connectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING,
 });
 
 const loggerProvider = new LoggerProvider();
@@ -205,7 +217,10 @@ logs.setGlobalLoggerProvider(loggerProvider);
 
 ```typescript
 import { DefaultAzureCredential } from "@azure/identity";
-import { LogsIngestionClient, isAggregateLogsUploadError } from "@azure/monitor-ingestion";
+import {
+  LogsIngestionClient,
+  isAggregateLogsUploadError,
+} from "@azure/monitor-ingestion";
 
 const endpoint = "https://<dce>.ingest.monitor.azure.com";
 const ruleId = "<data-collection-rule-id>";
@@ -218,8 +233,8 @@ const logs = [
     Time: new Date().toISOString(),
     Computer: "Server1",
     Message: "Application started",
-    Level: "Information"
-  }
+    Level: "Information",
+  },
 ];
 
 try {
@@ -241,14 +256,18 @@ import { Span, Context, SpanKind, TraceFlags } from "@opentelemetry/api";
 import { useAzureMonitor } from "@azure/monitor-opentelemetry";
 
 class FilteringSpanProcessor implements SpanProcessor {
-  forceFlush(): Promise<void> { return Promise.resolve(); }
-  shutdown(): Promise<void> { return Promise.resolve(); }
+  forceFlush(): Promise<void> {
+    return Promise.resolve();
+  }
+  shutdown(): Promise<void> {
+    return Promise.resolve();
+  }
   onStart(span: Span, context: Context): void {}
-  
+
   onEnd(span: ReadableSpan): void {
     // Add custom attributes
     span.attributes["CustomDimension"] = "value";
-    
+
     // Filter out internal spans
     if (span.kind === SpanKind.INTERNAL) {
       span.spanContext().traceFlags = TraceFlags.NONE;
@@ -257,7 +276,7 @@ class FilteringSpanProcessor implements SpanProcessor {
 }
 
 useAzureMonitor({
-  spanProcessors: [new FilteringSpanProcessor()]
+  spanProcessors: [new FilteringSpanProcessor()],
 });
 ```
 
@@ -276,7 +295,10 @@ const provider = new NodeTracerProvider({ sampler });
 ## Shutdown
 
 ```typescript
-import { useAzureMonitor, shutdownAzureMonitor } from "@azure/monitor-opentelemetry";
+import {
+  useAzureMonitor,
+  shutdownAzureMonitor,
+} from "@azure/monitor-opentelemetry";
 
 useAzureMonitor();
 
@@ -294,7 +316,7 @@ import {
   useAzureMonitor,
   shutdownAzureMonitor,
   AzureMonitorOpenTelemetryOptions,
-  InstrumentationOptions
+  InstrumentationOptions,
 } from "@azure/monitor-opentelemetry";
 
 import {
@@ -302,12 +324,12 @@ import {
   AzureMonitorMetricExporter,
   AzureMonitorLogExporter,
   ApplicationInsightsSampler,
-  AzureMonitorExporterOptions
+  AzureMonitorExporterOptions,
 } from "@azure/monitor-opentelemetry-exporter";
 
 import {
   LogsIngestionClient,
-  isAggregateLogsUploadError
+  isAggregateLogsUploadError,
 } from "@azure/monitor-ingestion";
 ```
 
@@ -321,4 +343,5 @@ import {
 6. **Graceful shutdown** - Call `shutdownAzureMonitor()` to flush telemetry
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

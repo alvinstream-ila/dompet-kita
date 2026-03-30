@@ -8,6 +8,7 @@ description: Find and evaluate influencers for brand partnerships, verify authen
 Discover and analyze influencers across multiple platforms using Apify Actors.
 
 ## Prerequisites
+
 (No need to check it upfront)
 
 - `.env` file with `APIFY_TOKEN`
@@ -31,23 +32,23 @@ Task Progress:
 
 Select the appropriate Actor based on user needs:
 
-| User Need | Actor ID | Best For |
-|-----------|----------|----------|
-| Influencer profiles | `apify/instagram-profile-scraper` | Profile metrics, bio, follower counts |
-| Find by hashtag | `apify/instagram-hashtag-scraper` | Discover influencers using specific hashtags |
-| Reel engagement | `apify/instagram-reel-scraper` | Analyze reel performance and engagement |
-| Discovery by niche | `apify/instagram-search-scraper` | Search for influencers by keyword/niche |
-| Brand mentions | `apify/instagram-tagged-scraper` | Track who tags brands/products |
-| Comprehensive data | `apify/instagram-scraper` | Full profile, posts, comments analysis |
-| API-based discovery | `apify/instagram-api-scraper` | Fast API-based data extraction |
-| Engagement analysis | `apify/export-instagram-comments-posts` | Export comments for sentiment analysis |
-| Facebook content | `apify/facebook-posts-scraper` | Analyze Facebook post performance |
-| Micro-influencers | `apify/facebook-groups-scraper` | Find influencers in niche groups |
-| Influential pages | `apify/facebook-search-scraper` | Search for influential pages |
-| YouTube creators | `streamers/youtube-channel-scraper` | Channel metrics and subscriber data |
-| TikTok influencers | `clockworks/tiktok-scraper` | Comprehensive TikTok data extraction |
-| TikTok (free) | `clockworks/free-tiktok-scraper` | Free TikTok data extractor |
-| Live streamers | `clockworks/tiktok-live-scraper` | Discover live streaming influencers |
+| User Need           | Actor ID                                | Best For                                     |
+| ------------------- | --------------------------------------- | -------------------------------------------- |
+| Influencer profiles | `apify/instagram-profile-scraper`       | Profile metrics, bio, follower counts        |
+| Find by hashtag     | `apify/instagram-hashtag-scraper`       | Discover influencers using specific hashtags |
+| Reel engagement     | `apify/instagram-reel-scraper`          | Analyze reel performance and engagement      |
+| Discovery by niche  | `apify/instagram-search-scraper`        | Search for influencers by keyword/niche      |
+| Brand mentions      | `apify/instagram-tagged-scraper`        | Track who tags brands/products               |
+| Comprehensive data  | `apify/instagram-scraper`               | Full profile, posts, comments analysis       |
+| API-based discovery | `apify/instagram-api-scraper`           | Fast API-based data extraction               |
+| Engagement analysis | `apify/export-instagram-comments-posts` | Export comments for sentiment analysis       |
+| Facebook content    | `apify/facebook-posts-scraper`          | Analyze Facebook post performance            |
+| Micro-influencers   | `apify/facebook-groups-scraper`         | Find influencers in niche groups             |
+| Influential pages   | `apify/facebook-search-scraper`         | Search for influential pages                 |
+| YouTube creators    | `streamers/youtube-channel-scraper`     | Channel metrics and subscriber data          |
+| TikTok influencers  | `clockworks/tiktok-scraper`             | Comprehensive TikTok data extraction         |
+| TikTok (free)       | `clockworks/free-tiktok-scraper`        | Free TikTok data extractor                   |
+| Live streamers      | `clockworks/tiktok-live-scraper`        | Discover live streaming influencers          |
 
 ### Step 2: Fetch Actor Schema
 
@@ -60,6 +61,7 @@ export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "A
 Replace `ACTOR_ID` with the selected Actor (e.g., `apify/instagram-profile-scraper`).
 
 This returns:
+
 - Actor description and README
 - Required and optional input parameters
 - Output fields (if available)
@@ -67,6 +69,7 @@ This returns:
 ### Step 3: Ask User Preferences
 
 Before running, ask:
+
 1. **Output format**:
    - **Quick answer** - Display top few results in chat (no file saved)
    - **CSV** - Full export with all fields
@@ -76,6 +79,7 @@ Before running, ask:
 ### Step 4: Run the Script
 
 **Quick answer (display in chat, no file):**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -83,6 +87,7 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ```
 
 **CSV:**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -92,6 +97,7 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ```
 
 **JSON:**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -103,11 +109,11 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ### Step 5: Summarize Results
 
 After completion, report:
+
 - Number of influencers found
 - File location and name
 - Key metrics available (followers, engagement rate, etc.)
 - Suggested next steps (filtering, outreach, deeper analysis)
-
 
 ## Error Handling
 

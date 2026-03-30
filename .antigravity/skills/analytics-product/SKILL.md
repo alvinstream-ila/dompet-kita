@@ -1,22 +1,22 @@
 ---
 name: analytics-product
-description: 'Analytics de produto — PostHog, Mixpanel, eventos, funnels, cohorts, retencao, north star metric, OKRs e dashboards de produto. Ativar para: configurar tracking de eventos, criar funil de...'
+description: "Analytics de produto — PostHog, Mixpanel, eventos, funnels, cohorts, retencao, north star metric, OKRs e dashboards de produto. Ativar para: configurar tracking de eventos, criar funil de..."
 risk: none
 source: community
-date_added: '2026-03-06'
+date_added: "2026-03-06"
 author: renat
 tags:
-- analytics
-- product
-- metrics
-- posthog
-- mixpanel
+  - analytics
+  - product
+  - metrics
+  - posthog
+  - mixpanel
 tools:
-- claude-code
-- antigravity
-- cursor
-- gemini-cli
-- codex-cli
+  - claude-code
+  - antigravity
+  - cursor
+  - gemini-cli
+  - codex-cli
 ---
 
 # ANALYTICS-PRODUCT — Decida com Dados
@@ -174,11 +174,11 @@ def calculate_cohort_retention(events_df):
 
 ## Benchmarks De Retencao (Assistentes De Voz)
 
-| Semana | Pessimo | Ok | Bom | Excelente |
-|--------|---------|-----|-----|-----------|
-| W1 | <20% | 20-35% | 35-50% | >50% |
-| W4 | <10% | 10-20% | 20-30% | >30% |
-| W8 | <5% | 5-12% | 12-20% | >20% |
+| Semana | Pessimo | Ok     | Bom    | Excelente |
+| ------ | ------- | ------ | ------ | --------- |
+| W1     | <20%    | 20-35% | 35-50% | >50%      |
+| W4     | <10%    | 10-20% | 20-30% | >30%      |
+| W8     | <5%     | 5-12%  | 12-20% | >20%      |
 
 ---
 
@@ -271,15 +271,15 @@ def ab_test_significance(
 
 ## 6. Comandos
 
-| Comando | Acao |
-|---------|------|
-| `/event-taxonomy` | Define taxonomia de eventos |
-| `/funnel-analysis` | Analisa funil de conversao |
-| `/cohort-retention` | Calcula retencao por cohort |
-| `/north-star` | Define ou revisa North Star Metric |
-| `/ab-test` | Calcula significancia de A/B test |
-| `/dashboard-setup` | Cria dashboard de produto |
-| `/okr-template` | Template de OKRs para produto |
+| Comando             | Acao                               |
+| ------------------- | ---------------------------------- |
+| `/event-taxonomy`   | Define taxonomia de eventos        |
+| `/funnel-analysis`  | Analisa funil de conversao         |
+| `/cohort-retention` | Calcula retencao por cohort        |
+| `/north-star`       | Define ou revisa North Star Metric |
+| `/ab-test`          | Calcula significancia de A/B test  |
+| `/dashboard-setup`  | Cria dashboard de produto          |
+| `/okr-template`     | Template de OKRs para produto      |
 
 ## Best Practices
 

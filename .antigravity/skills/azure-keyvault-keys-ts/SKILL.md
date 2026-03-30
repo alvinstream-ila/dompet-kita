@@ -50,7 +50,7 @@ const secretWithAttrs = await secretClient.setSecret("MySecret", "value", {
   enabled: true,
   expiresOn: new Date("2025-12-31"),
   contentType: "application/json",
-  tags: { environment: "production" }
+  tags: { environment: "production" },
 });
 ```
 
@@ -63,7 +63,7 @@ console.log(secret.value);
 
 // Get specific version
 const specificSecret = await secretClient.getSecret("MySecret", {
-  version: secret.properties.version
+  version: secret.properties.version,
 });
 ```
 
@@ -75,7 +75,9 @@ for await (const secretProperties of secretClient.listPropertiesOfSecrets()) {
 }
 
 // List versions
-for await (const version of secretClient.listPropertiesOfSecretVersions("MySecret")) {
+for await (const version of secretClient.listPropertiesOfSecretVersions(
+  "MySecret",
+)) {
   console.log(version.version);
 }
 ```
@@ -114,7 +116,7 @@ const keyWithAttrs = await keyClient.createKey("MyKey", "RSA", {
   enabled: true,
   expiresOn: new Date("2025-12-31"),
   tags: { purpose: "encryption" },
-  keyOps: ["encrypt", "decrypt", "sign", "verify"]
+  keyOps: ["encrypt", "decrypt", "sign", "verify"],
 });
 ```
 
@@ -142,7 +144,7 @@ const rotatedKey = await keyClient.rotateKey("MyKey");
 // Set rotation policy
 await keyClient.updateKeyRotationPolicy("MyKey", {
   lifetimeActions: [{ action: "Rotate", timeBeforeExpiry: "P30D" }],
-  expiresIn: "P90D"
+  expiresIn: "P90D",
 });
 ```
 
@@ -176,13 +178,13 @@ const cryptoClient = new CryptographyClient(key.id!, credential);
 // Encrypt
 const encryptResult = await cryptoClient.encrypt({
   algorithm: "RSA-OAEP",
-  plaintext: Buffer.from("My secret message")
+  plaintext: Buffer.from("My secret message"),
 });
 
 // Decrypt
 const decryptResult = await cryptoClient.decrypt({
   algorithm: "RSA-OAEP",
-  ciphertext: encryptResult.result
+  ciphertext: encryptResult.result,
 });
 
 console.log(decryptResult.result.toString());
@@ -200,7 +202,11 @@ const hash = createHash("sha256").update("My message").digest();
 const signResult = await cryptoClient.sign("RS256", hash);
 
 // Verify
-const verifyResult = await cryptoClient.verify("RS256", hash, signResult.result);
+const verifyResult = await cryptoClient.verify(
+  "RS256",
+  hash,
+  signResult.result,
+);
 console.log("Valid:", verifyResult.result);
 ```
 
@@ -208,10 +214,16 @@ console.log("Valid:", verifyResult.result);
 
 ```typescript
 // Wrap a key (encrypt it for storage)
-const wrapResult = await cryptoClient.wrapKey("RSA-OAEP", Buffer.from("key-material"));
+const wrapResult = await cryptoClient.wrapKey(
+  "RSA-OAEP",
+  Buffer.from("key-material"),
+);
 
 // Unwrap
-const unwrapResult = await cryptoClient.unwrapKey("RSA-OAEP", wrapResult.result);
+const unwrapResult = await cryptoClient.unwrapKey(
+  "RSA-OAEP",
+  wrapResult.result,
+);
 ```
 
 ## Backup and Restore
@@ -236,14 +248,14 @@ import {
   DeletedKey,
   CryptographyClient,
   KnownEncryptionAlgorithms,
-  KnownSignatureAlgorithms
+  KnownSignatureAlgorithms,
 } from "@azure/keyvault-keys";
 
 import {
   SecretClient,
   KeyVaultSecret,
   SecretProperties,
-  DeletedSecret
+  DeletedSecret,
 } from "@azure/keyvault-secrets";
 ```
 
@@ -271,4 +283,5 @@ try {
 6. **Browser not supported** - These SDKs are Node.js only
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

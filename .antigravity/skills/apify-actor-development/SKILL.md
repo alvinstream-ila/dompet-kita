@@ -14,6 +14,7 @@ description: "Develop, debug, and deploy Apify Actors - serverless cloud program
 Actors are serverless programs inspired by the UNIX philosophy - programs that do one thing well and can be easily combined to build complex systems. They're packaged as Docker images and run in isolated containers in the cloud.
 
 **Core Concepts:**
+
 - Accept well-defined JSON input
 - Perform isolated tasks (web scraping, automation, data processing)
 - Produce structured JSON output to datasets and/or store data in key-value stores
@@ -63,6 +64,7 @@ apify login
 ## Template Selection
 
 **IMPORTANT:** Before starting actor development, always ask the user which programming language they prefer:
+
 - **JavaScript** - Use `apify create <actor-name> -t project_empty`
 - **TypeScript** - Use `apify create <actor-name> -t ts_empty`
 - **Python** - Use `apify create <actor-name> -t python-empty`
@@ -96,6 +98,7 @@ Use the appropriate CLI command based on the user's language choice. Additional 
 ## Best Practices
 
 **✓ Do:**
+
 - Use `apify run` to test actors locally (configures Apify environment and storage)
 - Use Apify SDK (`apify`) for code running ON Apify platform
 - Validate input early with proper error handling and fail gracefully
@@ -113,6 +116,7 @@ Use the appropriate CLI command based on the user's language choice. Additional 
 - Implement readiness probe handler (required if your Actor uses standby mode)
 
 **✗ Don't:**
+
 - Use `npm start`, `npm run start`, `npx apify run`, or similar commands to run actors (use `apify run` instead)
 - Assume local storage from `apify run` is pushed to or visible in the Apify Console — it is local-only; deploy with `apify push` and run on the platform to see results in the Console
 - Rely on `Dataset.getInfo()` for final counts on Cloud
@@ -156,6 +160,7 @@ storage/key_value_stores/default/INPUT.json
 This file should contain the input parameters defined in your `.actor/input_schema.json`. The actor will read this input when running locally, mirroring how it receives input on the Apify platform.
 
 **IMPORTANT - Local storage is NOT synced to the Apify Console:**
+
 - Running `apify run` stores all data (datasets, key-value stores, request queues) **only on your local filesystem** in the `storage/` directory.
 - This data is **never** automatically uploaded or pushed to the Apify platform. It exists only on your machine.
 - To verify results on the Apify Console, you must deploy the Actor with `apify push` and then run it on the platform.
@@ -200,7 +205,6 @@ See [references/dataset-schema.md](references/dataset-schema.md) for dataset sch
 ## Key-Value Store Schema
 
 See [references/key-value-store-schema.md](references/key-value-store-schema.md) for key-value store schema structure, collections, and configuration.
-
 
 ## Apify MCP Tools
 

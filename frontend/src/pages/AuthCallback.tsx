@@ -12,13 +12,13 @@ const AuthCallback: React.FC = () => {
   useEffect(() => {
     const handleCallback = async () => {
       const token = searchParams.get('token');
-      
+
       if (token) {
         try {
           // Temporarily set token to fetch user data
           localStorage.setItem('auth_token', token);
           const { data: user } = await api.get('/user');
-          
+
           // Properly authorize via context
           login(token, user);
           navigate('/');
@@ -36,9 +36,11 @@ const AuthCallback: React.FC = () => {
   }, [searchParams, navigate, login]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center flex-col gap-4">
-      <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
-      <p className="font-black text-slate-600 uppercase tracking-widest text-[12px]">Lagi menyambungkan diri sayang...</p>
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4">
+      <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
+      <p className="text-[12px] font-black tracking-widest text-slate-600 uppercase">
+        Lagi menyambungkan diri sayang...
+      </p>
     </div>
   );
 };

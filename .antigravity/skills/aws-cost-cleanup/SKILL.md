@@ -17,17 +17,20 @@ Use this skill when you need to automatically clean up unused AWS resources to r
 ## Automated Cleanup Targets
 
 **Storage**
+
 - Unattached EBS volumes
 - Old EBS snapshots (>90 days)
 - Incomplete multipart S3 uploads
 - Old S3 versions in versioned buckets
 
 **Compute**
+
 - Stopped EC2 instances (>30 days)
 - Unused AMIs and associated snapshots
 - Unused Elastic IPs
 
 **Networking**
+
 - Unused Elastic Load Balancers
 - Unused NAT Gateways
 - Orphaned ENIs
@@ -62,7 +65,7 @@ CUTOFF_DATE=$(date -d '90 days ago' --iso-8601)
 aws ec2 describe-snapshots --owner-ids self \
   --query "Snapshots[?StartTime<='$CUTOFF_DATE'].[SnapshotId,StartTime,VolumeSize]" \
   --output text | while read snap_id start_time size; do
-  
+
   echo "Snapshot: $snap_id (Created: $start_time, Size: ${size}GB)"
   # Uncomment to delete:
   # aws ec2 delete-snapshot --snapshot-id $snap_id
@@ -76,7 +79,7 @@ done
 aws ec2 describe-addresses \
   --query 'Addresses[?AssociationId==null].[AllocationId,PublicIp]' \
   --output text | while read alloc_id public_ip; do
-  
+
   echo "Would release: $public_ip ($alloc_id)"
   # Uncomment to release:
   # aws ec2 release-address --allocation-id $alloc_id
@@ -162,15 +165,15 @@ from datetime import datetime, timedelta
 
 def lambda_handler(event, context):
     ec2 = boto3.client('ec2')
-    
+
     # Delete unattached volumes older than 7 days
     volumes = ec2.describe_volumes(
         Filters=[{'Name': 'status', 'Values': ['available']}]
     )
-    
+
     cutoff = datetime.now() - timedelta(days=7)
     deleted = 0
-    
+
     for vol in volumes['Volumes']:
         create_time = vol['CreateTime'].replace(tzinfo=None)
         if create_time < cutoff:
@@ -180,7 +183,7 @@ def lambda_handler(event, context):
                 print(f"Deleted volume: {vol['VolumeId']}")
             except Exception as e:
                 print(f"Error deleting {vol['VolumeId']}: {e}")
-    
+
     return {
         'statusCode': 200,
         'body': f'Deleted {deleted} volumes'
@@ -223,16 +226,19 @@ def lambda_handler(event, context):
 ## Example Prompts
 
 **Discovery**
+
 - "Find all unused resources and calculate potential savings"
 - "Generate a cleanup report for my AWS account"
 - "What resources can I safely delete?"
 
 **Execution**
+
 - "Create a script to cleanup unattached EBS volumes"
 - "Delete all snapshots older than 90 days"
 - "Release unused Elastic IPs"
 
 **Automation**
+
 - "Set up automated cleanup for old snapshots"
 - "Create a Lambda function for weekly cleanup"
 - "Schedule monthly resource cleanup"
@@ -243,7 +249,7 @@ def lambda_handler(event, context):
 # Run cleanup across multiple accounts
 for account in $(aws organizations list-accounts \
   --query 'Accounts[*].Id' --output text); do
-  
+
   echo "Checking account: $account"
   aws ec2 describe-volumes \
     --filters Name=status,Values=available \
@@ -280,11 +286,13 @@ aws cloudwatch put-metric-alarm \
 ## Risk Mitigation
 
 **Medium Risk Actions:**
+
 - Deleting unattached volumes (ensure no planned reattachment)
 - Removing old snapshots (verify no compliance requirements)
 - Releasing Elastic IPs (check DNS records)
 
 **Always:**
+
 - Maintain 30-day backup retention
 - Use AWS Backup for critical resources
 - Test restore procedures

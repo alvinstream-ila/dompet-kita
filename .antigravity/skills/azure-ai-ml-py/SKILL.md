@@ -3,7 +3,7 @@ name: azure-ai-ml-py
 description: Azure Machine Learning SDK v2 for Python. Use for ML workspaces, jobs, models, datasets, compute, and pipelines.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Machine Learning SDK v2 for Python
@@ -249,16 +249,16 @@ print(f"Default: {default_ds.name}")
 
 ## MLClient Operations
 
-| Property | Operations |
-|----------|------------|
-| `workspaces` | create, get, list, delete |
-| `jobs` | create_or_update, get, list, stream, cancel |
-| `models` | create_or_update, get, list, archive |
-| `data` | create_or_update, get, list |
-| `compute` | begin_create_or_update, get, list, delete |
-| `environments` | create_or_update, get, list |
-| `datastores` | create_or_update, get, list, get_default |
-| `components` | create_or_update, get, list |
+| Property       | Operations                                  |
+| -------------- | ------------------------------------------- |
+| `workspaces`   | create, get, list, delete                   |
+| `jobs`         | create_or_update, get, list, stream, cancel |
+| `models`       | create_or_update, get, list, archive        |
+| `data`         | create_or_update, get, list                 |
+| `compute`      | begin_create_or_update, get, list, delete   |
+| `environments` | create_or_update, get, list                 |
+| `datastores`   | create_or_update, get, list, get_default    |
+| `components`   | create_or_update, get, list                 |
 
 ## Best Practices
 
@@ -271,4 +271,5 @@ print(f"Default: {default_ds.name}")
 7. **Tag resources** for organization and cost tracking
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

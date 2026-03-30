@@ -3,7 +3,7 @@ name: azure-keyvault-keys-rust
 description: 'Azure Key Vault Keys SDK for Rust. Use for creating, managing, and using cryptographic keys. Triggers: "keyvault keys rust", "KeyClient rust", "create key rust", "encrypt rust", "sign rust".'
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Key Vault Keys SDK for Rust
@@ -38,12 +38,12 @@ let client = KeyClient::new(
 
 ## Key Types
 
-| Type | Description |
-|------|-------------|
-| RSA | RSA keys (2048, 3072, 4096 bits) |
-| EC | Elliptic curve keys (P-256, P-384, P-521) |
-| RSA-HSM | HSM-protected RSA keys |
-| EC-HSM | HSM-protected EC keys |
+| Type    | Description                               |
+| ------- | ----------------------------------------- |
+| RSA     | RSA keys (2048, 3072, 4096 bits)          |
+| EC      | Elliptic curve keys (P-256, P-384, P-521) |
+| RSA-HSM | HSM-protected RSA keys                    |
+| EC-HSM  | HSM-protected EC keys                     |
 
 ## Core Operations
 
@@ -155,16 +155,18 @@ Key Vault can perform crypto operations without exposing the private key:
 ## RBAC Permissions
 
 Assign these Key Vault roles:
+
 - `Key Vault Crypto User` — use keys for crypto operations
 - `Key Vault Crypto Officer` — full CRUD on keys
 
 ## Reference Links
 
-| Resource | Link |
-|----------|------|
-| API Reference | https://docs.rs/azure_security_keyvault_keys |
-| Source Code | https://github.com/Azure/azure-sdk-for-rust/tree/main/sdk/keyvault/azure_security_keyvault_keys |
-| crates.io | https://crates.io/crates/azure_security_keyvault_keys |
+| Resource      | Link                                                                                            |
+| ------------- | ----------------------------------------------------------------------------------------------- |
+| API Reference | https://docs.rs/azure_security_keyvault_keys                                                    |
+| Source Code   | https://github.com/Azure/azure-sdk-for-rust/tree/main/sdk/keyvault/azure_security_keyvault_keys |
+| crates.io     | https://crates.io/crates/azure_security_keyvault_keys                                           |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

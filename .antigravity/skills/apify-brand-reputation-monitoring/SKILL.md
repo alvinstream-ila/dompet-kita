@@ -8,6 +8,7 @@ description: "Track reviews, ratings, sentiment, and brand mentions across Googl
 Scrape reviews, ratings, and brand mentions from multiple platforms using Apify Actors.
 
 ## Prerequisites
+
 (No need to check it upfront)
 
 - `.env` file with `APIFY_TOKEN`
@@ -31,26 +32,26 @@ Task Progress:
 
 Select the appropriate Actor based on user needs:
 
-| User Need | Actor ID | Best For |
-|-----------|----------|----------|
-| Google Maps reviews | `compass/crawler-google-places` | Business reviews, ratings |
-| Google Maps review export | `compass/Google-Maps-Reviews-Scraper` | Dedicated review scraping |
-| Booking.com hotels | `voyager/booking-scraper` | Hotel data, scores |
-| Booking.com reviews | `voyager/booking-reviews-scraper` | Detailed hotel reviews |
-| TripAdvisor reviews | `maxcopell/tripadvisor-reviews` | Attraction/restaurant reviews |
-| Facebook reviews | `apify/facebook-reviews-scraper` | Page reviews |
-| Facebook comments | `apify/facebook-comments-scraper` | Post comment monitoring |
-| Facebook page metrics | `apify/facebook-pages-scraper` | Page ratings overview |
-| Facebook reactions | `apify/facebook-likes-scraper` | Reaction type analysis |
-| Instagram comments | `apify/instagram-comment-scraper` | Comment sentiment |
-| Instagram hashtags | `apify/instagram-hashtag-scraper` | Brand hashtag monitoring |
-| Instagram search | `apify/instagram-search-scraper` | Brand mention discovery |
-| Instagram tagged posts | `apify/instagram-tagged-scraper` | Brand tag tracking |
-| Instagram export | `apify/export-instagram-comments-posts` | Bulk comment export |
-| Instagram comprehensive | `apify/instagram-scraper` | Full Instagram monitoring |
-| Instagram API | `apify/instagram-api-scraper` | API-based monitoring |
-| YouTube comments | `streamers/youtube-comments-scraper` | Video comment sentiment |
-| TikTok comments | `clockworks/tiktok-comments-scraper` | TikTok sentiment |
+| User Need                 | Actor ID                                | Best For                      |
+| ------------------------- | --------------------------------------- | ----------------------------- |
+| Google Maps reviews       | `compass/crawler-google-places`         | Business reviews, ratings     |
+| Google Maps review export | `compass/Google-Maps-Reviews-Scraper`   | Dedicated review scraping     |
+| Booking.com hotels        | `voyager/booking-scraper`               | Hotel data, scores            |
+| Booking.com reviews       | `voyager/booking-reviews-scraper`       | Detailed hotel reviews        |
+| TripAdvisor reviews       | `maxcopell/tripadvisor-reviews`         | Attraction/restaurant reviews |
+| Facebook reviews          | `apify/facebook-reviews-scraper`        | Page reviews                  |
+| Facebook comments         | `apify/facebook-comments-scraper`       | Post comment monitoring       |
+| Facebook page metrics     | `apify/facebook-pages-scraper`          | Page ratings overview         |
+| Facebook reactions        | `apify/facebook-likes-scraper`          | Reaction type analysis        |
+| Instagram comments        | `apify/instagram-comment-scraper`       | Comment sentiment             |
+| Instagram hashtags        | `apify/instagram-hashtag-scraper`       | Brand hashtag monitoring      |
+| Instagram search          | `apify/instagram-search-scraper`        | Brand mention discovery       |
+| Instagram tagged posts    | `apify/instagram-tagged-scraper`        | Brand tag tracking            |
+| Instagram export          | `apify/export-instagram-comments-posts` | Bulk comment export           |
+| Instagram comprehensive   | `apify/instagram-scraper`               | Full Instagram monitoring     |
+| Instagram API             | `apify/instagram-api-scraper`           | API-based monitoring          |
+| YouTube comments          | `streamers/youtube-comments-scraper`    | Video comment sentiment       |
+| TikTok comments           | `clockworks/tiktok-comments-scraper`    | TikTok sentiment              |
 
 ### Step 2: Fetch Actor Schema
 
@@ -63,6 +64,7 @@ export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "A
 Replace `ACTOR_ID` with the selected Actor (e.g., `compass/crawler-google-places`).
 
 This returns:
+
 - Actor description and README
 - Required and optional input parameters
 - Output fields (if available)
@@ -70,6 +72,7 @@ This returns:
 ### Step 3: Ask User Preferences
 
 Before running, ask:
+
 1. **Output format**:
    - **Quick answer** - Display top few results in chat (no file saved)
    - **CSV** - Full export with all fields
@@ -79,6 +82,7 @@ Before running, ask:
 ### Step 4: Run the Script
 
 **Quick answer (display in chat, no file):**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -86,6 +90,7 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ```
 
 **CSV:**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -95,6 +100,7 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ```
 
 **JSON:**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -106,11 +112,11 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ### Step 5: Summarize Results
 
 After completion, report:
+
 - Number of reviews/mentions found
 - File location and name
 - Key fields available
 - Suggested next steps (sentiment analysis, filtering)
-
 
 ## Error Handling
 

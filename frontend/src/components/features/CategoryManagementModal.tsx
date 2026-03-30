@@ -5,20 +5,20 @@ import {
   DialogHeader,
   DialogTitle,
   DialogClose,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { 
-  Plus, 
-  Trash2, 
-  Settings2, 
-  ArrowDownCircle, 
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Plus,
+  Trash2,
+  Settings2,
+  ArrowDownCircle,
   ArrowUpCircle,
   Check,
-  X
+  X,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/constants';
 
 interface CategoryManagementModalProps {
@@ -26,121 +26,142 @@ interface CategoryManagementModalProps {
   onClose: () => void;
 }
 
-export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = ({ isOpen, onClose }) => {
+export const CategoryManagementModal: React.FC<
+  CategoryManagementModalProps
+> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState<'expense' | 'income'>('expense');
   const [expenseCats, setExpenseCats] = useState(EXPENSE_CATEGORIES);
   const [incomeCats, setIncomeCats] = useState(INCOME_CATEGORIES);
   const [newCategory, setNewCategory] = useState('');
 
   const currentCats = activeTab === 'expense' ? expenseCats : incomeCats;
-  const setCurrentCats = activeTab === 'expense' ? setExpenseCats : setIncomeCats;
+  const setCurrentCats =
+    activeTab === 'expense' ? setExpenseCats : setIncomeCats;
 
   const handleAddCategory = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCategory.trim()) return;
     if (currentCats.includes(newCategory.trim())) return;
-    
+
     setCurrentCats([...currentCats, newCategory.trim()]);
     setNewCategory('');
   };
 
   const handleDeleteCategory = (cat: string) => {
-    setCurrentCats(currentCats.filter(c => c !== cat));
+    setCurrentCats(currentCats.filter((c) => c !== cat));
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent showCloseButton={false} className="sm:max-w-md p-0 overflow-hidden rounded-[32px] border-none shadow-2xl bg-white/95 backdrop-blur-2xl">
-        <DialogHeader className="p-8 pb-12 bg-slate-900 text-white relative overflow-hidden">
+      <DialogContent
+        showCloseButton={false}
+        className="overflow-hidden rounded-[32px] border-none bg-white/95 p-0 shadow-2xl backdrop-blur-2xl sm:max-w-md"
+      >
+        <DialogHeader className="relative overflow-hidden bg-slate-900 p-8 pb-12 text-white">
           <div className="relative z-10 space-y-1">
-             <div className="flex items-center gap-2 mb-1">
-                <Settings2 className="w-4 h-4 text-pink-400" />
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-pink-400">Settings</p>
-             </div>
-             <DialogTitle className="text-2xl font-black tracking-tighter flex items-center gap-3 text-white">
-               KUSTOMISASI KATEGORI
-             </DialogTitle>
-             
-             <p className="text-slate-400 text-xs font-bold leading-relaxed">
-               Atur kategori pengeluaran dan pemasukan sesuka hati kamu ya..
-             </p>
+            <div className="mb-1 flex items-center gap-2">
+              <Settings2 className="h-4 w-4 text-pink-400" />
+              <p className="text-[10px] font-black tracking-[0.2em] text-pink-400 uppercase">
+                Settings
+              </p>
+            </div>
+            <DialogTitle className="flex items-center gap-3 text-2xl font-black tracking-tighter text-white">
+              KUSTOMISASI KATEGORI
+            </DialogTitle>
+
+            <p className="text-xs leading-relaxed font-bold text-slate-400">
+              Atur kategori pengeluaran dan pemasukan sesuka hati kamu ya..
+            </p>
           </div>
-          <div className="absolute -right-10 -top-10 w-48 h-48 bg-pink-500/20 rounded-full blur-3xl" />
-          
+          <div className="absolute -top-10 -right-10 h-48 w-48 rounded-full bg-pink-500/20 blur-3xl" />
+
           <DialogClose asChild>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="absolute top-4 right-4 w-11 h-11 rounded-full text-white hover:bg-white/10 hover:text-white transition-all active:scale-90 z-50"
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-4 right-4 z-50 h-11 w-11 rounded-full text-white transition-all hover:bg-white/10 hover:text-white active:scale-90"
             >
-              <X className="w-6 h-6" strokeWidth={3} />
+              <X className="h-6 w-6" strokeWidth={3} />
             </Button>
           </DialogClose>
         </DialogHeader>
 
-        <div className="px-8 pb-10 -mt-8 relative z-20 space-y-6">
-          <div className="flex p-1.5 bg-white shadow-xl rounded-2xl border border-slate-100">
-             <button 
-               onClick={() => setActiveTab('expense')}
-               className={cn(
-                 "flex-1 py-3 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all flex items-center justify-center gap-2",
-                 activeTab === 'expense' ? "bg-slate-900 text-white shadow-lg" : "text-slate-400 hover:bg-slate-50"
-               )}
-             >
-               <ArrowDownCircle className="w-3.5 h-3.5" />
-               Pengeluaran
-             </button>
-             <button 
-               onClick={() => setActiveTab('income')}
-               className={cn(
-                 "flex-1 py-3 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all flex items-center justify-center gap-2",
-                 activeTab === 'income' ? "bg-emerald-500 text-white shadow-lg" : "text-slate-400 hover:bg-slate-50"
-               )}
-             >
-               <ArrowUpCircle className="w-3.5 h-3.5" />
-               Pemasukan
-             </button>
+        <div className="relative z-20 -mt-8 space-y-6 px-8 pb-10">
+          <div className="flex rounded-2xl border border-slate-100 bg-white p-1.5 shadow-xl">
+            <button
+              onClick={() => setActiveTab('expense')}
+              className={cn(
+                'flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-[11px] font-black tracking-widest uppercase transition-all',
+                activeTab === 'expense'
+                  ? 'bg-slate-900 text-white shadow-lg'
+                  : 'text-slate-400 hover:bg-slate-50'
+              )}
+            >
+              <ArrowDownCircle className="h-3.5 w-3.5" />
+              Pengeluaran
+            </button>
+            <button
+              onClick={() => setActiveTab('income')}
+              className={cn(
+                'flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-[11px] font-black tracking-widest uppercase transition-all',
+                activeTab === 'income'
+                  ? 'bg-emerald-500 text-white shadow-lg'
+                  : 'text-slate-400 hover:bg-slate-50'
+              )}
+            >
+              <ArrowUpCircle className="h-3.5 w-3.5" />
+              Pemasukan
+            </button>
           </div>
 
           <form onSubmit={handleAddCategory} className="flex gap-2">
             <div className="relative flex-1">
-              <Input 
+              <Input
                 placeholder="Tambah kategori baru..."
                 value={newCategory}
                 onChange={(e) => setNewCategory(e.target.value)}
-                className="h-12 bg-slate-50 border-slate-200 rounded-2xl px-5 font-bold text-sm focus-visible:ring-slate-300 placeholder:italic"
+                className="h-12 rounded-2xl border-slate-200 bg-slate-50 px-5 text-sm font-bold placeholder:italic focus-visible:ring-slate-300"
               />
             </div>
-            <Button type="submit" className="h-12 w-12 rounded-2xl bg-pink-500 hover:bg-pink-600 shadow-lg shadow-pink-500/20 text-white border-none shrink-0 p-0">
-              <Plus className="w-6 h-6" strokeWidth={3} />
+            <Button
+              type="submit"
+              className="h-12 w-12 shrink-0 rounded-2xl border-none bg-pink-500 p-0 text-white shadow-lg shadow-pink-500/20 hover:bg-pink-600"
+            >
+              <Plus className="h-6 w-6" strokeWidth={3} />
             </Button>
           </form>
 
-          <div className="max-h-[300px] overflow-y-auto pr-2 space-y-2 custom-scrollbar">
+          <div className="custom-scrollbar max-h-[300px] space-y-2 overflow-y-auto pr-2">
             <AnimatePresence mode="popLayout">
               {currentCats.map((cat) => (
-                <motion.div 
+                <motion.div
                   key={cat}
                   layout
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="group bg-white border border-slate-100 rounded-2xl p-4 flex items-center justify-between shadow-sm transition-all hover:shadow-md hover:border-slate-200"
+                  className="group flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition-all hover:border-slate-200 hover:shadow-md"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "w-2 h-2 rounded-full",
-                      activeTab === 'expense' ? "bg-pink-400" : "bg-emerald-400"
-                    )} />
-                    <span className="font-bold text-slate-700 text-sm">{cat}</span>
+                    <div
+                      className={cn(
+                        'h-2 w-2 rounded-full',
+                        activeTab === 'expense'
+                          ? 'bg-pink-400'
+                          : 'bg-emerald-400'
+                      )}
+                    />
+                    <span className="text-sm font-bold text-slate-700">
+                      {cat}
+                    </span>
                   </div>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={() => handleDeleteCategory(cat)}
-                    className="w-9 h-9 rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
+                    className="h-9 w-9 rounded-xl text-slate-300 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-500"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </motion.div>
               ))}
@@ -148,11 +169,18 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
           </div>
 
           <div className="flex gap-3 pt-2">
-            <Button variant="outline" className="flex-1 h-12 rounded-2xl border-slate-200 font-black text-[11px] uppercase tracking-widest text-slate-500" onClick={onClose}>
-               <X className="w-4 h-4 mr-2" /> Batalkan
+            <Button
+              variant="outline"
+              className="h-12 flex-1 rounded-2xl border-slate-200 text-[11px] font-black tracking-widest text-slate-500 uppercase"
+              onClick={onClose}
+            >
+              <X className="mr-2 h-4 w-4" /> Batalkan
             </Button>
-            <Button className="flex-1 h-12 rounded-2xl bg-slate-900 hover:bg-black font-black text-[11px] uppercase tracking-widest text-white shadow-xl" onClick={onClose}>
-               <Check className="w-4 h-4 mr-2" /> Simpan
+            <Button
+              className="h-12 flex-1 rounded-2xl bg-slate-900 text-[11px] font-black tracking-widest text-white uppercase shadow-xl hover:bg-black"
+              onClick={onClose}
+            >
+              <Check className="mr-2 h-4 w-4" /> Simpan
             </Button>
           </div>
         </div>

@@ -110,14 +110,14 @@ client.agents.delete_version(
 
 ## ImageBasedHostedAgentDefinition Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `container_protocol_versions` | `list[ProtocolVersionRecord]` | Yes | Protocol versions the agent supports |
-| `image` | `str` | Yes | Full container image path (registry/image:tag) |
-| `cpu` | `str` | No | CPU allocation (e.g., "1", "2") |
-| `memory` | `str` | No | Memory allocation (e.g., "2Gi", "4Gi") |
-| `tools` | `list[dict]` | No | Tools available to the agent |
-| `environment_variables` | `dict[str, str]` | No | Environment variables for the container |
+| Parameter                     | Type                          | Required | Description                                    |
+| ----------------------------- | ----------------------------- | -------- | ---------------------------------------------- |
+| `container_protocol_versions` | `list[ProtocolVersionRecord]` | Yes      | Protocol versions the agent supports           |
+| `image`                       | `str`                         | Yes      | Full container image path (registry/image:tag) |
+| `cpu`                         | `str`                         | No       | CPU allocation (e.g., "1", "2")                |
+| `memory`                      | `str`                         | No       | Memory allocation (e.g., "2Gi", "4Gi")         |
+| `tools`                       | `list[dict]`                  | No       | Tools available to the agent                   |
+| `environment_variables`       | `dict[str, str]`              | No       | Environment variables for the container        |
 
 ## Protocol Versions
 
@@ -222,12 +222,12 @@ from azure.ai.projects.models import (
 
 def create_hosted_agent():
     """Create a hosted agent with custom container image."""
-    
+
     client = AIProjectClient(
         endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
         credential=DefaultAzureCredential()
     )
-    
+
     agent = client.agents.create_version(
         agent_name="data-processor-agent",
         definition=ImageBasedHostedAgentDefinition(
@@ -251,11 +251,11 @@ def create_hosted_agent():
             }
         )
     )
-    
+
     print(f"Created hosted agent: {agent.name}")
     print(f"Version: {agent.version}")
     print(f"State: {agent.state}")
-    
+
     return agent
 
 if __name__ == "__main__":
@@ -276,7 +276,7 @@ from azure.ai.projects.models import (
 
 async def create_hosted_agent_async():
     """Create a hosted agent asynchronously."""
-    
+
     async with DefaultAzureCredential() as credential:
         async with AIProjectClient(
             endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
@@ -301,12 +301,12 @@ async def create_hosted_agent_async():
 
 ## Common Errors
 
-| Error | Cause | Solution |
-|-------|-------|----------|
-| `ImagePullBackOff` | ACR pull permission denied | Grant `AcrPull` role to project's managed identity |
-| `InvalidContainerImage` | Image not found | Verify image path and tag exist in ACR |
-| `CapabilityHostNotFound` | No capability host configured | Create account-level capability host |
-| `ProtocolVersionNotSupported` | Invalid protocol version | Use `AgentProtocol.RESPONSES` with version `"v1"` |
+| Error                         | Cause                         | Solution                                           |
+| ----------------------------- | ----------------------------- | -------------------------------------------------- |
+| `ImagePullBackOff`            | ACR pull permission denied    | Grant `AcrPull` role to project's managed identity |
+| `InvalidContainerImage`       | Image not found               | Verify image path and tag exist in ACR             |
+| `CapabilityHostNotFound`      | No capability host configured | Create account-level capability host               |
+| `ProtocolVersionNotSupported` | Invalid protocol version      | Use `AgentProtocol.RESPONSES` with version `"v1"`  |
 
 ## Best Practices
 
@@ -323,4 +323,5 @@ async def create_hosted_agent_async():
 - [Azure Container Registry](https://learn.microsoft.com/azure/container-registry/)
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

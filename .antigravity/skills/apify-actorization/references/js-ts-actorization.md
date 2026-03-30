@@ -9,7 +9,7 @@ npm install apify
 ## Wrap Main Code with Actor Lifecycle
 
 ```javascript
-import { Actor } from 'apify';
+import { Actor } from "apify";
 
 // Initialize connection to Apify platform
 await Actor.init();
@@ -20,7 +20,7 @@ await Actor.init();
 
 // Example: Get input from Apify Console or API
 const input = await Actor.getInput();
-console.log('Input:', input);
+console.log("Input:", input);
 
 // Example: Your crawler or processing logic
 // const crawler = new PlaywrightCrawler({ ... });
@@ -49,28 +49,25 @@ await Actor.exit();
 Crawlee projects require minimal changes - just wrap with Actor lifecycle:
 
 ```javascript
-import { Actor } from 'apify';
-import { PlaywrightCrawler } from 'crawlee';
+import { Actor } from "apify";
+import { PlaywrightCrawler } from "crawlee";
 
 await Actor.init();
 
 // Get and validate input
 const input = await Actor.getInput();
-const {
-    startUrl = 'https://example.com',
-    maxItems = 100,
-} = input ?? {};
+const { startUrl = "https://example.com", maxItems = 100 } = input ?? {};
 
 let itemCount = 0;
 
 const crawler = new PlaywrightCrawler({
-    requestHandler: async ({ page, request, pushData }) => {
-        if (itemCount >= maxItems) return;
+  requestHandler: async ({ page, request, pushData }) => {
+    if (itemCount >= maxItems) return;
 
-        const title = await page.title();
-        await pushData({ url: request.url, title });
-        itemCount++;
-    },
+    const title = await page.title();
+    await pushData({ url: request.url, title });
+    itemCount++;
+  },
 });
 
 await crawler.run([startUrl]);
@@ -84,9 +81,9 @@ For web servers, use standby mode in actor.json:
 
 ```json
 {
-    "actorSpecification": 1,
-    "name": "my-api",
-    "usesStandbyMode": true
+  "actorSpecification": 1,
+  "name": "my-api",
+  "usesStandbyMode": true
 }
 ```
 
@@ -95,7 +92,7 @@ Then implement readiness probe. See [standby-mode.md](../../apify-actor-developm
 ## Batch Processing Scripts
 
 ```javascript
-import { Actor } from 'apify';
+import { Actor } from "apify";
 
 await Actor.init();
 
@@ -103,8 +100,8 @@ const input = await Actor.getInput();
 const items = input.items || [];
 
 for (const item of items) {
-    const result = processItem(item);
-    await Actor.pushData(result);
+  const result = processItem(item);
+  await Actor.pushData(result);
 }
 
 await Actor.exit();

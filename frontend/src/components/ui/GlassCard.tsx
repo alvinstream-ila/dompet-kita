@@ -5,10 +5,9 @@ interface GlassCardProps {
   className?: string;
 }
 
-export const GlassCard: React.FC<GlassCardProps> = ({ children, className = '' }) => {
-  return (
-    <div className={`glass-card ${className}`}>
-      {children}
-    </div>
-  );
+export const GlassCard: React.FC<GlassCardProps> = ({
+  children,
+  className = '',
+}) => {
+  return <div className={`glass-card ${className}`}>{children}</div>;
 };

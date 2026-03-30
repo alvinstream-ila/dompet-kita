@@ -1,4 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PageLoader } from '@/components/ui/PageLoader';
@@ -35,7 +41,7 @@ const queryClient = new QueryClient({
     },
     mutations: {
       retry: 1,
-    }
+    },
   },
 });
 
@@ -57,21 +63,34 @@ function AppContent() {
   }, [location.pathname]);
 
   if (loading) {
-    return <PageLoader isLoading={true} message="Mengecek status kita sayang..." />;
+    return (
+      <PageLoader isLoading={true} message="Mengecek status kita sayang..." />
+    );
   }
 
   return (
-    <Suspense fallback={<PageLoader isLoading={true} message="Lagi loading sebentar ya sayang..." />}>
+    <Suspense
+      fallback={
+        <PageLoader
+          isLoading={true}
+          message="Lagi loading sebentar ya sayang..."
+        />
+      }
+    >
       <Routes>
-        <Route 
-          path="/login" 
-          element={!isAuthenticated ? <Login /> : <Navigate to="/" replace />} 
+        <Route
+          path="/login"
+          element={!isAuthenticated ? <Login /> : <Navigate to="/" replace />}
         />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
-        
-        <Route element={isAuthenticated ? <MainLayout /> : <Navigate to="/login" replace />}>
+
+        <Route
+          element={
+            isAuthenticated ? <MainLayout /> : <Navigate to="/login" replace />
+          }
+        >
           <Route path="/" element={<Home />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/reports" element={<Reports />} />
@@ -95,12 +114,12 @@ function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-            <LazyMotion features={domAnimation}>
-              <Router>
-                <AppContent />
-                <Toaster richColors closeButton position="top-center" />
-              </Router>
-            </LazyMotion>
+          <LazyMotion features={domAnimation}>
+            <Router>
+              <AppContent />
+              <Toaster richColors closeButton position="top-center" />
+            </Router>
+          </LazyMotion>
         </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>

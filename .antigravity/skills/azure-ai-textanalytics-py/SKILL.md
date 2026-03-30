@@ -3,7 +3,7 @@ name: azure-ai-textanalytics-py
 description: Azure AI Text Analytics SDK for sentiment analysis, entity recognition, key phrases, language detection, PII, and healthcare NLP. Use for natural language processing on text.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure AI Text Analytics SDK for Python
@@ -66,7 +66,7 @@ for doc in result:
         print(f"Scores: pos={doc.confidence_scores.positive:.2f}, "
               f"neg={doc.confidence_scores.negative:.2f}, "
               f"neu={doc.confidence_scores.neutral:.2f}")
-        
+
         # Opinion mining (aspect-based sentiment)
         for sentence in doc.sentences:
             for opinion in sentence.mined_opinions:
@@ -145,7 +145,7 @@ for doc in result:
             print(f"Entity: {entity.text}")
             print(f"  Category: {entity.category}")
             print(f"  Normalized: {entity.normalized_text}")
-            
+
             # Entity links (UMLS, etc.)
             for link in entity.data_sources:
                 print(f"  Link: {link.name} - {link.entity_id}")
@@ -199,23 +199,23 @@ async def analyze():
 
 ## Client Types
 
-| Client | Purpose |
-|--------|---------|
-| `TextAnalyticsClient` | All text analytics operations |
-| `TextAnalyticsClient` (aio) | Async version |
+| Client                      | Purpose                       |
+| --------------------------- | ----------------------------- |
+| `TextAnalyticsClient`       | All text analytics operations |
+| `TextAnalyticsClient` (aio) | Async version                 |
 
 ## Available Operations
 
-| Method | Description |
-|--------|-------------|
-| `analyze_sentiment` | Sentiment analysis with opinion mining |
-| `recognize_entities` | Named entity recognition |
-| `recognize_pii_entities` | PII detection and redaction |
-| `recognize_linked_entities` | Entity linking to Wikipedia |
-| `extract_key_phrases` | Key phrase extraction |
-| `detect_language` | Language detection |
-| `begin_analyze_healthcare_entities` | Healthcare NLP (long-running) |
-| `begin_analyze_actions` | Multiple analyses in batch |
+| Method                              | Description                            |
+| ----------------------------------- | -------------------------------------- |
+| `analyze_sentiment`                 | Sentiment analysis with opinion mining |
+| `recognize_entities`                | Named entity recognition               |
+| `recognize_pii_entities`            | PII detection and redaction            |
+| `recognize_linked_entities`         | Entity linking to Wikipedia            |
+| `extract_key_phrases`               | Key phrase extraction                  |
+| `detect_language`                   | Language detection                     |
+| `begin_analyze_healthcare_entities` | Healthcare NLP (long-running)          |
+| `begin_analyze_actions`             | Multiple analyses in batch             |
 
 ## Best Practices
 
@@ -227,4 +227,5 @@ async def analyze():
 6. **Use context manager** or close client explicitly
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

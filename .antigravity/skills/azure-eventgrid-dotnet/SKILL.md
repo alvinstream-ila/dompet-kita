@@ -3,7 +3,7 @@ name: azure-eventgrid-dotnet
 description: Azure Event Grid SDK for .NET. Client library for publishing and consuming events with Azure Event Grid. Use for event-driven architectures, pub/sub messaging, CloudEvents, and EventGridEvents.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure.Messaging.EventGrid (.NET)
@@ -219,7 +219,7 @@ var senderClient = new EventGridSenderClient(
     new AzureKeyCredential(topicKey));
 
 // Send single event
-CloudEvent cloudEvent = new("employee_source", "Employee.Created", 
+CloudEvent cloudEvent = new("employee_source", "Employee.Created",
     new { Name = "John", Age = 30 });
 await senderClient.SendAsync(cloudEvent);
 
@@ -250,7 +250,7 @@ foreach (ReceiveDetails detail in result.Details)
 {
     CloudEvent cloudEvent = detail.Event;
     string lockToken = detail.BrokerProperties.LockToken;
-    
+
     try
     {
         // Process the event
@@ -395,25 +395,25 @@ IotHubDeviceCreatedEventData deviceCreated;
 
 ## Key Types Reference
 
-| Type | Purpose |
-|------|---------|
-| `EventGridPublisherClient` | Publish to topics/domains |
-| `EventGridSenderClient` | Send to namespace topics |
-| `EventGridReceiverClient` | Receive from namespace subscriptions |
-| `EventGridEvent` | Event Grid native schema |
-| `CloudEvent` | CloudEvents 1.0 schema |
-| `ReceiveResult` | Pull delivery response |
-| `ReceiveDetails` | Event with broker properties |
-| `BrokerProperties` | Lock token, delivery count |
+| Type                       | Purpose                              |
+| -------------------------- | ------------------------------------ |
+| `EventGridPublisherClient` | Publish to topics/domains            |
+| `EventGridSenderClient`    | Send to namespace topics             |
+| `EventGridReceiverClient`  | Receive from namespace subscriptions |
+| `EventGridEvent`           | Event Grid native schema             |
+| `CloudEvent`               | CloudEvents 1.0 schema               |
+| `ReceiveResult`            | Pull delivery response               |
+| `ReceiveDetails`           | Event with broker properties         |
+| `BrokerProperties`         | Lock token, delivery count           |
 
 ## Event Schemas Comparison
 
-| Feature | EventGridEvent | CloudEvent |
-|---------|----------------|------------|
-| Standard | Azure-specific | CNCF standard |
-| Required fields | subject, eventType, dataVersion, data | source, type |
-| Extensibility | Limited | Extension attributes |
-| Interoperability | Azure only | Cross-platform |
+| Feature          | EventGridEvent                        | CloudEvent           |
+| ---------------- | ------------------------------------- | -------------------- |
+| Standard         | Azure-specific                        | CNCF standard        |
+| Required fields  | subject, eventType, dataVersion, data | source, type         |
+| Extensibility    | Limited                               | Extension attributes |
+| Interoperability | Azure only                            | Cross-platform       |
 
 ## Best Practices
 
@@ -471,22 +471,23 @@ catch (RequestFailedException)
 
 ## Related SDKs
 
-| SDK | Purpose | Install |
-|-----|---------|---------|
-| `Azure.Messaging.EventGrid` | Topics/Domains (this SDK) | `dotnet add package Azure.Messaging.EventGrid` |
-| `Azure.Messaging.EventGrid.Namespaces` | Pull delivery | `dotnet add package Azure.Messaging.EventGrid.Namespaces` |
-| `Azure.Identity` | Authentication | `dotnet add package Azure.Identity` |
-| `Microsoft.Azure.WebJobs.Extensions.EventGrid` | Azure Functions trigger | `dotnet add package Microsoft.Azure.WebJobs.Extensions.EventGrid` |
+| SDK                                            | Purpose                   | Install                                                           |
+| ---------------------------------------------- | ------------------------- | ----------------------------------------------------------------- |
+| `Azure.Messaging.EventGrid`                    | Topics/Domains (this SDK) | `dotnet add package Azure.Messaging.EventGrid`                    |
+| `Azure.Messaging.EventGrid.Namespaces`         | Pull delivery             | `dotnet add package Azure.Messaging.EventGrid.Namespaces`         |
+| `Azure.Identity`                               | Authentication            | `dotnet add package Azure.Identity`                               |
+| `Microsoft.Azure.WebJobs.Extensions.EventGrid` | Azure Functions trigger   | `dotnet add package Microsoft.Azure.WebJobs.Extensions.EventGrid` |
 
 ## Reference Links
 
-| Resource | URL |
-|----------|-----|
-| NuGet Package | https://www.nuget.org/packages/Azure.Messaging.EventGrid |
-| API Reference | https://learn.microsoft.com/dotnet/api/azure.messaging.eventgrid |
-| Quickstart | https://learn.microsoft.com/azure/event-grid/custom-event-quickstart |
-| Pull Delivery | https://learn.microsoft.com/azure/event-grid/pull-delivery-overview |
+| Resource      | URL                                                                                          |
+| ------------- | -------------------------------------------------------------------------------------------- |
+| NuGet Package | https://www.nuget.org/packages/Azure.Messaging.EventGrid                                     |
+| API Reference | https://learn.microsoft.com/dotnet/api/azure.messaging.eventgrid                             |
+| Quickstart    | https://learn.microsoft.com/azure/event-grid/custom-event-quickstart                         |
+| Pull Delivery | https://learn.microsoft.com/azure/event-grid/pull-delivery-overview                          |
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/eventgrid/Azure.Messaging.EventGrid |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

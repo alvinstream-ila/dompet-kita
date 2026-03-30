@@ -3,7 +3,7 @@ name: azure-messaging-webpubsubservice-py
 description: Azure Web PubSub Service SDK for Python. Use for real-time messaging, WebSocket connections, and pub/sub patterns.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Web PubSub Service SDK for Python
@@ -213,26 +213,26 @@ async def broadcast():
         hub="my-hub",
         credential=credential
     )
-    
+
     await client.send_to_all("Hello async!", content_type="text/plain")
-    
+
     await client.close()
     await credential.close()
 ```
 
 ## Client Operations
 
-| Operation | Description |
-|-----------|-------------|
+| Operation                 | Description                       |
+| ------------------------- | --------------------------------- |
 | `get_client_access_token` | Generate WebSocket connection URL |
-| `send_to_all` | Broadcast to all connections |
-| `send_to_user` | Send to specific user |
-| `send_to_group` | Send to group members |
-| `send_to_connection` | Send to specific connection |
-| `add_user_to_group` | Add user to group |
-| `remove_user_from_group` | Remove user from group |
-| `close_connection` | Disconnect client |
-| `connection_exists` | Check connection status |
+| `send_to_all`             | Broadcast to all connections      |
+| `send_to_user`            | Send to specific user             |
+| `send_to_group`           | Send to group members             |
+| `send_to_connection`      | Send to specific connection       |
+| `add_user_to_group`       | Add user to group                 |
+| `remove_user_from_group`  | Remove user from group            |
+| `close_connection`        | Disconnect client                 |
+| `connection_exists`       | Check connection status           |
 
 ## Best Practices
 
@@ -245,4 +245,5 @@ async def broadcast():
 7. **Close connections** gracefully with reasons
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

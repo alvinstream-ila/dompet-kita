@@ -5,10 +5,12 @@ import axios from 'axios';
  * Centralized instance for talking to the Laravel Backend.
  */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://dompet-kita-production.up.railway.app/api',
+  baseURL:
+    import.meta.env.VITE_API_URL ||
+    'https://dompet-kita-production.up.railway.app/api',
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    Accept: 'application/json',
   },
   withCredentials: true, // Required for Sanctum CSRF protection
 });

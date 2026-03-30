@@ -33,14 +33,19 @@ TRANSLATOR_REGION=<your-region>  # e.g., westus, eastus
 ### Authentication
 
 ```typescript
-import TextTranslationClient, { TranslatorCredential } from "@azure-rest/ai-translation-text";
+import TextTranslationClient, {
+  TranslatorCredential,
+} from "@azure-rest/ai-translation-text";
 
 // API Key + Region
 const credential: TranslatorCredential = {
   key: process.env.TRANSLATOR_SUBSCRIPTION_KEY!,
   region: process.env.TRANSLATOR_REGION!,
 };
-const client = TextTranslationClient(process.env.TRANSLATOR_ENDPOINT!, credential);
+const client = TextTranslationClient(
+  process.env.TRANSLATOR_ENDPOINT!,
+  credential,
+);
 
 // Or just credential (uses global endpoint)
 const client2 = TextTranslationClient(credential);
@@ -49,18 +54,17 @@ const client2 = TextTranslationClient(credential);
 ### Translate Text
 
 ```typescript
-import TextTranslationClient, { isUnexpected } from "@azure-rest/ai-translation-text";
+import TextTranslationClient, {
+  isUnexpected,
+} from "@azure-rest/ai-translation-text";
 
 const response = await client.path("/translate").post({
   body: {
     inputs: [
       {
         text: "Hello, how are you?",
-        language: "en",  // source (optional, auto-detect)
-        targets: [
-          { language: "es" },
-          { language: "fr" },
-        ],
+        language: "en", // source (optional, auto-detect)
+        targets: [{ language: "es" }, { language: "fr" }],
       },
     ],
   },
@@ -86,12 +90,12 @@ const response = await client.path("/translate").post({
       {
         text: "Hello world",
         language: "en",
-        textType: "Plain",  // or "Html"
+        textType: "Plain", // or "Html"
         targets: [
           {
             language: "de",
-            profanityAction: "NoAction",  // "Marked" | "Deleted"
-            tone: "formal",  // LLM-specific
+            profanityAction: "NoAction", // "Marked" | "Deleted"
+            tone: "formal", // LLM-specific
           },
         ],
       },
@@ -129,7 +133,7 @@ const response = await client.path("/transliterate").post({
 
 if (!isUnexpected(response)) {
   for (const t of response.body.value) {
-    console.log(`${t.script}: ${t.text}`);  // Latn: zhè shì gè cè shì
+    console.log(`${t.script}: ${t.text}`); // Latn: zhè shì gè cè shì
   }
 }
 ```
@@ -159,7 +163,10 @@ import { DefaultAzureCredential } from "@azure/identity";
 const endpoint = "https://<translator>.cognitiveservices.azure.com";
 
 // TokenCredential
-const client = DocumentTranslationClient(endpoint, new DefaultAzureCredential());
+const client = DocumentTranslationClient(
+  endpoint,
+  new DefaultAzureCredential(),
+);
 
 // API Key
 const client2 = DocumentTranslationClient(endpoint, { key: "<api-key>" });
@@ -171,21 +178,24 @@ const client2 = DocumentTranslationClient(endpoint, { key: "<api-key>" });
 import DocumentTranslationClient from "@azure-rest/ai-translation-document";
 import { writeFile } from "node:fs/promises";
 
-const response = await client.path("/document:translate").post({
-  queryParameters: {
-    targetLanguage: "es",
-    sourceLanguage: "en",  // optional
-  },
-  contentType: "multipart/form-data",
-  body: [
-    {
-      name: "document",
-      body: "Hello, this is a test document.",
-      filename: "test.txt",
-      contentType: "text/plain",
+const response = await client
+  .path("/document:translate")
+  .post({
+    queryParameters: {
+      targetLanguage: "es",
+      sourceLanguage: "en", // optional
     },
-  ],
-}).asNodeStream();
+    contentType: "multipart/form-data",
+    body: [
+      {
+        name: "document",
+        body: "Hello, this is a test document.",
+        filename: "test.txt",
+        contentType: "text/plain",
+      },
+    ],
+  })
+  .asNodeStream();
 
 if (response.status === "200") {
   await writeFile("translated.txt", response.body);
@@ -195,7 +205,10 @@ if (response.status === "200") {
 ### Batch Document Translation
 
 ```typescript
-import { ContainerSASPermissions, BlobServiceClient } from "@azure/storage-blob";
+import {
+  ContainerSASPermissions,
+  BlobServiceClient,
+} from "@azure/storage-blob";
 
 // Generate SAS URLs for source and target containers
 const sourceSas = await sourceContainer.generateSasUrl({
@@ -214,17 +227,16 @@ const response = await client.path("/document/batches").post({
     inputs: [
       {
         source: { sourceUrl: sourceSas },
-        targets: [
-          { targetUrl: targetSas, language: "fr" },
-        ],
+        targets: [{ targetUrl: targetSas, language: "fr" }],
       },
     ],
   },
 });
 
 // Get operation ID from header
-const operationId = new URL(response.headers["operation-location"])
-  .pathname.split("/").pop();
+const operationId = new URL(response.headers["operation-location"]).pathname
+  .split("/")
+  .pop();
 ```
 
 ### Get Translation Status
@@ -232,7 +244,9 @@ const operationId = new URL(response.headers["operation-location"])
 ```typescript
 import { isUnexpected, paginate } from "@azure-rest/ai-translation-document";
 
-const statusResponse = await client.path("/document/batches/{id}", operationId).get();
+const statusResponse = await client
+  .path("/document/batches/{id}", operationId)
+  .get();
 
 if (!isUnexpected(statusResponse)) {
   const status = statusResponse.body;
@@ -242,7 +256,9 @@ if (!isUnexpected(statusResponse)) {
 }
 
 // List documents with pagination
-const docsResponse = await client.path("/document/batches/{id}/documents", operationId).get();
+const docsResponse = await client
+  .path("/document/batches/{id}/documents", operationId)
+  .get();
 const documents = paginate(client, docsResponse);
 
 for await (const doc of documents) {
@@ -288,4 +304,5 @@ import type {
 5. **Regional endpoints** - Use regional endpoints for lower latency
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

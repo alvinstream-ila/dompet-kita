@@ -166,15 +166,9 @@
       {
         "name": "Dashboard Overview",
         "description": "View summary of balance, income, and expenses",
-        "files": [
-          "src/pages/Home.tsx",
-          "src/hooks/useFinancialSummary.ts"
-        ],
+        "files": ["src/pages/Home.tsx", "src/hooks/useFinancialSummary.ts"],
         "entry_route": "/",
-        "user_interactions": [
-          "View charts",
-          "Check current balance"
-        ],
+        "user_interactions": ["View charts", "Check current balance"],
         "api_calls": [
           {
             "method": "GET",
@@ -186,10 +180,7 @@
       {
         "name": "Transaction Management",
         "description": "Add, edit, delete, and view transactions",
-        "files": [
-          "src/pages/Transactions.tsx",
-          "src/hooks/useTransactions.ts"
-        ],
+        "files": ["src/pages/Transactions.tsx", "src/hooks/useTransactions.ts"],
         "entry_route": "/transactions",
         "user_interactions": [
           "Click 'Add Transaction' button",
@@ -212,15 +203,9 @@
       {
         "name": "Loan Tracking",
         "description": "Track money lent to or borrowed from others",
-        "files": [
-          "src/pages/Loans.tsx",
-          "src/hooks/useLoans.ts"
-        ],
+        "files": ["src/pages/Loans.tsx", "src/hooks/useLoans.ts"],
         "entry_route": "/loans",
-        "user_interactions": [
-          "Add new loan record",
-          "Mark loan as paid"
-        ],
+        "user_interactions": ["Add new loan record", "Mark loan as paid"],
         "api_calls": [
           {
             "method": "GET",

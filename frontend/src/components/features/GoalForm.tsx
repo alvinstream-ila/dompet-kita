@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  Target, 
+import {
+  Target,
   Heart,
   Home,
   Car,
@@ -8,12 +8,12 @@ import {
   ShoppingBag,
   Briefcase,
   Gamepad,
-  Loader2
+  Loader2,
 } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useAddGoal, useUpdateGoal } from '@/hooks/useGoals';
-import { cn, formatToRupiah, getTerbilang } from "@/lib/utils";
+import { cn, formatToRupiah, getTerbilang } from '@/lib/utils';
 import type { Goal } from '@/types';
 
 interface GoalFormProps {
@@ -34,10 +34,12 @@ const ICONS = [
 
 export const GoalForm: React.FC<GoalFormProps> = ({ onSuccess, goal }) => {
   const [name, setName] = useState(goal?.name || '');
-  const [targetAmount, setTargetAmount] = useState(goal?.target_amount ? formatToRupiah(goal.target_amount.toString()) : '');
+  const [targetAmount, setTargetAmount] = useState(
+    goal?.target_amount ? formatToRupiah(goal.target_amount.toString()) : ''
+  );
   const [deadline, setDeadline] = useState(goal?.deadline || '');
   const [selectedIcon, setSelectedIcon] = useState(goal?.icon || 'heart');
-  
+
   const addGoalMutation = useAddGoal();
   const updateGoalMutation = useUpdateGoal();
 
@@ -52,7 +54,7 @@ export const GoalForm: React.FC<GoalFormProps> = ({ onSuccess, goal }) => {
       target_amount: parseFloat(targetAmount.replace(/\./g, '')),
       deadline: deadline || null,
       icon: selectedIcon,
-      category: 'dream'
+      category: 'dream',
     };
 
     if (goal) {
@@ -63,44 +65,48 @@ export const GoalForm: React.FC<GoalFormProps> = ({ onSuccess, goal }) => {
 
     onSuccess?.();
     if (!goal) {
-        setName('');
-        setTargetAmount('');
-        setDeadline('');
+      setName('');
+      setTargetAmount('');
+      setDeadline('');
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Apa Mimpimu, Sayang?</label>
+        <label className="ml-2 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+          Apa Mimpimu, Sayang?
+        </label>
         <div className="relative">
-          <Target className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-500" />
-          <Input 
-            placeholder="Contoh: Rumah Impian / DP Mobil" 
+          <Target className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-blue-500" />
+          <Input
+            placeholder="Contoh: Rumah Impian / DP Mobil"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="h-14 pl-12 bg-slate-50 border-none rounded-2xl font-bold text-slate-700 placeholder:text-slate-300 focus:ring-2 focus:ring-blue-400"
+            className="h-14 rounded-2xl border-none bg-slate-50 pl-12 font-bold text-slate-700 placeholder:text-slate-300 focus:ring-2 focus:ring-blue-400"
             required
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Target Tabungan (Rp)</label>
+        <label className="ml-2 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+          Target Tabungan (Rp)
+        </label>
         <div className="relative">
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-            <span className="text-blue-600 font-bold text-sm">Rp</span>
+          <div className="absolute top-1/2 left-4 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-blue-100">
+            <span className="text-sm font-bold text-blue-600">Rp</span>
           </div>
-          <Input 
-            placeholder="0" 
+          <Input
+            placeholder="0"
             value={targetAmount}
             onChange={(e) => setTargetAmount(formatToRupiah(e.target.value))}
-            className="h-14 pl-14 bg-slate-50 border-none rounded-2xl font-bold text-slate-700 placeholder:text-slate-300 focus:ring-2 focus:ring-blue-400"
+            className="h-14 rounded-2xl border-none bg-slate-50 pl-14 font-bold text-slate-700 placeholder:text-slate-300 focus:ring-2 focus:ring-blue-400"
             required
           />
         </div>
         {targetAmount && (
-          <p className="text-[10px] font-bold text-blue-500 italic px-2 mt-1">
+          <p className="mt-1 px-2 text-[10px] font-bold text-blue-500 italic">
             {getTerbilang(Number(targetAmount.replace(/\./g, '')))} Rupiah
           </p>
         )}
@@ -108,20 +114,24 @@ export const GoalForm: React.FC<GoalFormProps> = ({ onSuccess, goal }) => {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2 text-left">
-          <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Deadline (Opsional)</label>
+          <label className="ml-2 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+            Deadline (Opsional)
+          </label>
           <div className="relative">
-            <Input 
+            <Input
               type="date"
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
-              className="h-14 bg-slate-50 border-none rounded-2xl font-bold text-slate-700 focus:ring-2 focus:ring-blue-400 block w-full px-4"
+              className="block h-14 w-full rounded-2xl border-none bg-slate-50 px-4 font-bold text-slate-700 focus:ring-2 focus:ring-blue-400"
             />
           </div>
         </div>
 
         <div className="space-y-2 text-left">
-          <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Pilih Icon</label>
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none scroll-smooth">
+          <label className="ml-2 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+            Pilih Icon
+          </label>
+          <div className="scrollbar-none flex gap-2 overflow-x-auto scroll-smooth pb-2">
             {ICONS.map((item) => {
               const Icon = item.icon;
               return (
@@ -130,11 +140,13 @@ export const GoalForm: React.FC<GoalFormProps> = ({ onSuccess, goal }) => {
                   type="button"
                   onClick={() => setSelectedIcon(item.name)}
                   className={cn(
-                    "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all",
-                    selectedIcon === item.name ? "bg-blue-600 text-white shadow-lg" : "bg-slate-50 text-slate-400 hover:bg-slate-100"
+                    'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-all',
+                    selectedIcon === item.name
+                      ? 'bg-blue-600 text-white shadow-lg'
+                      : 'bg-slate-50 text-slate-400 hover:bg-slate-100'
                   )}
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="h-5 w-5" />
                 </button>
               );
             })}
@@ -142,12 +154,18 @@ export const GoalForm: React.FC<GoalFormProps> = ({ onSuccess, goal }) => {
         </div>
       </div>
 
-      <Button 
-        type="submit" 
+      <Button
+        type="submit"
         disabled={loading}
-        className="w-full h-16 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-[24px] shadow-xl shadow-blue-200 font-black uppercase tracking-widest text-sm group transition-all"
+        className="group h-16 w-full rounded-[24px] bg-linear-to-r from-blue-600 to-indigo-600 text-sm font-black tracking-widest text-white uppercase shadow-xl shadow-blue-200 transition-all hover:from-blue-700 hover:to-indigo-700"
       >
-        {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : (goal ? "Perbarui Mimpi Kita ✨" : "Simpan Mimpi Kita ✨")}
+        {loading ? (
+          <Loader2 className="h-6 w-6 animate-spin" />
+        ) : goal ? (
+          'Perbarui Mimpi Kita ✨'
+        ) : (
+          'Simpan Mimpi Kita ✨'
+        )}
       </Button>
     </form>
   );

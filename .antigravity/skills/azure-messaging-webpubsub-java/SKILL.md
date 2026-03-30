@@ -278,12 +278,12 @@ WEB_PUBSUB_ACCESS_KEY=<your-access-key>
 
 ## Client Roles
 
-| Role | Permission |
-|------|------------|
-| `webpubsub.joinLeaveGroup` | Join/leave any group |
-| `webpubsub.sendToGroup` | Send to any group |
+| Role                               | Permission                |
+| ---------------------------------- | ------------------------- |
+| `webpubsub.joinLeaveGroup`         | Join/leave any group      |
+| `webpubsub.sendToGroup`            | Send to any group         |
 | `webpubsub.joinLeaveGroup.<group>` | Join/leave specific group |
-| `webpubsub.sendToGroup.<group>` | Send to specific group |
+| `webpubsub.sendToGroup.<group>`    | Send to specific group    |
 
 ## Best Practices
 
@@ -304,4 +304,5 @@ WEB_PUBSUB_ACCESS_KEY=<your-access-key>
 - "live updates broadcasting"
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

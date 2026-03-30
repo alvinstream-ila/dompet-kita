@@ -46,7 +46,11 @@ const indexClient = new SearchIndexClient(endpoint, credential);
 ### Create Index with Vector Field
 
 ```typescript
-import { SearchIndex, SearchField, VectorSearch } from "@azure/search-documents";
+import {
+  SearchIndex,
+  SearchField,
+  VectorSearch,
+} from "@azure/search-documents";
 
 const index: SearchIndex = {
   name: "products",
@@ -64,9 +68,7 @@ const index: SearchIndex = {
     },
   ],
   vectorSearch: {
-    algorithms: [
-      { name: "hnsw-algorithm", kind: "hnsw" },
-    ],
+    algorithms: [{ name: "hnsw-algorithm", kind: "hnsw" }],
     profiles: [
       { name: "vector-profile", algorithmConfigurationName: "hnsw-algorithm" },
     ],
@@ -268,4 +270,5 @@ import {
 6. **Monitor query performance** - Use `includeTotalCount: true` sparingly in production
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

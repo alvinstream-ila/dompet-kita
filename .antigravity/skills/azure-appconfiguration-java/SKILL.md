@@ -3,7 +3,7 @@ name: azure-appconfiguration-java
 description: Azure App Configuration SDK for Java. Centralized application configuration management with key-value settings, feature flags, and snapshots.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure App Configuration SDK for Java
@@ -91,13 +91,13 @@ ConfigurationClient configClient = new ConfigurationClientBuilder()
 
 ## Key Concepts
 
-| Concept | Description |
-|---------|-------------|
-| Configuration Setting | Key-value pair with optional label |
-| Label | Dimension for separating settings (e.g., environments) |
-| Feature Flag | Special setting for feature management |
-| Secret Reference | Setting pointing to Key Vault secret |
-| Snapshot | Point-in-time immutable view of settings |
+| Concept               | Description                                            |
+| --------------------- | ------------------------------------------------------ |
+| Configuration Setting | Key-value pair with optional label                     |
+| Label                 | Dimension for separating settings (e.g., environments) |
+| Feature Flag          | Special setting for feature management                 |
+| Secret Reference      | Setting pointing to Key Vault secret                   |
+| Snapshot              | Point-in-time immutable view of settings               |
 
 ## Configuration Setting Operations
 
@@ -109,8 +109,8 @@ Creates only if setting doesn't exist:
 import com.azure.data.appconfiguration.models.ConfigurationSetting;
 
 ConfigurationSetting setting = configClient.addConfigurationSetting(
-    "app/database/connection", 
-    "Production", 
+    "app/database/connection",
+    "Production",
     "Server=prod.db.com;Database=myapp"
 );
 ```
@@ -121,8 +121,8 @@ Creates or overwrites:
 
 ```java
 ConfigurationSetting setting = configClient.setConfigurationSetting(
-    "app/cache/enabled", 
-    "Production", 
+    "app/cache/enabled",
+    "Production",
     "true"
 );
 ```
@@ -131,7 +131,7 @@ ConfigurationSetting setting = configClient.setConfigurationSetting(
 
 ```java
 ConfigurationSetting setting = configClient.getConfigurationSetting(
-    "app/database/connection", 
+    "app/database/connection",
     "Production"
 );
 System.out.println("Value: " + setting.getValue());
@@ -163,8 +163,8 @@ if (response.getStatusCode() == 304) {
 
 ```java
 ConfigurationSetting updated = configClient.setConfigurationSetting(
-    "app/cache/enabled", 
-    "Production", 
+    "app/cache/enabled",
+    "Production",
     "false"
 );
 ```
@@ -184,7 +184,7 @@ Response<ConfigurationSetting> response = configClient.setConfigurationSettingWi
 
 ```java
 ConfigurationSetting deleted = configClient.deleteConfigurationSetting(
-    "app/cache/enabled", 
+    "app/cache/enabled",
     "Production"
 );
 ```
@@ -317,8 +317,8 @@ System.out.println("Secret URI: " + ref.getSecretId());
 
 ```java
 ConfigurationSetting readOnly = configClient.setReadOnly(
-    "app/critical/setting", 
-    "Production", 
+    "app/critical/setting",
+    "Production",
     true
 );
 ```
@@ -327,8 +327,8 @@ ConfigurationSetting readOnly = configClient.setReadOnly(
 
 ```java
 ConfigurationSetting writable = configClient.setReadOnly(
-    "app/critical/setting", 
-    "Production", 
+    "app/critical/setting",
+    "Production",
     false
 );
 ```
@@ -369,7 +369,7 @@ System.out.println("Items: " + snapshot.getItemCount());
 ### List Settings in Snapshot
 
 ```java
-PagedIterable<ConfigurationSetting> settings = 
+PagedIterable<ConfigurationSetting> settings =
     configClient.listConfigurationSettingsForSnapshot("release-v1.0");
 
 for (ConfigurationSetting setting : settings) {
@@ -460,14 +460,15 @@ try {
 
 ## Reference Links
 
-| Resource | URL |
-|----------|-----|
-| Maven Package | https://central.sonatype.com/artifact/com.azure/azure-data-appconfiguration |
-| GitHub | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/appconfiguration/azure-data-appconfiguration |
-| API Documentation | https://aka.ms/java-docs |
-| Product Docs | https://learn.microsoft.com/azure/azure-app-configuration |
-| Samples | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/appconfiguration/azure-data-appconfiguration/src/samples |
-| Troubleshooting | https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/appconfiguration/azure-data-appconfiguration/TROUBLESHOOTING.md |
+| Resource          | URL                                                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Maven Package     | https://central.sonatype.com/artifact/com.azure/azure-data-appconfiguration                                               |
+| GitHub            | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/appconfiguration/azure-data-appconfiguration                    |
+| API Documentation | https://aka.ms/java-docs                                                                                                  |
+| Product Docs      | https://learn.microsoft.com/azure/azure-app-configuration                                                                 |
+| Samples           | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/appconfiguration/azure-data-appconfiguration/src/samples        |
+| Troubleshooting   | https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/appconfiguration/azure-data-appconfiguration/TROUBLESHOOTING.md |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

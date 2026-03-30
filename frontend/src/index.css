@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&family=Great+Vibes&family=Dancing+Script:wght@400;700&family=Sacramento&display=swap');
 
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Menggunakan :root standar agar tidak terbaca sebagai error oleh IDE */
 :root {
@@ -11,7 +11,7 @@
   --color-red-stat: #e74c3c;
   --color-dark-saldo: #232a34;
   --color-glass-card: rgba(255, 255, 255, 0.4);
-  
+
   /* Additional Accents */
   --color-yellow-outlook: #ffcc00;
   --color-bg-light: #f5fafd;
@@ -28,12 +28,12 @@
   --radius-standard: 24px;
 
   /* Typography */
-  --font-display: "Plus Jakarta Sans", sans-serif;
-  --font-body: "Inter", sans-serif;
-  --font-script: "Great Vibes", cursive;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-script: 'Great Vibes', cursive;
 
   /* GPU Optimization Utilities */
-  --gpu-accelerate: translate3d(0,0,0);
+  --gpu-accelerate: translate3d(0, 0, 0);
 
   /* shadcn/ui - Neutral Theme v4 style */
   --background: oklch(1 0 0);
@@ -72,9 +72,13 @@
 }
 
 @theme {
-  --font-plus-jakarta-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-inter: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-script: "Great Vibes", cursive;
+  --font-plus-jakarta-sans:
+    'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-inter:
+    'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-script: 'Great Vibes', cursive;
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -142,7 +146,9 @@
 }
 
 @layer base {
-  html, body, #root {
+  html,
+  body,
+  #root {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -153,9 +159,9 @@
   body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    color: #1e293b; 
+    color: #1e293b;
     background-color: #e3eff8;
-    background-image: url("/global-bg.svg");
+    background-image: url('/global-bg.svg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -170,7 +176,10 @@
     flex-direction: column;
   }
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-display);
     font-weight: 700;
     color: #0f172a;
@@ -186,7 +195,10 @@
     box-shadow: var(--glass-shadow);
     border-radius: var(--radius-extra);
     padding: 1.5rem;
-    transition: transform 0.3s ease, background 0.3s ease, opacity 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      background 0.3s ease,
+      opacity 0.3s ease;
     transform: var(--gpu-accelerate);
     will-change: transform, backdrop-filter;
   }
@@ -197,7 +209,7 @@
     -webkit-backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.8);
     transform: translateZ(0); /* Force Hardware Acceleration */
-    
+
     @media (max-width: 768px) {
       /* Android low-specs often struggle with heavy blur + opacity */
       backdrop-filter: blur(6px);
@@ -216,7 +228,8 @@
 
   /* Responsive Blur for mobile performance */
   @media (max-width: 768px) {
-    .glass-card, .glass {
+    .glass-card,
+    .glass {
       backdrop-filter: blur(var(--glass-blur-mobile));
       -webkit-backdrop-filter: blur(var(--glass-blur-mobile));
     }
@@ -232,9 +245,13 @@
     box-shadow: 0 10px 15px -3px rgba(255, 120, 164, 0.2);
     cursor: pointer;
   }
-  
-  .btn-pink:hover { filter: brightness(1.1); }
-  .btn-pink:active { transform: scale(0.95); }
+
+  .btn-pink:hover {
+    filter: brightness(1.1);
+  }
+  .btn-pink:active {
+    transform: scale(0.95);
+  }
 
   .btn-blue {
     background-color: var(--color-blue-royal);
@@ -247,8 +264,12 @@
     cursor: pointer;
   }
 
-  .btn-blue:hover { filter: brightness(1.1); }
-  .btn-blue:active { transform: scale(0.95); }
+  .btn-blue:hover {
+    filter: brightness(1.1);
+  }
+  .btn-blue:active {
+    transform: scale(0.95);
+  }
 
   .glass {
     background: var(--glass-bg);
@@ -266,21 +287,22 @@
     outline: none;
     transition: all 0.2s;
   }
-  
+
   .input-field:focus {
     box-shadow: 0 0 0 2px #60a5fa;
   }
-  
+
   .input-field::placeholder {
     color: #94a3b8;
   }
 
   .app-main-bg {
-    background-image: url("/app-bg.svg");
+    background-image: url('/app-bg.svg');
   }
 
   /* Low Performance / Eco Mode Optimizations */
-  .eco-mode *, .eco-mode {
+  .eco-mode *,
+  .eco-mode {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     animation-duration: 0.1s !important;

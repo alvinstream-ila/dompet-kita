@@ -1,40 +1,39 @@
+import { spawn } from "child_process";
 
-import { spawn } from 'child_process';
-
-const server = spawn('node', ['build/index.js'], {
-  cwd: 'C:/Programing alvin/Dompet kita/mcp-server'
+const server = spawn("node", ["build/index.js"], {
+  cwd: "C:/Programing alvin/Dompet kita/mcp-server",
 });
 
-server.stdout.on('data', (data) => {
-  console.log('Server Output:', data.toString());
+server.stdout.on("data", (data) => {
+  console.log("Server Output:", data.toString());
 });
 
-server.stderr.on('data', (data) => {
-  console.error('Server Error:', data.toString());
+server.stderr.on("data", (data) => {
+  console.error("Server Error:", data.toString());
 });
 
 const listRequest = {
-  jsonrpc: '2.0',
+  jsonrpc: "2.0",
   id: 1,
-  method: 'tools/list',
-  params: {}
+  method: "tools/list",
+  params: {},
 };
 
 setTimeout(() => {
-  server.stdin.write(JSON.stringify(listRequest) + '\n');
+  server.stdin.write(JSON.stringify(listRequest) + "\n");
 }, 1000);
 
 setTimeout(() => {
   const callRequest = {
-    jsonrpc: '2.0',
+    jsonrpc: "2.0",
     id: 2,
-    method: 'tools/call',
+    method: "tools/call",
     params: {
-      name: 'penpot_list_projects',
-      arguments: {}
-    }
+      name: "penpot_list_projects",
+      arguments: {},
+    },
   };
-  server.stdin.write(JSON.stringify(callRequest) + '\n');
+  server.stdin.write(JSON.stringify(callRequest) + "\n");
 }, 3000);
 
 setTimeout(() => {

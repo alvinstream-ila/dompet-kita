@@ -27,34 +27,34 @@
 
 Common variables used across templates:
 
-| Variable | Description | Example |
-|---|---|---|
-| `{{carrier_name}}` | Carrier legal or DBA name | `Ridgeline Transport, Inc.` |
-| `{{carrier_contact}}` | Carrier contact name | `Mike Patterson` |
-| `{{carrier_contact_title}}` | Carrier contact title | `VP of Sales` |
-| `{{carrier_mc}}` | Carrier MC number | `MC-498132` |
-| `{{our_company}}` | Our company name | `Consolidated Manufacturing LLC` |
-| `{{our_contact_name}}` | Our representative name | `Sarah Chen` |
-| `{{our_contact_title}}` | Our representative title | `Director of Transportation` |
-| `{{our_contact_email}}` | Our representative email | `schen@company.com` |
-| `{{our_contact_phone}}` | Our representative phone | `(312) 555-0189` |
-| `{{lane_origin}}` | Lane origin city/state | `Chicago, IL` |
-| `{{lane_destination}}` | Lane destination city/state | `Dallas, TX` |
-| `{{current_rate}}` | Current contract rate per mile | `$2.45/mile` |
-| `{{proposed_rate}}` | Proposed new rate | `$2.28/mile` |
-| `{{market_rate}}` | DAT/benchmark market rate | `$2.18/mile` |
-| `{{volume_loads_week}}` | Weekly load volume | `8 loads/week` |
-| `{{annual_spend}}` | Annual freight spend with carrier | `$2.4M` |
-| `{{contract_start}}` | Contract effective date | `2026-04-01` |
-| `{{contract_end}}` | Contract expiration date | `2027-03-31` |
-| `{{rfp_deadline}}` | RFP response deadline | `2026-03-15` |
-| `{{otd_percentage}}` | Carrier's on-time delivery rate | `96.2%` |
-| `{{tender_acceptance}}` | Carrier's tender acceptance rate | `91.4%` |
-| `{{claims_ratio}}` | Carrier's claims ratio | `0.3%` |
-| `{{invoice_accuracy}}` | Carrier's invoice accuracy rate | `97.8%` |
-| `{{review_period}}` | Performance review time period | `Q3 2025 (Jul-Sep)` |
-| `{{detention_amount}}` | Disputed detention charge amount | `$4,275` |
-| `{{accessorial_type}}` | Specific accessorial charge type | `liftgate delivery` |
+| Variable                    | Description                       | Example                          |
+| --------------------------- | --------------------------------- | -------------------------------- |
+| `{{carrier_name}}`          | Carrier legal or DBA name         | `Ridgeline Transport, Inc.`      |
+| `{{carrier_contact}}`       | Carrier contact name              | `Mike Patterson`                 |
+| `{{carrier_contact_title}}` | Carrier contact title             | `VP of Sales`                    |
+| `{{carrier_mc}}`            | Carrier MC number                 | `MC-498132`                      |
+| `{{our_company}}`           | Our company name                  | `Consolidated Manufacturing LLC` |
+| `{{our_contact_name}}`      | Our representative name           | `Sarah Chen`                     |
+| `{{our_contact_title}}`     | Our representative title          | `Director of Transportation`     |
+| `{{our_contact_email}}`     | Our representative email          | `schen@company.com`              |
+| `{{our_contact_phone}}`     | Our representative phone          | `(312) 555-0189`                 |
+| `{{lane_origin}}`           | Lane origin city/state            | `Chicago, IL`                    |
+| `{{lane_destination}}`      | Lane destination city/state       | `Dallas, TX`                     |
+| `{{current_rate}}`          | Current contract rate per mile    | `$2.45/mile`                     |
+| `{{proposed_rate}}`         | Proposed new rate                 | `$2.28/mile`                     |
+| `{{market_rate}}`           | DAT/benchmark market rate         | `$2.18/mile`                     |
+| `{{volume_loads_week}}`     | Weekly load volume                | `8 loads/week`                   |
+| `{{annual_spend}}`          | Annual freight spend with carrier | `$2.4M`                          |
+| `{{contract_start}}`        | Contract effective date           | `2026-04-01`                     |
+| `{{contract_end}}`          | Contract expiration date          | `2027-03-31`                     |
+| `{{rfp_deadline}}`          | RFP response deadline             | `2026-03-15`                     |
+| `{{otd_percentage}}`        | Carrier's on-time delivery rate   | `96.2%`                          |
+| `{{tender_acceptance}}`     | Carrier's tender acceptance rate  | `91.4%`                          |
+| `{{claims_ratio}}`          | Carrier's claims ratio            | `0.3%`                           |
+| `{{invoice_accuracy}}`      | Carrier's invoice accuracy rate   | `97.8%`                          |
+| `{{review_period}}`         | Performance review time period    | `Q3 2025 (Jul-Sep)`              |
+| `{{detention_amount}}`      | Disputed detention charge amount  | `$4,275`                         |
+| `{{accessorial_type}}`      | Specific accessorial charge type  | `liftgate delivery`              |
 
 ---
 
@@ -73,6 +73,7 @@ Common variables used across templates:
 {{our_company}} is conducting our annual freight RFP process and we're inviting {{carrier_name}} to participate as a bidding carrier. Based on our analysis of market capabilities and your operational profile, we believe there may be strong alignment between your network and our shipping requirements.
 
 **RFP Overview:**
+
 - **Scope:** {{lane_count}} lanes across TL, LTL, and intermodal modes
 - **Total annual freight spend:** Approximately {{total_annual_spend}}
 - **Contract period:** {{contract_start}} through {{contract_end}}
@@ -82,6 +83,7 @@ Common variables used across templates:
 We evaluate bids on a weighted scorecard: rate competitiveness (40%), service history and reliability (25%), capacity commitment (20%), and operational fit including technology integration (15%). We value carriers who bring consistent service and a commitment to partnership over the lowest possible rate.
 
 **Enclosed with this letter:**
+
 1. Lane-level bid package with volume ranges, equipment requirements, and transit expectations
 2. Accessorial schedule with standard rates and negotiable items
 3. Insurance and compliance requirements
@@ -115,6 +117,7 @@ Best regards,
 I'd like to schedule a call to discuss rate alignment on our {{lane_origin}} to {{lane_destination}} lane. As part of our quarterly rate benchmarking process, we've identified an opportunity to ensure our pricing on this lane reflects current market conditions.
 
 **Our Current Situation:**
+
 - **Current contract rate:** {{current_rate}} (effective since {{contract_start}})
 - **DAT 90-day contract average for this lane:** {{market_rate}}
 - **Your current volume on this lane:** {{volume_loads_week}}
@@ -151,11 +154,13 @@ After reviewing your proposal against our market data and total cost model, I'd 
 **Our Counter:** {{our_counter_rate}}
 
 **Rationale:**
+
 - DAT 90-day contract average for this lane is {{market_rate}}, which puts your proposal {{percentage_above_market}}% above the current market benchmark.
 - We modeled total cost including your proposed fuel surcharge schedule at diesel prices of $3.25, $3.85, and $4.50/gal. At current diesel ({{current_diesel}}), your total cost per mile is {{total_cost_per_mile}}, which is {{total_cost_vs_market}}% above our benchmark total cost.
 - Our counter rate of {{our_counter_rate}} reflects the market benchmark plus a {{premium_percentage}}% premium for your service quality — which we genuinely value. Your {{otd_percentage}} OTD is among the best in our portfolio.
 
 **What We're Offering in Return:**
+
 - Volume commitment: {{volume_commitment}} loads/week guaranteed (vs. your current {{current_volume}} loads/week)
 - Payment terms: Net {{payment_days}} (vs. our standard Net 30)
 - Drop-trailer program at our {{facility_name}} facility (eliminating an average of {{detention_hours}} hours detention per load)
@@ -185,20 +190,22 @@ I want to formally recognize {{carrier_name}}'s performance during {{review_peri
 
 **Performance Summary — {{review_period}}:**
 
-| Metric | Target | Your Performance | Portfolio Average |
-|--------|--------|-----------------|-------------------|
-| On-Time Delivery | ≥95% | {{otd_percentage}} | {{portfolio_avg_otd}} |
-| Tender Acceptance | ≥90% | {{tender_acceptance}} | {{portfolio_avg_tender}} |
-| Claims Ratio | <0.5% | {{claims_ratio}} | {{portfolio_avg_claims}} |
-| Invoice Accuracy | ≥97% | {{invoice_accuracy}} | {{portfolio_avg_invoice}} |
+| Metric            | Target | Your Performance      | Portfolio Average         |
+| ----------------- | ------ | --------------------- | ------------------------- |
+| On-Time Delivery  | ≥95%   | {{otd_percentage}}    | {{portfolio_avg_otd}}     |
+| Tender Acceptance | ≥90%   | {{tender_acceptance}} | {{portfolio_avg_tender}}  |
+| Claims Ratio      | <0.5%  | {{claims_ratio}}      | {{portfolio_avg_claims}}  |
+| Invoice Accuracy  | ≥97%   | {{invoice_accuracy}}  | {{portfolio_avg_invoice}} |
 
 **Specific Highlights:**
+
 - Your team's performance on the {{highlight_lane}} lane was particularly strong — {{highlight_detail}}.
 - Driver {{driver_name}} received compliments from our {{facility_name}} receiving team for consistent professionalism and efficient dock operations.
 - Your operations team's proactive communication during {{event}} prevented what could have been a significant service disruption.
 
 **What This Means for Our Partnership:**
 Based on this performance, we're making the following allocation changes effective {{effective_date}}:
+
 - **{{lane_1}}:** Increasing your allocation from {{old_allocation_1}}% to {{new_allocation_1}}%
 - **{{lane_2}}:** Adding you as primary carrier (new lane award — {{volume_2}} loads/week)
 - **Contract extension:** We'd like to discuss extending our agreement through {{extended_end_date}} at current terms
@@ -228,23 +235,24 @@ I'm reaching out regarding {{carrier_name}}'s performance during {{review_period
 
 **Performance Summary — {{review_period}}:**
 
-| Metric | Our Standard | Your Performance | Gap |
-|--------|-------------|-----------------|-----|
-| On-Time Delivery | ≥95% | {{otd_percentage}} | {{otd_gap}} below standard |
-| Tender Acceptance | ≥90% | {{tender_acceptance}} | {{tender_gap}} below standard |
-| Claims Ratio | <0.5% | {{claims_ratio}} | {{claims_gap}} above standard |
-| Invoice Accuracy | ≥97% | {{invoice_accuracy}} | {{invoice_gap}} below standard |
+| Metric            | Our Standard | Your Performance      | Gap                            |
+| ----------------- | ------------ | --------------------- | ------------------------------ |
+| On-Time Delivery  | ≥95%         | {{otd_percentage}}    | {{otd_gap}} below standard     |
+| Tender Acceptance | ≥90%         | {{tender_acceptance}} | {{tender_gap}} below standard  |
+| Claims Ratio      | <0.5%        | {{claims_ratio}}      | {{claims_gap}} above standard  |
+| Invoice Accuracy  | ≥97%         | {{invoice_accuracy}}  | {{invoice_gap}} below standard |
 
 **Business Impact:**
+
 - Tender rejections on the {{problem_lane}} lane forced {{spot_loads}} loads to the spot market at an average premium of {{spot_premium}}%, costing us approximately ${{incremental_cost}} in incremental freight spend.
 - Late deliveries resulted in {{penalty_count}} customer penalty events totaling ${{penalty_total}}.
 
 **What We Need:**
 We value our relationship with {{carrier_name}} and want to find a path forward. We're requesting a Corrective Action Plan that addresses the following within the timelines indicated:
 
-| Metric | Target | 30-Day Checkpoint | 60-Day Checkpoint |
-|--------|--------|-------------------|-------------------|
-| OTD | ≥{{otd_target}}% | ≥{{otd_30day}}% | ≥{{otd_60day}}% |
+| Metric            | Target              | 30-Day Checkpoint  | 60-Day Checkpoint  |
+| ----------------- | ------------------- | ------------------ | ------------------ |
+| OTD               | ≥{{otd_target}}%    | ≥{{otd_30day}}%    | ≥{{otd_60day}}%    |
 | Tender Acceptance | ≥{{tender_target}}% | ≥{{tender_30day}}% | ≥{{tender_60day}}% |
 
 Please send your CAP document by {{cap_due_date}} outlining the root causes you've identified and the specific operational changes you're implementing.
@@ -279,10 +287,10 @@ This email contains everything you need to get started. Please review carefully 
 
 **Your Awarded Lanes:**
 
-| Lane | Volume | Equipment | Transit Requirement |
-|------|--------|-----------|-------------------|
-| {{lane_1_origin}} → {{lane_1_dest}} | {{lane_1_volume}}/week | {{lane_1_equip}} | {{lane_1_transit}} |
-| {{lane_2_origin}} → {{lane_2_dest}} | {{lane_2_volume}}/week | {{lane_2_equip}} | {{lane_2_transit}} |
+| Lane                                | Volume                 | Equipment        | Transit Requirement |
+| ----------------------------------- | ---------------------- | ---------------- | ------------------- |
+| {{lane_1_origin}} → {{lane_1_dest}} | {{lane_1_volume}}/week | {{lane_1_equip}} | {{lane_1_transit}}  |
+| {{lane_2_origin}} → {{lane_2_dest}} | {{lane_2_volume}}/week | {{lane_2_equip}} | {{lane_2_transit}}  |
 
 **Onboarding Checklist (please complete by {{onboarding_deadline}}):**
 
@@ -294,18 +302,20 @@ This email contains everything you need to get started. Please review carefully 
 - [ ] Confirm after-hours emergency contact (name, phone)
 
 **What to Expect:**
+
 - **First 30 days:** We'll run trial loads on your awarded lanes. Our minimum standards during trial: ≥93% OTD, ≥85% tender acceptance, ≥95% invoice accuracy.
 - **Day 30 review:** We'll review trial performance together. If targets are met, you'll move to full allocation. If not, we'll discuss what adjustments are needed.
 - **Ongoing:** Quarterly performance reviews, annual rate review aligned with our RFP cycle.
 
 **Our Facilities — Key Operational Notes:**
 
-| Facility | Dock Hours | Appointment Required? | Avg Load/Unload Time | Detention Policy |
-|----------|-----------|----------------------|---------------------|-----------------|
-| {{facility_1}} | {{hours_1}} | {{appt_1}} | {{avg_time_1}} | {{detention_1}} |
-| {{facility_2}} | {{hours_2}} | {{appt_2}} | {{avg_time_2}} | {{detention_2}} |
+| Facility       | Dock Hours  | Appointment Required? | Avg Load/Unload Time | Detention Policy |
+| -------------- | ----------- | --------------------- | -------------------- | ---------------- |
+| {{facility_1}} | {{hours_1}} | {{appt_1}}            | {{avg_time_1}}       | {{detention_1}}  |
+| {{facility_2}} | {{hours_2}} | {{appt_2}}            | {{avg_time_2}}       | {{detention_2}}  |
 
 **Your Primary Contacts at {{our_company}}:**
+
 - **Relationship management:** {{our_contact_name}}, {{our_contact_title}} ({{our_contact_email}}, {{our_contact_phone}})
 - **Daily operations / tendering:** {{ops_contact_name}}, {{ops_contact_title}} ({{ops_contact_email}}, {{ops_contact_phone}})
 - **Accounts payable / invoicing:** {{ap_contact_name}} ({{ap_contact_email}})
@@ -335,12 +345,13 @@ This letter serves as formal notice that {{carrier_name}}'s performance on {{our
 **Deficiency Summary:**
 Per Section {{contract_section}} of our Transportation Agreement dated {{agreement_date}}, the following minimum standards apply:
 
-| Metric | Contractual Minimum | {{carrier_name}}'s Performance ({{deficiency_period}}) |
-|--------|--------------------|----------------------------------------------------|
-| {{metric_1}} | {{standard_1}} | {{actual_1}} |
-| {{metric_2}} | {{standard_2}} | {{actual_2}} |
+| Metric       | Contractual Minimum | {{carrier_name}}'s Performance ({{deficiency_period}}) |
+| ------------ | ------------------- | ------------------------------------------------------ |
+| {{metric_1}} | {{standard_1}}      | {{actual_1}}                                           |
+| {{metric_2}} | {{standard_2}}      | {{actual_2}}                                           |
 
 **Prior Communication:**
+
 - {{prior_comm_date_1}}: {{prior_comm_description_1}}
 - {{prior_comm_date_2}}: {{prior_comm_description_2}}
 - {{cap_date}}: Corrective Action Plan submitted, targeting improvement by {{cap_target_date}}
@@ -385,6 +396,7 @@ After careful consideration and review of {{carrier_name}}'s performance over th
 {{exit_reason_summary}}
 
 **Transition Plan:**
+
 - **{{exit_date}} through {{transition_end_date}}:** We will reduce tender volume by approximately {{reduction_percent}}% per week during this transition period to allow both organizations to adjust.
 - **Open invoices:** All outstanding invoices will be processed per standard payment terms. Please ensure all invoices are submitted by {{invoice_deadline}}.
 - **Open claims:** Any pending claims will continue through their normal resolution process. This decision does not affect the adjudication of open claims.
@@ -416,6 +428,7 @@ Regards,
 I wanted to reach out proactively about what we're seeing in the {{lane_origin}} to {{lane_destination}} market. As you know, we track lane-level benchmarks quarterly, and the latest data suggests some movement worth discussing.
 
 **What We're Seeing:**
+
 - DAT contract average for this lane has moved from {{old_benchmark}} to {{new_benchmark}} over the last {{timeframe}} — a {{percentage_change}} {{direction}} shift.
 - Our spot procurement on overflow loads in this corridor has averaged {{spot_average}} over the last 30 days.
 - Load-to-truck ratios in the {{region}} region are currently {{ltt_ratio}}, compared to {{ltt_previous}} last quarter.
@@ -450,17 +463,20 @@ I'd like to propose elevating the relationship between {{our_company}} and {{car
 
 **Why {{carrier_name}}:**
 Over the past {{relationship_years}} years, {{carrier_name}} has consistently performed in the top tier of our carrier portfolio. Specifically:
+
 - {{otd_percentage}} OTD (vs. portfolio average of {{portfolio_avg}}%)
 - {{tender_acceptance}} tender acceptance (vs. {{portfolio_avg_tender}}% average)
 - Exceptional communication and problem-resolution responsiveness
 
 **What We're Proposing:**
+
 1. **Volume commitment:** Increase {{carrier_name}}'s share of our total freight from {{current_share}}% to {{proposed_share}}%, representing approximately {{proposed_spend}} in annual freight spend.
 2. **Multi-year agreement:** 24-month contract with pre-agreed annual escalators tied to {{escalator_index}}, replacing the annual RFP cycle for your lanes.
 3. **Operational integration:** Implement real-time tracking integration (API), shared KPI dashboard, and quarterly executive business reviews.
 4. **Growth collaboration:** As {{our_company}} expands into {{growth_markets}}, {{carrier_name}} would be our first-call carrier for new lanes in your network.
 
 **What We'd Need in Return:**
+
 1. Rate alignment: Competitive pricing reflecting the volume commitment and multi-year certainty (we're targeting rates within {{target_range}}% of DAT contract benchmark).
 2. Service guarantee: {{otd_target}}% OTD and {{tender_target}}% tender acceptance with quarterly review.
 3. Dedicated account management: A named contact who knows our operations, our customers, and our seasonal patterns.
@@ -490,17 +506,20 @@ Best regards,
 We've reviewed the detention invoice for PRO# {{pro_number}} ({{lane_origin}} to {{lane_destination}}, delivered {{delivery_date}}) and have identified discrepancies between the invoiced detention and our facility records.
 
 **Your Invoice:**
+
 - Driver arrival: {{carrier_arrival_time}}
 - Departure: {{carrier_departure_time}}
 - Total detention billed: {{billed_detention_hours}} hours at ${{detention_rate}}/hr = {{detention_amount}}
 
 **Our Records:**
+
 - Driver check-in at guard shack: {{our_checkin_time}}
 - Dock door assigned: {{dock_assign_time}}
 - Loading/unloading complete (BOL signed): {{bol_sign_time}}
 - Free time: {{free_time_hours}} hours per contract Section {{contract_section}}
 
 **Discrepancy Analysis:**
+
 - The driver arrived {{early_minutes}} minutes before the scheduled appointment of {{appointment_time}}. Per our contract, detention begins at the later of appointment time or arrival time — not early arrival time.
 - Our records show actual dock dwell time (from check-in to BOL signature) of {{actual_dwell}} hours, of which {{free_time_hours}} hours is free time. Billable detention per our records: {{adjusted_detention}} hours.
 
@@ -531,6 +550,7 @@ Best regards,
 We're reviewing an accessorial charge on PRO# {{pro_number}} ({{lane_origin}} to {{lane_destination}}, {{delivery_date}}) and need clarification before processing payment.
 
 **Charge in Question:**
+
 - Accessorial type: {{accessorial_type}}
 - Amount: ${{accessorial_amount}}
 - Invoice reference: {{invoice_number}}
@@ -541,6 +561,7 @@ We're reviewing an accessorial charge on PRO# {{pro_number}} ({{lane_origin}} to
 Per our Transportation Agreement (Section {{contract_section}}, Accessorial Schedule Item {{schedule_item}}), {{accessorial_type}} charges apply when {{contract_condition}}. Based on the BOL and delivery receipt for this shipment, {{evidence_detail}}.
 
 **Supporting Documentation (attached):**
+
 - BOL showing {{bol_detail}}
 - Delivery receipt showing {{pod_detail}}
 - Rate confirmation with accessorial schedule reference
@@ -563,22 +584,22 @@ Best regards,
 
 ### Tone Calibration by Relationship Status
 
-| Relationship Status | Appropriate Templates | Tone Adjustment |
-|--------------------|----------------------|-----------------|
-| New carrier (< 6 months) | Onboarding welcome, rate negotiation opening, market rate discussion | More formal, set clear expectations, be specific about standards |
-| Established carrier (6-24 months) | All templates | Standard professional tone, data-driven, collaborative |
-| Strategic partner (2+ years, top tier) | Performance review positive, partnership proposal, market rate discussion | More collegial, emphasize growth opportunity, share more operational context |
-| Underperforming carrier | Performance review corrective, warning letter, exit notification | Strictly professional, document everything, focus on facts and data |
-| Carrier in dispute | Detention dispute, accessorial challenge, warning letter | Factual and neutral, avoid emotional language, always propose a resolution path |
+| Relationship Status                    | Appropriate Templates                                                     | Tone Adjustment                                                                 |
+| -------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| New carrier (< 6 months)               | Onboarding welcome, rate negotiation opening, market rate discussion      | More formal, set clear expectations, be specific about standards                |
+| Established carrier (6-24 months)      | All templates                                                             | Standard professional tone, data-driven, collaborative                          |
+| Strategic partner (2+ years, top tier) | Performance review positive, partnership proposal, market rate discussion | More collegial, emphasize growth opportunity, share more operational context    |
+| Underperforming carrier                | Performance review corrective, warning letter, exit notification          | Strictly professional, document everything, focus on facts and data             |
+| Carrier in dispute                     | Detention dispute, accessorial challenge, warning letter                  | Factual and neutral, avoid emotional language, always propose a resolution path |
 
 ### Communication Channel Selection
 
-| Situation | Primary Channel | When to Escalate Channel |
-|-----------|----------------|------------------------|
-| Rate discussion (routine) | Email → phone follow-up | If email exchange exceeds 3 rounds without resolution |
-| Performance review (positive) | Email + QBR meeting | N/A — always share good news broadly |
-| Performance review (corrective) | Email first (documentation), then phone/meeting | If carrier doesn't respond within 5 business days |
-| Warning letter | Formal email with read receipt | If carrier doesn't respond within 3 business days, follow up via carrier VP phone call |
-| Exit notification | Formal email + same-day phone call | N/A — always deliver exit decisions via both channels |
-| Detention/accessorial dispute | Email with documentation | If not resolved in 15 business days, escalate to carrier account manager |
-| Partnership proposal | Formal letter/email → in-person meeting | N/A — partnership proposals require in-person discussion |
+| Situation                       | Primary Channel                                 | When to Escalate Channel                                                               |
+| ------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Rate discussion (routine)       | Email → phone follow-up                         | If email exchange exceeds 3 rounds without resolution                                  |
+| Performance review (positive)   | Email + QBR meeting                             | N/A — always share good news broadly                                                   |
+| Performance review (corrective) | Email first (documentation), then phone/meeting | If carrier doesn't respond within 5 business days                                      |
+| Warning letter                  | Formal email with read receipt                  | If carrier doesn't respond within 3 business days, follow up via carrier VP phone call |
+| Exit notification               | Formal email + same-day phone call              | N/A — always deliver exit decisions via both channels                                  |
+| Detention/accessorial dispute   | Email with documentation                        | If not resolved in 15 business days, escalate to carrier account manager               |
+| Partnership proposal            | Formal letter/email → in-person meeting         | N/A — partnership proposals require in-person discussion                               |

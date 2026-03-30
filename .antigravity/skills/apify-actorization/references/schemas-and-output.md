@@ -6,26 +6,26 @@ Map your application's inputs to `.actor/input_schema.json`. Validate against th
 
 ```json
 {
-    "title": "My Actor Input",
-    "type": "object",
-    "schemaVersion": 1,
-    "properties": {
-        "startUrl": {
-            "title": "Start URL",
-            "type": "string",
-            "description": "The URL to start processing from",
-            "editor": "textfield",
-            "prefill": "https://example.com"
-        },
-        "maxItems": {
-            "title": "Max Items",
-            "type": "integer",
-            "description": "Maximum number of items to process",
-            "default": 100,
-            "minimum": 1
-        }
+  "title": "My Actor Input",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "startUrl": {
+      "title": "Start URL",
+      "type": "string",
+      "description": "The URL to start processing from",
+      "editor": "textfield",
+      "prefill": "https://example.com"
     },
-    "required": ["startUrl"]
+    "maxItems": {
+      "title": "Max Items",
+      "type": "integer",
+      "description": "Maximum number of items to process",
+      "default": 100,
+      "minimum": 1
+    }
+  },
+  "required": ["startUrl"]
 }
 ```
 
@@ -52,7 +52,9 @@ Define output structure in `.actor/output_schema.json`. Validate against the JSO
 
 ```javascript
 // Store file with public access
-await Actor.setValue('report.pdf', pdfBuffer, { contentType: 'application/pdf' });
+await Actor.setValue("report.pdf", pdfBuffer, {
+  contentType: "application/pdf",
+});
 
 // Get the public URL
 const storeInfo = await Actor.openKeyValueStore();
@@ -67,7 +69,9 @@ await Actor.pushData({ reportUrl: publicUrl });
 ```javascript
 // Store multiple files with a prefix
 for (const [name, data] of files) {
-    await Actor.setValue(`screenshots/${name}`, data, { contentType: 'image/png' });
+  await Actor.setValue(`screenshots/${name}`, data, {
+    contentType: "image/png",
+  });
 }
 // Files are accessible at: .../records/screenshots%2F{name}
 ```
@@ -78,17 +82,17 @@ Configure `.actor/actor.json`. Validate against the JSON Schema from the `@apify
 
 ```json
 {
-    "actorSpecification": 1,
-    "name": "my-actor",
-    "title": "My Actor",
-    "description": "Brief description of what the actor does",
-    "version": "1.0.0",
-    "meta": {
-        "templateId": "ts_empty",
-        "generatedBy": "Claude Code with Claude Opus 4.5"
-    },
-    "input": "./input_schema.json",
-    "dockerfile": "../Dockerfile"
+  "actorSpecification": 1,
+  "name": "my-actor",
+  "title": "My Actor",
+  "description": "Brief description of what the actor does",
+  "version": "1.0.0",
+  "meta": {
+    "templateId": "ts_empty",
+    "generatedBy": "Claude Code with Claude Opus 4.5"
+  },
+  "input": "./input_schema.json",
+  "dockerfile": "../Dockerfile"
 }
 ```
 
@@ -105,27 +109,27 @@ const requestQueue = await Actor.openRequestQueue();
 
 // Add tasks to the queue (works for any processing, not just URLs)
 await requestQueue.addRequest({
-    url: 'https://placeholder.local',  // Dummy URL for non-scraping tasks
-    uniqueKey: `task-${taskId}`,       // Unique identifier for deduplication
-    userData: { itemId: 123, action: 'process' },  // Your custom task data
+  url: "https://placeholder.local", // Dummy URL for non-scraping tasks
+  uniqueKey: `task-${taskId}`, // Unique identifier for deduplication
+  userData: { itemId: 123, action: "process" }, // Your custom task data
 });
 
 // Process tasks from the queue (with Crawlee)
 const crawler = new BasicCrawler({
-    requestQueue,
-    requestHandler: async ({ request }) => {
-        const { itemId, action } = request.userData;
-        // Process your task using userData
-        await processTask(itemId, action);
-    },
+  requestQueue,
+  requestHandler: async ({ request }) => {
+    const { itemId, action } = request.userData;
+    // Process your task using userData
+    await processTask(itemId, action);
+  },
 });
 await crawler.run();
 
 // Or manually consume without Crawlee:
 let request;
 while ((request = await requestQueue.fetchNextRequest())) {
-    await processTask(request.userData);
-    await requestQueue.markRequestHandled(request);
+  await processTask(request.userData);
+  await requestQueue.markRequestHandled(request);
 }
 ```
 
@@ -133,8 +137,8 @@ while ((request = await requestQueue.fetchNextRequest())) {
 
 ```javascript
 // Save state
-await Actor.setValue('STATE', { processedCount: 100 });
+await Actor.setValue("STATE", { processedCount: 100 });
 
 // Restore state on restart
-const state = await Actor.getValue('STATE') || { processedCount: 0 };
+const state = (await Actor.getValue("STATE")) || { processedCount: 0 };
 ```

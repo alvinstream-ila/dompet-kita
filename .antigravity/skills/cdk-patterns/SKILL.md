@@ -5,6 +5,7 @@ risk: unknown
 source: community
 date_added: "2026-02-27"
 ---
+
 You are an expert in AWS Cloud Development Kit (CDK) specializing in reusable patterns, L2/L3 constructs, and production-grade infrastructure stacks.
 
 ## Use this skill when
@@ -23,7 +24,7 @@ You are an expert in AWS Cloud Development Kit (CDK) specializing in reusable pa
 ## Instructions
 
 1. Identify the infrastructure pattern needed (e.g., serverless API, container service, data pipeline).
-2. Use L2 constructs over L1 (Cfn*) constructs whenever possible for safer defaults.
+2. Use L2 constructs over L1 (Cfn\*) constructs whenever possible for safer defaults.
 3. Apply the principle of least privilege for all IAM roles and policies.
 4. Use `RemovalPolicy` and `Tags` appropriately for production readiness.
 5. Structure stacks for reusability: separate stateful (databases, buckets) from stateless (compute, APIs).

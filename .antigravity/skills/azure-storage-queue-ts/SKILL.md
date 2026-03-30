@@ -3,7 +3,7 @@ name: azure-storage-queue-ts
 description: Azure Queue Storage JavaScript/TypeScript SDK (@azure/storage-queue) for message queue operations. Use for sending, receiving, peeking, and deleting messages in queues.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # @azure/storage-queue (TypeScript/JavaScript)
@@ -39,7 +39,7 @@ import { DefaultAzureCredential } from "@azure/identity";
 const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME!;
 const client = new QueueServiceClient(
   `https://${accountName}.queue.core.windows.net`,
-  new DefaultAzureCredential()
+  new DefaultAzureCredential(),
 );
 ```
 
@@ -49,22 +49,28 @@ const client = new QueueServiceClient(
 import { QueueServiceClient } from "@azure/storage-queue";
 
 const client = QueueServiceClient.fromConnectionString(
-  process.env.AZURE_STORAGE_CONNECTION_STRING!
+  process.env.AZURE_STORAGE_CONNECTION_STRING!,
 );
 ```
 
 ### StorageSharedKeyCredential (Node.js only)
 
 ```typescript
-import { QueueServiceClient, StorageSharedKeyCredential } from "@azure/storage-queue";
+import {
+  QueueServiceClient,
+  StorageSharedKeyCredential,
+} from "@azure/storage-queue";
 
 const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME!;
 const accountKey = process.env.AZURE_STORAGE_ACCOUNT_KEY!;
 
-const sharedKeyCredential = new StorageSharedKeyCredential(accountName, accountKey);
+const sharedKeyCredential = new StorageSharedKeyCredential(
+  accountName,
+  accountKey,
+);
 const client = new QueueServiceClient(
   `https://${accountName}.queue.core.windows.net`,
-  sharedKeyCredential
+  sharedKeyCredential,
 );
 ```
 
@@ -77,7 +83,7 @@ const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME!;
 const sasToken = process.env.AZURE_STORAGE_SAS_TOKEN!;
 
 const client = new QueueServiceClient(
-  `https://${accountName}.queue.core.windows.net${sasToken}`
+  `https://${accountName}.queue.core.windows.net${sasToken}`,
 );
 ```
 
@@ -175,9 +181,9 @@ for (const message of response.receivedMessageItems) {
   console.log("Content:", message.messageText);
   console.log("Dequeue Count:", message.dequeueCount);
   console.log("Pop Receipt:", message.popReceipt);
-  
+
   // Process the message...
-  
+
   // Delete after processing
   await queueClient.deleteMessage(message.messageId, message.popReceipt);
 }
@@ -214,9 +220,9 @@ if (message) {
     message.messageId,
     message.popReceipt,
     "Updated content",
-    60 // New visibility timeout in seconds
+    60, // New visibility timeout in seconds
   );
-  
+
   // Use new popReceipt for subsequent operations
   console.log("New pop receipt:", updateResponse.popReceipt);
 }
@@ -287,7 +293,7 @@ const MAX_DEQUEUE_COUNT = 5;
 
 async function processWithPoisonHandling(
   queueClient: QueueClient,
-  poisonQueueClient: QueueClient
+  poisonQueueClient: QueueClient,
 ): Promise<void> {
   const response = await queueClient.receiveMessages({
     numberOfMessages: 10,
@@ -307,7 +313,10 @@ async function processWithPoisonHandling(
       await processMessage(message.messageText);
       await queueClient.deleteMessage(message.messageId, message.popReceipt);
     } catch (error) {
-      console.error(`Processing failed (attempt ${message.dequeueCount}):`, error);
+      console.error(
+        `Processing failed (attempt ${message.dequeueCount}):`,
+        error,
+      );
     }
   }
 }
@@ -316,7 +325,9 @@ async function processWithPoisonHandling(
 ### Batch Processing with Visibility Extension
 
 ```typescript
-async function processBatchWithExtension(queueClient: QueueClient): Promise<void> {
+async function processBatchWithExtension(
+  queueClient: QueueClient,
+): Promise<void> {
   const response = await queueClient.receiveMessages({
     numberOfMessages: 1,
     visibilityTimeout: 60,
@@ -334,7 +345,7 @@ async function processBatchWithExtension(queueClient: QueueClient): Promise<void
         message.messageId,
         popReceipt,
         message.messageText,
-        60 // Extend by another 60 seconds
+        60, // Extend by another 60 seconds
       );
       popReceipt = updateResponse.popReceipt;
     } catch (error) {
@@ -364,7 +375,7 @@ const queueClient = new QueueClient(
   credential,
   {
     messageEncoding: "text", // "base64" (default) or "text"
-  }
+  },
 );
 
 // Or with custom encoder
@@ -376,7 +387,7 @@ const customQueueClient = new QueueClient(
       encode: (message: string) => Buffer.from(message).toString("base64"),
       decode: (message: string) => Buffer.from(message, "base64").toString(),
     },
-  }
+  },
 );
 ```
 
@@ -391,7 +402,10 @@ import {
   StorageSharedKeyCredential,
 } from "@azure/storage-queue";
 
-const sharedKeyCredential = new StorageSharedKeyCredential(accountName, accountKey);
+const sharedKeyCredential = new StorageSharedKeyCredential(
+  accountName,
+  accountKey,
+);
 
 const sasToken = generateQueueSASQueryParameters(
   {
@@ -400,7 +414,7 @@ const sasToken = generateQueueSASQueryParameters(
     startsOn: new Date(),
     expiresOn: new Date(Date.now() + 3600 * 1000), // 1 hour
   },
-  sharedKeyCredential
+  sharedKeyCredential,
 ).toString();
 
 const sasUrl = `https://${accountName}.queue.core.windows.net/my-queue?${sasToken}`;
@@ -423,7 +437,7 @@ const sasToken = generateAccountSASQueryParameters(
     permissions: AccountSASPermissions.parse("rwdlacupi"),
     expiresOn: new Date(Date.now() + 24 * 3600 * 1000),
   },
-  sharedKeyCredential
+  sharedKeyCredential,
 ).toString();
 ```
 
@@ -495,13 +509,13 @@ import {
 
 ## Message Limits
 
-| Limit | Value |
-|-------|-------|
-| Max message size | 64 KB |
-| Max visibility timeout | 7 days |
-| Max time-to-live | 7 days (or -1 for infinite) |
-| Max messages per receive | 32 |
-| Default visibility timeout | 30 seconds |
+| Limit                      | Value                       |
+| -------------------------- | --------------------------- |
+| Max message size           | 64 KB                       |
+| Max visibility timeout     | 7 days                      |
+| Max time-to-live           | 7 days (or -1 for infinite) |
+| Max messages per receive   | 32                          |
+| Default visibility timeout | 30 seconds                  |
 
 ## Best Practices
 
@@ -516,13 +530,14 @@ import {
 
 ## Platform Differences
 
-| Feature | Node.js | Browser |
-|---------|---------|---------|
-| `StorageSharedKeyCredential` | ✅ | ❌ |
-| SAS generation | ✅ | ❌ |
-| DefaultAzureCredential | ✅ | ❌ |
-| Anonymous/SAS access | ✅ | ✅ |
-| All message operations | ✅ | ✅ |
+| Feature                      | Node.js | Browser |
+| ---------------------------- | ------- | ------- |
+| `StorageSharedKeyCredential` | ✅      | ❌      |
+| SAS generation               | ✅      | ❌      |
+| DefaultAzureCredential       | ✅      | ❌      |
+| Anonymous/SAS access         | ✅      | ✅      |
+| All message operations       | ✅      | ✅      |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

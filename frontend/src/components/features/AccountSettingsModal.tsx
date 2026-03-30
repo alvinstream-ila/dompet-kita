@@ -1,18 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '@/lib/axios';
 import { useAuth, type User as UserType } from '@/context/AuthContext';
-import {
-  ShieldCheck,
-  CheckCircle2,
-} from 'lucide-react';
+import { ShieldCheck, CheckCircle2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSettings } from '@/hooks/useSettings';
 import { ProfileTab } from './settings/ProfileTab';
 import { SecurityTab } from './settings/SecurityTab';
@@ -25,7 +22,12 @@ interface AccountSettingsModalProps {
   defaultTab?: string;
 }
 
-export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOpen, onClose, user, defaultTab = 'profile' }) => {
+export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({
+  isOpen,
+  onClose,
+  user,
+  defaultTab = 'profile',
+}) => {
   const {
     budgetCycleStart,
     isPrivacyMode,
@@ -36,9 +38,9 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
     partnerName: storedPartnerName,
     anniversaryDate: storedAnniversaryDate,
     timezone: storedTimezone,
-    updateSettings
+    updateSettings,
   } = useSettings();
-  
+
   const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [loading, setLoading] = useState(false);
@@ -67,7 +69,14 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
       setTimezone(storedTimezone || 'Asia/Jakarta');
       setSuccess(false);
     }
-  }, [user, isOpen, storedFullName, storedPartnerName, storedAnniversaryDate, storedTimezone]);
+  }, [
+    user,
+    isOpen,
+    storedFullName,
+    storedPartnerName,
+    storedAnniversaryDate,
+    storedTimezone,
+  ]);
 
   const showSuccess = useCallback((msg: string) => {
     setSuccess(true);
@@ -104,9 +113,13 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
     setLoading(true);
     try {
       await api.post('/forgot-password', { email: user?.email });
-      showSuccess('Link ganti password sudah dikirim ke email kamu, Sayang! ✨');
+      showSuccess(
+        'Link ganti password sudah dikirim ke email kamu, Sayang! ✨'
+      );
     } catch (error: any) {
-      const errorMsg = error.response?.data?.message || 'Gagal mengirim email, coba lagi ya sayang?';
+      const errorMsg =
+        error.response?.data?.message ||
+        'Gagal mengirim email, coba lagi ya sayang?';
       alert(errorMsg);
     } finally {
       setLoading(false);
@@ -120,48 +133,73 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[440px] p-0 overflow-hidden rounded-[40px] border-none shadow-2xl bg-white/95 backdrop-blur-xl">
-        <DialogHeader className="p-8 pb-14 bg-slate-900 text-white relative overflow-hidden">
+      <DialogContent className="overflow-hidden rounded-[40px] border-none bg-white/95 p-0 shadow-2xl backdrop-blur-xl sm:max-w-[440px]">
+        <DialogHeader className="relative overflow-hidden bg-slate-900 p-8 pb-14 text-white">
           <div className="relative z-10 space-y-1">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-70">Control Center</p>
-            <DialogTitle className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
-              <ShieldCheck className="w-6 h-6 text-blue-400" />
+            <p className="text-[10px] font-black tracking-[0.2em] uppercase opacity-70">
+              Control Center
+            </p>
+            <DialogTitle className="flex items-center gap-2 text-2xl font-black tracking-tight text-white">
+              <ShieldCheck className="h-6 w-6 text-blue-400" />
               PENGATURAN AKUN
             </DialogTitle>
             <DialogDescription className="sr-only">
               Kelola profil, keamanan, dan preferensi aplikasi Anda di sini.
             </DialogDescription>
           </div>
-          <div className="absolute -right-10 -top-10 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl" />
-          <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-pink-500/10 rounded-full blur-2xl" />
+          <div className="absolute -top-10 -right-10 h-48 w-48 rounded-full bg-blue-500/20 blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-pink-500/10 blur-2xl" />
         </DialogHeader>
 
-        <div className="px-6 pb-8 -mt-8 relative z-20">
-          <div className="bg-white rounded-[32px] p-2 shadow-2xl border border-slate-100 min-h-[400px] flex flex-col">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col">
+        <div className="relative z-20 -mt-8 px-6 pb-8">
+          <div className="flex min-h-[400px] flex-col rounded-[32px] border border-slate-100 bg-white p-2 shadow-2xl">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="flex w-full flex-1 flex-col"
+            >
               <div className="px-4 pt-4">
-                <TabsList className="grid w-full grid-cols-3 p-1 bg-slate-50 rounded-2xl h-11">
-                  <TabsTrigger value="profile" className="rounded-xl font-black text-[10px] tracking-widest">UMUM</TabsTrigger>
-                  <TabsTrigger value="privacy" className="rounded-xl font-black text-[10px] tracking-widest">KEAMANAN</TabsTrigger>
-                  <TabsTrigger value="preferences" className="rounded-xl font-black text-[10px] tracking-widest">PREFERENSI</TabsTrigger>
+                <TabsList className="grid h-11 w-full grid-cols-3 rounded-2xl bg-slate-50 p-1">
+                  <TabsTrigger
+                    value="profile"
+                    className="rounded-xl text-[10px] font-black tracking-widest"
+                  >
+                    UMUM
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="privacy"
+                    className="rounded-xl text-[10px] font-black tracking-widest"
+                  >
+                    KEAMANAN
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="preferences"
+                    className="rounded-xl text-[10px] font-black tracking-widest"
+                  >
+                    PREFERENSI
+                  </TabsTrigger>
                 </TabsList>
               </div>
 
               <div className="flex-1 overflow-y-auto px-4 py-6">
                 {success ? (
-                  <div className="py-12 text-center space-y-4 animate-in fade-in zoom-in duration-300">
-                    <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+                  <div className="animate-in fade-in zoom-in space-y-4 py-12 text-center duration-300">
+                    <div className="mx-auto mb-2 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50">
+                      <CheckCircle2 className="h-10 w-10 text-emerald-500" />
                     </div>
                     <div className="space-y-1">
-                      <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight">Sukses!</h3>
-                      <p className="text-sm font-bold text-slate-500 px-6 leading-relaxed">{successMessage}</p>
+                      <h3 className="text-xl font-black tracking-tight text-slate-800 uppercase">
+                        Sukses!
+                      </h3>
+                      <p className="px-6 text-sm leading-relaxed font-bold text-slate-500">
+                        {successMessage}
+                      </p>
                     </div>
                   </div>
                 ) : (
                   <>
                     <TabsContent value="profile">
-                      <ProfileTab 
+                      <ProfileTab
                         displayName={displayName}
                         setDisplayName={setDisplayName}
                         fullName={fullName}
@@ -179,7 +217,7 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
                     </TabsContent>
 
                     <TabsContent value="privacy">
-                      <SecurityTab 
+                      <SecurityTab
                         userEmail={user?.email}
                         loading={loading}
                         onSendResetLink={handleSendResetLink}
@@ -188,7 +226,7 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({ isOp
                     </TabsContent>
 
                     <TabsContent value="preferences">
-                      <PreferencesTab 
+                      <PreferencesTab
                         monthlyBudgetLimit={monthlyBudgetLimit}
                         budgetCycleStart={budgetCycleStart}
                         isPrivacyMode={isPrivacyMode}

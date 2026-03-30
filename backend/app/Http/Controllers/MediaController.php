@@ -13,7 +13,7 @@ class MediaController extends Controller
     /**
      * @OA\Post(
      *     path="/media/upload",
-     *     summary="Upload a file to storage",
+     *     summary="Upload a file to storage securely (Private by default)",
      *     tags={"Media"},
      *     security={{"sanctum":{}}},
      *     @OA\RequestBody(
@@ -29,7 +29,7 @@ class MediaController extends Controller
      *         description="Success",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="url", type="string", example="https://example.com/receipts/abc-123.jpg"),
+     *             @OA\Property(property="url", type="string", description="Temporary Signed URL"),
      *             @OA\Property(property="path", type="string", example="receipts/abc-123.jpg")
      *         )
      *     )
@@ -37,8 +37,9 @@ class MediaController extends Controller
      */
     public function upload(Request $request): JsonResponse
     {
+        // 🛡️ Strict Validation: Only allow professional formats and limit to 10MB
         $request->validate([
-            'file' => 'required|file|mimes:jpeg,png,jpg,webp,pdf|max:10240', // Optimized mimes
+            'file' => 'required|file|mimes:jpeg,png,jpg,webp,pdf|max:10240',
         ]);
 
         try {
@@ -47,38 +48,37 @@ class MediaController extends Controller
             $folder = 'receipts';
             $filePath = "{$folder}/{$fileName}";
 
-            $diskName = config('filesystems.default', 'public');
+            // Default to 'storj' (high reliability) if available, otherwise fallback to local/public
+            $diskName = config('filesystems.disks.storj.key') ? 'storj' : config('filesystems.default', 'public');
 
-            // Store using more efficient stream if possible
-            Storage::disk($diskName)->putFileAs($folder, $file, $fileName, 'public');
+            // ⛔ SECURITY FIX: Set visibility to 'private' (default for secure apps)
+            // We use putFileAs with 'private' to ensure the cloud bucket doesn't expose it
+            Storage::disk($diskName)->putFileAs($folder, $file, $fileName, 'private');
 
-            // Construct Public URL
-            if ($diskName === 'storj') {
-                $bucket = config('filesystems.disks.storj.bucket');
-                $url = "https://gateway.storjshare.io/{$bucket}/{$filePath}";
-            } else {
+            // 🔑 Generate dynamic signed URL for immediate frontend preview (Valid for 15 minutes)
+            try {
+                $url = Storage::disk($diskName)->temporaryUrl($filePath, now()->addMinutes(15));
+            } catch (\Exception $e) {
+                // Fallback for disks that don't support temporary URLs (e.g. local)
                 $url = Storage::disk($diskName)->url($filePath);
-                // Ensure Absolute URL if relative
-                if (!str_starts_with($url, 'http')) {
-                    $url = config('app.url') . (str_starts_with($url, '/') ? '' : '/') . $url;
-                }
             }
 
             return response()->json([
                 'success' => true,
-                'url' => $url,
-                'path' => $filePath,
+                'path' => $filePath, // Root path to save in Database
+                'url' => $url,       // Temporary URL to display in Frontend
+                'disk' => $diskName,
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Upload failed: ' . $e->getMessage(), [
+            Log::error('🛡️ Security Leak Prevented / Upload failed: ' . $e->getMessage(), [
                 'user_id' => $request->user()?->id,
                 'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengunggah ke cloud: ' . $e->getMessage(),
+                'message' => 'Gagal mengunggah aman: ' . $e->getMessage(),
             ], 500);
         }
     }

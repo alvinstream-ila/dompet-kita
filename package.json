@@ -11,12 +11,27 @@
     "backend-install": "composer install --working-dir=backend",
     "install-all": "npm run frontend-install && npm run backend-install",
     "setup": "npm run install-all && php backend/artisan key:generate && php backend/artisan migrate",
-    "migrate": "php backend/artisan migrate"
+    "migrate": "php backend/artisan migrate",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "frontend/src/**/*.{ts,tsx,css}": [
+      "prettier --write"
+    ],
+    "backend/app/**/*.php": [
+      "php backend/artisan maintenance:verify"
+    ]
   },
   "keywords": [],
   "author": "Antigravity & Alvin",
   "license": "ISC",
   "dependencies": {
     "pg": "^8.20.0"
+  },
+  "devDependencies": {
+    "husky": "^8.0.0",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2"
   }
 }

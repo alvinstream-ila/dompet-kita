@@ -40,12 +40,12 @@ import { DefaultAzureCredential } from "@azure/identity";
 // DefaultAzureCredential (recommended)
 const client = new AppConfigurationClient(
   process.env.AZURE_APPCONFIG_ENDPOINT!,
-  new DefaultAzureCredential()
+  new DefaultAzureCredential(),
 );
 
 // Connection string
 const client2 = new AppConfigurationClient(
-  process.env.AZURE_APPCONFIG_CONNECTION_STRING!
+  process.env.AZURE_APPCONFIG_CONNECTION_STRING!,
 );
 ```
 
@@ -82,7 +82,7 @@ await client.setConfigurationSetting(existing, { onlyIfUnchanged: true });
 // Get single setting
 const setting = await client.getConfigurationSetting({
   key: "app:settings:message",
-  label: "production",  // optional
+  label: "production", // optional
 });
 console.log(setting.value);
 
@@ -128,11 +128,9 @@ const appConfig = await load(
   process.env.AZURE_APPCONFIG_ENDPOINT!,
   new DefaultAzureCredential(),
   {
-    selectors: [
-      { keyFilter: "app:*", labelFilter: "production" },
-    ],
+    selectors: [{ keyFilter: "app:*", labelFilter: "production" }],
     trimKeyPrefixes: ["app:"],
-  }
+  },
 );
 
 // Map-style access
@@ -150,7 +148,7 @@ const appConfig = await load(endpoint, credential, {
   selectors: [{ keyFilter: "app:*" }],
   refreshOptions: {
     enabled: true,
-    refreshIntervalInMs: 30_000,  // 30 seconds
+    refreshIntervalInMs: 30_000, // 30 seconds
   },
 });
 
@@ -176,7 +174,7 @@ const appConfig = await load(endpoint, credential, {
   selectors: [{ keyFilter: "app:*" }],
   keyVaultOptions: {
     credential: new DefaultAzureCredential(),
-    secretRefreshIntervalInMs: 7200_000,  // 2 hours
+    secretRefreshIntervalInMs: 7200_000, // 2 hours
   },
 });
 
@@ -262,7 +260,7 @@ const isEnabledForUser = await featureManager.isEnabled("Beta", {
 // Create snapshot
 const snapshot = await client.beginCreateSnapshotAndWait({
   name: "release-v1.0",
-  retentionPeriod: 2592000,  // 30 days
+  retentionPeriod: 2592000, // 30 days
   filters: [{ keyFilter: "app:*", labelFilter: "production" }],
 });
 
@@ -351,4 +349,5 @@ import {
 7. **RBAC roles** - `App Configuration Data Reader` for read-only access
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

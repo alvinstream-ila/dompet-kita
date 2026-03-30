@@ -54,11 +54,12 @@ const credential = new DefaultAzureCredential();
 import { BlobServiceClient } from "@azure/storage-blob";
 const blobClient = new BlobServiceClient(
   "https://<account>.blob.core.windows.net",
-  credential
+  credential,
 );
 ```
 
 **Credential Chain Order:**
+
 1. EnvironmentCredential
 2. WorkloadIdentityCredential
 3. ManagedIdentityCredential
@@ -81,7 +82,7 @@ const credential = new ManagedIdentityCredential();
 
 ```typescript
 const credential = new ManagedIdentityCredential({
-  clientId: "<user-assigned-client-id>"
+  clientId: "<user-assigned-client-id>",
 });
 ```
 
@@ -89,7 +90,8 @@ const credential = new ManagedIdentityCredential({
 
 ```typescript
 const credential = new ManagedIdentityCredential({
-  resourceId: "/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<name>"
+  resourceId:
+    "/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<name>",
 });
 ```
 
@@ -103,7 +105,7 @@ import { ClientSecretCredential } from "@azure/identity";
 const credential = new ClientSecretCredential(
   "<tenant-id>",
   "<client-id>",
-  "<client-secret>"
+  "<client-secret>",
 );
 ```
 
@@ -115,17 +117,17 @@ import { ClientCertificateCredential } from "@azure/identity";
 const credential = new ClientCertificateCredential(
   "<tenant-id>",
   "<client-id>",
-  { certificatePath: "/path/to/cert.pem" }
+  { certificatePath: "/path/to/cert.pem" },
 );
 
 // With password
 const credentialWithPwd = new ClientCertificateCredential(
   "<tenant-id>",
   "<client-id>",
-  { 
+  {
     certificatePath: "/path/to/cert.pem",
-    certificatePassword: "<password>"
-  }
+    certificatePassword: "<password>",
+  },
 );
 ```
 
@@ -139,7 +141,7 @@ import { InteractiveBrowserCredential } from "@azure/identity";
 const credential = new InteractiveBrowserCredential({
   clientId: "<client-id>",
   tenantId: "<tenant-id>",
-  loginHint: "user@example.com"
+  loginHint: "user@example.com",
 });
 ```
 
@@ -154,23 +156,23 @@ const credential = new DeviceCodeCredential({
   userPromptCallback: (info) => {
     console.log(info.message);
     // "To sign in, use a web browser to open..."
-  }
+  },
 });
 ```
 
 ## Custom Credential Chain
 
 ```typescript
-import { 
+import {
   ChainedTokenCredential,
   ManagedIdentityCredential,
-  AzureCliCredential
+  AzureCliCredential,
 } from "@azure/identity";
 
 // Try managed identity first, fall back to CLI
 const credential = new ChainedTokenCredential(
   new ManagedIdentityCredential(),
-  new AzureCliCredential()
+  new AzureCliCredential(),
 );
 ```
 
@@ -210,28 +212,35 @@ import { ClientSecretCredential, AzureAuthorityHosts } from "@azure/identity";
 
 // Azure Government
 const credential = new ClientSecretCredential(
-  "<tenant>", "<client>", "<secret>",
-  { authorityHost: AzureAuthorityHosts.AzureGovernment }
+  "<tenant>",
+  "<client>",
+  "<secret>",
+  { authorityHost: AzureAuthorityHosts.AzureGovernment },
 );
 
 // Azure China
 const credentialChina = new ClientSecretCredential(
-  "<tenant>", "<client>", "<secret>",
-  { authorityHost: AzureAuthorityHosts.AzureChina }
+  "<tenant>",
+  "<client>",
+  "<secret>",
+  { authorityHost: AzureAuthorityHosts.AzureChina },
 );
 ```
 
 ## Bearer Token Provider
 
 ```typescript
-import { DefaultAzureCredential, getBearerTokenProvider } from "@azure/identity";
+import {
+  DefaultAzureCredential,
+  getBearerTokenProvider,
+} from "@azure/identity";
 
 const credential = new DefaultAzureCredential();
 
 // Create a function that returns tokens
 const getAccessToken = getBearerTokenProvider(
   credential,
-  "https://cognitiveservices.azure.com/.default"
+  "https://cognitiveservices.azure.com/.default",
 );
 
 // Use with APIs that need bearer tokens
@@ -241,10 +250,10 @@ const token = await getAccessToken();
 ## Key Types
 
 ```typescript
-import type { 
-  TokenCredential, 
-  AccessToken, 
-  GetTokenOptions 
+import type {
+  TokenCredential,
+  AccessToken,
+  GetTokenOptions,
 } from "@azure/core-auth";
 
 import {
@@ -259,24 +268,28 @@ import {
   AzurePowerShellCredential,
   AzureDeveloperCliCredential,
   DeviceCodeCredential,
-  AzureAuthorityHosts
+  AzureAuthorityHosts,
 } from "@azure/identity";
 ```
 
 ## Custom Credential Implementation
 
 ```typescript
-import type { TokenCredential, AccessToken, GetTokenOptions } from "@azure/core-auth";
+import type {
+  TokenCredential,
+  AccessToken,
+  GetTokenOptions,
+} from "@azure/core-auth";
 
 class CustomCredential implements TokenCredential {
   async getToken(
     scopes: string | string[],
-    options?: GetTokenOptions
+    options?: GetTokenOptions,
   ): Promise<AccessToken | null> {
     // Custom token acquisition logic
     return {
       token: "<access-token>",
-      expiresOnTimestamp: Date.now() + 3600000
+      expiresOnTimestamp: Date.now() + 3600000,
     };
   }
 }
@@ -305,4 +318,5 @@ AzureLogger.log = (...args) => {
 6. **Use ChainedTokenCredential** - For custom fallback scenarios
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

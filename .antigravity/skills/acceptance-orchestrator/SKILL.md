@@ -21,6 +21,7 @@ Core rule: **do not optimize for "code changed"; optimize for "DoD proven".**
 - `verification-before-completion`
 
 Optional supporting skills:
+
 - `deploy-dev`
 - `pr-watch`
 - `pr-review-autopilot`
@@ -29,12 +30,14 @@ Optional supporting skills:
 ## Inputs
 
 Require these inputs:
+
 - issue id or issue body
 - issue status
 - acceptance criteria (DoD)
 - target environment (`dev` default)
 
 Fixed defaults:
+
 - max iteration rounds = `2`
 - PR review polling = `3m -> 6m -> 10m`
 
@@ -81,6 +84,7 @@ Fixed defaults:
 Move to `accepted` only when every acceptance criterion has matching evidence.
 
 Move to `escalated` when any of these happen:
+
 - DoD still fails after `2` full rounds
 - missing secrets/permissions/external dependency blocks progress
 - task needs production action or destructive operation approval
@@ -89,6 +93,7 @@ Move to `escalated` when any of these happen:
 ## Human Gates
 
 Always stop for human confirmation on:
+
 - prod/stage deploys beyond agreed scope
 - destructive git/data operations
 - billing or security posture changes
@@ -97,6 +102,7 @@ Always stop for human confirmation on:
 ## Output Contract
 
 When reporting status, always include:
+
 - `Status`: intake / executing / accepted / escalated
 - `Acceptance Criteria`: pass/fail checklist
 - `Evidence`: commands, logs, API results, or runtime proof

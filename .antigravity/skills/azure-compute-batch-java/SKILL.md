@@ -3,7 +3,7 @@ name: azure-compute-batch-java
 description: Azure Batch SDK for Java. Run large-scale parallel and HPC batch jobs with pools, jobs, tasks, and compute nodes.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Batch SDK for Java
@@ -77,13 +77,13 @@ BatchClient batchClient = new BatchClientBuilder()
 
 ## Key Concepts
 
-| Concept | Description |
-|---------|-------------|
-| Pool | Collection of compute nodes that run tasks |
-| Job | Logical grouping of tasks |
-| Task | Unit of computation (command/script) |
-| Node | VM that executes tasks |
-| Job Schedule | Recurring job creation |
+| Concept      | Description                                |
+| ------------ | ------------------------------------------ |
+| Pool         | Collection of compute nodes that run tasks |
+| Job          | Logical grouping of tasks                  |
+| Task         | Unit of computation (command/script)       |
+| Node         | VM that executes tasks                     |
+| Job Schedule | Recurring job creation                     |
 
 ## Pool Operations
 
@@ -227,7 +227,7 @@ batchClient.createTask("myJobId", task);
 batchClient.createTask("myJobId", new BatchTaskCreateParameters("task2", "cmd /c exit 3")
     .setExitConditions(new ExitConditions()
         .setExitCodeRanges(Arrays.asList(
-            new ExitCodeRangeMapping(2, 4, 
+            new ExitCodeRangeMapping(2, 4,
                 new ExitOptions().setJobAction(BatchJobActionKind.TERMINATE)))))
     .setUserIdentity(new UserIdentity()
         .setAutoUser(new AutoUserSpecification()
@@ -350,7 +350,7 @@ try {
     BatchError error = e.getValue();
     System.err.println("Error code: " + error.getCode());
     System.err.println("Message: " + error.getMessage().getValue());
-    
+
     if ("PoolNotFound".equals(error.getCode())) {
         System.err.println("The specified pool does not exist.");
     }
@@ -370,14 +370,15 @@ try {
 
 ## Reference Links
 
-| Resource | URL |
-|----------|-----|
-| Maven Package | https://central.sonatype.com/artifact/com.azure/azure-compute-batch |
-| GitHub | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/batch/azure-compute-batch |
-| API Documentation | https://learn.microsoft.com/java/api/com.azure.compute.batch |
-| Product Docs | https://learn.microsoft.com/azure/batch/ |
-| REST API | https://learn.microsoft.com/rest/api/batchservice/ |
-| Samples | https://github.com/azure/azure-batch-samples |
+| Resource          | URL                                                                                 |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| Maven Package     | https://central.sonatype.com/artifact/com.azure/azure-compute-batch                 |
+| GitHub            | https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/batch/azure-compute-batch |
+| API Documentation | https://learn.microsoft.com/java/api/com.azure.compute.batch                        |
+| Product Docs      | https://learn.microsoft.com/azure/batch/                                            |
+| REST API          | https://learn.microsoft.com/rest/api/batchservice/                                  |
+| Samples           | https://github.com/azure/azure-batch-samples                                        |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

@@ -3,7 +3,7 @@ name: azure-mgmt-weightsandbiases-dotnet
 description: Azure Weights & Biases SDK for .NET. ML experiment tracking and model management via Azure Marketplace. Use for creating W&B instances, managing SSO, marketplace integration, and ML observability.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure.ResourceManager.WeightsAndBiases (.NET)
@@ -134,7 +134,7 @@ if (instance.Data.Properties.PartnerProperties != null)
 
 ```csharp
 // List in resource group
-await foreach (WeightsAndBiasesInstanceResource instance in 
+await foreach (WeightsAndBiasesInstanceResource instance in
     resourceGroup.GetWeightsAndBiasesInstances())
 {
     Console.WriteLine($"Instance: {instance.Data.Name}");
@@ -144,7 +144,7 @@ await foreach (WeightsAndBiasesInstanceResource instance in
 
 // List in subscription
 SubscriptionResource subscription = await client.GetDefaultSubscriptionAsync();
-await foreach (WeightsAndBiasesInstanceResource instance in 
+await foreach (WeightsAndBiasesInstanceResource instance in
     subscription.GetWeightsAndBiasesInstancesAsync())
 {
     Console.WriteLine($"{instance.Data.Name} in {instance.Id.ResourceGroupName}");
@@ -222,40 +222,40 @@ catch (RequestFailedException ex) when (ex.Status == 404)
 
 ## Key Types Reference
 
-| Type | Purpose |
-|------|---------|
-| `WeightsAndBiasesInstanceResource` | W&B instance resource |
-| `WeightsAndBiasesInstanceData` | Instance configuration data |
-| `WeightsAndBiasesInstanceCollection` | Collection of instances |
-| `WeightsAndBiasesInstanceProperties` | Instance properties |
-| `WeightsAndBiasesMarketplaceDetails` | Marketplace subscription info |
-| `WeightsAndBiasesOfferDetails` | Marketplace offer details |
-| `WeightsAndBiasesUserDetails` | Admin user information |
-| `WeightsAndBiasesPartnerProperties` | W&B-specific configuration |
-| `WeightsAndBiasSingleSignOnPropertiesV2` | SSO configuration |
-| `WeightsAndBiasesInstancePatch` | Patch for updates |
-| `WeightsAndBiasesRegion` | Supported regions enum |
+| Type                                     | Purpose                       |
+| ---------------------------------------- | ----------------------------- |
+| `WeightsAndBiasesInstanceResource`       | W&B instance resource         |
+| `WeightsAndBiasesInstanceData`           | Instance configuration data   |
+| `WeightsAndBiasesInstanceCollection`     | Collection of instances       |
+| `WeightsAndBiasesInstanceProperties`     | Instance properties           |
+| `WeightsAndBiasesMarketplaceDetails`     | Marketplace subscription info |
+| `WeightsAndBiasesOfferDetails`           | Marketplace offer details     |
+| `WeightsAndBiasesUserDetails`            | Admin user information        |
+| `WeightsAndBiasesPartnerProperties`      | W&B-specific configuration    |
+| `WeightsAndBiasSingleSignOnPropertiesV2` | SSO configuration             |
+| `WeightsAndBiasesInstancePatch`          | Patch for updates             |
+| `WeightsAndBiasesRegion`                 | Supported regions enum        |
 
 ## Available Regions
 
-| Region Enum | Azure Region |
-|-------------|--------------|
-| `WeightsAndBiasesRegion.EastUS` | East US |
-| `WeightsAndBiasesRegion.CentralUS` | Central US |
-| `WeightsAndBiasesRegion.WestUS` | West US |
-| `WeightsAndBiasesRegion.WestEurope` | West Europe |
-| `WeightsAndBiasesRegion.JapanEast` | Japan East |
+| Region Enum                           | Azure Region  |
+| ------------------------------------- | ------------- |
+| `WeightsAndBiasesRegion.EastUS`       | East US       |
+| `WeightsAndBiasesRegion.CentralUS`    | Central US    |
+| `WeightsAndBiasesRegion.WestUS`       | West US       |
+| `WeightsAndBiasesRegion.WestEurope`   | West Europe   |
+| `WeightsAndBiasesRegion.JapanEast`    | Japan East    |
 | `WeightsAndBiasesRegion.KoreaCentral` | Korea Central |
 
 ## Marketplace Offer Details
 
 For Azure Marketplace integration:
 
-| Property | Value |
-|----------|-------|
-| Publisher ID | `wandb` |
-| Offer ID | `wandb-pay-as-you-go` |
-| Plan ID | `wandb-payg` (Pay As You Go) |
+| Property     | Value                        |
+| ------------ | ---------------------------- |
+| Publisher ID | `wandb`                      |
+| Offer ID     | `wandb-pay-as-you-go`        |
+| Plan ID      | `wandb-payg` (Pay As You Go) |
 
 ## Best Practices
 
@@ -314,19 +314,20 @@ run.finish()
 
 ## Related SDKs
 
-| SDK | Purpose | Install |
-|-----|---------|---------|
+| SDK                                      | Purpose                            | Install                                                                  |
+| ---------------------------------------- | ---------------------------------- | ------------------------------------------------------------------------ |
 | `Azure.ResourceManager.WeightsAndBiases` | W&B instance management (this SDK) | `dotnet add package Azure.ResourceManager.WeightsAndBiases --prerelease` |
-| `Azure.ResourceManager.MachineLearning` | Azure ML workspaces | `dotnet add package Azure.ResourceManager.MachineLearning` |
+| `Azure.ResourceManager.MachineLearning`  | Azure ML workspaces                | `dotnet add package Azure.ResourceManager.MachineLearning`               |
 
 ## Reference Links
 
-| Resource | URL |
-|----------|-----|
-| NuGet Package | https://www.nuget.org/packages/Azure.ResourceManager.WeightsAndBiases |
-| W&B Documentation | https://docs.wandb.ai/ |
+| Resource          | URL                                                                               |
+| ----------------- | --------------------------------------------------------------------------------- |
+| NuGet Package     | https://www.nuget.org/packages/Azure.ResourceManager.WeightsAndBiases             |
+| W&B Documentation | https://docs.wandb.ai/                                                            |
 | Azure Marketplace | https://azuremarketplace.microsoft.com/marketplace/apps/wandb.wandb-pay-as-you-go |
-| GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/weightsandbiases |
+| GitHub Source     | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/weightsandbiases         |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

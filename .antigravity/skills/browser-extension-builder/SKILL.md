@@ -35,6 +35,7 @@ Structure for modern browser extensions
 **When to use**: When starting a new extension
 
 ### Project Structure
+
 ```
 extension/
 ├── manifest.json      # Extension config
@@ -56,6 +57,7 @@ extension/
 ```
 
 ### Manifest V3 Template
+
 ```json
 {
   "manifest_version": 3,
@@ -71,10 +73,12 @@ extension/
       "128": "icons/icon128.png"
     }
   },
-  "content_scripts": [{
-    "matches": ["<all_urls>"],
-    "js": ["content/content.js"]
-  }],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/content.js"]
+    }
+  ],
   "background": {
     "service_worker": "background/service-worker.js"
   },
@@ -83,6 +87,7 @@ extension/
 ```
 
 ### Communication Pattern
+
 ```
 Popup ←→ Background (Service Worker) ←→ Content Script
               ↓
@@ -96,22 +101,23 @@ Code that runs on web pages
 **When to use**: When modifying or reading page content
 
 ### Basic Content Script
+
 ```javascript
 // content.js - Runs on every matched page
 
 // Wait for page to load
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   // Modify the page
-  const element = document.querySelector('.target');
+  const element = document.querySelector(".target");
   if (element) {
-    element.style.backgroundColor = 'yellow';
+    element.style.backgroundColor = "yellow";
   }
 });
 
 // Listen for messages from popup/background
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'getData') {
-    const data = document.querySelector('.data')?.textContent;
+  if (message.action === "getData") {
+    const data = document.querySelector(".data")?.textContent;
     sendResponse({ data });
   }
   return true; // Keep channel open for async
@@ -119,11 +125,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 ```
 
 ### Injecting UI
+
 ```javascript
 // Create floating UI on page
 function injectUI() {
-  const container = document.createElement('div');
-  container.id = 'my-extension-ui';
+  const container = document.createElement("div");
+  container.id = "my-extension-ui";
   container.innerHTML = `
     <div style="position: fixed; bottom: 20px; right: 20px;
                 background: white; padding: 16px; border-radius: 8px;
@@ -134,7 +141,7 @@ function injectUI() {
   `;
   document.body.appendChild(container);
 
-  document.getElementById('my-extension-btn').addEventListener('click', () => {
+  document.getElementById("my-extension-btn").addEventListener("click", () => {
     // Handle click
   });
 }
@@ -143,13 +150,16 @@ injectUI();
 ```
 
 ### Permissions for Content Scripts
+
 ```json
 {
-  "content_scripts": [{
-    "matches": ["https://specific-site.com/*"],
-    "js": ["content.js"],
-    "run_at": "document_end"
-  }]
+  "content_scripts": [
+    {
+      "matches": ["https://specific-site.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ]
 }
 ```
 
@@ -160,14 +170,15 @@ Persisting extension data
 **When to use**: When saving user settings or data
 
 ### Chrome Storage API
+
 ```javascript
 // Save data
-chrome.storage.local.set({ key: 'value' }, () => {
-  console.log('Saved');
+chrome.storage.local.set({ key: "value" }, () => {
+  console.log("Saved");
 });
 
 // Get data
-chrome.storage.local.get(['key'], (result) => {
+chrome.storage.local.get(["key"], (result) => {
   console.log(result.key);
 });
 
@@ -177,18 +188,20 @@ chrome.storage.sync.set({ setting: true });
 // Watch for changes
 chrome.storage.onChanged.addListener((changes, area) => {
   if (changes.key) {
-    console.log('key changed:', changes.key.newValue);
+    console.log("key changed:", changes.key.newValue);
   }
 });
 ```
 
 ### Storage Limits
-| Type | Limit |
-|------|-------|
-| local | 5MB |
-| sync | 100KB total, 8KB per item |
+
+| Type  | Limit                     |
+| ----- | ------------------------- |
+| local | 5MB                       |
+| sync  | 100KB total, 8KB per item |
 
 ### Async/Await Pattern
+
 ```javascript
 // Modern async wrapper
 async function getStorage(keys) {
@@ -204,8 +217,8 @@ async function setStorage(data) {
 }
 
 // Usage
-const { settings } = await getStorage(['settings']);
-await setStorage({ settings: { ...settings, theme: 'dark' } });
+const { settings } = await getStorage(["settings"]);
+await setStorage({ settings: { ...settings, theme: "dark" } });
 ```
 
 ## Anti-Patterns
@@ -251,4 +264,5 @@ Update quickly when broken.
 Works well with: `frontend`, `micro-saas-launcher`, `personal-tool-builder`
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

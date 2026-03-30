@@ -9,18 +9,23 @@ Dokumen ini adalah panduan tunggal untuk memahami bagaimana sistem kita menyimpa
 Jika dibayangkan sebagai buku catatan fisik di rumah, database kita terdiri dari beberapa **"Buku Catatan"** yang saling bekerja sama secara otomatis.
 
 ### 👤 1. Buku Profil (Users)
+
 Ini adalah halaman pertama yang mencatat **siapa pemilik aplikasi ini**. Di sini tersimpan nama Alvin & Ila serta **"Batas Jajan Bulanan"** agar aplikasi bisa mengingatkan jika kita terlalu boros.
 
 ### 📝 2. Buku Kas Utama (Transactions)
+
 Setiap kali ada uang masuk atau keluar, dicatat di sini. Lengkap dengan kategori (Makan, Transport, dll) dan foto struknya agar bukti bayar tidak hilang.
 
 ### 🏦 3. Daftar Harta (Assets)
+
 Rangkap kekayaan kita ada di mana saja—mulai dari saldo di Bank, uang tunai di Dompet, hingga nilai Investasi kita.
 
 ### 🤝 4. Catatan Janji (Loans)
+
 Mencatat urusan utang (kita pinjam) dan piutang (orang pinjam ke kita) agar tidak terlupakan.
 
 ### 🎯 5. Tabungan Mimpi & Liburan (Goals & Holidays)
+
 Celengan digital khusus untuk rencana masa depan seperti beli barang impian atau rencana jalan-jalan ke luar kota/negeri.
 
 ---
@@ -75,9 +80,10 @@ erDiagram
 ```
 
 ### 🔍 Bedah Fitur Canggih
-*   **Gatekeeper AI:** Menggunakan `monthly_budget_limit` di tabel `users` sebagai acuan untuk memberikan saran finansial di Dashboard.
-*   **Smart Loans:** Berkat kolom `remaining_amount`, sistem akan tahu kapan sebuah utang benar-benar lunas tanpa perlu kita hitung manual.
-*   **Keamanan Data (Cascade):** Jika akun ditutup, sistem secara otomatis akan menghapus seluruh data terkait demi menjaga privasi Anda berdua.
+
+- **Gatekeeper AI:** Menggunakan `monthly_budget_limit` di tabel `users` sebagai acuan untuk memberikan saran finansial di Dashboard.
+- **Smart Loans:** Berkat kolom `remaining_amount`, sistem akan tahu kapan sebuah utang benar-benar lunas tanpa perlu kita hitung manual.
+- **Keamanan Data (Cascade):** Jika akun ditutup, sistem secara otomatis akan menghapus seluruh data terkait demi menjaga privasi Anda berdua.
 
 ---
 

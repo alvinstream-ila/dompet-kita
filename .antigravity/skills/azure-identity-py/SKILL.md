@@ -3,7 +3,7 @@ name: azure-identity-py
 description: Azure Identity SDK for Python authentication. Use for DefaultAzureCredential, managed identity, service principals, and token caching.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Identity SDK for Python
@@ -47,16 +47,16 @@ client = BlobServiceClient(
 
 ### Credential Chain Order
 
-| Order | Credential | Environment |
-|-------|-----------|-------------|
-| 1 | EnvironmentCredential | CI/CD, containers |
-| 2 | WorkloadIdentityCredential | Kubernetes |
-| 3 | ManagedIdentityCredential | Azure VMs, App Service, Functions |
-| 4 | SharedTokenCacheCredential | Windows only |
-| 5 | VisualStudioCodeCredential | VS Code with Azure extension |
-| 6 | AzureCliCredential | `az login` |
-| 7 | AzurePowerShellCredential | `Connect-AzAccount` |
-| 8 | AzureDeveloperCliCredential | `azd auth login` |
+| Order | Credential                  | Environment                       |
+| ----- | --------------------------- | --------------------------------- |
+| 1     | EnvironmentCredential       | CI/CD, containers                 |
+| 2     | WorkloadIdentityCredential  | Kubernetes                        |
+| 3     | ManagedIdentityCredential   | Azure VMs, App Service, Functions |
+| 4     | SharedTokenCacheCredential  | Windows only                      |
+| 5     | VisualStudioCodeCredential  | VS Code with Azure extension      |
+| 6     | AzureCliCredential          | `az login`                        |
+| 7     | AzurePowerShellCredential   | `Connect-AzAccount`               |
+| 8     | AzureDeveloperCliCredential | `azd auth login`                  |
 
 ### Customizing DefaultAzureCredential
 
@@ -136,16 +136,16 @@ credential = ChainedTokenCredential(
 
 ## Credential Types Table
 
-| Credential | Use Case | Auth Method |
-|------------|----------|-------------|
-| `DefaultAzureCredential` | Most scenarios | Auto-detect |
-| `ManagedIdentityCredential` | Azure-hosted apps | Managed Identity |
-| `ClientSecretCredential` | Service principal | Client secret |
-| `ClientCertificateCredential` | Service principal | Certificate |
-| `AzureCliCredential` | Local development | Azure CLI |
-| `AzureDeveloperCliCredential` | Local development | Azure Developer CLI |
-| `InteractiveBrowserCredential` | User sign-in | Browser OAuth |
-| `DeviceCodeCredential` | Headless/SSH | Device code flow |
+| Credential                     | Use Case          | Auth Method         |
+| ------------------------------ | ----------------- | ------------------- |
+| `DefaultAzureCredential`       | Most scenarios    | Auto-detect         |
+| `ManagedIdentityCredential`    | Azure-hosted apps | Managed Identity    |
+| `ClientSecretCredential`       | Service principal | Client secret       |
+| `ClientCertificateCredential`  | Service principal | Certificate         |
+| `AzureCliCredential`           | Local development | Azure CLI           |
+| `AzureDeveloperCliCredential`  | Local development | Azure Developer CLI |
+| `InteractiveBrowserCredential` | User sign-in      | Browser OAuth       |
+| `DeviceCodeCredential`         | Headless/SSH      | Device code flow    |
 
 ## Getting Tokens Directly
 
@@ -170,14 +170,14 @@ from azure.storage.blob.aio import BlobServiceClient
 
 async def main():
     credential = DefaultAzureCredential()
-    
+
     async with BlobServiceClient(
         account_url="https://<account>.blob.core.windows.net",
         credential=credential
     ) as client:
         # ... async operations
         pass
-    
+
     await credential.close()
 ```
 
@@ -192,4 +192,5 @@ async def main():
 7. **Exclude unused credentials** to speed up authentication
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

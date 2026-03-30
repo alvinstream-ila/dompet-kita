@@ -16,6 +16,7 @@ Specialized workflow for testing REST and GraphQL API security including authent
 ## When to Use This Workflow
 
 Use this workflow when:
+
 - Testing REST API security
 - Assessing GraphQL endpoints
 - Validating API authentication
@@ -27,10 +28,12 @@ Use this workflow when:
 ### Phase 1: API Discovery
 
 #### Skills to Invoke
+
 - `api-fuzzing-bug-bounty` - API fuzzing
 - `scanning-tools` - API scanning
 
 #### Actions
+
 1. Enumerate endpoints
 2. Document API methods
 3. Identify parameters
@@ -38,6 +41,7 @@ Use this workflow when:
 5. Review documentation
 
 #### Copy-Paste Prompts
+
 ```
 Use @api-fuzzing-bug-bounty to discover API endpoints
 ```
@@ -45,10 +49,12 @@ Use @api-fuzzing-bug-bounty to discover API endpoints
 ### Phase 2: Authentication Testing
 
 #### Skills to Invoke
+
 - `broken-authentication` - Auth testing
 - `api-security-best-practices` - API auth
 
 #### Actions
+
 1. Test API key validation
 2. Test JWT tokens
 3. Test OAuth2 flows
@@ -56,6 +62,7 @@ Use @api-fuzzing-bug-bounty to discover API endpoints
 5. Test refresh tokens
 
 #### Copy-Paste Prompts
+
 ```
 Use @broken-authentication to test API authentication
 ```
@@ -63,9 +70,11 @@ Use @broken-authentication to test API authentication
 ### Phase 3: Authorization Testing
 
 #### Skills to Invoke
+
 - `idor-testing` - IDOR testing
 
 #### Actions
+
 1. Test object-level authorization
 2. Test function-level authorization
 3. Test role-based access
@@ -73,6 +82,7 @@ Use @broken-authentication to test API authentication
 5. Test multi-tenant isolation
 
 #### Copy-Paste Prompts
+
 ```
 Use @idor-testing to test API authorization
 ```
@@ -80,10 +90,12 @@ Use @idor-testing to test API authorization
 ### Phase 4: Input Validation
 
 #### Skills to Invoke
+
 - `api-fuzzing-bug-bounty` - API fuzzing
 - `sql-injection-testing` - Injection testing
 
 #### Actions
+
 1. Test parameter validation
 2. Test SQL injection
 3. Test NoSQL injection
@@ -91,6 +103,7 @@ Use @idor-testing to test API authorization
 5. Test XXE injection
 
 #### Copy-Paste Prompts
+
 ```
 Use @api-fuzzing-bug-bounty to fuzz API parameters
 ```
@@ -98,9 +111,11 @@ Use @api-fuzzing-bug-bounty to fuzz API parameters
 ### Phase 5: Rate Limiting
 
 #### Skills to Invoke
+
 - `api-security-best-practices` - Rate limiting
 
 #### Actions
+
 1. Test rate limit headers
 2. Test brute force protection
 3. Test resource exhaustion
@@ -108,6 +123,7 @@ Use @api-fuzzing-bug-bounty to fuzz API parameters
 5. Document limitations
 
 #### Copy-Paste Prompts
+
 ```
 Use @api-security-best-practices to test rate limiting
 ```
@@ -115,9 +131,11 @@ Use @api-security-best-practices to test rate limiting
 ### Phase 6: GraphQL Testing
 
 #### Skills to Invoke
+
 - `api-fuzzing-bug-bounty` - GraphQL fuzzing
 
 #### Actions
+
 1. Test introspection
 2. Test query depth
 3. Test query complexity
@@ -125,6 +143,7 @@ Use @api-security-best-practices to test rate limiting
 5. Test field suggestions
 
 #### Copy-Paste Prompts
+
 ```
 Use @api-fuzzing-bug-bounty to test GraphQL security
 ```
@@ -132,9 +151,11 @@ Use @api-fuzzing-bug-bounty to test GraphQL security
 ### Phase 7: Error Handling
 
 #### Skills to Invoke
+
 - `api-security-best-practices` - Error handling
 
 #### Actions
+
 1. Test error messages
 2. Check information disclosure
 3. Test stack traces
@@ -142,6 +163,7 @@ Use @api-fuzzing-bug-bounty to test GraphQL security
 5. Document findings
 
 #### Copy-Paste Prompts
+
 ```
 Use @api-security-best-practices to audit API error handling
 ```

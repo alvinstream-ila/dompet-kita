@@ -62,15 +62,15 @@ ImageAnalysisClient client = new ImageAnalysisClientBuilder()
 
 ## Visual Features
 
-| Feature | Description |
-|---------|-------------|
-| `CAPTION` | Generate human-readable image description |
-| `DENSE_CAPTIONS` | Captions for up to 10 regions |
-| `READ` | OCR - Extract text from images |
-| `TAGS` | Content tags for objects, scenes, actions |
-| `OBJECTS` | Detect objects with bounding boxes |
-| `SMART_CROPS` | Smart thumbnail regions |
-| `PEOPLE` | Detect people with locations |
+| Feature          | Description                               |
+| ---------------- | ----------------------------------------- |
+| `CAPTION`        | Generate human-readable image description |
+| `DENSE_CAPTIONS` | Captions for up to 10 regions             |
+| `READ`           | OCR - Extract text from images            |
+| `TAGS`           | Content tags for objects, scenes, actions |
+| `OBJECTS`        | Detect objects with bounding boxes        |
+| `SMART_CROPS`    | Smart thumbnail regions                   |
+| `PEOPLE`         | Detect people with locations              |
 
 ## Core Patterns
 
@@ -118,7 +118,7 @@ for (DetectedTextBlock block : result.getRead().getBlocks()) {
     for (DetectedTextLine line : block.getLines()) {
         System.out.printf("Line: '%s'%n", line.getText());
         System.out.printf("  Bounding polygon: %s%n", line.getBoundingPolygon());
-        
+
         for (DetectedTextWord word : line.getWords()) {
             System.out.printf("  Word: '%s' (confidence: %.4f)%n",
                 word.getText(),
@@ -140,7 +140,7 @@ for (DetectedObject obj : result.getObjects()) {
     System.out.printf("Object: %s (confidence: %.4f)%n",
         obj.getTags().get(0).getName(),
         obj.getTags().get(0).getConfidence());
-    
+
     ImageBoundingBox box = obj.getBoundingBox();
     System.out.printf("  Location: x=%d, y=%d, w=%d, h=%d%n",
         box.getX(), box.getY(), box.getWidth(), box.getHeight());
@@ -291,4 +291,5 @@ Caption and Dense Captions require GPU-supported regions. Check [supported regio
 - "detect people image"
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

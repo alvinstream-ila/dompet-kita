@@ -3,7 +3,7 @@ name: azure-search-documents-dotnet
 description: Azure AI Search SDK for .NET (Azure.Search.Documents). Use for building search applications with full-text, vector, semantic, and hybrid search.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure.Search.Documents (.NET)
@@ -31,6 +31,7 @@ SEARCH_API_KEY=<api-key>
 ## Authentication
 
 **DefaultAzureCredential (preferred)**:
+
 ```csharp
 using Azure.Identity;
 using Azure.Search.Documents;
@@ -43,6 +44,7 @@ var client = new SearchClient(
 ```
 
 **API Key**:
+
 ```csharp
 using Azure;
 using Azure.Search.Documents;
@@ -57,11 +59,11 @@ var client = new SearchClient(
 
 ## Client Selection
 
-| Client | Purpose |
-|--------|---------|
-| `SearchClient` | Query indexes, upload/update/delete documents |
-| `SearchIndexClient` | Create/manage indexes, synonym maps |
-| `SearchIndexerClient` | Manage indexers, skillsets, data sources |
+| Client                | Purpose                                       |
+| --------------------- | --------------------------------------------- |
+| `SearchClient`        | Query indexes, upload/update/delete documents |
+| `SearchIndexClient`   | Create/manage indexes, synonym maps           |
+| `SearchIndexerClient` | Manage indexers, skillsets, data sources      |
 
 ## Index Creation
 
@@ -291,17 +293,17 @@ var results = await searchClient.SearchAsync<Hotel>("luxury beachfront", options
 
 ## Field Attributes Reference
 
-| Attribute | Purpose |
-|-----------|---------|
-| `SimpleField` | Non-searchable field (filters, sorting, facets) |
-| `SearchableField` | Full-text searchable field |
-| `VectorSearchField` | Vector embedding field |
-| `IsKey = true` | Document key (required, one per index) |
-| `IsFilterable = true` | Enable $filter expressions |
-| `IsSortable = true` | Enable $orderby |
-| `IsFacetable = true` | Enable faceted navigation |
-| `IsHidden = true` | Exclude from results |
-| `AnalyzerName` | Specify text analyzer |
+| Attribute             | Purpose                                         |
+| --------------------- | ----------------------------------------------- |
+| `SimpleField`         | Non-searchable field (filters, sorting, facets) |
+| `SearchableField`     | Full-text searchable field                      |
+| `VectorSearchField`   | Vector embedding field                          |
+| `IsKey = true`        | Document key (required, one per index)          |
+| `IsFilterable = true` | Enable $filter expressions                      |
+| `IsSortable = true`   | Enable $orderby                                 |
+| `IsFacetable = true`  | Enable faceted navigation                       |
+| `IsHidden = true`     | Exclude from results                            |
+| `AnalyzerName`        | Specify text analyzer                           |
 
 ## Error Handling
 
@@ -334,10 +336,11 @@ catch (RequestFailedException ex)
 
 ## Reference Files
 
-| File | Contents |
-|------|----------|
-| references/vector-search.md | Vector search, hybrid search, vectorizers |
-| references/semantic-search.md | Semantic ranking, captions, answers |
+| File                          | Contents                                  |
+| ----------------------------- | ----------------------------------------- |
+| references/vector-search.md   | Vector search, hybrid search, vectorizers |
+| references/semantic-search.md | Semantic ranking, captions, answers       |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

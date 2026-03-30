@@ -3,38 +3,38 @@
  */
 
 export const EXPENSE_CATEGORIES = [
-    'Makanan & Minuman',
-    'Transportasi',
-    'Kebutuhan Rumah',
-    'Belanja',
-    'Hiburan',
-    'Kesehatan',
-    'Pendidikan',
-    'Tagihan & Utilitas',
-    'Lainnya'
+  'Makanan & Minuman',
+  'Transportasi',
+  'Kebutuhan Rumah',
+  'Belanja',
+  'Hiburan',
+  'Kesehatan',
+  'Pendidikan',
+  'Tagihan & Utilitas',
+  'Lainnya',
 ];
 
 export const INCOME_CATEGORIES = [
-    'Gaji',
-    'Investasi',
-    'Hadiah',
-    'Bisnis',
-    'Penjualan',
-    'Bonus',
-    'Lainnya'
+  'Gaji',
+  'Investasi',
+  'Hadiah',
+  'Bisnis',
+  'Penjualan',
+  'Bonus',
+  'Lainnya',
 ];
 
 export const ASSET_TYPES = [
-    'Tabungan',
-    'Emas',
-    'Investasi',
-    'Aset Fisik',
-    'Lainnya'
+  'Tabungan',
+  'Emas',
+  'Investasi',
+  'Aset Fisik',
+  'Lainnya',
 ];
 
 export const TIMEZONES = [
-    'Asia/Jakarta',
-    'Asia/Makassar',
-    'Asia/Jayapura',
-    'UTC'
+  'Asia/Jakarta',
+  'Asia/Makassar',
+  'Asia/Jayapura',
+  'UTC',
 ];

@@ -8,6 +8,7 @@ description: Understand audience demographics, preferences, behavior patterns, a
 Analyze and understand your audience using Apify Actors to extract follower demographics, engagement patterns, and behavior data from multiple platforms.
 
 ## Prerequisites
+
 (No need to check it upfront)
 
 - `.env` file with `APIFY_TOKEN`
@@ -31,26 +32,26 @@ Task Progress:
 
 Select the appropriate Actor based on analysis needs:
 
-| User Need | Actor ID | Best For |
-|-----------|----------|----------|
+| User Need                      | Actor ID                                     | Best For                     |
+| ------------------------------ | -------------------------------------------- | ---------------------------- |
 | Facebook follower demographics | `apify/facebook-followers-following-scraper` | FB followers/following lists |
-| Facebook engagement behavior | `apify/facebook-likes-scraper` | FB post likes analysis |
-| Facebook video audience | `apify/facebook-reels-scraper` | FB Reels viewers |
-| Facebook comment analysis | `apify/facebook-comments-scraper` | FB post/video comments |
-| Facebook content engagement | `apify/facebook-posts-scraper` | FB post engagement metrics |
-| Instagram audience sizing | `apify/instagram-profile-scraper` | IG profile demographics |
-| Instagram location-based | `apify/instagram-search-scraper` | IG geo-tagged audience |
-| Instagram tagged network | `apify/instagram-tagged-scraper` | IG tag network analysis |
-| Instagram comprehensive | `apify/instagram-scraper` | Full IG audience data |
-| Instagram API-based | `apify/instagram-api-scraper` | IG API access |
-| Instagram follower counts | `apify/instagram-followers-count-scraper` | IG follower tracking |
-| Instagram comment export | `apify/export-instagram-comments-posts` | IG comment bulk export |
-| Instagram comment analysis | `apify/instagram-comment-scraper` | IG comment sentiment |
-| YouTube viewer feedback | `streamers/youtube-comments-scraper` | YT comment analysis |
-| YouTube channel audience | `streamers/youtube-channel-scraper` | YT channel subscribers |
-| TikTok follower demographics | `clockworks/tiktok-followers-scraper` | TT follower lists |
-| TikTok profile analysis | `clockworks/tiktok-profile-scraper` | TT profile demographics |
-| TikTok comment analysis | `clockworks/tiktok-comments-scraper` | TT comment engagement |
+| Facebook engagement behavior   | `apify/facebook-likes-scraper`               | FB post likes analysis       |
+| Facebook video audience        | `apify/facebook-reels-scraper`               | FB Reels viewers             |
+| Facebook comment analysis      | `apify/facebook-comments-scraper`            | FB post/video comments       |
+| Facebook content engagement    | `apify/facebook-posts-scraper`               | FB post engagement metrics   |
+| Instagram audience sizing      | `apify/instagram-profile-scraper`            | IG profile demographics      |
+| Instagram location-based       | `apify/instagram-search-scraper`             | IG geo-tagged audience       |
+| Instagram tagged network       | `apify/instagram-tagged-scraper`             | IG tag network analysis      |
+| Instagram comprehensive        | `apify/instagram-scraper`                    | Full IG audience data        |
+| Instagram API-based            | `apify/instagram-api-scraper`                | IG API access                |
+| Instagram follower counts      | `apify/instagram-followers-count-scraper`    | IG follower tracking         |
+| Instagram comment export       | `apify/export-instagram-comments-posts`      | IG comment bulk export       |
+| Instagram comment analysis     | `apify/instagram-comment-scraper`            | IG comment sentiment         |
+| YouTube viewer feedback        | `streamers/youtube-comments-scraper`         | YT comment analysis          |
+| YouTube channel audience       | `streamers/youtube-channel-scraper`          | YT channel subscribers       |
+| TikTok follower demographics   | `clockworks/tiktok-followers-scraper`        | TT follower lists            |
+| TikTok profile analysis        | `clockworks/tiktok-profile-scraper`          | TT profile demographics      |
+| TikTok comment analysis        | `clockworks/tiktok-comments-scraper`         | TT comment engagement        |
 
 ### Step 2: Fetch Actor Schema
 
@@ -63,6 +64,7 @@ export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "A
 Replace `ACTOR_ID` with the selected Actor (e.g., `apify/facebook-followers-following-scraper`).
 
 This returns:
+
 - Actor description and README
 - Required and optional input parameters
 - Output fields (if available)
@@ -70,6 +72,7 @@ This returns:
 ### Step 3: Ask User Preferences
 
 Before running, ask:
+
 1. **Output format**:
    - **Quick answer** - Display top few results in chat (no file saved)
    - **CSV** - Full export with all fields
@@ -79,6 +82,7 @@ Before running, ask:
 ### Step 4: Run the Script
 
 **Quick answer (display in chat, no file):**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -86,6 +90,7 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ```
 
 **CSV:**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -95,6 +100,7 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ```
 
 **JSON:**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -106,11 +112,11 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ### Step 5: Summarize Findings
 
 After completion, report:
+
 - Number of audience members/profiles analyzed
 - File location and name
 - Key demographic insights
 - Suggested next steps (deeper analysis, segmentation)
-
 
 ## Error Handling
 

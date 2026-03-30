@@ -9,13 +9,13 @@ export function useLoans() {
     queryFn: async () => {
       const { data } = await api.get('/loans');
       return data as Loan[];
-    }
+    },
   });
 }
 
 export function useAddLoan() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (newLoan: Omit<Loan, 'id' | 'created_at'>) => {
       const { data } = await api.post('/loans', newLoan);
@@ -24,16 +24,16 @@ export function useAddLoan() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['loans'] });
       toast.success('Pinjaman Dicatat! 📝', {
-        description: `Sudah aku bantu catat ya, pinjaman dari ${data.debtor}.`
+        description: `Sudah aku bantu catat ya, pinjaman dari ${data.debtor}.`,
       });
     },
-    onError: () => toast.error('Gagal Menyimpan 🥺')
+    onError: () => toast.error('Gagal Menyimpan 🥺'),
   });
 }
 
 export function useUpdateLoan() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Loan> & { id: string }) => {
       const { data } = await api.put(`/loans/${id}`, updates);
@@ -43,19 +43,19 @@ export function useUpdateLoan() {
       queryClient.invalidateQueries({ queryKey: ['loans'] });
       if (data.status === 'paid') {
         toast.success('ALHAMDULILLAH LUNAS! 🎉', {
-          description: `Pinjaman ${data.debtor} sudah diselesaikan! ✨`
+          description: `Pinjaman ${data.debtor} sudah diselesaikan! ✨`,
         });
       } else {
         toast.success('Berhasil Diupdate! ✨');
       }
     },
-    onError: () => toast.error('Gagal Update 🥺')
+    onError: () => toast.error('Gagal Update 🥺'),
   });
 }
 
 export function useDeleteLoan() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id: string) => {
       await api.delete(`/loans/${id}`);
@@ -64,6 +64,6 @@ export function useDeleteLoan() {
       queryClient.invalidateQueries({ queryKey: ['loans'] });
       toast.info('Data Dihapus 🗑️');
     },
-    onError: () => toast.error('Gagal Menghapus 🥺')
+    onError: () => toast.error('Gagal Menghapus 🥺'),
   });
 }

@@ -41,21 +41,21 @@ import { DefaultAzureCredential } from "@azure/identity";
 // Connection string
 const client = new WebPubSubServiceClient(
   process.env.WEBPUBSUB_CONNECTION_STRING!,
-  "chat"  // hub name
+  "chat", // hub name
 );
 
 // DefaultAzureCredential (recommended)
 const client2 = new WebPubSubServiceClient(
   process.env.WEBPUBSUB_ENDPOINT!,
   new DefaultAzureCredential(),
-  "chat"
+  "chat",
 );
 
 // AzureKeyCredential
 const client3 = new WebPubSubServiceClient(
   process.env.WEBPUBSUB_ENDPOINT!,
   new AzureKeyCredential("<access-key>"),
-  "chat"
+  "chat",
 );
 ```
 
@@ -64,7 +64,7 @@ const client3 = new WebPubSubServiceClient(
 ```typescript
 // Basic token
 const token = await client.getClientAccessToken();
-console.log(token.url);  // wss://...?access_token=...
+console.log(token.url); // wss://...?access_token=...
 
 // Token with user ID
 const userToken = await client.getClientAccessToken({
@@ -77,9 +77,9 @@ const permToken = await client.getClientAccessToken({
   roles: [
     "webpubsub.joinLeaveGroup",
     "webpubsub.sendToGroup",
-    "webpubsub.sendToGroup.chat-room",  // specific group
+    "webpubsub.sendToGroup.chat-room", // specific group
   ],
-  groups: ["chat-room"],  // auto-join on connect
+  groups: ["chat-room"], // auto-join on connect
   expirationTimeInMinutes: 60,
 });
 ```
@@ -98,9 +98,12 @@ await client.sendToUser("user123", { message: "Hello!" });
 await client.sendToConnection("connectionId", { data: "Direct message" });
 
 // Send with filter (OData syntax)
-await client.sendToAll({ message: "Filtered" }, {
-  filter: "userId ne 'admin'",
-});
+await client.sendToAll(
+  { message: "Filtered" },
+  {
+    filter: "userId ne 'admin'",
+  },
+);
 ```
 
 ### Group Management
@@ -135,8 +138,12 @@ await client.closeUserConnections("user123");
 await client.closeAllConnections();
 
 // Permissions
-await client.grantPermission("connectionId", "sendToGroup", { targetName: "chat" });
-await client.revokePermission("connectionId", "sendToGroup", { targetName: "chat" });
+await client.grantPermission("connectionId", "sendToGroup", {
+  targetName: "chat",
+});
+await client.revokePermission("connectionId", "sendToGroup", {
+  targetName: "chat",
+});
 ```
 
 ## Client-Side: WebPubSubClient
@@ -178,11 +185,15 @@ await client.joinGroup("chat-room");
 
 // Send to group
 await client.sendToGroup("chat-room", "Hello!", "text");
-await client.sendToGroup("chat-room", { type: "message", content: "Hi" }, "json");
+await client.sendToGroup(
+  "chat-room",
+  { type: "message", content: "Hi" },
+  "json",
+);
 
 // Send options
 await client.sendToGroup("chat-room", "Hello", "text", {
-  noEcho: true,        // Don't echo back to sender
+  noEcho: true, // Don't echo back to sender
   fireAndForget: true, // Don't wait for ack
 });
 
@@ -208,7 +219,9 @@ client.on("stopped", () => {
 
 // Messages
 client.on("group-message", (e) => {
-  console.log(`[${e.message.group}] ${e.message.fromUserId}: ${e.message.data}`);
+  console.log(
+    `[${e.message.group}] ${e.message.fromUserId}: ${e.message.data}`,
+  );
 });
 
 client.on("server-message", (e) => {
@@ -231,7 +244,7 @@ const app = express();
 
 const handler = new WebPubSubEventHandler("chat", {
   path: "/api/webpubsub/hubs/chat/",
-  
+
   // Blocking: approve/reject connection
   handleConnect: (req, res) => {
     if (!req.claims?.sub) {
@@ -244,18 +257,18 @@ const handler = new WebPubSubEventHandler("chat", {
       roles: ["webpubsub.sendToGroup"],
     });
   },
-  
+
   // Blocking: handle custom events
   handleUserEvent: (req, res) => {
     console.log(`Event from ${req.context.userId}:`, req.data);
     res.success(`Received: ${req.data}`, "text");
   },
-  
+
   // Non-blocking
   onConnected: (req) => {
     console.log(`Client connected: ${req.context.connectionId}`);
   },
-  
+
   onDisconnected: (req) => {
     console.log(`Client disconnected: ${req.context.connectionId}`);
   },
@@ -312,4 +325,5 @@ import {
 6. **Use noEcho** - Prevent message echo back to sender when needed
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

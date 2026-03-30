@@ -10,7 +10,7 @@ interface PageLoaderProps {
 
 export const PageLoader: React.FC<PageLoaderProps> = ({
   isLoading,
-  message = "Sedang merajut masa depan indah kita..."
+  message = 'Sedang merajut masa depan indah kita...',
 }) => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [mounted, setMounted] = useState(false);
@@ -41,14 +41,14 @@ export const PageLoader: React.FC<PageLoaderProps> = ({
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-99999 flex items-center justify-center bg-white/95 backdrop-blur-3xl"
         >
-          <div className="flex flex-col items-center gap-12 p-12 max-w-lg text-center transform-gpu">
+          <div className="flex max-w-lg transform-gpu flex-col items-center gap-12 p-12 text-center">
             {/* Main Animation Container */}
             <div className="relative">
               {/* Spinning Ring */}
               <motion.div
                 animate={{ rotate: 360 }}
-                transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                className="w-48 h-48 rounded-full border-4 border-transparent border-t-pink-500 border-b-blue-400 opacity-30 shadow-2xl shadow-pink-500/20"
+                transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+                className="h-48 w-48 rounded-full border-4 border-transparent border-t-pink-500 border-b-blue-400 opacity-30 shadow-2xl shadow-pink-500/20"
               />
 
               {/* Floating Icons */}
@@ -56,16 +56,16 @@ export const PageLoader: React.FC<PageLoaderProps> = ({
                 <motion.div
                   animate={{
                     scale: [1, 1.25, 1],
-                    y: [0, -15, 0]
+                    y: [0, -15, 0],
                   }}
                   transition={{
                     duration: 2.5,
                     repeat: Infinity,
-                    ease: "easeInOut"
+                    ease: 'easeInOut',
                   }}
-                  className="bg-white p-8 rounded-full shadow-[0_0_60px_rgba(236,72,153,0.4)] border border-pink-50"
+                  className="rounded-full border border-pink-50 bg-white p-8 shadow-[0_0_60px_rgba(236,72,153,0.4)]"
                 >
-                  <Heart className="w-16 h-16 text-pink-500 fill-pink-500" />
+                  <Heart className="h-16 w-16 fill-pink-500 text-pink-500" />
                 </motion.div>
               </div>
 
@@ -74,23 +74,29 @@ export const PageLoader: React.FC<PageLoaderProps> = ({
                 <motion.div
                   key={i}
                   animate={{
-                    rotate: [0, 360]
+                    rotate: [0, 360],
                   }}
                   transition={{
                     duration: 12 + i * 2,
                     repeat: Infinity,
-                    ease: "linear"
+                    ease: 'linear',
                   }}
-                  className="absolute inset-0 pointer-events-none"
+                  className="pointer-events-none absolute inset-0"
                 >
                   <motion.div
                     animate={{ scale: [1, 1.4, 1] }}
-                    transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.4 }}
-                    style={{ transform: `rotate(${angle}deg) translateY(-85px)` }}
+                    transition={{
+                      duration: 2.5,
+                      repeat: Infinity,
+                      delay: i * 0.4,
+                    }}
+                    style={{
+                      transform: `rotate(${angle}deg) translateY(-85px)`,
+                    }}
                     className="absolute"
                   >
-                    <div className="bg-white p-2 rounded-full shadow-lg text-blue-400 border border-blue-50">
-                      <Heart className="w-5 h-5 fill-current" />
+                    <div className="rounded-full border border-blue-50 bg-white p-2 text-blue-400 shadow-lg">
+                      <Heart className="h-5 w-5 fill-current" />
                     </div>
                   </motion.div>
                 </motion.div>
@@ -102,7 +108,7 @@ export const PageLoader: React.FC<PageLoaderProps> = ({
               <motion.h3
                 animate={{ opacity: [0.6, 1, 0.6] }}
                 transition={{ duration: 2.5, repeat: Infinity }}
-                className="font-script text-6xl text-slate-800 leading-normal"
+                className="font-script text-6xl leading-normal text-slate-800"
               >
                 Sebentar Ya Sayangku...
               </motion.h3>
@@ -116,12 +122,15 @@ export const PageLoader: React.FC<PageLoaderProps> = ({
                     exit={{ opacity: 0, y: -15 }}
                     className="flex flex-col items-center gap-3"
                   >
-                    <div className="flex items-center gap-3 text-amber-600 font-bold bg-amber-50 px-6 py-3 rounded-full border border-amber-100 shadow-sm">
-                      <WifiOff className="w-5 h-5" />
-                      <span className="text-lg">Sinyalnya Lagi Ngambek Nih 🥺</span>
+                    <div className="flex items-center gap-3 rounded-full border border-amber-100 bg-amber-50 px-6 py-3 font-bold text-amber-600 shadow-sm">
+                      <WifiOff className="h-5 w-5" />
+                      <span className="text-lg">
+                        Sinyalnya Lagi Ngambek Nih 🥺
+                      </span>
                     </div>
-                    <p className="text-sm text-slate-400 font-medium italic px-10">
-                      Sabar ya cintaku, aku lagi usaha sekuat tenaga hubungin dunia luar buat kamu...
+                    <p className="px-10 text-sm font-medium text-slate-400 italic">
+                      Sabar ya cintaku, aku lagi usaha sekuat tenaga hubungin
+                      dunia luar buat kamu...
                     </p>
                   </motion.div>
                 ) : (
@@ -130,7 +139,7 @@ export const PageLoader: React.FC<PageLoaderProps> = ({
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -15 }}
-                    className="text-slate-500 font-bold tracking-widest text-base uppercase px-12 leading-relaxed"
+                    className="px-12 text-base leading-relaxed font-bold tracking-widest text-slate-500 uppercase"
                   >
                     {message}
                   </motion.p>

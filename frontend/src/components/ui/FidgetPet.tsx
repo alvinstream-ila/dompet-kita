@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 import { Heart, Sparkles, Star, Ghost, Cat, Rabbit } from 'lucide-react';
 
 type PetType = 'rabbit' | 'cat' | 'ghost';
@@ -30,7 +30,7 @@ export const FidgetPet: React.FC = () => {
       x: (Math.random() - 0.5) * 120,
       y: (Math.random() - 0.5) * 120 - 40,
       rotate: Math.random() * 360,
-      type: Math.floor(Math.random() * 3)
+      type: Math.floor(Math.random() * 3),
     }));
     setParticles(newParticles);
     setIsHappy(true);
@@ -43,23 +43,32 @@ export const FidgetPet: React.FC = () => {
 
   const getPetIcon = () => {
     switch (petType) {
-      case 'rabbit': return <Rabbit className="w-8 h-8" />;
-      case 'cat': return <Cat className="w-8 h-8" />;
-      case 'ghost': return <Ghost className="w-8 h-8" />;
+      case 'rabbit':
+        return <Rabbit className="h-8 w-8" />;
+      case 'cat':
+        return <Cat className="h-8 w-8" />;
+      case 'ghost':
+        return <Ghost className="h-8 w-8" />;
     }
   };
 
   const getPetColor = () => {
     switch (petType) {
-      case 'rabbit': return 'from-pink-400 to-rose-400';
-      case 'cat': return 'from-amber-400 to-orange-400';
-      case 'ghost': return 'from-blue-300 to-indigo-300';
+      case 'rabbit':
+        return 'from-pink-400 to-rose-400';
+      case 'cat':
+        return 'from-amber-400 to-orange-400';
+      case 'ghost':
+        return 'from-blue-300 to-indigo-300';
     }
   };
 
   return (
-    <div ref={constraintsRef} className="fixed inset-0 z-50 pointer-events-none overflow-hidden">
-      <div className="absolute bottom-28 right-6 pointer-events-auto">
+    <div
+      ref={constraintsRef}
+      className="pointer-events-none fixed inset-0 z-50 overflow-hidden"
+    >
+      <div className="pointer-events-auto absolute right-6 bottom-28">
         <motion.div
           drag
           dragConstraints={constraintsRef}
@@ -77,26 +86,26 @@ export const FidgetPet: React.FC = () => {
               y: isHappy ? [0, -40, 0] : [0, -15, 0],
               scaleX: isHappy ? [1, 1.4, 0.8, 1] : [1, 1.05, 1],
               scaleY: isHappy ? [1, 0.6, 1.3, 1] : [1, 0.95, 1],
-              rotate: isHappy ? [0, 15, -15, 0] : [0, -3, 3, 0]
+              rotate: isHappy ? [0, 15, -15, 0] : [0, -3, 3, 0],
             }}
             transition={{
               duration: isHappy ? 0.4 : 3,
               repeat: isHappy ? 0 : Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
             className={cn(
-              "w-18 h-18 rounded-[28px] flex items-center justify-center text-white shadow-[0_20px_50px_rgba(0,0,0,0.2)] relative",
-              "bg-linear-to-br ring-4 ring-white/30 backdrop-blur-sm",
+              'relative flex h-18 w-18 items-center justify-center rounded-[28px] text-white shadow-[0_20px_50px_rgba(0,0,0,0.2)]',
+              'bg-linear-to-br ring-4 ring-white/30 backdrop-blur-sm',
               getPetColor()
             )}
           >
             {/* Crown/Ear Accessory */}
-            <motion.div 
+            <motion.div
               animate={{ y: [0, -5, 0], rotate: [0, 5, -5, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
               className="absolute -top-4 text-amber-300 drop-shadow-md"
             >
-              <Star className="w-6 h-6 fill-amber-300" />
+              <Star className="h-6 w-6 fill-amber-300" />
             </motion.div>
 
             {/* Explosive Particles on click */}
@@ -107,18 +116,22 @@ export const FidgetPet: React.FC = () => {
                     <motion.div
                       key={i}
                       initial={{ scale: 0, opacity: 0, x: 0, y: 0 }}
-                      animate={{ 
-                        scale: [0, 1.5, 0], 
-                        opacity: [0, 1, 0], 
-                        x: p.x, 
+                      animate={{
+                        scale: [0, 1.5, 0],
+                        opacity: [0, 1, 0],
+                        x: p.x,
                         y: p.y,
-                        rotate: p.rotate
+                        rotate: p.rotate,
                       }}
-                      className="absolute pointer-events-none"
+                      className="pointer-events-none absolute"
                     >
-                      {p.type === 0 ? <Heart className="w-5 h-5 fill-white text-white" /> : 
-                       p.type === 1 ? <Sparkles className="w-6 h-6 text-amber-200" /> : 
-                       <Star className="w-4 h-4 text-white fill-white" />}
+                      {p.type === 0 ? (
+                        <Heart className="h-5 w-5 fill-white text-white" />
+                      ) : p.type === 1 ? (
+                        <Sparkles className="h-6 w-6 text-amber-200" />
+                      ) : (
+                        <Star className="h-4 w-4 fill-white text-white" />
+                      )}
                     </motion.div>
                   ))}
                 </>
@@ -126,32 +139,48 @@ export const FidgetPet: React.FC = () => {
             </AnimatePresence>
 
             {/* Inner glow effect */}
-            <div className="absolute inset-0 rounded-[28px] overflow-hidden">
-               <div className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] bg-white/20 rotate-45" />
+            <div className="absolute inset-0 overflow-hidden rounded-[28px]">
+              <div className="absolute -top-[50%] -left-[50%] h-[200%] w-[200%] rotate-45 bg-white/20" />
             </div>
-            
+
             {/* Pet Face */}
-            <div className="relative z-10 drop-shadow-lg group-hover:scale-110 transition-transform">
+            <div className="relative z-10 drop-shadow-lg transition-transform group-hover:scale-110">
               {getPetIcon()}
             </div>
 
             {/* More Expressive Eyes */}
-            <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full flex items-center justify-center gap-3">
-               <motion.div 
-                 animate={isHappy ? { height: [6, 2, 6], scaleX: 1.5 } : { height: [6, 6, 1, 6] }} 
-                 transition={{ duration: isHappy ? 0.2 : 4, repeat: Infinity, repeatDelay: isHappy ? 0 : 3 }}
-                 className="w-2 h-2 bg-slate-900/60 rounded-full" 
-               />
-               <motion.div 
-                 animate={isHappy ? { height: [6, 2, 6], scaleX: 1.5 } : { height: [6, 6, 1, 6] }} 
-                 transition={{ duration: isHappy ? 0.2 : 4, repeat: Infinity, repeatDelay: isHappy ? 0 : 3 }}
-                 className="w-2 h-2 bg-slate-900/60 rounded-full" 
-               />
+            <div className="absolute top-[45%] left-1/2 flex h-full w-full -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-3">
+              <motion.div
+                animate={
+                  isHappy
+                    ? { height: [6, 2, 6], scaleX: 1.5 }
+                    : { height: [6, 6, 1, 6] }
+                }
+                transition={{
+                  duration: isHappy ? 0.2 : 4,
+                  repeat: Infinity,
+                  repeatDelay: isHappy ? 0 : 3,
+                }}
+                className="h-2 w-2 rounded-full bg-slate-900/60"
+              />
+              <motion.div
+                animate={
+                  isHappy
+                    ? { height: [6, 2, 6], scaleX: 1.5 }
+                    : { height: [6, 6, 1, 6] }
+                }
+                transition={{
+                  duration: isHappy ? 0.2 : 4,
+                  repeat: Infinity,
+                  repeatDelay: isHappy ? 0 : 3,
+                }}
+                className="h-2 w-2 rounded-full bg-slate-900/60"
+              />
             </div>
           </motion.div>
 
           {/* Shadow behind pet */}
-          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-10 h-2 bg-black/10 blur-md rounded-full -z-10" />
+          <div className="absolute -bottom-2 left-1/2 -z-10 h-2 w-10 -translate-x-1/2 rounded-full bg-black/10 blur-md" />
         </motion.div>
       </div>
     </div>

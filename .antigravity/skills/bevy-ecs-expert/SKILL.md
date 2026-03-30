@@ -103,7 +103,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         Player,
         Velocity { x: 10.0, y: 0.0 },
-        Sprite::from_image(asset_server.load("player.png")), 
+        Sprite::from_image(asset_server.load("player.png")),
     ));
 }
 ```

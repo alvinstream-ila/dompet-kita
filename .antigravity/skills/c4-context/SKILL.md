@@ -3,7 +3,7 @@ name: c4-context
 description: Expert C4 Context-level documentation specialist. Creates high-level system context diagrams, documents personas, user journeys, system features, and external dependencies.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # C4 Context Level: System Context
@@ -84,7 +84,8 @@ date_added: '2026-02-27'
 
 - Container Documentation
 - Component Documentation
-```
+
+````
 
 ## Context Diagram Template
 
@@ -106,7 +107,7 @@ C4Context
     Rel(system, external1, "Uses", "API")
     Rel(system, external2, "Sends events to")
     Rel(system, externalDb, "Reads from and writes to")
-```
+````
 
 **Key Principles** (from [c4model.com](https://c4model.com/diagrams/system-context)):
 

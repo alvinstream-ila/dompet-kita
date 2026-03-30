@@ -39,15 +39,15 @@ client = AIProjectClient(
 
 ## Client Operations Overview
 
-| Operation | Access | Purpose |
-|-----------|--------|---------|
-| `client.agents` | `.agents.*` | Agent CRUD, versions, threads, runs |
-| `client.connections` | `.connections.*` | List/get project connections |
-| `client.deployments` | `.deployments.*` | List model deployments |
-| `client.datasets` | `.datasets.*` | Dataset management |
-| `client.indexes` | `.indexes.*` | Index management |
-| `client.evaluations` | `.evaluations.*` | Run evaluations |
-| `client.red_teams` | `.red_teams.*` | Red team operations |
+| Operation            | Access           | Purpose                             |
+| -------------------- | ---------------- | ----------------------------------- |
+| `client.agents`      | `.agents.*`      | Agent CRUD, versions, threads, runs |
+| `client.connections` | `.connections.*` | List/get project connections        |
+| `client.deployments` | `.deployments.*` | List model deployments              |
+| `client.datasets`    | `.datasets.*`    | Dataset management                  |
+| `client.indexes`     | `.indexes.*`     | Index management                    |
+| `client.evaluations` | `.evaluations.*` | Run evaluations                     |
+| `client.red_teams`   | `.red_teams.*`   | Red team operations                 |
 
 ## Two Client Approaches
 
@@ -128,17 +128,17 @@ See references/agents.md for detailed agent patterns.
 
 ## Tools Overview
 
-| Tool | Class | Use Case |
-|------|-------|----------|
-| Code Interpreter | `CodeInterpreterTool` | Execute Python, generate files |
-| File Search | `FileSearchTool` | RAG over uploaded documents |
-| Bing Grounding | `BingGroundingTool` | Web search (requires connection) |
-| Azure AI Search | `AzureAISearchTool` | Search your indexes |
-| Function Calling | `FunctionTool` | Call your Python functions |
-| OpenAPI | `OpenApiTool` | Call REST APIs |
-| MCP | `McpTool` | Model Context Protocol servers |
-| Memory Search | `MemorySearchTool` | Search agent memory stores |
-| SharePoint | `SharepointGroundingTool` | Search SharePoint content |
+| Tool             | Class                     | Use Case                         |
+| ---------------- | ------------------------- | -------------------------------- |
+| Code Interpreter | `CodeInterpreterTool`     | Execute Python, generate files   |
+| File Search      | `FileSearchTool`          | RAG over uploaded documents      |
+| Bing Grounding   | `BingGroundingTool`       | Web search (requires connection) |
+| Azure AI Search  | `AzureAISearchTool`       | Search your indexes              |
+| Function Calling | `FunctionTool`            | Call your Python functions       |
+| OpenAPI          | `OpenApiTool`             | Call REST APIs                   |
+| MCP              | `McpTool`                 | Model Context Protocol servers   |
+| Memory Search    | `MemorySearchTool`        | Search agent memory stores       |
+| SharePoint       | `SharepointGroundingTool` | Search SharePoint content        |
 
 See references/tools.md for all tool patterns.
 
@@ -271,16 +271,16 @@ agent = client.agents.create_agent(
 
 ## SDK Comparison
 
-| Feature | `azure-ai-projects` | `azure-ai-agents` |
-|---------|---------------------|-------------------|
-| Level | High-level (Foundry) | Low-level (Agents) |
-| Client | `AIProjectClient` | `AgentsClient` |
-| Versioning | `create_version()` | Not available |
-| Connections | Yes | No |
-| Deployments | Yes | No |
-| Datasets/Indexes | Yes | No |
-| Evaluation | Via OpenAI client | No |
-| When to use | Full Foundry integration | Standalone agent apps |
+| Feature          | `azure-ai-projects`      | `azure-ai-agents`     |
+| ---------------- | ------------------------ | --------------------- |
+| Level            | High-level (Foundry)     | Low-level (Agents)    |
+| Client           | `AIProjectClient`        | `AgentsClient`        |
+| Versioning       | `create_version()`       | Not available         |
+| Connections      | Yes                      | No                    |
+| Deployments      | Yes                      | No                    |
+| Datasets/Indexes | Yes                      | No                    |
+| Evaluation       | Via OpenAI client        | No                    |
+| When to use      | Full Foundry integration | Standalone agent apps |
 
 ## Reference Files
 
@@ -297,4 +297,5 @@ agent = client.agents.create_agent(
 - scripts/run_batch_evaluation.py: CLI tool for batch evaluations
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

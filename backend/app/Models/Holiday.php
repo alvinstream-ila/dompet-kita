@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasUserScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Holiday extends Model
 {
+    use HasUserScope;
+
     protected $fillable = [
         'user_id',
         'destination',
@@ -24,9 +27,4 @@ class Holiday extends Model
         'start_date' => 'datetime',
         'end_date' => 'datetime',
     ];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 }

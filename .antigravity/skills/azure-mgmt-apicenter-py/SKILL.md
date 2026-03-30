@@ -3,7 +3,7 @@ name: azure-mgmt-apicenter-py
 description: Azure API Center Management SDK for Python. Use for managing API inventory, metadata, and governance across your organization.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure API Center Management SDK for Python
@@ -215,22 +215,22 @@ metadata = client.metadata_schemas.create_or_update(
 
 ## Client Types
 
-| Client | Purpose |
-|--------|---------|
+| Client                | Purpose                        |
+| --------------------- | ------------------------------ |
 | `ApiCenterMgmtClient` | Main client for all operations |
 
 ## Operations
 
-| Operation Group | Purpose |
-|----------------|---------|
-| `services` | API Center service management |
-| `workspaces` | Workspace management |
-| `apis` | API registration and management |
-| `api_versions` | API version management |
-| `api_definitions` | API definition management |
-| `deployments` | Deployment tracking |
-| `environments` | Environment management |
-| `metadata_schemas` | Custom metadata definitions |
+| Operation Group    | Purpose                         |
+| ------------------ | ------------------------------- |
+| `services`         | API Center service management   |
+| `workspaces`       | Workspace management            |
+| `apis`             | API registration and management |
+| `api_versions`     | API version management          |
+| `api_definitions`  | API definition management       |
+| `deployments`      | Deployment tracking             |
+| `environments`     | Environment management          |
+| `metadata_schemas` | Custom metadata definitions     |
 
 ## Best Practices
 
@@ -242,4 +242,5 @@ metadata = client.metadata_schemas.create_or_update(
 6. **Add contacts** for API ownership and support
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

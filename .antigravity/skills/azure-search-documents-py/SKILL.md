@@ -3,7 +3,7 @@ name: azure-search-documents-py
 description: Azure AI Search SDK for Python. Use for vector search, hybrid search, semantic ranking, indexing, and skillsets.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure AI Search SDK for Python
@@ -54,10 +54,10 @@ client = SearchClient(
 
 ## Client Types
 
-| Client | Purpose |
-|--------|---------|
-| `SearchClient` | Search and document operations |
-| `SearchIndexClient` | Index management, synonym maps |
+| Client                | Purpose                           |
+| --------------------- | --------------------------------- |
+| `SearchClient`        | Search and document operations    |
+| `SearchIndexClient`   | Index management, synonym maps    |
 | `SearchIndexerClient` | Indexers, data sources, skillsets |
 
 ## Create Index with Vector Field
@@ -307,12 +307,11 @@ indexer_client.create_or_update_indexer(indexer)
 
 ## Reference Files
 
-| File | Contents |
-|------|----------|
-| references/vector-search.md | HNSW configuration, integrated vectorization, multi-vector queries |
-| references/semantic-ranking.md | Semantic configuration, captions, answers, hybrid patterns |
-| scripts/setup_vector_index.py | CLI script to create vector-enabled search index |
-
+| File                           | Contents                                                           |
+| ------------------------------ | ------------------------------------------------------------------ |
+| references/vector-search.md    | HNSW configuration, integrated vectorization, multi-vector queries |
+| references/semantic-ranking.md | Semantic configuration, captions, answers, hybrid patterns         |
+| scripts/setup_vector_index.py  | CLI script to create vector-enabled search index                   |
 
 ---
 
@@ -340,6 +339,7 @@ AZURE_SEARCH_API_KEY=<api-key>
 ## Authentication
 
 **DefaultAzureCredential (preferred)**:
+
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
@@ -349,6 +349,7 @@ client = SearchClient(endpoint, index_name, credential)
 ```
 
 **API Key**:
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
@@ -358,12 +359,12 @@ client = SearchClient(endpoint, index_name, AzureKeyCredential(api_key))
 
 ## Client Selection
 
-| Client | Purpose |
-|--------|---------|
-| `SearchClient` | Query indexes, upload/update/delete documents |
-| `SearchIndexClient` | Create/manage indexes, knowledge sources, knowledge bases |
-| `SearchIndexerClient` | Manage indexers, skillsets, data sources |
-| `KnowledgeBaseRetrievalClient` | Agentic retrieval with LLM-powered Q&A |
+| Client                         | Purpose                                                   |
+| ------------------------------ | --------------------------------------------------------- |
+| `SearchClient`                 | Query indexes, upload/update/delete documents             |
+| `SearchIndexClient`            | Create/manage indexes, knowledge sources, knowledge bases |
+| `SearchIndexerClient`          | Manage indexers, skillsets, data sources                  |
+| `KnowledgeBaseRetrievalClient` | Agentic retrieval with LLM-powered Q&A                    |
 
 ## Index Creation Pattern
 
@@ -473,6 +474,7 @@ results = search_client.search(
 For LLM-powered Q&A with answer synthesis, see references/agentic-retrieval.md.
 
 Key concepts:
+
 - **Knowledge Source**: Points to a search index
 - **Knowledge Base**: Wraps knowledge sources + LLM for query planning and synthesis
 - **Output modes**: `EXTRACTIVE_DATA` (raw chunks) or `ANSWER_SYNTHESIS` (LLM-generated answers)
@@ -499,16 +501,16 @@ async with SearchClient(endpoint, index_name, credential) as client:
 
 ## Field Types Reference
 
-| EDM Type | Python | Notes |
-|----------|--------|-------|
-| `Edm.String` | str | Searchable text |
-| `Edm.Int32` | int | Integer |
-| `Edm.Int64` | int | Long integer |
-| `Edm.Double` | float | Floating point |
-| `Edm.Boolean` | bool | True/False |
-| `Edm.DateTimeOffset` | datetime | ISO 8601 |
+| EDM Type                 | Python      | Notes             |
+| ------------------------ | ----------- | ----------------- |
+| `Edm.String`             | str         | Searchable text   |
+| `Edm.Int32`              | int         | Integer           |
+| `Edm.Int64`              | int         | Long integer      |
+| `Edm.Double`             | float       | Floating point    |
+| `Edm.Boolean`            | bool        | True/False        |
+| `Edm.DateTimeOffset`     | datetime    | ISO 8601          |
 | `Collection(Edm.Single)` | List[float] | Vector embeddings |
-| `Collection(Edm.String)` | List[str] | String arrays |
+| `Collection(Edm.String)` | List[str]   | String arrays     |
 
 ## Error Handling
 
@@ -528,4 +530,5 @@ except HttpResponseError as e:
 ```
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

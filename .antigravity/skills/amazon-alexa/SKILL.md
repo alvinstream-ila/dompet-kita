@@ -3,20 +3,20 @@ name: amazon-alexa
 description: Integracao completa com Amazon Alexa para criar skills de voz inteligentes, transformar Alexa em assistente com Claude como cerebro (projeto Auri) e integrar com AWS ecosystem (Lambda, DynamoDB,...
 risk: safe
 source: community
-date_added: '2026-03-06'
+date_added: "2026-03-06"
 author: renat
 tags:
-- voice
-- alexa
-- aws
-- smart-home
-- iot
+  - voice
+  - alexa
+  - aws
+  - smart-home
+  - iot
 tools:
-- claude-code
-- antigravity
-- cursor
-- gemini-cli
-- codex-cli
+  - claude-code
+  - antigravity
+  - cursor
+  - gemini-cli
+  - codex-cli
 ---
 
 # AMAZON ALEXA — Voz Inteligente com Claude
@@ -58,17 +58,17 @@ Integracao completa com Amazon Alexa para criar skills de voz inteligentes, tran
 
 ## Componentes Da Arquitetura Auri
 
-| Componente | Servico AWS | Funcao |
-|-----------|-------------|--------|
-| Voz → Texto | Alexa ASR nativo | Reconhecimento de fala |
-| NLU | ASK Interaction Model + Lex V2 | Extrair intent e slots |
-| Backend | AWS Lambda (Python/Node.js) | Logica e orquestracao |
-| LLM | Claude API (Anthropic) | Inteligencia e respostas |
-| Persistencia | Amazon DynamoDB | Historico e preferencias |
-| Texto → Voz | Amazon Polly (neural) | Fala natural da Auri |
-| Interface Visual | APL (Alexa Presentation Language) | Telas em Echo Show |
-| Smart Home | Alexa Smart Home API | Controle de dispositivos |
-| Automacao | Alexa Routines API | Rotinas inteligentes |
+| Componente       | Servico AWS                       | Funcao                   |
+| ---------------- | --------------------------------- | ------------------------ |
+| Voz → Texto      | Alexa ASR nativo                  | Reconhecimento de fala   |
+| NLU              | ASK Interaction Model + Lex V2    | Extrair intent e slots   |
+| Backend          | AWS Lambda (Python/Node.js)       | Logica e orquestracao    |
+| LLM              | Claude API (Anthropic)            | Inteligencia e respostas |
+| Persistencia     | Amazon DynamoDB                   | Historico e preferencias |
+| Texto → Voz      | Amazon Polly (neural)             | Fala natural da Auri     |
+| Interface Visual | APL (Alexa Presentation Language) | Telas em Echo Show       |
+| Smart Home       | Alexa Smart Home API              | Controle de dispositivos |
+| Automacao        | Alexa Routines API                | Rotinas inteligentes     |
 
 ---
 
@@ -90,13 +90,13 @@ aws configure
 ## Criar Skill Com Template
 
 ask new \
-  --template hello-world \
-  --skill-name auri \
-  --language pt-BR
+ --template hello-world \
+ --skill-name auri \
+ --language pt-BR
 
 ## └── .Ask/Ask-Resources.Json
 
-```
+````
 
 ## 2.3 Configurar Invocation Name
 
@@ -109,7 +109,7 @@ No arquivo `models/pt-BR.json`:
     }
   }
 }
-```
+````
 
 ---
 
@@ -121,13 +121,13 @@ No arquivo `models/pt-BR.json`:
     "languageModel": {
       "invocationName": "auri",
       "intents": [
-        {"name": "AMAZON.HelpIntent"},
-        {"name": "AMAZON.StopIntent"},
-        {"name": "AMAZON.CancelIntent"},
-        {"name": "AMAZON.FallbackIntent"},
+        { "name": "AMAZON.HelpIntent" },
+        { "name": "AMAZON.StopIntent" },
+        { "name": "AMAZON.CancelIntent" },
+        { "name": "AMAZON.FallbackIntent" },
         {
           "name": "ChatIntent",
-          "slots": [{"name": "query", "type": "AMAZON.SearchQuery"}],
+          "slots": [{ "name": "query", "type": "AMAZON.SearchQuery" }],
           "samples": [
             "{query}",
             "me ajuda com {query}",
@@ -140,8 +140,8 @@ No arquivo `models/pt-BR.json`:
         {
           "name": "SmartHomeIntent",
           "slots": [
-            {"name": "device", "type": "AMAZON.Room"},
-            {"name": "action", "type": "ActionType"}
+            { "name": "device", "type": "AMAZON.Room" },
+            { "name": "action", "type": "ActionType" }
           ],
           "samples": [
             "{action} a {device}",
@@ -152,7 +152,7 @@ No arquivo `models/pt-BR.json`:
         },
         {
           "name": "RoutineIntent",
-          "slots": [{"name": "routine", "type": "RoutineType"}],
+          "slots": [{ "name": "routine", "type": "RoutineType" }],
           "samples": [
             "ativa rotina {routine}",
             "executa {routine}",
@@ -164,17 +164,36 @@ No arquivo `models/pt-BR.json`:
         {
           "name": "ActionType",
           "values": [
-            {"name": {"value": "liga", "synonyms": ["acende", "ativa", "liga"]}},
-            {"name": {"value": "desliga", "synonyms": ["apaga", "desativa", "desliga"]}}
+            {
+              "name": {
+                "value": "liga",
+                "synonyms": ["acende", "ativa", "liga"]
+              }
+            },
+            {
+              "name": {
+                "value": "desliga",
+                "synonyms": ["apaga", "desativa", "desliga"]
+              }
+            }
           ]
         },
         {
           "name": "RoutineType",
           "values": [
-            {"name": {"value": "bom dia", "synonyms": ["acordar", "manhã"]}},
-            {"name": {"value": "boa noite", "synonyms": ["dormir", "descansar"]}},
-            {"name": {"value": "trabalho", "synonyms": ["trabalhar", "foco"]}},
-            {"name": {"value": "sair", "synonyms": ["saindo", "goodbye"]}}
+            {
+              "name": { "value": "bom dia", "synonyms": ["acordar", "manhã"] }
+            },
+            {
+              "name": {
+                "value": "boa noite",
+                "synonyms": ["dormir", "descansar"]
+              }
+            },
+            {
+              "name": { "value": "trabalho", "synonyms": ["trabalhar", "foco"] }
+            },
+            { "name": { "value": "sair", "synonyms": ["saindo", "goodbye"] } }
           ]
         }
       ]
@@ -251,19 +270,23 @@ def chat_handler(handler_input: HandlerInput) -> Response:
 ## 4.2 Variaveis De Ambiente Lambda
 
 ```
-ANTHROPIC_API_KEY=sk-...  (armazenar em Secrets Manager)
+
+ANTHROPIC_API_KEY=sk-... (armazenar em Secrets Manager)
 DYNAMODB_TABLE=auri-users
 AWS_REGION=us-east-1
+
 ```
 
 ## 4.3 Requirements.Txt
 
 ```
+
 ask-sdk-core>=1.19.0
 ask-sdk-dynamodb-persistence-adapter>=1.19.0
 anthropic>=0.40.0
 boto3>=1.34.0
-```
+
+````
 
 ---
 
@@ -276,7 +299,7 @@ aws dynamodb create-table \
   --key-schema AttributeName=userId,KeyType=HASH \
   --billing-mode PAY_PER_REQUEST \
   --region us-east-1
-```
+````
 
 ## 5.2 Schema Do Usuario
 
@@ -285,8 +308,8 @@ aws dynamodb create-table \
   "userId": "amzn1.ask.account.XXXXX",
   "name": "Joao",
   "history": [
-    {"role": "user", "content": "..."},
-    {"role": "assistant", "content": "..."}
+    { "role": "user", "content": "..." },
+    { "role": "assistant", "content": "..." }
   ],
   "preferences": {
     "language": "pt-BR",
@@ -316,12 +339,12 @@ attrs["ttl"] = int(time.time()) + (180 * 24 * 3600)
 
 ## 6.1 Vozes Disponiveis (Portugues)
 
-| Voice | Idioma | Tipo | Recomendado |
-|-------|--------|------|-------------|
-| `Vitoria` | pt-BR | Neural | ✅ Auri PT-BR |
-| `Camila` | pt-BR | Neural | Alternativa |
-| `Ricardo` | pt-BR | Standard | Masculino |
-| `Ines` | pt-PT | Neural | Portugal |
+| Voice     | Idioma | Tipo     | Recomendado   |
+| --------- | ------ | -------- | ------------- |
+| `Vitoria` | pt-BR  | Neural   | ✅ Auri PT-BR |
+| `Camila`  | pt-BR  | Neural   | Alternativa   |
+| `Ricardo` | pt-BR  | Standard | Masculino     |
+| `Ines`    | pt-PT  | Neural   | Portugal      |
 
 ## 6.2 Integrar Polly Na Resposta
 
@@ -372,39 +395,41 @@ def speak_with_polly(handler_input, text, voice_id="Vitoria"):
   "theme": "dark",
   "mainTemplate": {
     "parameters": ["payload"],
-    "items": [{
-      "type": "Container",
-      "width": "100%",
-      "height": "100%",
-      "backgroundColor": "#1a1a2e",
-      "items": [
-        {
-          "type": "Text",
-          "text": "AURI",
-          "fontSize": "32px",
-          "color": "#e94560",
-          "textAlign": "center",
-          "paddingTop": "20px"
-        },
-        {
-          "type": "Text",
-          "text": "${payload.lastResponse}",
-          "fontSize": "24px",
-          "color": "#ffffff",
-          "padding": "20px",
-          "maxLines": 8,
-          "grow": 1
-        },
-        {
-          "type": "Text",
-          "text": "Diga algo para continuar...",
-          "fontSize": "18px",
-          "color": "#888888",
-          "textAlign": "center",
-          "paddingBottom": "20px"
-        }
-      ]
-    }]
+    "items": [
+      {
+        "type": "Container",
+        "width": "100%",
+        "height": "100%",
+        "backgroundColor": "#1a1a2e",
+        "items": [
+          {
+            "type": "Text",
+            "text": "AURI",
+            "fontSize": "32px",
+            "color": "#e94560",
+            "textAlign": "center",
+            "paddingTop": "20px"
+          },
+          {
+            "type": "Text",
+            "text": "${payload.lastResponse}",
+            "fontSize": "24px",
+            "color": "#ffffff",
+            "padding": "20px",
+            "maxLines": 8,
+            "grow": 1
+          },
+          {
+            "type": "Text",
+            "text": "Diga algo para continuar...",
+            "fontSize": "18px",
+            "color": "#888888",
+            "textAlign": "center",
+            "paddingBottom": "20px"
+          }
+        ]
+      }
+    ]
   }
 }
 ```
@@ -437,6 +462,7 @@ def chat_with_apl(handler_input: HandlerInput) -> Response:
 ## 8.1 Ativar Smart Home Skill
 
 No `skill.json`, adicionar:
+
 ```json
 {
   "apis": {
@@ -523,9 +549,10 @@ ask dialog --locale pt-BR
 ## Teste Especifico De Intent
 
 ask simulate \
-  --text "abrir auri" \
-  --locale pt-BR \
-  --skill-id amzn1.ask.skill.YOUR-SKILL-ID
+ --text "abrir auri" \
+ --locale pt-BR \
+ --skill-id amzn1.ask.skill.YOUR-SKILL-ID
+
 ```
 
 ## Criar Lambda Manualmente
@@ -552,16 +579,17 @@ aws lambda add-permission \
 ## Usar Secrets Manager
 
 aws secretsmanager create-secret \
-  --name auri/anthropic-key \
-  --secret-string '{"ANTHROPIC_API_KEY": "sk-..."}'
+ --name auri/anthropic-key \
+ --secret-string '{"ANTHROPIC_API_KEY": "sk-..."}'
 
 ## Lambda Acessa Via Sdk:
 
 import boto3, json
 def get_secret(secret_name):
-    client = boto3.client('secretsmanager')
-    response = client.get_secret_value(SecretId=secret_name)
-    return json.loads(response['SecretString'])
+client = boto3.client('secretsmanager')
+response = client.get_secret_value(SecretId=secret_name)
+return json.loads(response['SecretString'])
+
 ```
 
 ---
@@ -569,57 +597,69 @@ def get_secret(secret_name):
 ## Fase 1 — Setup (Dia 1)
 
 ```
+
 [ ] Conta Amazon Developer criada
 [ ] Conta AWS configurada (free tier)
 [ ] ASK CLI instalado e configurado
 [ ] IAM Role criada com permissoes: Lambda, DynamoDB, Polly, Logs
 [ ] Anthropic API key armazenada em Secrets Manager
+
 ```
 
 ## Fase 2 — Skill Base (Dia 2-3)
 
 ```
+
 [ ] ask new --template hello-world --skill-name auri
 [ ] Interaction model definido (pt-BR.json)
 [ ] LaunchRequest handler funcionando
 [ ] ChatIntent handler com Claude integrado
 [ ] ask deploy funcionando
 [ ] Teste basico no ASK simulator
+
 ```
 
 ## Fase 3 — Persistencia (Dia 4)
 
 ```
+
 [ ] DynamoDB table criada
 [ ] Persistencia de historico funcionando
 [ ] TTL configurado
 [ ] Preferencias do usuario salvas
+
 ```
 
 ## Fase 4 — Polly + Apl (Dia 5-6)
 
 ```
+
 [ ] Polly integrado com voz Vitoria (neural)
 [ ] APL template de chat criado
 [ ] APL renderizando em Echo Show simulator
+
 ```
 
 ## Fase 5 — Smart Home (Opcional)
 
 ```
+
 [ ] Smart Home skill habilitada
 [ ] Discovery de dispositivos funcionando
 [ ] PowerController implementado
 [ ] Teste com device real
+
 ```
 
 ## Fase 6 — Publicacao
 
 ```
+
 [ ] Teste completo de todas funcionalidades
 [ ] Performance OK (< 8s timeout)
 [ ] Certificacao Amazon submetida
 [ ] Publicado na Alexa Skills Store
+
 ```
 
 ---
@@ -659,3 +699,4 @@ def get_secret(secret_name):
 - Using this skill for tasks outside its domain expertise
 - Applying recommendations without understanding your specific context
 - Not providing enough project context for accurate analysis
+```

@@ -3,7 +3,7 @@ name: azure-servicebus-dotnet
 description: Azure Service Bus SDK for .NET. Enterprise messaging with queues, topics, subscriptions, and sessions.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure.Messaging.ServiceBus (.NET)
@@ -227,7 +227,7 @@ var message = await subReceiver.ReceiveMessageAsync();
 
 ```csharp
 var adminClient = new ServiceBusAdministrationClient(
-    fullyQualifiedNamespace, 
+    fullyQualifiedNamespace,
     new DefaultAzureCredential());
 
 // Create queue
@@ -273,18 +273,18 @@ using (var ts = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
 
 ## Key Types Reference
 
-| Type | Purpose |
-|------|---------|
-| `ServiceBusClient` | Main entry point, manages connection |
-| `ServiceBusSender` | Sends messages to queues/topics |
-| `ServiceBusReceiver` | Receives messages from queues/subscriptions |
-| `ServiceBusSessionReceiver` | Receives session messages |
-| `ServiceBusProcessor` | Background message processing |
-| `ServiceBusSessionProcessor` | Background session processing |
-| `ServiceBusAdministrationClient` | CRUD for queues/topics/subscriptions |
-| `ServiceBusMessage` | Message to send |
-| `ServiceBusReceivedMessage` | Received message with metadata |
-| `ServiceBusMessageBatch` | Batch of messages |
+| Type                             | Purpose                                     |
+| -------------------------------- | ------------------------------------------- |
+| `ServiceBusClient`               | Main entry point, manages connection        |
+| `ServiceBusSender`               | Sends messages to queues/topics             |
+| `ServiceBusReceiver`             | Receives messages from queues/subscriptions |
+| `ServiceBusSessionReceiver`      | Receives session messages                   |
+| `ServiceBusProcessor`            | Background message processing               |
+| `ServiceBusSessionProcessor`     | Background session processing               |
+| `ServiceBusAdministrationClient` | CRUD for queues/topics/subscriptions        |
+| `ServiceBusMessage`              | Message to send                             |
+| `ServiceBusReceivedMessage`      | Received message with metadata              |
+| `ServiceBusMessageBatch`         | Batch of messages                           |
 
 ## Best Practices
 
@@ -318,20 +318,21 @@ catch (ServiceBusException ex)
 
 ## Related SDKs
 
-| SDK | Purpose | Install |
-|-----|---------|---------|
+| SDK                          | Purpose                | Install                                         |
+| ---------------------------- | ---------------------- | ----------------------------------------------- |
 | `Azure.Messaging.ServiceBus` | Service Bus (this SDK) | `dotnet add package Azure.Messaging.ServiceBus` |
-| `Azure.Messaging.EventHubs` | Event streaming | `dotnet add package Azure.Messaging.EventHubs` |
-| `Azure.Messaging.EventGrid` | Event routing | `dotnet add package Azure.Messaging.EventGrid` |
+| `Azure.Messaging.EventHubs`  | Event streaming        | `dotnet add package Azure.Messaging.EventHubs`  |
+| `Azure.Messaging.EventGrid`  | Event routing          | `dotnet add package Azure.Messaging.EventGrid`  |
 
 ## Reference Links
 
-| Resource | URL |
-|----------|-----|
-| NuGet Package | https://www.nuget.org/packages/Azure.Messaging.ServiceBus |
-| API Reference | https://learn.microsoft.com/dotnet/api/azure.messaging.servicebus |
-| GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/servicebus/Azure.Messaging.ServiceBus |
+| Resource        | URL                                                                                                               |
+| --------------- | ----------------------------------------------------------------------------------------------------------------- |
+| NuGet Package   | https://www.nuget.org/packages/Azure.Messaging.ServiceBus                                                         |
+| API Reference   | https://learn.microsoft.com/dotnet/api/azure.messaging.servicebus                                                 |
+| GitHub Source   | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/servicebus/Azure.Messaging.ServiceBus                    |
 | Troubleshooting | https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/servicebus/Azure.Messaging.ServiceBus/TROUBLESHOOTING.md |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

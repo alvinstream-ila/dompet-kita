@@ -3,7 +3,7 @@ name: c4-component
 description: Expert C4 Component-level documentation specialist. Synthesizes C4 Code-level documentation into Component-level architecture, defining component boundaries, interfaces, and relationships.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # C4 Component Level: [Component Name]
@@ -89,7 +89,8 @@ C4Component
     Rel(component1, externalContainer, "Uses", "API")
     Rel(component2, externalSystem, "Uses", "API")
 ```
-````
+
+```
 
 **Key Principles** (from [c4model.com](https://c4model.com/diagrams/component)):
 
@@ -99,7 +100,7 @@ C4Component
 - Show how components **interact** with each other
 - Include **external dependencies** (other containers, external systems)
 
-````
+```
 
 ## Master Component Index Template
 
@@ -109,18 +110,21 @@ C4Component
 ## System Components
 
 ### [Component 1]
+
 - **Name**: [Component name]
 - **Description**: [Short description]
 - **Documentation**: c4-component-name-1.md
 
 ### [Component 2]
+
 - **Name**: [Component name]
 - **Description**: [Short description]
 - **Documentation**: c4-component-name-2.md
 
 ## Component Relationships
+
 [Mermaid diagram showing all components and their relationships]
-````
+```
 
 ## Example Interactions
 

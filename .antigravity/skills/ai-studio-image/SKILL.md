@@ -3,19 +3,19 @@ name: ai-studio-image
 description: Geracao de imagens humanizadas via Google AI Studio (Gemini). Fotos realistas estilo influencer ou educacional com iluminacao natural e imperfeicoes sutis.
 risk: safe
 source: community
-date_added: '2026-03-06'
+date_added: "2026-03-06"
 author: renat
 tags:
-- image-generation
-- ai-studio
-- google
-- photography
+  - image-generation
+  - ai-studio
+  - google
+  - photography
 tools:
-- claude-code
-- antigravity
-- cursor
-- gemini-cli
-- codex-cli
+  - claude-code
+  - antigravity
+  - cursor
+  - gemini-cli
+  - codex-cli
 ---
 
 # AI Studio Image — Especialista em Imagens Humanizadas
@@ -55,6 +55,7 @@ pessoa real com seu celular — nao por uma IA.
 ## 1. Configurar Api Key
 
 O usuario precisa de uma API key do Google AI Studio:
+
 - Acesse https://aistudio.google.com/apikey
 - Crie ou copie sua API key
 - Configure como variavel de ambiente:
@@ -71,6 +72,7 @@ export GEMINI_API_KEY=sua-api-key-aqui
 ```
 
 Ou crie um arquivo `.env` em `C:\Users\renat\skills\ai-studio-image\`:
+
 ```
 GEMINI_API_KEY=sua-api-key-aqui
 ```
@@ -95,22 +97,22 @@ Quando o usuario pedir para gerar uma imagem, siga este fluxo:
 
 Pergunte ou deduza pelo contexto:
 
-| Modo | Quando Usar | Caracteristicas |
-|------|-------------|-----------------|
-| **influencer** | Posts de redes sociais, lifestyle, branding pessoal | Estetica atraente mas natural, cores vibrantes sem saturacao excessiva, composicao que prende atencao |
-| **educacional** | Material de curso, tutorial, apresentacao, infografico | Visual limpo, profissional, foco no conteudo, elementos claros e legiveis |
+| Modo            | Quando Usar                                            | Caracteristicas                                                                                       |
+| --------------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| **influencer**  | Posts de redes sociais, lifestyle, branding pessoal    | Estetica atraente mas natural, cores vibrantes sem saturacao excessiva, composicao que prende atencao |
+| **educacional** | Material de curso, tutorial, apresentacao, infografico | Visual limpo, profissional, foco no conteudo, elementos claros e legiveis                             |
 
 Se o usuario nao especificar, use **influencer** como padrao para conteudo de redes sociais
 e **educacional** para qualquer coisa relacionada a ensino/apresentacao.
 
 ## Passo 2: Identificar O Formato
 
-| Formato | Aspect Ratio | Uso Ideal |
-|---------|-------------|-----------|
-| `square` | 1:1 | Feed Instagram, Facebook, perfis |
-| `portrait` | 3:4 | Instagram portrait, Pinterest |
-| `landscape` | 16:9 | YouTube thumbnails, banners, desktop |
-| `stories` | 9:16 | Instagram/Facebook Stories, TikTok, Reels |
+| Formato     | Aspect Ratio | Uso Ideal                                 |
+| ----------- | ------------ | ----------------------------------------- |
+| `square`    | 1:1          | Feed Instagram, Facebook, perfis          |
+| `portrait`  | 3:4          | Instagram portrait, Pinterest             |
+| `landscape` | 16:9         | YouTube thumbnails, banners, desktop      |
+| `stories`   | 9:16         | Instagram/Facebook Stories, TikTok, Reels |
 
 Se nao especificado, deduza pelo contexto (stories → 9:16, feed → 1:1, etc).
 
@@ -126,30 +128,35 @@ python C:\Users\renat\skills\ai-studio-image\scripts\prompt_engine.py --prompt "
 O motor de humanizacao adiciona camadas de realismo:
 
 **Camada 1 — Dispositivo e Tecnica:**
+
 - Fotografado com smartphone (iPhone/Samsung Galaxy)
 - Lente de celular com profundidade de campo natural
 - Sem flash — apenas luz ambiente
 - Leve ruido de sensor (ISO elevado em baixa luz)
 
 **Camada 2 — Iluminacao Natural:**
+
 - Luz do sol indireta / golden hour / luz de janela
 - Sombras suaves e organicas
 - Sem iluminacao de estudio
 - Reflexos naturais em superficies
 
 **Camada 3 — Imperfeicoes Humanas:**
+
 - Enquadramento ligeiramente imperfeito (nao centralizado matematicamente)
 - Foco seletivo natural (algo levemente fora de foco no background)
 - Micro-tremor de maos (nitidez nao e absoluta)
 - Elementos aleatorios do ambiente real
 
 **Camada 4 — Autenticidade:**
+
 - Expressoes faciais genuinas (nao poses de estudio)
 - Roupas e cenarios do dia-a-dia
 - Textura de pele real (poros, marcas sutis — sem pele de porcelana)
 - Proporcoes corporais realistas
 
 **Camada 5 — Contexto Ambiental:**
+
 - Cenarios reais (nao fundos genericos de stock)
 - Objetos do cotidiano no ambiente
 - Iluminacao consistente com o cenario
@@ -168,18 +175,19 @@ python C:\Users\renat\skills\ai-studio-image\scripts\generate.py \
 
 **Modelos disponiveis (em ordem de recomendacao):**
 
-| Modelo | Velocidade | Qualidade | Custo | Uso Ideal |
-|--------|-----------|-----------|-------|-----------|
-| `gemini-2-flash-exp` | Rapido | Alta | **GRATIS** | **Padrao — usar sempre** |
-| `imagen-4` | Medio | Alta | $0.03/img | Alta qualidade (requer --force-paid) |
-| `imagen-4-ultra` | Lento | Maxima | $0.06/img | Impressao, 2K (requer --force-paid) |
-| `imagen-4-fast` | Rapido | Boa | $0.02/img | Volume alto (requer --force-paid) |
-| `gemini-flash-image` | Rapido | Alta | $0.039/img | Edicao de imagem (requer --force-paid) |
-| `gemini-pro-image` | Medio | Maxima+4K | $0.134/img | Referencia, 4K (requer --force-paid) |
+| Modelo               | Velocidade | Qualidade | Custo      | Uso Ideal                              |
+| -------------------- | ---------- | --------- | ---------- | -------------------------------------- |
+| `gemini-2-flash-exp` | Rapido     | Alta      | **GRATIS** | **Padrao — usar sempre**               |
+| `imagen-4`           | Medio      | Alta      | $0.03/img  | Alta qualidade (requer --force-paid)   |
+| `imagen-4-ultra`     | Lento      | Maxima    | $0.06/img  | Impressao, 2K (requer --force-paid)    |
+| `imagen-4-fast`      | Rapido     | Boa       | $0.02/img  | Volume alto (requer --force-paid)      |
+| `gemini-flash-image` | Rapido     | Alta      | $0.039/img | Edicao de imagem (requer --force-paid) |
+| `gemini-pro-image`   | Medio      | Maxima+4K | $0.134/img | Referencia, 4K (requer --force-paid)   |
 
 ## Passo 5: Apresentar E Iterar
 
 Mostre o resultado ao usuario. Se precisar ajustar:
+
 - Reluz: Ajustar iluminacao
 - Reenquadrar: Mudar composicao
 - Mais/menos natural: Ajustar nivel de imperfeicoes
@@ -197,35 +205,36 @@ Templates disponiveis:
 
 ## Modo Influencer
 
-| Template | Descricao |
-|----------|-----------|
-| `cafe-lifestyle` | Pessoa em cafeteria/restaurante com bebida/comida |
-| `outdoor-adventure` | Atividade ao ar livre, natureza, viagem |
-| `workspace-minimal` | Mesa de trabalho elegante, home office |
-| `fitness-natural` | Exercicio/wellness com visual natural |
-| `food-flat-lay` | Comida vista de cima, flat lay casual |
-| `urban-street` | Cenario urbano, street style |
-| `golden-hour-portrait` | Retrato com luz dourada do por-do-sol |
-| `mirror-selfie` | Selfie no espelho, casual e espontaneo |
-| `product-in-use` | Produto sendo usado naturalmente por pessoa |
-| `behind-scenes` | Bastidores, making of, dia-a-dia real |
+| Template               | Descricao                                         |
+| ---------------------- | ------------------------------------------------- |
+| `cafe-lifestyle`       | Pessoa em cafeteria/restaurante com bebida/comida |
+| `outdoor-adventure`    | Atividade ao ar livre, natureza, viagem           |
+| `workspace-minimal`    | Mesa de trabalho elegante, home office            |
+| `fitness-natural`      | Exercicio/wellness com visual natural             |
+| `food-flat-lay`        | Comida vista de cima, flat lay casual             |
+| `urban-street`         | Cenario urbano, street style                      |
+| `golden-hour-portrait` | Retrato com luz dourada do por-do-sol             |
+| `mirror-selfie`        | Selfie no espelho, casual e espontaneo            |
+| `product-in-use`       | Produto sendo usado naturalmente por pessoa       |
+| `behind-scenes`        | Bastidores, making of, dia-a-dia real             |
 
 ## Modo Educacional
 
-| Template | Descricao |
-|----------|-----------|
-| `tutorial-step` | Pessoa demonstrando passo de tutorial |
-| `whiteboard-explain` | Pessoa explicando em quadro/lousa |
-| `hands-on-demo` | Maos fazendo demonstracao pratica |
-| `before-after` | Comparacao antes/depois |
-| `tool-showcase` | Ferramenta/software sendo utilizado |
-| `classroom-natural` | Ambiente de aula/workshop |
-| `infographic-human` | Pessoa apontando para dados/graficos |
-| `interview-setup` | Setup de entrevista/podcast natural |
-| `screen-recording-human` | Pessoa com notebook mostrando tela |
-| `team-collaboration` | Equipe trabalhando junta naturalmente |
+| Template                 | Descricao                             |
+| ------------------------ | ------------------------------------- |
+| `tutorial-step`          | Pessoa demonstrando passo de tutorial |
+| `whiteboard-explain`     | Pessoa explicando em quadro/lousa     |
+| `hands-on-demo`          | Maos fazendo demonstracao pratica     |
+| `before-after`           | Comparacao antes/depois               |
+| `tool-showcase`          | Ferramenta/software sendo utilizado   |
+| `classroom-natural`      | Ambiente de aula/workshop             |
+| `infographic-human`      | Pessoa apontando para dados/graficos  |
+| `interview-setup`        | Setup de entrevista/podcast natural   |
+| `screen-recording-human` | Pessoa com notebook mostrando tela    |
+| `team-collaboration`     | Equipe trabalhando junta naturalmente |
 
 Usar template:
+
 ```bash
 python C:\Users\renat\skills\ai-studio-image\scripts\generate.py \
   --template cafe-lifestyle \
@@ -237,12 +246,12 @@ python C:\Users\renat\skills\ai-studio-image\scripts\generate.py \
 
 Controle quanto "imperfeicao" injetar:
 
-| Nivel | Efeito |
-|-------|--------|
-| `ultra` | Maximo realismo — parece 100% foto de celular |
-| `natural` (padrao) | Equilibrio perfeito entre qualidade e realismo |
-| `polished` | Mais limpo, ainda natural mas com mais cuidado estetico |
-| `editorial` | Estilo revista, natural mas com producao |
+| Nivel              | Efeito                                                  |
+| ------------------ | ------------------------------------------------------- |
+| `ultra`            | Maximo realismo — parece 100% foto de celular           |
+| `natural` (padrao) | Equilibrio perfeito entre qualidade e realismo          |
+| `polished`         | Mais limpo, ainda natural mas com mais cuidado estetico |
+| `editorial`        | Estilo revista, natural mas com producao                |
 
 ```bash
 python C:\Users\renat\skills\ai-studio-image\scripts\generate.py \
@@ -253,14 +262,14 @@ python C:\Users\renat\skills\ai-studio-image\scripts\generate.py \
 
 A iluminacao muda drasticamente:
 
-| Opcao | Descricao |
-|-------|-----------|
-| `morning` | Luz matinal suave, tons frios-quentes |
-| `golden-hour` | Por-do-sol/nascer, tons dourados |
-| `midday` | Luz dura do meio-dia, sombras marcadas |
-| `overcast` | Dia nublado, luz difusa uniforme |
-| `night` | Iluminacao artificial, tons quentes |
-| `indoor` | Luz de interiores, mista |
+| Opcao         | Descricao                              |
+| ------------- | -------------------------------------- |
+| `morning`     | Luz matinal suave, tons frios-quentes  |
+| `golden-hour` | Por-do-sol/nascer, tons dourados       |
+| `midday`      | Luz dura do meio-dia, sombras marcadas |
+| `overcast`    | Dia nublado, luz difusa uniforme       |
+| `night`       | Iluminacao artificial, tons quentes    |
+| `indoor`      | Luz de interiores, mista               |
 
 ## Geracao Em Lote
 
@@ -274,6 +283,7 @@ python C:\Users\renat\skills\ai-studio-image\scripts\generate.py \
 ## Instagram Skill
 
 Gere imagens e publique diretamente:
+
 1. Use `ai-studio-image` para gerar a foto
 2. Use `instagram` skill para publicar com caption otimizada
 
@@ -283,16 +293,17 @@ As imagens geradas podem ser enviadas para o Canva para adicao de texto/branding
 
 ## Troubleshooting
 
-| Problema | Solucao |
-|----------|---------|
-| `GEMINI_API_KEY not found` | Configure a variavel de ambiente ou crie `.env` |
-| `quota exceeded` | Aguarde reset do rate limit ou upgrade do plano |
-| `image blocked` | Ajuste o prompt — pode conter conteudo restrito |
-| `low quality output` | Aumente humanization para `ultra`, tente outro modelo |
+| Problema                   | Solucao                                               |
+| -------------------------- | ----------------------------------------------------- |
+| `GEMINI_API_KEY not found` | Configure a variavel de ambiente ou crie `.env`       |
+| `quota exceeded`           | Aguarde reset do rate limit ou upgrade do plano       |
+| `image blocked`            | Ajuste o prompt — pode conter conteudo restrito       |
+| `low quality output`       | Aumente humanization para `ultra`, tente outro modelo |
 
 ## Referencias
 
 Para guias detalhados, consulte:
+
 - `references/setup-guide.md` — Instalacao e configuracao completa
 - `references/prompt-engineering.md` — Tecnicas avancadas de prompt para imagens humanizadas
 - `references/api-reference.md` — Documentacao da API do Google AI Studio

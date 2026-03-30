@@ -32,7 +32,10 @@ import { ServiceBusClient } from "@azure/service-bus";
 import { DefaultAzureCredential } from "@azure/identity";
 
 const fullyQualifiedNamespace = process.env.SERVICEBUS_NAMESPACE!;
-const client = new ServiceBusClient(fullyQualifiedNamespace, new DefaultAzureCredential());
+const client = new ServiceBusClient(
+  fullyQualifiedNamespace,
+  new DefaultAzureCredential(),
+);
 ```
 
 ## Core Workflow
@@ -105,7 +108,10 @@ await topicSender.sendMessages({
 });
 
 // Receive from subscription
-const subscriptionReceiver = client.createReceiver("my-topic", "my-subscription");
+const subscriptionReceiver = client.createReceiver(
+  "my-topic",
+  "my-subscription",
+);
 const messages = await subscriptionReceiver.receiveMessages(10);
 ```
 
@@ -120,12 +126,17 @@ await sender.sendMessages({
 });
 
 // Receive session messages
-const sessionReceiver = await client.acceptSession("session-queue", "workflow-123");
+const sessionReceiver = await client.acceptSession(
+  "session-queue",
+  "workflow-123",
+);
 const messages = await sessionReceiver.receiveMessages(10);
 
 // Get/set session state
 const state = await sessionReceiver.getSessionState();
-await sessionReceiver.setSessionState(Buffer.from(JSON.stringify({ progress: 50 })));
+await sessionReceiver.setSessionState(
+  Buffer.from(JSON.stringify({ progress: 50 })),
+);
 
 await sessionReceiver.close();
 ```
@@ -140,7 +151,9 @@ await receiver.deadLetterMessage(message, {
 });
 
 // Process dead-letter queue
-const dlqReceiver = client.createReceiver("my-queue", { subQueueType: "deadLetter" });
+const dlqReceiver = client.createReceiver("my-queue", {
+  subQueueType: "deadLetter",
+});
 const dlqMessages = await dlqReceiver.receiveMessages(10);
 for (const msg of dlqMessages) {
   console.log(`DLQ Reason: ${msg.deadLetterReason}`);
@@ -158,7 +171,7 @@ const sender = client.createSender("my-queue");
 const scheduledTime = new Date(Date.now() + 60000); // 1 minute from now
 const sequenceNumber = await sender.scheduleMessages(
   { body: "Delayed message" },
-  scheduledTime
+  scheduledTime,
 );
 
 // Cancel scheduled message
@@ -172,7 +185,9 @@ await sender.cancelScheduledMessages(sequenceNumber);
 await receiver.deferMessage(message);
 
 // Receive deferred message by sequence number
-const deferredMessage = await receiver.receiveDeferredMessages(message.sequenceNumber!);
+const deferredMessage = await receiver.receiveDeferredMessages(
+  message.sequenceNumber!,
+);
 await receiver.completeMessage(deferredMessage[0]);
 ```
 
@@ -208,13 +223,15 @@ import {
 ```typescript
 // Peek-Lock (default) - message locked until completed/abandoned
 const receiver = client.createReceiver("my-queue", { receiveMode: "peekLock" });
-await receiver.completeMessage(message);   // Remove from queue
-await receiver.abandonMessage(message);    // Return to queue
-await receiver.deferMessage(message);      // Defer for later
+await receiver.completeMessage(message); // Remove from queue
+await receiver.abandonMessage(message); // Return to queue
+await receiver.deferMessage(message); // Defer for later
 await receiver.deadLetterMessage(message); // Move to DLQ
 
 // Receive-and-Delete - message removed immediately
-const receiver = client.createReceiver("my-queue", { receiveMode: "receiveAndDelete" });
+const receiver = client.createReceiver("my-queue", {
+  receiveMode: "receiveAndDelete",
+});
 ```
 
 ## Best Practices
@@ -235,4 +252,5 @@ For detailed patterns, see:
 - Error Handling and Reliability - ServiceBusError codes, DLQ handling, lock renewal, graceful shutdown
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

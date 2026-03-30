@@ -24,10 +24,12 @@ Search and extract data from Burp Suite project files using the burpsuite-projec
 This skill **delegates parsing to Burp Suite Professional** - it does not parse .burp files directly.
 
 **Required:**
+
 1. **Burp Suite Professional** - Must be installed ([portswigger.net](https://portswigger.net/burp/pro))
 2. **burpsuite-project-file-parser extension** - Provides CLI functionality
 
 **Install the extension:**
+
 1. Download from [github.com/BuffaloWill/burpsuite-project-file-parser](https://github.com/BuffaloWill/burpsuite-project-file-parser)
 2. In Burp Suite: Extender → Extensions → Add
 3. Select the downloaded JAR file
@@ -35,11 +37,13 @@ This skill **delegates parsing to Burp Suite Professional** - it does not parse 
 ## Quick Reference
 
 Use the wrapper script:
+
 ```bash
 {baseDir}/scripts/burp-search.sh /path/to/project.burp [FLAGS]
 ```
 
 The script uses environment variables for platform compatibility:
+
 - `BURP_JAVA`: Path to Java executable
 - `BURP_JAR`: Path to burpsuite_pro.jar
 
@@ -51,16 +55,16 @@ See [Platform Configuration](#platform-configuration) for setup instructions.
 
 ### Available Filters
 
-| Filter | Returns | Typical Size |
-|--------|---------|--------------|
-| `proxyHistory.request.headers` | Request line + headers only | Small (< 1KB/record) |
-| `proxyHistory.request.body` | Request body only | Variable |
-| `proxyHistory.response.headers` | Status + headers only | Small (< 1KB/record) |
-| `proxyHistory.response.body` | Response body only | **LARGE - avoid** |
-| `siteMap.request.headers` | Same as above for site map | Small |
-| `siteMap.request.body` | | Variable |
-| `siteMap.response.headers` | | Small |
-| `siteMap.response.body` | | **LARGE - avoid** |
+| Filter                          | Returns                     | Typical Size         |
+| ------------------------------- | --------------------------- | -------------------- |
+| `proxyHistory.request.headers`  | Request line + headers only | Small (< 1KB/record) |
+| `proxyHistory.request.body`     | Request body only           | Variable             |
+| `proxyHistory.response.headers` | Status + headers only       | Small (< 1KB/record) |
+| `proxyHistory.response.body`    | Response body only          | **LARGE - avoid**    |
+| `siteMap.request.headers`       | Same as above for site map  | Small                |
+| `siteMap.request.body`          |                             | Variable             |
+| `siteMap.response.headers`      |                             | Small                |
+| `siteMap.response.body`         |                             | **LARGE - avoid**    |
 
 ### Default Approach
 
@@ -92,20 +96,25 @@ See [Platform Configuration](#platform-configuration) for setup instructions.
 ## Regex Search Operations
 
 ### Search Response Headers
+
 ```bash
 responseHeader='.*regex.*'
 ```
+
 Searches all response headers. Output: `{"url":"...", "header":"..."}`
 
 Example - find server signatures:
+
 ```bash
 responseHeader='.*(nginx|Apache|Servlet).*' | head -c 50000
 ```
 
 ### Search Response Bodies
+
 ```bash
 responseBody='.*regex.*'
 ```
+
 **MANDATORY: Always truncate body content to 1000 chars max.** Response bodies can be megabytes each.
 
 ```bash
@@ -119,25 +128,32 @@ responseBody='.*regex.*'
 ## Other Operations
 
 ### Extract Audit Items
+
 ```bash
 auditItems
 ```
+
 Returns all security findings. Output includes: name, severity, confidence, host, port, protocol, url.
 
 **Note:** Audit items are small (no bodies) - safe to retrieve with `head -n 100`.
 
 ### Dump Proxy History (AVOID)
+
 ```bash
 proxyHistory
 ```
+
 **NEVER use this directly.** Use sub-component filters instead:
+
 - `proxyHistory.request.headers`
 - `proxyHistory.response.headers`
 
 ### Dump Site Map (AVOID)
+
 ```bash
 siteMap
 ```
+
 **NEVER use this directly.** Use sub-component filters instead.
 
 ## Output Limits (REQUIRED)
@@ -159,10 +175,10 @@ The `wc -cl` output shows: `<bytes> <lines>` (e.g., `524288 42` means 512KB acro
 
 **Interpret the results - BOTH must pass:**
 
-| Metric | Safe | Narrow search | Too broad | STOP |
-|--------|------|---------------|-----------|------|
-| **Lines** | < 50 | 50-200 | 200+ | 1000+ |
-| **Bytes** | < 50KB | 50-200KB | 200KB+ | 1MB+ |
+| Metric    | Safe   | Narrow search | Too broad | STOP  |
+| --------- | ------ | ------------- | --------- | ----- |
+| **Lines** | < 50   | 50-200        | 200+      | 1000+ |
+| **Bytes** | < 50KB | 50-200KB      | 200KB+    | 1MB+  |
 
 **A single 10MB response on one line will show high byte count but only 1 line - the byte check catches this.**
 
@@ -171,12 +187,14 @@ The `wc -cl` output shows: `<bytes> <lines>` (e.g., `524288 42` means 512KB acro
 If count/size is too high:
 
 1. **Use sub-component filters** (see table above):
+
    ```bash
    # Instead of: proxyHistory (gigabytes)
    # Use: proxyHistory.request.headers (kilobytes)
    ```
 
 2. **Narrow regex patterns:**
+
    ```bash
    # Too broad (matches everything):
    responseHeader='.*'
@@ -210,6 +228,7 @@ Even after narrowing, always pipe through truncation:
 ```
 
 **Hard limits to enforce:**
+
 - `head -c 50000` (50KB max) on ALL output
 - **Truncate `.body` fields to 1000 chars - MANDATORY, no exceptions**
   ```bash
@@ -217,6 +236,7 @@ Even after narrowing, always pipe through truncation:
   ```
 
 **Never run these without counting first AND truncating:**
+
 - `proxyHistory` / `siteMap` (full dumps - always use sub-component filters)
 - `responseBody='...'` searches (bodies can be megabytes each)
 - Any broad regex like `.*` or `.+`
@@ -226,21 +246,25 @@ Even after narrowing, always pipe through truncation:
 1. **Identify scope** - What are you looking for? (specific vuln type, endpoint, header pattern)
 
 2. **Search audit items first** - Start with Burp's findings:
+
    ```bash
    {baseDir}/scripts/burp-search.sh project.burp auditItems | jq 'select(.severity == "High")'
    ```
 
 3. **Check confidence scores** - Filter for actionable findings:
+
    ```bash
    ... | jq 'select(.confidence == "Certain" or .confidence == "Firm")'
    ```
 
 4. **Extract affected URLs** - Get the attack surface:
+
    ```bash
    ... | jq -r '.url' | sort -u
    ```
 
 5. **Search raw traffic for context** - Examine actual requests/responses:
+
    ```bash
    {baseDir}/scripts/burp-search.sh project.burp "responseBody='pattern'"
    ```
@@ -253,17 +277,18 @@ Even after narrowing, always pipe through truncation:
 
 Burp reports both **severity** (High/Medium/Low) and **confidence** (Certain/Firm/Tentative). Use both when triaging:
 
-| Combination | Meaning |
-|-------------|---------|
-| High + Certain | Likely real vulnerability, prioritize investigation |
-| High + Tentative | Often a false positive, verify before reporting |
-| Medium + Firm | Worth investigating, may need manual validation |
+| Combination      | Meaning                                             |
+| ---------------- | --------------------------------------------------- |
+| High + Certain   | Likely real vulnerability, prioritize investigation |
+| High + Tentative | Often a false positive, verify before reporting     |
+| Medium + Firm    | Worth investigating, may need manual validation     |
 
 A "High severity, Tentative confidence" finding is frequently a false positive. Don't report findings based on severity alone.
 
 ### When Proxy History is Incomplete
 
 Proxy history only contains what Burp captured. It may be missing traffic due to:
+
 - **Scope filters** excluding domains
 - **Intercept settings** dropping requests
 - **Browser traffic** not routed through Burp proxy
@@ -273,6 +298,7 @@ If you don't find expected traffic, check Burp's scope and proxy settings in the
 ### HTTP Body Encoding
 
 Response bodies may be gzip compressed, chunked, or use non-UTF8 encoding. Regex patterns that work on plaintext may silently fail on encoded responses. If searches return fewer results than expected:
+
 - Check if responses are compressed
 - Try broader patterns or search headers first
 - Use Burp's UI to inspect raw vs rendered response
@@ -281,22 +307,24 @@ Response bodies may be gzip compressed, chunked, or use non-UTF8 encoding. Regex
 
 Common shortcuts that lead to missed vulnerabilities or false reports:
 
-| Shortcut | Why It's Wrong |
-|----------|----------------|
-| "This regex looks good" | Verify on sample data first—encoding and escaping cause silent failures |
-| "High severity = must fix" | Check confidence score too; Burp has false positives |
-| "All audit items are relevant" | Filter by actual threat model; not every finding matters for every app |
-| "Proxy history is complete" | May be filtered by Burp scope/intercept settings; you see only what Burp captured |
+| Shortcut                        | Why It's Wrong                                                                      |
+| ------------------------------- | ----------------------------------------------------------------------------------- |
+| "This regex looks good"         | Verify on sample data first—encoding and escaping cause silent failures             |
+| "High severity = must fix"      | Check confidence score too; Burp has false positives                                |
+| "All audit items are relevant"  | Filter by actual threat model; not every finding matters for every app              |
+| "Proxy history is complete"     | May be filtered by Burp scope/intercept settings; you see only what Burp captured   |
 | "Burp found it, so it's a vuln" | Burp findings require manual verification—they indicate potential issues, not proof |
 
 ## Output Format
 
 All output is JSON, one object per line. Pipe to `jq` for formatting:
+
 ```bash
 {baseDir}/scripts/burp-search.sh project.burp auditItems | jq .
 ```
 
 Filter with grep:
+
 ```bash
 {baseDir}/scripts/burp-search.sh project.burp auditItems | grep -i "sql injection"
 ```
@@ -304,21 +332,25 @@ Filter with grep:
 ## Examples
 
 Search for CORS headers (with byte limit):
+
 ```bash
 {baseDir}/scripts/burp-search.sh project.burp "responseHeader='.*Access-Control.*'" | head -c 50000
 ```
 
 Get all high-severity findings (audit items are small, but still limit):
+
 ```bash
 {baseDir}/scripts/burp-search.sh project.burp auditItems | jq -c 'select(.severity == "High")' | head -n 100
 ```
 
 Extract just request URLs from proxy history:
+
 ```bash
 {baseDir}/scripts/burp-search.sh project.burp proxyHistory.request.headers | jq -r '.request.url' | head -n 200
 ```
 
 Search response bodies (MUST truncate body to 1000 chars):
+
 ```bash
 {baseDir}/scripts/burp-search.sh project.burp "responseBody='.*password.*'" | \
   head -n 10 | jq -c '.body = (.body[:1000] + "...[TRUNCATED]")'
@@ -354,6 +386,7 @@ Add these exports to your shell profile (`.bashrc`, `.zshrc`, etc.) for persiste
 ### Manual Invocation
 
 If not using the wrapper script, invoke directly:
+
 ```bash
 "$BURP_JAVA" -jar -Djava.awt.headless=true "$BURP_JAR" \
   --project-file=/path/to/project.burp [FLAGS]

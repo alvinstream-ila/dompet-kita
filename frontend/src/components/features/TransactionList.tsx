@@ -17,12 +17,15 @@ interface TransactionListProps {
   loading?: boolean;
 }
 
-export const TransactionList: React.FC<TransactionListProps> = ({ transactions, loading }) => {
+export const TransactionList: React.FC<TransactionListProps> = ({
+  transactions,
+  loading,
+}) => {
   if (loading) {
     return (
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-24 bg-slate-50 animate-pulse rounded-2xl" />
+          <div key={i} className="h-24 animate-pulse rounded-2xl bg-slate-50" />
         ))}
       </div>
     );
@@ -31,55 +34,69 @@ export const TransactionList: React.FC<TransactionListProps> = ({ transactions, 
   return (
     <div className="space-y-4">
       {transactions.length === 0 ? (
-        <div className="text-center py-12 text-slate-400 italic text-lg">
+        <div className="py-12 text-center text-lg text-slate-400 italic">
           Belum ada catatan hari ini... 🏝️
         </div>
       ) : (
         transactions.map((t) => (
-          <div key={t.id} className="bg-white border border-slate-100 rounded-[24px] p-5 shadow-sm hover:shadow-md transition-all group">
+          <div
+            key={t.id}
+            className="group rounded-[24px] border border-slate-100 bg-white p-5 shadow-sm transition-all hover:shadow-md"
+          >
             <div className="flex items-center justify-between">
               <div className="flex flex-col gap-1">
-                <h4 className="text-[#1a1c1e] font-black text-lg uppercase tracking-tight">
+                <h4 className="text-lg font-black tracking-tight text-[#1a1c1e] uppercase">
                   {t.description}
                 </h4>
-                <div className="flex items-center gap-3 text-slate-400 text-sm font-bold">
+                <div className="flex items-center gap-3 text-sm font-bold text-slate-400">
                   <span className="flex items-center gap-1.5 uppercase">
-                    {t.category} 
-                    {t.sub_category && <span className="text-slate-200">/</span>}
-                    {t.sub_category && <span className="text-[#ff78a4]">{t.sub_category}</span>}
+                    {t.category}
+                    {t.sub_category && (
+                      <span className="text-slate-200">/</span>
+                    )}
+                    {t.sub_category && (
+                      <span className="text-[#ff78a4]">{t.sub_category}</span>
+                    )}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-slate-300 text-xs font-bold mt-1 uppercase">
-                  <Calendar className="w-3.5 h-3.5" />
-                  {new Date(t.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                <div className="mt-1 flex items-center gap-2 text-xs font-bold text-slate-300 uppercase">
+                  <Calendar className="h-3.5 w-3.5" />
+                  {new Date(t.date).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  })}
                 </div>
               </div>
 
               <div className="flex items-center gap-6">
                 <div className="flex flex-col items-end">
-                  <span className={`text-xl font-black ${t.type === 'expense' ? 'text-[#ff5252]' : 'text-[#4caf50]'}`}>
-                    {t.type === 'expense' ? '-' : '+'} Rp. {t.amount.toLocaleString('id-ID')}
+                  <span
+                    className={`text-xl font-black ${t.type === 'expense' ? 'text-[#ff5252]' : 'text-[#4caf50]'}`}
+                  >
+                    {t.type === 'expense' ? '-' : '+'} Rp.{' '}
+                    {t.amount.toLocaleString('id-ID')}
                   </span>
                   {t.receipt_url && (
-                    <a 
-                      href={t.receipt_url} 
-                      target="_blank" 
+                    <a
+                      href={t.receipt_url}
+                      target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-[10px] font-black text-[#ff78a4] hover:underline uppercase mt-1"
+                      className="mt-1 flex items-center gap-1 text-[10px] font-black text-[#ff78a4] uppercase hover:underline"
                     >
-                      <FileText className="w-3 h-3" />
+                      <FileText className="h-3 w-3" />
                       LIHAT STRUK
                     </a>
                   )}
                 </div>
 
-                <div className="flex flex-col gap-2 opacity-40 group-hover:opacity-100 transition-opacity">
-                   <button className="p-2 text-slate-500 hover:text-[#ff78a4] hover:bg-pink-50 rounded-full transition-all">
-                      <Edit3 className="w-5 h-5" />
-                   </button>
-                   <button className="p-2 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-all">
-                      <Trash2 className="w-5 h-5" />
-                   </button>
+                <div className="flex flex-col gap-2 opacity-40 transition-opacity group-hover:opacity-100">
+                  <button className="rounded-full p-2 text-slate-500 transition-all hover:bg-pink-50 hover:text-[#ff78a4]">
+                    <Edit3 className="h-5 w-5" />
+                  </button>
+                  <button className="rounded-full p-2 text-slate-500 transition-all hover:bg-red-50 hover:text-red-500">
+                    <Trash2 className="h-5 w-5" />
+                  </button>
                 </div>
               </div>
             </div>

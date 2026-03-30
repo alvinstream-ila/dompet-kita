@@ -3,7 +3,7 @@ name: azure-resource-manager-durabletask-dotnet
 description: Azure Resource Manager SDK for Durable Task Scheduler in .NET.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure.ResourceManager.DurableTask (.NET)
@@ -11,6 +11,7 @@ date_added: '2026-02-27'
 Management plane SDK for provisioning and managing Azure Durable Task Scheduler resources via Azure Resource Manager.
 
 > **⚠️ Management vs Data Plane**
+>
 > - **This SDK (Azure.ResourceManager.DurableTask)**: Create schedulers, task hubs, configure retention policies
 > - **Data Plane SDK (Microsoft.DurableTask.Client.AzureManaged)**: Start orchestrations, query instances, send events
 
@@ -234,28 +235,28 @@ var retentionOperation = await retentionPolicies.CreateOrUpdateAsync(
 
 ## Key Types Reference
 
-| Type | Purpose |
-|------|---------|
-| `ArmClient` | Entry point for all ARM operations |
-| `DurableTaskSchedulerResource` | Represents a Durable Task Scheduler |
-| `DurableTaskSchedulerCollection` | Collection for scheduler CRUD |
-| `DurableTaskSchedulerData` | Scheduler creation/update payload |
-| `DurableTaskSchedulerProperties` | Scheduler configuration (SKU, IPAllowlist) |
-| `DurableTaskSchedulerSku` | SKU configuration (Name, Capacity, RedundancyState) |
-| `DurableTaskSchedulerSkuName` | SKU options: `Dedicated`, `Consumption` |
-| `DurableTaskHubResource` | Represents a Task Hub |
-| `DurableTaskHubCollection` | Collection for task hub CRUD |
-| `DurableTaskHubData` | Task hub creation payload |
-| `DurableTaskRetentionPolicyResource` | Retention policy management |
-| `DurableTaskRetentionPolicyData` | Retention policy configuration |
-| `DurableTaskExtensions` | Extension methods for ARM client |
+| Type                                 | Purpose                                             |
+| ------------------------------------ | --------------------------------------------------- |
+| `ArmClient`                          | Entry point for all ARM operations                  |
+| `DurableTaskSchedulerResource`       | Represents a Durable Task Scheduler                 |
+| `DurableTaskSchedulerCollection`     | Collection for scheduler CRUD                       |
+| `DurableTaskSchedulerData`           | Scheduler creation/update payload                   |
+| `DurableTaskSchedulerProperties`     | Scheduler configuration (SKU, IPAllowlist)          |
+| `DurableTaskSchedulerSku`            | SKU configuration (Name, Capacity, RedundancyState) |
+| `DurableTaskSchedulerSkuName`        | SKU options: `Dedicated`, `Consumption`             |
+| `DurableTaskHubResource`             | Represents a Task Hub                               |
+| `DurableTaskHubCollection`           | Collection for task hub CRUD                        |
+| `DurableTaskHubData`                 | Task hub creation payload                           |
+| `DurableTaskRetentionPolicyResource` | Retention policy management                         |
+| `DurableTaskRetentionPolicyData`     | Retention policy configuration                      |
+| `DurableTaskExtensions`              | Extension methods for ARM client                    |
 
 ## SKU Options
 
-| SKU | Description | Use Case |
-|-----|-------------|----------|
-| `Dedicated` | Fixed capacity with configurable instances | Production workloads, predictable performance |
-| `Consumption` | Serverless, auto-scaling | Development, variable workloads |
+| SKU           | Description                                | Use Case                                      |
+| ------------- | ------------------------------------------ | --------------------------------------------- |
+| `Dedicated`   | Fixed capacity with configurable instances | Production workloads, predictable performance |
+| `Consumption` | Serverless, auto-scaling                   | Development, variable workloads               |
 
 ## Extension Methods
 
@@ -266,7 +267,7 @@ The SDK provides extension methods on `SubscriptionResource` and `ResourceGroupR
 subscription.GetDurableTaskSchedulers();           // List all in subscription
 subscription.GetDurableTaskSchedulersAsync();      // Async enumerable
 
-// On ResourceGroupResource  
+// On ResourceGroupResource
 resourceGroup.GetDurableTaskSchedulers();          // Get collection
 resourceGroup.GetDurableTaskSchedulerAsync(name);  // Get by name
 
@@ -364,13 +365,13 @@ await scheduler.DeleteAsync(WaitUntil.Completed);
 
 ## Related SDKs
 
-| SDK | Purpose | Install |
-|-----|---------|---------|
-| `Azure.ResourceManager.DurableTask` | Management plane (this SDK) | `dotnet add package Azure.ResourceManager.DurableTask` |
+| SDK                                         | Purpose                                 | Install                                                        |
+| ------------------------------------------- | --------------------------------------- | -------------------------------------------------------------- |
+| `Azure.ResourceManager.DurableTask`         | Management plane (this SDK)             | `dotnet add package Azure.ResourceManager.DurableTask`         |
 | `Microsoft.DurableTask.Client.AzureManaged` | Data plane (orchestrations, activities) | `dotnet add package Microsoft.DurableTask.Client.AzureManaged` |
-| `Microsoft.DurableTask.Worker.AzureManaged` | Worker for running orchestrations | `dotnet add package Microsoft.DurableTask.Worker.AzureManaged` |
-| `Azure.Identity` | Authentication | `dotnet add package Azure.Identity` |
-| `Azure.ResourceManager` | Base ARM SDK | `dotnet add package Azure.ResourceManager` |
+| `Microsoft.DurableTask.Worker.AzureManaged` | Worker for running orchestrations       | `dotnet add package Microsoft.DurableTask.Worker.AzureManaged` |
+| `Azure.Identity`                            | Authentication                          | `dotnet add package Azure.Identity`                            |
+| `Azure.ResourceManager`                     | Base ARM SDK                            | `dotnet add package Azure.ResourceManager`                     |
 
 ## Source Reference
 
@@ -378,4 +379,5 @@ await scheduler.DeleteAsync(WaitUntil.Completed);
 - [NuGet: Azure.ResourceManager.DurableTask](https://www.nuget.org/packages/Azure.ResourceManager.DurableTask)
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

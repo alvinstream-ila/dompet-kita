@@ -17,6 +17,7 @@ npm install @azure/ai-projects @azure/identity
 ```
 
 For tracing:
+
 ```bash
 npm install @azure/monitor-opentelemetry @opentelemetry/api
 ```
@@ -36,21 +37,21 @@ import { DefaultAzureCredential } from "@azure/identity";
 
 const client = new AIProjectClient(
   process.env.AZURE_AI_PROJECT_ENDPOINT!,
-  new DefaultAzureCredential()
+  new DefaultAzureCredential(),
 );
 ```
 
 ## Operation Groups
 
-| Group | Purpose |
-|-------|---------|
-| `client.agents` | Create and manage AI agents |
-| `client.connections` | List connected Azure resources |
-| `client.deployments` | List model deployments |
-| `client.datasets` | Upload and manage datasets |
-| `client.indexes` | Create and manage search indexes |
-| `client.evaluators` | Manage evaluation metrics |
-| `client.memoryStores` | Manage agent memory |
+| Group                 | Purpose                          |
+| --------------------- | -------------------------------- |
+| `client.agents`       | Create and manage AI agents      |
+| `client.connections`  | List connected Azure resources   |
+| `client.deployments`  | List model deployments           |
+| `client.datasets`     | Upload and manage datasets       |
+| `client.indexes`      | Create and manage search indexes |
+| `client.evaluators`   | Manage evaluation metrics        |
+| `client.memoryStores` | Manage agent memory              |
 
 ## Getting OpenAI Client
 
@@ -60,12 +61,12 @@ const openAIClient = await client.getOpenAIClient();
 // Use for responses
 const response = await openAIClient.responses.create({
   model: "gpt-4o",
-  input: "What is the capital of France?"
+  input: "What is the capital of France?",
 });
 
 // Use for conversations
 const conversation = await openAIClient.conversations.create({
-  items: [{ type: "message", role: "user", content: "Hello!" }]
+  items: [{ type: "message", role: "user", content: "Hello!" }],
 });
 ```
 
@@ -77,7 +78,7 @@ const conversation = await openAIClient.conversations.create({
 const agent = await client.agents.createVersion("my-agent", {
   kind: "prompt",
   model: "gpt-4o",
-  instructions: "You are a helpful assistant."
+  instructions: "You are a helpful assistant.",
 });
 ```
 
@@ -89,71 +90,81 @@ const agent = await client.agents.createVersion("code-agent", {
   kind: "prompt",
   model: "gpt-4o",
   instructions: "You can execute code.",
-  tools: [{ type: "code_interpreter", container: { type: "auto" } }]
+  tools: [{ type: "code_interpreter", container: { type: "auto" } }],
 });
 
 // File Search
 const agent = await client.agents.createVersion("search-agent", {
   kind: "prompt",
   model: "gpt-4o",
-  tools: [{ type: "file_search", vector_store_ids: [vectorStoreId] }]
+  tools: [{ type: "file_search", vector_store_ids: [vectorStoreId] }],
 });
 
 // Web Search
 const agent = await client.agents.createVersion("web-agent", {
   kind: "prompt",
   model: "gpt-4o",
-  tools: [{
-    type: "web_search_preview",
-    user_location: { type: "approximate", country: "US", city: "Seattle" }
-  }]
+  tools: [
+    {
+      type: "web_search_preview",
+      user_location: { type: "approximate", country: "US", city: "Seattle" },
+    },
+  ],
 });
 
 // Azure AI Search
 const agent = await client.agents.createVersion("aisearch-agent", {
   kind: "prompt",
   model: "gpt-4o",
-  tools: [{
-    type: "azure_ai_search",
-    azure_ai_search: {
-      indexes: [{
-        project_connection_id: connectionId,
-        index_name: "my-index",
-        query_type: "simple"
-      }]
-    }
-  }]
+  tools: [
+    {
+      type: "azure_ai_search",
+      azure_ai_search: {
+        indexes: [
+          {
+            project_connection_id: connectionId,
+            index_name: "my-index",
+            query_type: "simple",
+          },
+        ],
+      },
+    },
+  ],
 });
 
 // Function Tool
 const agent = await client.agents.createVersion("func-agent", {
   kind: "prompt",
   model: "gpt-4o",
-  tools: [{
-    type: "function",
-    function: {
-      name: "get_weather",
-      description: "Get weather for a location",
-      strict: true,
-      parameters: {
-        type: "object",
-        properties: { location: { type: "string" } },
-        required: ["location"]
-      }
-    }
-  }]
+  tools: [
+    {
+      type: "function",
+      function: {
+        name: "get_weather",
+        description: "Get weather for a location",
+        strict: true,
+        parameters: {
+          type: "object",
+          properties: { location: { type: "string" } },
+          required: ["location"],
+        },
+      },
+    },
+  ],
 });
 
 // MCP Tool
 const agent = await client.agents.createVersion("mcp-agent", {
   kind: "prompt",
   model: "gpt-4o",
-  tools: [{
-    type: "mcp",
-    server_label: "my-mcp",
-    server_url: "https://mcp-server.example.com",
-    require_approval: "always"
-  }]
+  tools: [
+    {
+      type: "mcp",
+      server_label: "my-mcp",
+      server_url: "https://mcp-server.example.com",
+      require_approval: "always",
+    },
+  ],
 });
 ```
 
@@ -164,13 +175,13 @@ const openAIClient = await client.getOpenAIClient();
 
 // Create conversation
 const conversation = await openAIClient.conversations.create({
-  items: [{ type: "message", role: "user", content: "Hello!" }]
+  items: [{ type: "message", role: "user", content: "Hello!" }],
 });
 
 // Generate response using agent
 const response = await openAIClient.responses.create(
   { conversation: conversation.id },
-  { body: { agent: { name: agent.name, type: "agent_reference" } } }
+  { body: { agent: { name: agent.name, type: "agent_reference" } } },
 );
 
 // Cleanup
@@ -190,10 +201,14 @@ for await (const conn of client.connections.list()) {
 const conn = await client.connections.get("my-connection");
 
 // Get connection with credentials
-const connWithCreds = await client.connections.getWithCredentials("my-connection");
+const connWithCreds =
+  await client.connections.getWithCredentials("my-connection");
 
 // Get default connection by type
-const defaultAzureOpenAI = await client.connections.getDefault("AzureOpenAI", true);
+const defaultAzureOpenAI = await client.connections.getDefault(
+  "AzureOpenAI",
+  true,
+);
 ```
 
 ## Deployments
@@ -222,14 +237,14 @@ const deployment = await client.deployments.get("gpt-4o");
 const dataset = await client.datasets.uploadFile(
   "my-dataset",
   "1.0",
-  "./data/training.jsonl"
+  "./data/training.jsonl",
 );
 
 // Upload folder
 const dataset = await client.datasets.uploadFolder(
   "my-dataset",
   "2.0",
-  "./data/documents/"
+  "./data/documents/",
 );
 
 // Get dataset
@@ -254,7 +269,7 @@ const indexConfig: AzureAISearchIndex = {
   type: "AzureSearch",
   version: "1",
   indexName: "my-index",
-  connectionName: "search-connection"
+  connectionName: "search-connection",
 };
 
 // Create index
@@ -278,7 +293,7 @@ import {
   Connection,
   ModelDeployment,
   DatasetVersionUnion,
-  AzureAISearchIndex
+  AzureAISearchIndex,
 } from "@azure/ai-projects";
 ```
 
@@ -291,4 +306,5 @@ import {
 5. **Filter deployments** - Use `modelPublisher` filter to find specific models
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

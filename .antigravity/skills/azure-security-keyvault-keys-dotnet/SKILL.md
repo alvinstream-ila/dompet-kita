@@ -3,7 +3,7 @@ name: azure-security-keyvault-keys-dotnet
 description: Azure Key Vault Keys SDK for .NET. Client library for managing cryptographic keys in Azure Key Vault and Managed HSM. Use for key creation, rotation, encryption, decryption, signing, and verification.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure.Security.KeyVault.Keys (.NET)
@@ -186,7 +186,7 @@ KeyVaultKey restoredKey = await client.RestoreKeyBackupAsync(backupData);
 // From KeyClient
 KeyVaultKey key = await client.GetKeyAsync("my-rsa-key");
 CryptographyClient cryptoClient = client.GetCryptographyClient(
-    key.Name, 
+    key.Name,
     key.Properties.Version);
 
 // Or create directly with key ID
@@ -202,13 +202,13 @@ byte[] plaintext = Encoding.UTF8.GetBytes("Secret message to encrypt");
 
 // Encrypt
 EncryptResult encryptResult = await cryptoClient.EncryptAsync(
-    EncryptionAlgorithm.RsaOaep256, 
+    EncryptionAlgorithm.RsaOaep256,
     plaintext);
 Console.WriteLine($"Encrypted: {Convert.ToBase64String(encryptResult.Ciphertext)}");
 
 // Decrypt
 DecryptResult decryptResult = await cryptoClient.DecryptAsync(
-    EncryptionAlgorithm.RsaOaep256, 
+    EncryptionAlgorithm.RsaOaep256,
     encryptResult.Ciphertext);
 string decrypted = Encoding.UTF8.GetString(decryptResult.Plaintext);
 Console.WriteLine($"Decrypted: {decrypted}");
@@ -223,12 +223,12 @@ RandomNumberGenerator.Fill(keyToWrap);
 
 // Wrap key
 WrapResult wrapResult = await cryptoClient.WrapKeyAsync(
-    KeyWrapAlgorithm.RsaOaep256, 
+    KeyWrapAlgorithm.RsaOaep256,
     keyToWrap);
 
 // Unwrap key
 UnwrapResult unwrapResult = await cryptoClient.UnwrapKeyAsync(
-    KeyWrapAlgorithm.RsaOaep256, 
+    KeyWrapAlgorithm.RsaOaep256,
     wrapResult.EncryptedKey);
 ```
 
@@ -240,13 +240,13 @@ byte[] data = Encoding.UTF8.GetBytes("Data to sign");
 
 // Sign data (computes hash internally)
 SignResult signResult = await cryptoClient.SignDataAsync(
-    SignatureAlgorithm.RS256, 
+    SignatureAlgorithm.RS256,
     data);
 
 // Verify signature
 VerifyResult verifyResult = await cryptoClient.VerifyDataAsync(
-    SignatureAlgorithm.RS256, 
-    data, 
+    SignatureAlgorithm.RS256,
+    data,
     signResult.Signature);
 Console.WriteLine($"Signature valid: {verifyResult.IsValid}");
 
@@ -255,7 +255,7 @@ using var sha256 = SHA256.Create();
 byte[] hash = sha256.ComputeHash(data);
 
 SignResult signHashResult = await cryptoClient.SignAsync(
-    SignatureAlgorithm.RS256, 
+    SignatureAlgorithm.RS256,
     hash);
 ```
 
@@ -272,7 +272,7 @@ CryptographyClient cryptoClient = await resolver.ResolveAsync(
 
 // Use for encryption
 EncryptResult result = await cryptoClient.EncryptAsync(
-    EncryptionAlgorithm.RsaOaep256, 
+    EncryptionAlgorithm.RsaOaep256,
     plaintext);
 ```
 
@@ -299,52 +299,55 @@ await client.UpdateKeyRotationPolicyAsync("my-rsa-key", policy);
 
 ## Key Types Reference
 
-| Type | Purpose |
-|------|---------|
-| `KeyClient` | Key management operations |
-| `CryptographyClient` | Cryptographic operations |
-| `KeyResolver` | Resolve key ID to CryptographyClient |
-| `KeyVaultKey` | Key with cryptographic material |
-| `KeyProperties` | Key metadata (no crypto material) |
-| `CreateRsaKeyOptions` | RSA key creation options |
-| `CreateEcKeyOptions` | EC key creation options |
-| `CreateOctKeyOptions` | Symmetric key options |
-| `EncryptResult` | Encryption result |
-| `DecryptResult` | Decryption result |
-| `SignResult` | Signing result |
-| `VerifyResult` | Verification result |
-| `WrapResult` | Key wrap result |
-| `UnwrapResult` | Key unwrap result |
+| Type                  | Purpose                              |
+| --------------------- | ------------------------------------ |
+| `KeyClient`           | Key management operations            |
+| `CryptographyClient`  | Cryptographic operations             |
+| `KeyResolver`         | Resolve key ID to CryptographyClient |
+| `KeyVaultKey`         | Key with cryptographic material      |
+| `KeyProperties`       | Key metadata (no crypto material)    |
+| `CreateRsaKeyOptions` | RSA key creation options             |
+| `CreateEcKeyOptions`  | EC key creation options              |
+| `CreateOctKeyOptions` | Symmetric key options                |
+| `EncryptResult`       | Encryption result                    |
+| `DecryptResult`       | Decryption result                    |
+| `SignResult`          | Signing result                       |
+| `VerifyResult`        | Verification result                  |
+| `WrapResult`          | Key wrap result                      |
+| `UnwrapResult`        | Key unwrap result                    |
 
 ## Algorithms Reference
 
 ### Encryption Algorithms
-| Algorithm | Key Type | Description |
-|-----------|----------|-------------|
-| `RsaOaep` | RSA | RSA-OAEP |
-| `RsaOaep256` | RSA | RSA-OAEP-256 |
-| `Rsa15` | RSA | RSA 1.5 (legacy) |
-| `A128Gcm` | Oct | AES-128-GCM |
-| `A256Gcm` | Oct | AES-256-GCM |
+
+| Algorithm    | Key Type | Description      |
+| ------------ | -------- | ---------------- |
+| `RsaOaep`    | RSA      | RSA-OAEP         |
+| `RsaOaep256` | RSA      | RSA-OAEP-256     |
+| `Rsa15`      | RSA      | RSA 1.5 (legacy) |
+| `A128Gcm`    | Oct      | AES-128-GCM      |
+| `A256Gcm`    | Oct      | AES-256-GCM      |
 
 ### Signature Algorithms
-| Algorithm | Key Type | Description |
-|-----------|----------|-------------|
-| `RS256` | RSA | RSASSA-PKCS1-v1_5 SHA-256 |
-| `RS384` | RSA | RSASSA-PKCS1-v1_5 SHA-384 |
-| `RS512` | RSA | RSASSA-PKCS1-v1_5 SHA-512 |
-| `PS256` | RSA | RSASSA-PSS SHA-256 |
-| `ES256` | EC | ECDSA P-256 SHA-256 |
-| `ES384` | EC | ECDSA P-384 SHA-384 |
-| `ES512` | EC | ECDSA P-521 SHA-512 |
+
+| Algorithm | Key Type | Description               |
+| --------- | -------- | ------------------------- |
+| `RS256`   | RSA      | RSASSA-PKCS1-v1_5 SHA-256 |
+| `RS384`   | RSA      | RSASSA-PKCS1-v1_5 SHA-384 |
+| `RS512`   | RSA      | RSASSA-PKCS1-v1_5 SHA-512 |
+| `PS256`   | RSA      | RSASSA-PSS SHA-256        |
+| `ES256`   | EC       | ECDSA P-256 SHA-256       |
+| `ES384`   | EC       | ECDSA P-384 SHA-384       |
+| `ES512`   | EC       | ECDSA P-521 SHA-512       |
 
 ### Key Wrap Algorithms
-| Algorithm | Key Type | Description |
-|-----------|----------|-------------|
-| `RsaOaep` | RSA | RSA-OAEP |
-| `RsaOaep256` | RSA | RSA-OAEP-256 |
-| `A128KW` | Oct | AES-128 Key Wrap |
-| `A256KW` | Oct | AES-256 Key Wrap |
+
+| Algorithm    | Key Type | Description      |
+| ------------ | -------- | ---------------- |
+| `RsaOaep`    | RSA      | RSA-OAEP         |
+| `RsaOaep256` | RSA      | RSA-OAEP-256     |
+| `A128KW`     | Oct      | AES-128 Key Wrap |
+| `A256KW`     | Oct      | AES-256 Key Wrap |
 
 ## Best Practices
 
@@ -382,29 +385,30 @@ catch (RequestFailedException ex)
 
 ## Required RBAC Roles
 
-| Role | Permissions |
-|------|-------------|
-| Key Vault Crypto Officer | Full key management |
-| Key Vault Crypto User | Use keys for crypto operations |
-| Key Vault Reader | Read key metadata |
+| Role                     | Permissions                    |
+| ------------------------ | ------------------------------ |
+| Key Vault Crypto Officer | Full key management            |
+| Key Vault Crypto User    | Use keys for crypto operations |
+| Key Vault Reader         | Read key metadata              |
 
 ## Related SDKs
 
-| SDK | Purpose | Install |
-|-----|---------|---------|
-| `Azure.Security.KeyVault.Keys` | Keys (this SDK) | `dotnet add package Azure.Security.KeyVault.Keys` |
-| `Azure.Security.KeyVault.Secrets` | Secrets | `dotnet add package Azure.Security.KeyVault.Secrets` |
-| `Azure.Security.KeyVault.Certificates` | Certificates | `dotnet add package Azure.Security.KeyVault.Certificates` |
-| `Azure.Identity` | Authentication | `dotnet add package Azure.Identity` |
+| SDK                                    | Purpose         | Install                                                   |
+| -------------------------------------- | --------------- | --------------------------------------------------------- |
+| `Azure.Security.KeyVault.Keys`         | Keys (this SDK) | `dotnet add package Azure.Security.KeyVault.Keys`         |
+| `Azure.Security.KeyVault.Secrets`      | Secrets         | `dotnet add package Azure.Security.KeyVault.Secrets`      |
+| `Azure.Security.KeyVault.Certificates` | Certificates    | `dotnet add package Azure.Security.KeyVault.Certificates` |
+| `Azure.Identity`                       | Authentication  | `dotnet add package Azure.Identity`                       |
 
 ## Reference Links
 
-| Resource | URL |
-|----------|-----|
-| NuGet Package | https://www.nuget.org/packages/Azure.Security.KeyVault.Keys |
-| API Reference | https://learn.microsoft.com/dotnet/api/azure.security.keyvault.keys |
-| Quickstart | https://learn.microsoft.com/azure/key-vault/keys/quick-create-net |
+| Resource      | URL                                                                                            |
+| ------------- | ---------------------------------------------------------------------------------------------- |
+| NuGet Package | https://www.nuget.org/packages/Azure.Security.KeyVault.Keys                                    |
+| API Reference | https://learn.microsoft.com/dotnet/api/azure.security.keyvault.keys                            |
+| Quickstart    | https://learn.microsoft.com/azure/key-vault/keys/quick-create-net                              |
 | GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/keyvault/Azure.Security.KeyVault.Keys |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

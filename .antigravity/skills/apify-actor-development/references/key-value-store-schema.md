@@ -9,16 +9,20 @@ The key-value store schema organizes keys into logical groups called collections
 Consider an example Actor that calls `Actor.setValue()` to save records into the key-value store:
 
 ```javascript
-import { Actor } from 'apify';
+import { Actor } from "apify";
 // Initialize the JavaScript SDK
 await Actor.init();
 
 /**
  * Actor code
  */
-await Actor.setValue('document-1', 'my text data', { contentType: 'text/plain' });
+await Actor.setValue("document-1", "my text data", {
+  contentType: "text/plain",
+});
 
-await Actor.setValue(`image-${imageID}`, imageBuffer, { contentType: 'image/jpeg' });
+await Actor.setValue(`image-${imageID}`, imageBuffer, {
+  contentType: "image/jpeg",
+});
 
 // Exit successfully
 await Actor.exit();
@@ -56,13 +60,13 @@ To configure the key-value store schema, reference a schema file in `.actor/acto
 
 ```json
 {
-    "actorSpecification": 1,
-    "name": "data-collector",
-    "title": "Data Collector",
-    "version": "1.0.0",
-    "storages": {
-        "keyValueStore": "./key_value_store_schema.json"
-    }
+  "actorSpecification": 1,
+  "name": "data-collector",
+  "title": "Data Collector",
+  "version": "1.0.0",
+  "storages": {
+    "keyValueStore": "./key_value_store_schema.json"
+  }
 }
 ```
 
@@ -70,21 +74,21 @@ Then create the key-value store schema in `.actor/key_value_store_schema.json`:
 
 ```json
 {
-    "actorKeyValueStoreSchemaVersion": 1,
-    "title": "Key-Value Store Schema",
-    "collections": {
-        "documents": {
-            "title": "Documents",
-            "description": "Text documents stored by the Actor",
-            "keyPrefix": "document-"
-        },
-        "images": {
-            "title": "Images",
-            "description": "Images stored by the Actor",
-            "keyPrefix": "image-",
-            "contentTypes": ["image/jpeg"]
-        }
+  "actorKeyValueStoreSchemaVersion": 1,
+  "title": "Key-Value Store Schema",
+  "collections": {
+    "documents": {
+      "title": "Documents",
+      "description": "Text documents stored by the Actor",
+      "keyPrefix": "document-"
+    },
+    "images": {
+      "title": "Images",
+      "description": "Images stored by the Actor",
+      "keyPrefix": "image-",
+      "contentTypes": ["image/jpeg"]
     }
+  }
 }
 ```
 
@@ -92,19 +96,19 @@ Then create the key-value store schema in `.actor/key_value_store_schema.json`:
 
 ```json
 {
-    "actorKeyValueStoreSchemaVersion": 1,
-    "title": "string (required)",
-    "description": "string (optional)",
-    "collections": {
-        "<COLLECTION_NAME>": {
-            "title": "string (required)",
-            "description": "string (optional)",
-            "key": "string (conditional - use key OR keyPrefix)",
-            "keyPrefix": "string (conditional - use key OR keyPrefix)",
-            "contentTypes": ["string (optional)"],
-            "jsonSchema": "object (optional)"
-        }
+  "actorKeyValueStoreSchemaVersion": 1,
+  "title": "string (required)",
+  "description": "string (optional)",
+  "collections": {
+    "<COLLECTION_NAME>": {
+      "title": "string (required)",
+      "description": "string (optional)",
+      "key": "string (conditional - use key OR keyPrefix)",
+      "keyPrefix": "string (conditional - use key OR keyPrefix)",
+      "contentTypes": ["string (optional)"],
+      "jsonSchema": "object (optional)"
     }
+  }
 }
 ```
 

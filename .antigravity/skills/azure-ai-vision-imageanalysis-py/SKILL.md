@@ -3,7 +3,7 @@ name: azure-ai-vision-imageanalysis-py
 description: Azure AI Vision Image Analysis SDK for captions, tags, objects, OCR, people detection, and smart cropping. Use for computer vision and image understanding tasks.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure AI Vision Image Analysis SDK for Python
@@ -159,7 +159,7 @@ if result.read:
         for line in block.lines:
             print(f"Line: {line.text}")
             print(f"  Bounding polygon: {line.bounding_polygon}")
-            
+
             # Word-level details
             for word in line.words:
                 print(f"  Word: {word.text} (confidence: {word.confidence:.2f})")
@@ -217,15 +217,15 @@ async def analyze_image():
 
 ## Visual Features
 
-| Feature | Description |
-|---------|-------------|
-| `CAPTION` | Single sentence describing the image |
-| `DENSE_CAPTIONS` | Captions for multiple regions |
-| `TAGS` | Content tags (objects, scenes, actions) |
-| `OBJECTS` | Object detection with bounding boxes |
-| `READ` | OCR text extraction |
-| `PEOPLE` | People detection with bounding boxes |
-| `SMART_CROPS` | Suggested crop regions for thumbnails |
+| Feature          | Description                             |
+| ---------------- | --------------------------------------- |
+| `CAPTION`        | Single sentence describing the image    |
+| `DENSE_CAPTIONS` | Captions for multiple regions           |
+| `TAGS`           | Content tags (objects, scenes, actions) |
+| `OBJECTS`        | Object detection with bounding boxes    |
+| `READ`           | OCR text extraction                     |
+| `PEOPLE`         | People detection with bounding boxes    |
+| `SMART_CROPS`    | Suggested crop regions for thumbnails   |
 
 ## Error Handling
 
@@ -260,4 +260,5 @@ except HttpResponseError as e:
 7. **Cache results** when analyzing the same image multiple times
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

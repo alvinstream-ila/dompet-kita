@@ -30,12 +30,12 @@ date_added: "2026-02-27"
 
 ## Class Name Changes
 
-| CallingServer (Old) | Call Automation (New) |
-|---------------------|----------------------|
-| `CallingServerClient` | `CallAutomationClient` |
-| `CallingServerClientBuilder` | `CallAutomationClientBuilder` |
-| `CallConnection` | `CallConnection` (same) |
-| `ServerCall` | Removed - use `CallConnection` |
+| CallingServer (Old)          | Call Automation (New)          |
+| ---------------------------- | ------------------------------ |
+| `CallingServerClient`        | `CallAutomationClient`         |
+| `CallingServerClientBuilder` | `CallAutomationClientBuilder`  |
+| `CallConnection`             | `CallConnection` (same)        |
+| `ServerCall`                 | Removed - use `CallConnection` |
 
 ## Legacy Client Creation
 
@@ -76,9 +76,10 @@ client.stopRecording(recordingId);
 
 ## For New Development
 
-**Do not use this SDK for new projects.** 
+**Do not use this SDK for new projects.**
 
 See the `azure-communication-callautomation-java` skill for:
+
 - Making outbound calls
 - Answering incoming calls
 - Call recording
@@ -93,4 +94,5 @@ See the `azure-communication-callautomation-java` skill for:
 - "migrate callingserver to callautomation"
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

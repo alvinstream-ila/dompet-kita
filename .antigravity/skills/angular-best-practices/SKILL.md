@@ -560,4 +560,5 @@ export class Component implements OnInit, OnDestroy {
 - [Change Detection Deep Dive](https://angular.dev/guide/change-detection)
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

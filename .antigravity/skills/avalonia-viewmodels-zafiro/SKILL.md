@@ -28,8 +28,10 @@ This skill provides a set of best practices and patterns for creating ViewModels
 ## Example Reference
 
 For real-world implementations, refer to the **Angor** project:
+
 - `CreateProjectFlowV2.cs`: Excellent example of complex Wizard building.
 - `HomeViewModel.cs`: Simple section ViewModel using functional-reactive commands.
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

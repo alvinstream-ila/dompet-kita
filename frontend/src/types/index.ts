@@ -1,6 +1,12 @@
 export type TransactionType = 'income' | 'expense';
 
-export type AssetType = 'Emas' | 'Saham' | 'Tabungan' | 'Kripto' | 'Properti' | 'Lainnya';
+export type AssetType =
+  | 'Emas'
+  | 'Saham'
+  | 'Tabungan'
+  | 'Kripto'
+  | 'Properti'
+  | 'Lainnya';
 
 export interface Asset {
   id: string;

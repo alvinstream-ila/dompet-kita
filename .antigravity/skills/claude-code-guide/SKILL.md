@@ -71,4 +71,5 @@ If the agent is stuck or behaving unexpectedly:
 Based on [Claude Code Guide by zebbern](https://github.com/zebbern/claude-code-guide).
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

@@ -3,7 +3,7 @@ name: azure-ai-voicelive-dotnet
 description: Azure AI Voice Live SDK for .NET. Build real-time voice AI applications with bidirectional WebSocket communication.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure.AI.VoiceLive (.NET)
@@ -116,19 +116,19 @@ await foreach (SessionUpdate serverEvent in session.GetUpdatesAsync())
             byte[] audioData = audioDelta.Delta.ToArray();
             // Play audio via NAudio or other audio library
             break;
-            
+
         case SessionUpdateResponseTextDelta textDelta:
             Console.Write(textDelta.Delta);
             break;
-            
+
         case SessionUpdateResponseFunctionCallArgumentsDone functionCall:
             // Handle function call (see Function Calling section)
             break;
-            
+
         case SessionUpdateError error:
             Console.WriteLine($"Error: {error.Error.Message}");
             break;
-            
+
         case SessionUpdateResponseDone:
             Console.WriteLine("\n--- Response complete ---");
             break;
@@ -174,10 +174,10 @@ if (serverEvent is SessionUpdateResponseFunctionCallArgumentsDone functionCall)
     {
         var parameters = JsonSerializer.Deserialize<Dictionary<string, string>>(functionCall.Arguments);
         string location = parameters?["location"] ?? "";
-        
+
         // Call external service
         string weatherInfo = $"The weather in {location} is sunny, 75°F.";
-        
+
         // Send response
         await session.AddItemAsync(new FunctionCallOutputItem(functionCall.CallId, weatherInfo));
         await session.StartResponseAsync();
@@ -187,34 +187,34 @@ if (serverEvent is SessionUpdateResponseFunctionCallArgumentsDone functionCall)
 
 ## Voice Options
 
-| Voice Type | Class | Example |
-|------------|-------|---------|
-| Azure Standard | `AzureStandardVoice` | `"en-US-AvaNeural"` |
-| Azure HD | `AzureStandardVoice` | `"en-US-Ava:DragonHDLatestNeural"` |
-| Azure Custom | `AzureCustomVoice` | Custom voice with endpoint ID |
+| Voice Type     | Class                | Example                            |
+| -------------- | -------------------- | ---------------------------------- |
+| Azure Standard | `AzureStandardVoice` | `"en-US-AvaNeural"`                |
+| Azure HD       | `AzureStandardVoice` | `"en-US-Ava:DragonHDLatestNeural"` |
+| Azure Custom   | `AzureCustomVoice`   | Custom voice with endpoint ID      |
 
 ## Supported Models
 
-| Model | Description |
-|-------|-------------|
-| `gpt-4o-realtime-preview` | GPT-4o with real-time audio |
+| Model                          | Description                    |
+| ------------------------------ | ------------------------------ |
+| `gpt-4o-realtime-preview`      | GPT-4o with real-time audio    |
 | `gpt-4o-mini-realtime-preview` | Lightweight, fast interactions |
-| `phi4-mm-realtime` | Cost-effective multimodal |
+| `phi4-mm-realtime`             | Cost-effective multimodal      |
 
 ## Key Types Reference
 
-| Type | Purpose |
-|------|---------|
-| `VoiceLiveClient` | Main client for creating sessions |
-| `VoiceLiveSession` | Active WebSocket session |
-| `VoiceLiveSessionOptions` | Session configuration |
-| `AzureStandardVoice` | Standard Azure voice provider |
-| `AzureSemanticVadTurnDetection` | Voice activity detection |
-| `VoiceLiveFunctionDefinition` | Function tool definition |
-| `UserMessageItem` | User text message |
-| `FunctionCallOutputItem` | Function call response |
-| `SessionUpdateResponseAudioDelta` | Audio chunk event |
-| `SessionUpdateResponseTextDelta` | Text chunk event |
+| Type                              | Purpose                           |
+| --------------------------------- | --------------------------------- |
+| `VoiceLiveClient`                 | Main client for creating sessions |
+| `VoiceLiveSession`                | Active WebSocket session          |
+| `VoiceLiveSessionOptions`         | Session configuration             |
+| `AzureStandardVoice`              | Standard Azure voice provider     |
+| `AzureSemanticVadTurnDetection`   | Voice activity detection          |
+| `VoiceLiveFunctionDefinition`     | Function tool definition          |
+| `UserMessageItem`                 | User text message                 |
+| `FunctionCallOutputItem`          | Function call response            |
+| `SessionUpdateResponseAudioDelta` | Audio chunk event                 |
+| `SessionUpdateResponseTextDelta`  | Text chunk event                  |
 
 ## Best Practices
 
@@ -250,20 +250,21 @@ if (serverEvent is SessionUpdateError error)
 
 ## Related SDKs
 
-| SDK | Purpose | Install |
-|-----|---------|---------|
-| `Azure.AI.VoiceLive` | Real-time voice (this SDK) | `dotnet add package Azure.AI.VoiceLive` |
+| SDK                                  | Purpose                        | Install                                                 |
+| ------------------------------------ | ------------------------------ | ------------------------------------------------------- |
+| `Azure.AI.VoiceLive`                 | Real-time voice (this SDK)     | `dotnet add package Azure.AI.VoiceLive`                 |
 | `Microsoft.CognitiveServices.Speech` | Speech-to-text, text-to-speech | `dotnet add package Microsoft.CognitiveServices.Speech` |
-| `NAudio` | Audio capture/playback | `dotnet add package NAudio` |
+| `NAudio`                             | Audio capture/playback         | `dotnet add package NAudio`                             |
 
 ## Reference Links
 
-| Resource | URL |
-|----------|-----|
-| NuGet Package | https://www.nuget.org/packages/Azure.AI.VoiceLive |
-| API Reference | https://learn.microsoft.com/dotnet/api/azure.ai.voicelive |
-| GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/ai/Azure.AI.VoiceLive |
-| Quickstart | https://learn.microsoft.com/azure/ai-services/speech-service/voice-live-quickstart |
+| Resource      | URL                                                                                |
+| ------------- | ---------------------------------------------------------------------------------- |
+| NuGet Package | https://www.nuget.org/packages/Azure.AI.VoiceLive                                  |
+| API Reference | https://learn.microsoft.com/dotnet/api/azure.ai.voicelive                          |
+| GitHub Source | https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/ai/Azure.AI.VoiceLive     |
+| Quickstart    | https://learn.microsoft.com/azure/ai-services/speech-service/voice-live-quickstart |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

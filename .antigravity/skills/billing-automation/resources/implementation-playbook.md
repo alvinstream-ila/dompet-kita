@@ -5,7 +5,9 @@ This file contains detailed patterns, checklists, and code samples referenced by
 ## Core Concepts
 
 ### 1. Billing Cycles
+
 **Common Intervals:**
+
 - Monthly (most common for SaaS)
 - Annual (discounted long-term)
 - Quarterly
@@ -13,20 +15,25 @@ This file contains detailed patterns, checklists, and code samples referenced by
 - Custom (usage-based, per-seat)
 
 ### 2. Subscription States
+
 ```
 trial → active → past_due → canceled
               → paused → resumed
 ```
 
 ### 3. Dunning Management
+
 Automated process to recover failed payments through:
+
 - Retry schedules
 - Customer notifications
 - Grace periods
 - Account restrictions
 
 ### 4. Proration
+
 Adjusting charges when:
+
 - Upgrading/downgrading mid-cycle
 - Adding/removing seats
 - Changing billing frequency

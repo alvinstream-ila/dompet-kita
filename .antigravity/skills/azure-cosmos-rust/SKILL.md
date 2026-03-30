@@ -3,7 +3,7 @@ name: azure-cosmos-rust
 description: Azure Cosmos DB SDK for Rust (NoSQL API). Use for document CRUD, queries, containers, and globally distributed data.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Cosmos DB SDK for Rust
@@ -40,10 +40,10 @@ let client = CosmosClient::new(
 
 ## Client Hierarchy
 
-| Client | Purpose | Get From |
-|--------|---------|----------|
-| `CosmosClient` | Account-level operations | Direct instantiation |
-| `DatabaseClient` | Database operations | `client.database_client()` |
+| Client            | Purpose                   | Get From                      |
+| ----------------- | ------------------------- | ----------------------------- |
+| `CosmosClient`    | Account-level operations  | Direct instantiation          |
+| `DatabaseClient`  | Database operations       | `client.database_client()`    |
 | `ContainerClient` | Container/item operations | `database.container_client()` |
 
 ## Core Workflow
@@ -128,11 +128,12 @@ cargo add azure_data_cosmos --features key_auth
 
 ## Reference Links
 
-| Resource | Link |
-|----------|------|
-| API Reference | https://docs.rs/azure_data_cosmos |
-| Source Code | https://github.com/Azure/azure-sdk-for-rust/tree/main/sdk/cosmos/azure_data_cosmos |
-| crates.io | https://crates.io/crates/azure_data_cosmos |
+| Resource      | Link                                                                               |
+| ------------- | ---------------------------------------------------------------------------------- |
+| API Reference | https://docs.rs/azure_data_cosmos                                                  |
+| Source Code   | https://github.com/Azure/azure-sdk-for-rust/tree/main/sdk/cosmos/azure_data_cosmos |
+| crates.io     | https://crates.io/crates/azure_data_cosmos                                         |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

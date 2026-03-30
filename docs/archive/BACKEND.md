@@ -16,13 +16,13 @@ Welcome to the official technical documentation for the **Dompet Kita** backend.
 
 ## 🛠️ 2. Technical Stack
 
-| Component | Technology |
-| :--- | :--- |
-| **Language** | PHP 8.4 |
-| **Framework** | Laravel 11.x |
-| **Database** | PostgreSQL (Hosted on Supabase) |
-| **Authentication** | Laravel Sanctum (Token-based) |
-| **Social Auth** | Laravel Socialite (Google Support) |
+| Component          | Technology                          |
+| :----------------- | :---------------------------------- |
+| **Language**       | PHP 8.4                             |
+| **Framework**      | Laravel 11.x                        |
+| **Database**       | PostgreSQL (Hosted on Supabase)     |
+| **Authentication** | Laravel Sanctum (Token-based)       |
+| **Social Auth**    | Laravel Socialite (Google Support)  |
 | **AI Integration** | Google Gemini AI (via AIController) |
 
 ---
@@ -32,28 +32,37 @@ Welcome to the official technical documentation for the **Dompet Kita** backend.
 The database is structured to support multi-user operations and historical tracking.
 
 ### `users` Table
+
 Stores user profiles, settings, and partner information.
+
 - `social_id`, `social_type`: For OAuth integration.
 - `partner_name`, `anniversary_date`: Personalization fields.
 - `monthly_budget_limit`: User-defined guardrail.
 
 ### `transactions` Table
+
 The core ledger of the application.
+
 - `type`: `income` or `expense`.
 - `amount`: Precision decimal (15,2).
 - `receipt_url`: Link to uploaded media.
 
 ### `assets` Table
+
 Tracks net worth components.
+
 - `type`: `cash`, `bank`, `investment`, `property`.
 - `value`: Current valuation.
 
 ### `loans` Table
+
 Tracks debt and lending.
+
 - `type`: `utang` (debt) or `piutang` (loaned out).
 - `remaining_amount`: Tracks partial repayments.
 
 ### `goals` & `holidays` Table
+
 - **Goals**: Target-based savings tracking.
 - **Holidays**: Trip planning and budget allocation.
 
@@ -64,39 +73,43 @@ Tracks debt and lending.
 All private endpoints require the `Authorization: Bearer <token>` header.
 
 ### 🔑 Authentication
-| Method | Path | Description | Auth |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/register` | User signup. | No |
-| `POST` | `/api/login` | User login (Throttled). | No |
-| `POST` | `/api/logout` | Revoke tokens. | Yes |
-| `GET` | `/api/auth/{provider}` | Start Social Login. | No |
-| `ANY` | `/api/email/verify` | Email Verification Callback. | No |
+
+| Method | Path                   | Description                  | Auth |
+| :----- | :--------------------- | :--------------------------- | :--- |
+| `POST` | `/api/register`        | User signup.                 | No   |
+| `POST` | `/api/login`           | User login (Throttled).      | No   |
+| `POST` | `/api/logout`          | Revoke tokens.               | Yes  |
+| `GET`  | `/api/auth/{provider}` | Start Social Login.          | No   |
+| `ANY`  | `/api/email/verify`    | Email Verification Callback. | No   |
 
 ### 💰 Finance & Wealth
-| Method | Path | Description |
-| :--- | :--- | :--- |
-| `GET` | `/api/transactions` | List all transactions. |
-| `POST` | `/api/transactions` | Add new record. |
-| `GET` | `/api/wealth-history` | Fetch net worth trends. |
-| `GET` | `/api/loans` | Track debts/loans. |
+
+| Method | Path                  | Description             |
+| :----- | :-------------------- | :---------------------- |
+| `GET`  | `/api/transactions`   | List all transactions.  |
+| `POST` | `/api/transactions`   | Add new record.         |
+| `GET`  | `/api/wealth-history` | Fetch net worth trends. |
+| `GET`  | `/api/loans`          | Track debts/loans.      |
 
 ### 🧠 AI & Services
-| Method | Path | Description |
-| :--- | :--- | :--- |
-| `GET` | `/api/ai/insights` | Fetch AI personal insights. |
-| `POST` | `/api/ai/analyze` | Scan receipt (Maintenance). |
-| `POST` | `/api/media/upload` | Upload files to storage. |
+
+| Method | Path                | Description                 |
+| :----- | :------------------ | :-------------------------- |
+| `GET`  | `/api/ai/insights`  | Fetch AI personal insights. |
+| `POST` | `/api/ai/analyze`   | Scan receipt (Maintenance). |
+| `POST` | `/api/media/upload` | Upload files to storage.    |
 
 ---
 
 ## 🤖 5. AI "The Gatekeeper" Logic
 
 The `AIController` acts as a financial coach with a personality.
+
 - **Insight Engine**: Analyzes the last 30 days of `transactions`.
 - **Dynamic Templates**:
-    - **Deficit**: Encouraging messages about saving.
-    - **Buffer**: Pride-filled messages about small savings.
-    - **Surplus**: Celebration and date-night suggestions.
+  - **Deficit**: Encouraging messages about saving.
+  - **Buffer**: Pride-filled messages about small savings.
+  - **Surplus**: Celebration and date-night suggestions.
 - **Tone**: Romantic, supportive, and "sayang-centric".
 
 ---
@@ -104,6 +117,7 @@ The `AIController` acts as a financial coach with a personality.
 ## ⚙️ 6. Deployment & Setup
 
 ### Installation
+
 1. `composer install`
 2. `php artisan migrate`
 3. `php artisan key:generate`

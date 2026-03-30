@@ -15,11 +15,11 @@ export function useFinancialSummary(month?: number, year?: number) {
         params: {
           month: targetMonth,
           year: targetYear,
-          budget_cycle_start: budgetCycleStart
-        }
+          budget_cycle_start: budgetCycleStart,
+        },
       });
       return data;
-    }
+    },
   });
 
   return {

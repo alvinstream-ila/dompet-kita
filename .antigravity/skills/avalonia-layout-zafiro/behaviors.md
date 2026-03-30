@@ -15,6 +15,7 @@ Use `Interaction.Behaviors` to handle UI-related logic that doesn't belong in th
 ```
 
 ### Why use Behaviors?
+
 - **Encapsulation**: UI logic is contained in a reusable behavior class.
 - **Clean XAML**: Avoids code-behind and complex XAML triggers.
 - **Testability**: Behaviors can be tested independently of the View.
@@ -28,6 +29,7 @@ Converters often lead to "magical" logic hidden in XAML. Whenever possible, pref
 3.  **Behaviors**: For more complex interactions that involve state or events.
 
 ### When to use Converters?
+
 Only use them when the conversion is purely visual and highly reusable across different contexts (e.g., `BoolToOpacityConverter`).
 
 ## 🧩 Simplified Interactions

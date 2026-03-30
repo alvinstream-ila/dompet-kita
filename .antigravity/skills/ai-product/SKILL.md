@@ -3,7 +3,7 @@ name: ai-product
 description: Every product will be AI-powered. The question is whether you'll build it right or ship a demo that falls apart in production. This skill covers LLM integration patterns, RAG architecture, prompt ...
 risk: unknown
 source: vibeship-spawner-skills (Apache 2.0)
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # AI Product Development
@@ -44,16 +44,17 @@ Version prompts in code and test with regression suite
 
 ## ⚠️ Sharp Edges
 
-| Issue | Severity | Solution |
-|-------|----------|----------|
-| Trusting LLM output without validation | critical | # Always validate output: |
-| User input directly in prompts without sanitization | critical | # Defense layers: |
-| Stuffing too much into context window | high | # Calculate tokens before sending: |
-| Waiting for complete response before showing anything | high | # Stream responses: |
-| Not monitoring LLM API costs | high | # Track per-request: |
-| App breaks when LLM API fails | high | # Defense in depth: |
-| Not validating facts from LLM responses | critical | # For factual claims: |
-| Making LLM calls in synchronous request handlers | high | # Async patterns: |
+| Issue                                                 | Severity | Solution                           |
+| ----------------------------------------------------- | -------- | ---------------------------------- |
+| Trusting LLM output without validation                | critical | # Always validate output:          |
+| User input directly in prompts without sanitization   | critical | # Defense layers:                  |
+| Stuffing too much into context window                 | high     | # Calculate tokens before sending: |
+| Waiting for complete response before showing anything | high     | # Stream responses:                |
+| Not monitoring LLM API costs                          | high     | # Track per-request:               |
+| App breaks when LLM API fails                         | high     | # Defense in depth:                |
+| Not validating facts from LLM responses               | critical | # For factual claims:              |
+| Making LLM calls in synchronous request handlers      | high     | # Async patterns:                  |
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

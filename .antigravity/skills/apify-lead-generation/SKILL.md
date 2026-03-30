@@ -8,6 +8,7 @@ description: "Generates B2B/B2C leads by scraping Google Maps, websites, Instagr
 Scrape leads from multiple platforms using Apify Actors.
 
 ## Prerequisites
+
 (No need to check it upfront)
 
 - `.env` file with `APIFY_TOKEN`
@@ -31,25 +32,25 @@ Task Progress:
 
 Select the appropriate Actor based on user needs:
 
-| User Need | Actor ID | Best For |
-|-----------|----------|----------|
-| Local businesses | `compass/crawler-google-places` | Restaurants, gyms, shops |
-| Contact enrichment | `vdrmota/contact-info-scraper` | Emails, phones from URLs |
-| Instagram profiles | `apify/instagram-profile-scraper` | Influencer discovery |
-| Instagram posts/comments | `apify/instagram-scraper` | Posts, comments, hashtags, places |
-| Instagram search | `apify/instagram-search-scraper` | Places, users, hashtags discovery |
-| TikTok videos/hashtags | `clockworks/tiktok-scraper` | Comprehensive TikTok data extraction |
-| TikTok hashtags/profiles | `clockworks/free-tiktok-scraper` | Free TikTok data extractor |
-| TikTok user search | `clockworks/tiktok-user-search-scraper` | Find users by keywords |
-| TikTok profiles | `clockworks/tiktok-profile-scraper` | Creator outreach |
-| TikTok followers/following | `clockworks/tiktok-followers-scraper` | Audience analysis, segmentation |
-| Facebook pages | `apify/facebook-pages-scraper` | Business contacts |
-| Facebook page contacts | `apify/facebook-page-contact-information` | Extract emails, phones, addresses |
-| Facebook groups | `apify/facebook-groups-scraper` | Buying intent signals |
-| Facebook events | `apify/facebook-events-scraper` | Event networking, partnerships |
-| Google Search | `apify/google-search-scraper` | Broad lead discovery |
-| YouTube channels | `streamers/youtube-scraper` | Creator partnerships |
-| Google Maps emails | `poidata/google-maps-email-extractor` | Direct email extraction |
+| User Need                  | Actor ID                                  | Best For                             |
+| -------------------------- | ----------------------------------------- | ------------------------------------ |
+| Local businesses           | `compass/crawler-google-places`           | Restaurants, gyms, shops             |
+| Contact enrichment         | `vdrmota/contact-info-scraper`            | Emails, phones from URLs             |
+| Instagram profiles         | `apify/instagram-profile-scraper`         | Influencer discovery                 |
+| Instagram posts/comments   | `apify/instagram-scraper`                 | Posts, comments, hashtags, places    |
+| Instagram search           | `apify/instagram-search-scraper`          | Places, users, hashtags discovery    |
+| TikTok videos/hashtags     | `clockworks/tiktok-scraper`               | Comprehensive TikTok data extraction |
+| TikTok hashtags/profiles   | `clockworks/free-tiktok-scraper`          | Free TikTok data extractor           |
+| TikTok user search         | `clockworks/tiktok-user-search-scraper`   | Find users by keywords               |
+| TikTok profiles            | `clockworks/tiktok-profile-scraper`       | Creator outreach                     |
+| TikTok followers/following | `clockworks/tiktok-followers-scraper`     | Audience analysis, segmentation      |
+| Facebook pages             | `apify/facebook-pages-scraper`            | Business contacts                    |
+| Facebook page contacts     | `apify/facebook-page-contact-information` | Extract emails, phones, addresses    |
+| Facebook groups            | `apify/facebook-groups-scraper`           | Buying intent signals                |
+| Facebook events            | `apify/facebook-events-scraper`           | Event networking, partnerships       |
+| Google Search              | `apify/google-search-scraper`             | Broad lead discovery                 |
+| YouTube channels           | `streamers/youtube-scraper`               | Creator partnerships                 |
+| Google Maps emails         | `poidata/google-maps-email-extractor`     | Direct email extraction              |
 
 ### Step 2: Fetch Actor Schema
 
@@ -62,6 +63,7 @@ export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "A
 Replace `ACTOR_ID` with the selected Actor (e.g., `compass/crawler-google-places`).
 
 This returns:
+
 - Actor description and README
 - Required and optional input parameters
 - Output fields (if available)
@@ -69,6 +71,7 @@ This returns:
 ### Step 3: Ask User Preferences
 
 Before running, ask:
+
 1. **Output format**:
    - **Quick answer** - Display top few results in chat (no file saved)
    - **CSV** - Full export with all fields
@@ -78,6 +81,7 @@ Before running, ask:
 ### Step 4: Run the Script
 
 **Quick answer (display in chat, no file):**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -85,6 +89,7 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ```
 
 **CSV:**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -94,6 +99,7 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ```
 
 **JSON:**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -105,11 +111,11 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ### Step 5: Summarize Results
 
 After completion, report:
+
 - Number of leads found
 - File location and name
 - Key fields available
 - Suggested next steps (filtering, enrichment)
-
 
 ## Error Handling
 

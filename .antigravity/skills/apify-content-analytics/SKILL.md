@@ -8,6 +8,7 @@ description: Track engagement metrics, measure campaign ROI, and analyze content
 Track and analyze content performance using Apify Actors to extract engagement metrics from multiple platforms.
 
 ## Prerequisites
+
 (No need to check it upfront)
 
 - `.env` file with `APIFY_TOKEN`
@@ -31,25 +32,25 @@ Task Progress:
 
 Select the appropriate Actor based on analytics needs:
 
-| User Need | Actor ID | Best For |
-|-----------|----------|----------|
-| Post engagement metrics | `apify/instagram-post-scraper` | Post performance |
-| Reel performance | `apify/instagram-reel-scraper` | Reel analytics |
-| Follower growth tracking | `apify/instagram-followers-count-scraper` | Growth metrics |
-| Comment engagement | `apify/instagram-comment-scraper` | Comment analysis |
-| Hashtag performance | `apify/instagram-hashtag-scraper` | Branded hashtags |
-| Mention tracking | `apify/instagram-tagged-scraper` | Tag tracking |
-| Comprehensive metrics | `apify/instagram-scraper` | Full data |
-| API-based analytics | `apify/instagram-api-scraper` | API access |
-| Facebook post performance | `apify/facebook-posts-scraper` | Post metrics |
-| Reaction analysis | `apify/facebook-likes-scraper` | Engagement types |
-| Facebook Reels metrics | `apify/facebook-reels-scraper` | Reels performance |
-| Ad performance tracking | `apify/facebook-ads-scraper` | Ad analytics |
-| Facebook comment analysis | `apify/facebook-comments-scraper` | Comment engagement |
-| Page performance audit | `apify/facebook-pages-scraper` | Page metrics |
-| YouTube video metrics | `streamers/youtube-scraper` | Video performance |
-| YouTube Shorts analytics | `streamers/youtube-shorts-scraper` | Shorts performance |
-| TikTok content metrics | `clockworks/tiktok-scraper` | TikTok analytics |
+| User Need                 | Actor ID                                  | Best For           |
+| ------------------------- | ----------------------------------------- | ------------------ |
+| Post engagement metrics   | `apify/instagram-post-scraper`            | Post performance   |
+| Reel performance          | `apify/instagram-reel-scraper`            | Reel analytics     |
+| Follower growth tracking  | `apify/instagram-followers-count-scraper` | Growth metrics     |
+| Comment engagement        | `apify/instagram-comment-scraper`         | Comment analysis   |
+| Hashtag performance       | `apify/instagram-hashtag-scraper`         | Branded hashtags   |
+| Mention tracking          | `apify/instagram-tagged-scraper`          | Tag tracking       |
+| Comprehensive metrics     | `apify/instagram-scraper`                 | Full data          |
+| API-based analytics       | `apify/instagram-api-scraper`             | API access         |
+| Facebook post performance | `apify/facebook-posts-scraper`            | Post metrics       |
+| Reaction analysis         | `apify/facebook-likes-scraper`            | Engagement types   |
+| Facebook Reels metrics    | `apify/facebook-reels-scraper`            | Reels performance  |
+| Ad performance tracking   | `apify/facebook-ads-scraper`              | Ad analytics       |
+| Facebook comment analysis | `apify/facebook-comments-scraper`         | Comment engagement |
+| Page performance audit    | `apify/facebook-pages-scraper`            | Page metrics       |
+| YouTube video metrics     | `streamers/youtube-scraper`               | Video performance  |
+| YouTube Shorts analytics  | `streamers/youtube-shorts-scraper`        | Shorts performance |
+| TikTok content metrics    | `clockworks/tiktok-scraper`               | TikTok analytics   |
 
 ### Step 2: Fetch Actor Schema
 
@@ -62,6 +63,7 @@ export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "A
 Replace `ACTOR_ID` with the selected Actor (e.g., `apify/instagram-post-scraper`).
 
 This returns:
+
 - Actor description and README
 - Required and optional input parameters
 - Output fields (if available)
@@ -69,6 +71,7 @@ This returns:
 ### Step 3: Ask User Preferences
 
 Before running, ask:
+
 1. **Output format**:
    - **Quick answer** - Display top few results in chat (no file saved)
    - **CSV** - Full export with all fields
@@ -78,6 +81,7 @@ Before running, ask:
 ### Step 4: Run the Script
 
 **Quick answer (display in chat, no file):**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -85,6 +89,7 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ```
 
 **CSV:**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -94,6 +99,7 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ```
 
 **JSON:**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -105,11 +111,11 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ### Step 5: Summarize Findings
 
 After completion, report:
+
 - Number of content pieces analyzed
 - File location and name
 - Key performance insights
 - Suggested next steps (deeper analysis, content optimization)
-
 
 ## Error Handling
 

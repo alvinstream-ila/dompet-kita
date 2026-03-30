@@ -8,6 +8,7 @@ description: Analyze market conditions, geographic opportunities, pricing, consu
 Conduct market research using Apify Actors to extract data from multiple platforms.
 
 ## Prerequisites
+
 (No need to check it upfront)
 
 - `.env` file with `APIFY_TOKEN`
@@ -31,24 +32,24 @@ Task Progress:
 
 Select the appropriate Actor based on research needs:
 
-| User Need | Actor ID | Best For |
-|-----------|----------|----------|
-| Market density | `compass/crawler-google-places` | Location analysis |
-| Geospatial analysis | `compass/google-maps-extractor` | Business mapping |
-| Regional interest | `apify/google-trends-scraper` | Trend data |
-| Pricing and demand | `apify/facebook-marketplace-scraper` | Market pricing |
-| Event market | `apify/facebook-events-scraper` | Event analysis |
-| Consumer needs | `apify/facebook-groups-scraper` | Group research |
-| Market landscape | `apify/facebook-pages-scraper` | Business pages |
-| Business density | `apify/facebook-page-contact-information` | Contact data |
-| Cultural insights | `apify/facebook-photos-scraper` | Visual research |
-| Niche targeting | `apify/instagram-hashtag-scraper` | Hashtag research |
-| Hashtag stats | `apify/instagram-hashtag-stats` | Market sizing |
-| Market activity | `apify/instagram-reel-scraper` | Activity analysis |
-| Market intelligence | `apify/instagram-scraper` | Full data |
-| Product launch research | `apify/instagram-api-scraper` | API access |
-| Hospitality market | `voyager/booking-scraper` | Hotel data |
-| Tourism insights | `maxcopell/tripadvisor-reviews` | Review analysis |
+| User Need               | Actor ID                                  | Best For          |
+| ----------------------- | ----------------------------------------- | ----------------- |
+| Market density          | `compass/crawler-google-places`           | Location analysis |
+| Geospatial analysis     | `compass/google-maps-extractor`           | Business mapping  |
+| Regional interest       | `apify/google-trends-scraper`             | Trend data        |
+| Pricing and demand      | `apify/facebook-marketplace-scraper`      | Market pricing    |
+| Event market            | `apify/facebook-events-scraper`           | Event analysis    |
+| Consumer needs          | `apify/facebook-groups-scraper`           | Group research    |
+| Market landscape        | `apify/facebook-pages-scraper`            | Business pages    |
+| Business density        | `apify/facebook-page-contact-information` | Contact data      |
+| Cultural insights       | `apify/facebook-photos-scraper`           | Visual research   |
+| Niche targeting         | `apify/instagram-hashtag-scraper`         | Hashtag research  |
+| Hashtag stats           | `apify/instagram-hashtag-stats`           | Market sizing     |
+| Market activity         | `apify/instagram-reel-scraper`            | Activity analysis |
+| Market intelligence     | `apify/instagram-scraper`                 | Full data         |
+| Product launch research | `apify/instagram-api-scraper`             | API access        |
+| Hospitality market      | `voyager/booking-scraper`                 | Hotel data        |
+| Tourism insights        | `maxcopell/tripadvisor-reviews`           | Review analysis   |
 
 ### Step 2: Fetch Actor Schema
 
@@ -61,6 +62,7 @@ export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "A
 Replace `ACTOR_ID` with the selected Actor (e.g., `compass/crawler-google-places`).
 
 This returns:
+
 - Actor description and README
 - Required and optional input parameters
 - Output fields (if available)
@@ -68,6 +70,7 @@ This returns:
 ### Step 3: Ask User Preferences
 
 Before running, ask:
+
 1. **Output format**:
    - **Quick answer** - Display top few results in chat (no file saved)
    - **CSV** - Full export with all fields
@@ -77,6 +80,7 @@ Before running, ask:
 ### Step 4: Run the Script
 
 **Quick answer (display in chat, no file):**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -84,6 +88,7 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ```
 
 **CSV:**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -93,6 +98,7 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ```
 
 **JSON:**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -104,11 +110,11 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ### Step 5: Summarize Findings
 
 After completion, report:
+
 - Number of results found
 - File location and name
 - Key market insights
 - Suggested next steps (deeper analysis, validation)
-
 
 ## Error Handling
 

@@ -9,19 +9,21 @@ export function useGoals() {
     queryFn: async () => {
       const { data } = await api.get('/goals');
       return data as Goal[];
-    }
+    },
   });
 }
 
 export function useAddGoal() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: async (newGoal: Omit<Goal, 'id' | 'created_at' | 'current_amount' | 'status'>) => {
+    mutationFn: async (
+      newGoal: Omit<Goal, 'id' | 'created_at' | 'current_amount' | 'status'>
+    ) => {
       const { data } = await api.post('/goals', {
         ...newGoal,
         current_amount: 0,
-        status: 'active'
+        status: 'active',
       });
       return data;
     },
@@ -34,7 +36,7 @@ export function useAddGoal() {
           id: 'temp-' + Date.now(),
           current_amount: 0,
           status: 'active',
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         } as Goal;
         return old ? [...old, optimisticGoal] : [optimisticGoal];
       });
@@ -49,15 +51,15 @@ export function useAddGoal() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['goals'] });
       toast.success('Mimpi Baru Dicatat! ✨', {
-        description: `Yey! Satu lagi langkah buat mewujudkan ${data.name} kita! ❤️`
+        description: `Yey! Satu lagi langkah buat mewujudkan ${data.name} kita! ❤️`,
       });
-    }
+    },
   });
 }
 
 export function useUpdateGoal() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Goal> & { id: string }) => {
       const { data } = await api.put(`/goals/${id}`, updates);
@@ -67,7 +69,7 @@ export function useUpdateGoal() {
       await queryClient.cancelQueries({ queryKey: ['goals'] });
       const previousGoals = queryClient.getQueryData<Goal[]>(['goals']);
       queryClient.setQueryData(['goals'], (old: Goal[] | undefined) => {
-        return old?.map(goal => 
+        return old?.map((goal) =>
           goal.id === updatedGoal.id ? { ...goal, ...updatedGoal } : goal
         );
       });
@@ -83,18 +85,18 @@ export function useUpdateGoal() {
       queryClient.invalidateQueries({ queryKey: ['goals'] });
       if (data.status === 'completed') {
         toast.success('BERHASIL TERWUJUD! 🏆🎉', {
-          description: `Mimpi "${data.name}" kita sudah jadi nyata, Sayang! So proud of us! ❤️`
+          description: `Mimpi "${data.name}" kita sudah jadi nyata, Sayang! So proud of us! ❤️`,
         });
       } else {
         toast.success('Kemajuan Dicatat! ✨');
       }
-    }
+    },
   });
 }
 
 export function useDeleteGoal() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id: string) => {
       await api.delete(`/goals/${id}`);
@@ -103,7 +105,7 @@ export function useDeleteGoal() {
       await queryClient.cancelQueries({ queryKey: ['goals'] });
       const previousGoals = queryClient.getQueryData<Goal[]>(['goals']);
       queryClient.setQueryData(['goals'], (old: Goal[] | undefined) => {
-        return old?.filter(goal => goal.id !== id);
+        return old?.filter((goal) => goal.id !== id);
       });
       return { previousGoals };
     },
@@ -116,8 +118,8 @@ export function useDeleteGoal() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['goals'] });
       toast.info('Mimpi Dihapus 🗑️', {
-        description: 'Gapapa Sayang, kita buat mimpi yang lebih besar lagi ya!'
+        description: 'Gapapa Sayang, kita buat mimpi yang lebih besar lagi ya!',
       });
-    }
+    },
   });
 }

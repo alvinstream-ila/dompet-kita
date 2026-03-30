@@ -28,6 +28,7 @@ Use the `{Icon}` markup extension to easily include icons from libraries like Fo
 ```
 
 ### Common Properties:
+
 - `IconOptions.Size`: Sets the width and height of the icon.
 - `IconOptions.Fill`: The color/brush of the icon.
 - `IconOptions.Background`: Background brush for the icon container.

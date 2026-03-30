@@ -108,6 +108,7 @@ Here's the exact mental model I use when converting natural language instruction
 I read the CLAUDE.md **as if I'm building a state machine**, not reading a document.
 
 For each sentence, I ask:
+
 1. **Is this a TRIGGER?** (What input activates this behavior?)
 2. **Is this an ACTION?** (What should the AI do?)
 3. **Is this a CONSTRAINT?** (What should the AI NOT do?)
@@ -158,20 +159,20 @@ compare: "覺得A比B好" → A/B實測先行
 Every atomic rule gets a label that declares its function.
 I use a standard vocabulary of ~12 label types:
 
-| Label | What It Declares | When to Use |
-|-------|-----------------|-------------|
-| `trigger:` | What input activates this | Every gate/rule needs one |
-| `action:` | What the AI must do | The core behavior |
-| `exception:` | When NOT to do it | Override cases |
-| `not-triggered:` | Explicit negative examples | Prevent over-triggering |
-| `format:` | Output format constraint | Position, structure requirements |
-| `priority:` | Override relationship | When rules conflict |
-| `yields-to:` | Which gate takes precedence | Inter-gate priority |
-| `persist:` | Durability across turns | Rules that survive conversation flow |
-| `timing:` | When in the workflow | Before/after/during constraints |
-| `violation:` | Consequence of breaking | Accountability mechanism |
-| `banned:` | Forbidden words/actions | Hard no-go list |
-| `policy:` | Decision heuristic | When judgment is needed |
+| Label            | What It Declares            | When to Use                          |
+| ---------------- | --------------------------- | ------------------------------------ |
+| `trigger:`       | What input activates this   | Every gate/rule needs one            |
+| `action:`        | What the AI must do         | The core behavior                    |
+| `exception:`     | When NOT to do it           | Override cases                       |
+| `not-triggered:` | Explicit negative examples  | Prevent over-triggering              |
+| `format:`        | Output format constraint    | Position, structure requirements     |
+| `priority:`      | Override relationship       | When rules conflict                  |
+| `yields-to:`     | Which gate takes precedence | Inter-gate priority                  |
+| `persist:`       | Durability across turns     | Rules that survive conversation flow |
+| `timing:`        | When in the workflow        | Before/after/during constraints      |
+| `violation:`     | Consequence of breaking     | Accountability mechanism             |
+| `banned:`        | Forbidden words/actions     | Hard no-go list                      |
+| `policy:`        | Decision heuristic          | When judgment is needed              |
 
 **The label selection technique:** I pick the label that would help a DIFFERENT AI model
 (not the one being instructed) understand this rule's function if it saw ONLY the label.
@@ -312,17 +313,20 @@ are less standardized across models.
 ### Technique 2: State Machine Gates
 
 Instead of treating rules as a flat list, model them as a **state machine**:
+
 - Each gate has a `trigger` (input state)
 - Each gate has an `action` (transition)
 - Gates have `priority` (which fires first when multiple match)
 - Gates have `yields-to` (explicit conflict resolution)
 
 This gives AI a clear execution model:
+
 ```
 Input arrives → Check GATE-3 first (highest priority) → Check GATE-1 → Check GATE-2 → ...
 ```
 
 Instead of:
+
 ```
 Input arrives → Read all rules → Try to figure out which one applies → Maybe miss one
 ```
@@ -483,17 +487,17 @@ how system evolves over time
 
 ## Anti-Patterns
 
-| Don't | Do Instead | Why |
-|-------|------------|-----|
-| Human prose in CLAUDE.md | Structured labels | Prose requires inference; labels are direct |
-| Multiple rules on one line | One concept per line | Attention splits across dense lines |
-| Parenthetical explanations | Remove them | AI needs "what" not "why" |
-| Same rule in 3 places | Single source + cross-ref | Duplicates can diverge and confuse |
-| 20+ flat rules | 5-7 domains with sub-items | Hierarchy helps model organize behavior |
-| Compress without testing | Validate with 2+ models | What works for Claude might fail for GPT |
-| Assume format doesn't matter | Test it — it does | Same content, different format = different compliance |
-| Chinese-only labels | English labels + native output | English labels are more universal across models |
-| Flat rule list | State machine with priorities | Clear execution order prevents missed rules |
+| Don't                        | Do Instead                     | Why                                                   |
+| ---------------------------- | ------------------------------ | ----------------------------------------------------- |
+| Human prose in CLAUDE.md     | Structured labels              | Prose requires inference; labels are direct           |
+| Multiple rules on one line   | One concept per line           | Attention splits across dense lines                   |
+| Parenthetical explanations   | Remove them                    | AI needs "what" not "why"                             |
+| Same rule in 3 places        | Single source + cross-ref      | Duplicates can diverge and confuse                    |
+| 20+ flat rules               | 5-7 domains with sub-items     | Hierarchy helps model organize behavior               |
+| Compress without testing     | Validate with 2+ models        | What works for Claude might fail for GPT              |
+| Assume format doesn't matter | Test it — it does              | Same content, different format = different compliance |
+| Chinese-only labels          | English labels + native output | English labels are more universal across models       |
+| Flat rule list               | State machine with priorities  | Clear execution order prevents missed rules           |
 
 ---
 
@@ -501,14 +505,15 @@ how system evolves over time
 
 Tested 2026-03, washinmura.jp CLAUDE.md, 5 rounds, 4 models:
 
-| Round | Change | Codex (GPT-5.3) | Gemini 2.5 Pro | Claude Opus 4.6 |
-|-------|--------|-----------------|----------------|-----------------|
-| R1 (baseline prose) | — | 8/8 | 7/8 | 8/8 |
-| R2 (added rules) | +gates +examples | 7/8 | 6/8 | — |
-| R3 (refined prose) | +exceptions +non-triggers | 6/8 | 6.5/8 | — |
-| R4 (AI-native convert) | structured labels | **8/8** | **7/8** | **8/8** |
+| Round                  | Change                    | Codex (GPT-5.3) | Gemini 2.5 Pro | Claude Opus 4.6 |
+| ---------------------- | ------------------------- | --------------- | -------------- | --------------- |
+| R1 (baseline prose)    | —                         | 8/8             | 7/8            | 8/8             |
+| R2 (added rules)       | +gates +examples          | 7/8             | 6/8            | —               |
+| R3 (refined prose)     | +exceptions +non-triggers | 6/8             | 6.5/8          | —               |
+| R4 (AI-native convert) | structured labels         | **8/8**         | **7/8**        | **8/8**         |
 
 Key findings:
+
 1. **More prose rules = worse compliance** (R1→R3: scores dropped as rules grew)
 2. **Structured format = restored + exceeded** (R4: back to max despite more rules)
 3. **Cross-model consistency**: Format that works for one model works for all (except Grok)

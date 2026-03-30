@@ -6,21 +6,21 @@ The `.actor/actor.json` file contains the Actor's configuration including metada
 
 ```json
 {
-    "actorSpecification": 1,
-    "name": "project-name",
-    "title": "Project Title",
-    "description": "Actor description",
-    "version": "0.0",
-    "meta": {
-        "templateId": "template-id",
-        "generatedBy": "<FILL-IN-TOOL-AND-MODEL>"
-    },
-    "input": "./input_schema.json",
-    "output": "./output_schema.json",
-    "storages": {
-        "dataset": "./dataset_schema.json"
-    },
-    "dockerfile": "../Dockerfile"
+  "actorSpecification": 1,
+  "name": "project-name",
+  "title": "Project Title",
+  "description": "Actor description",
+  "version": "0.0",
+  "meta": {
+    "templateId": "template-id",
+    "generatedBy": "<FILL-IN-TOOL-AND-MODEL>"
+  },
+  "input": "./input_schema.json",
+  "output": "./output_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json"
+  },
+  "dockerfile": "../Dockerfile"
 }
 ```
 
@@ -28,21 +28,21 @@ The `.actor/actor.json` file contains the Actor's configuration including metada
 
 ```json
 {
-    "actorSpecification": 1,
-    "name": "project-cheerio-crawler-javascript",
-    "title": "Project Cheerio Crawler Javascript",
-    "description": "Crawlee and Cheerio project in javascript.",
-    "version": "0.0",
-    "meta": {
-        "templateId": "js-crawlee-cheerio",
-        "generatedBy": "Claude Code with Claude Sonnet 4.5"
-    },
-    "input": "./input_schema.json",
-    "output": "./output_schema.json",
-    "storages": {
-        "dataset": "./dataset_schema.json"
-    },
-    "dockerfile": "../Dockerfile"
+  "actorSpecification": 1,
+  "name": "project-cheerio-crawler-javascript",
+  "title": "Project Cheerio Crawler Javascript",
+  "description": "Crawlee and Cheerio project in javascript.",
+  "version": "0.0",
+  "meta": {
+    "templateId": "js-crawlee-cheerio",
+    "generatedBy": "Claude Code with Claude Sonnet 4.5"
+  },
+  "input": "./input_schema.json",
+  "output": "./output_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json"
+  },
+  "dockerfile": "../Dockerfile"
 }
 ```
 

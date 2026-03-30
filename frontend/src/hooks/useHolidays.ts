@@ -20,13 +20,13 @@ export function useHolidays() {
     queryFn: async () => {
       const { data } = await api.get('/holidays');
       return data as Holiday[];
-    }
+    },
   });
 }
 
 export function useAddHoliday() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (newHoliday: Omit<Holiday, 'id'>) => {
       const { data } = await api.post('/holidays', newHoliday);
@@ -35,40 +35,43 @@ export function useAddHoliday() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['holidays'] });
       toast.success('Rencana Dibuat! ✨', {
-        description: `Asik! Kita mau ke ${data.destination} nih Sayang! ❤️`
+        description: `Asik! Kita mau ke ${data.destination} nih Sayang! ❤️`,
       });
     },
     onError: () => {
       toast.error('Gagal Menyimpan 🥺', {
-        description: 'Coba ulangi lagi ya Sayang, maaf ada kendala.'
+        description: 'Coba ulangi lagi ya Sayang, maaf ada kendala.',
       });
-    }
+    },
   });
 }
 
 export function useUpdateHoliday() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: async ({ id, ...updates }: Partial<Holiday> & { id: number }) => {
+    mutationFn: async ({
+      id,
+      ...updates
+    }: Partial<Holiday> & { id: number }) => {
       const { data } = await api.put(`/holidays/${id}`, updates);
       return data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['holidays'] });
       toast.success('Berhasil Diupdate! ✨', {
-        description: `Rencana ke ${data.destination} sudah aku catat ya!`
+        description: `Rencana ke ${data.destination} sudah aku catat ya!`,
       });
     },
     onError: () => {
       toast.error('Gagal Update 🥺');
-    }
+    },
   });
 }
 
 export function useDeleteHoliday() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id: number) => {
       await api.delete(`/holidays/${id}`);
@@ -76,8 +79,8 @@ export function useDeleteHoliday() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['holidays'] });
       toast.info('Rencana Dihapus 🗑️', {
-        description: 'Gapapa Sayang, kita cari destinasi lain yang lebih seru!'
+        description: 'Gapapa Sayang, kita cari destinasi lain yang lebih seru!',
       });
-    }
+    },
   });
 }

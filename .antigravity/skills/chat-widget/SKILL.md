@@ -10,6 +10,7 @@ Build a real-time support chat system with a floating widget for users and an ad
 ## When to Use This Skill
 
 Use when the user wants to:
+
 - Add a live chat widget to their app
 - Build customer support chat functionality
 - Create real-time messaging between users and admins
@@ -50,6 +51,7 @@ Use when the user wants to:
 Create two tables: `support_chats` and `support_messages`.
 
 **support_chats**
+
 ```
 id              - primary key (UUID recommended)
 user_id         - foreign key to users (UNIQUE - one chat per user)
@@ -61,6 +63,7 @@ updated_at
 ```
 
 **support_messages**
+
 ```
 id              - primary key (UUID recommended)
 chat_id         - foreign key to support_chats
@@ -72,6 +75,7 @@ updated_at
 ```
 
 **Key indexes:**
+
 - `support_chats.user_id` (unique)
 - `support_chats.last_message_at` (for sorting)
 - `support_chats.archived_at` (for filtering)
@@ -79,6 +83,7 @@ updated_at
 - `support_messages.(chat_id, created_at)` (composite, for ordering)
 
 **Model relationships:**
+
 ```
 User has_one SupportChat
 SupportChat belongs_to User
@@ -89,6 +94,7 @@ SupportMessage belongs_to SupportChat
 **Model methods to implement:**
 
 Chat model:
+
 ```pseudo
 function touch_last_message()
   update last_message_at = now()
@@ -111,6 +117,7 @@ function archived?()
 ```
 
 Message model:
+
 ```pseudo
 after_create:
   chat.touch_last_message()
@@ -128,12 +135,14 @@ after_create_commit:
 ### Step 2: API Endpoints
 
 **User-facing:**
+
 ```
 GET  /support_chat       - Get or create user's chat with messages
 PATCH /support_chat/mark_read - Mark admin messages as read
 ```
 
 **Admin-facing:**
+
 ```
 GET  /admin/chats              - List chats (query: archived=true/false)
 GET  /admin/chats/:id          - Get chat with messages
@@ -144,6 +153,7 @@ POST /admin/chats/:id/unarchive - Restore chat
 **Controller logic:**
 
 User GET /support_chat:
+
 ```pseudo
 function show()
   chat = current_user.support_chat || create_chat(user: current_user)
@@ -154,6 +164,7 @@ function show()
 ```
 
 Admin GET /admin/chats:
+
 ```pseudo
 function index()
   chats = SupportChat
@@ -177,6 +188,7 @@ function index()
 Create two channels for real-time communication.
 
 **ChatChannel** (specific to each chat):
+
 ```pseudo
 class ChatChannel
   on_subscribe(chat_id):
@@ -196,6 +208,7 @@ class ChatChannel
 ```
 
 **AdminNotificationChannel** (global for all admins):
+
 ```pseudo
 class AdminNotificationChannel
   on_subscribe:
@@ -206,6 +219,7 @@ class AdminNotificationChannel
 ```
 
 **Broadcasting (from Message model):**
+
 ```pseudo
 function broadcast_message():
   message_data = {
@@ -237,6 +251,7 @@ function broadcast_message():
 Create a floating chat widget with these components:
 
 **Component structure:**
+
 ```
 ChatWidget (root container)
 ├── ChatButton (fixed position, bottom-right)
@@ -252,6 +267,7 @@ ChatWidget (root container)
 ```
 
 **State management hook:**
+
 ```pseudo
 function useSupportChat():
   state:
@@ -298,6 +314,7 @@ function useSupportChat():
 ```
 
 **Widget behavior:**
+
 - Show floating button at bottom-right corner (fixed position)
 - Display unread count badge (count messages where sender_type='admin' and read_at=null)
 - Toggle panel open/closed on button click
@@ -307,6 +324,7 @@ function useSupportChat():
 - Keyboard: Enter to send, Shift+Enter for newline
 
 **Message styling:**
+
 - User messages: right-aligned, primary color background
 - Admin messages: left-aligned, secondary/muted background
 - Show timestamp on each message
@@ -316,6 +334,7 @@ function useSupportChat():
 Create two pages: chat list and chat detail.
 
 **Chat List Page:**
+
 ```
 Header: "Support Chats"
 Tabs: [Active] [Archived]
@@ -329,12 +348,14 @@ Chat cards (sorted by last_message_at desc):
 ```
 
 Features:
+
 - Tab filtering (active vs archived)
 - Unread indicator (highlight border or badge)
 - Click to navigate to detail
 - Show "You: " prefix if last message was from admin
 
 **Chat Detail Page:**
+
 ```
 Header: user@example.com [Archive/Restore button]
 Back link
@@ -351,6 +372,7 @@ Input area (same as widget)
 ```
 
 Features:
+
 - Group messages by date with dividers
 - User messages left, admin messages right (opposite of user widget)
 - Show sender label ("You" for admin, user email/name for user)
@@ -363,6 +385,7 @@ Features:
 Send email to user when admin replies and user hasn't seen it.
 
 **Job/worker:**
+
 ```pseudo
 class SupportReplyNotificationJob
   perform(message):
@@ -377,6 +400,7 @@ class SupportReplyNotificationJob
 ```
 
 **Scheduling:**
+
 - Schedule job with 5-minute delay when admin sends message
 - This gives user time to see message in-app before email
 - Job checks if still unread before sending
@@ -385,49 +409,49 @@ class SupportReplyNotificationJob
 
 ```typescript
 interface SupportMessage {
-  id: string
-  content: string
-  sender_type: 'user' | 'admin'
-  read_at: string | null  // ISO8601
-  created_at: string      // ISO8601
+  id: string;
+  content: string;
+  sender_type: "user" | "admin";
+  read_at: string | null; // ISO8601
+  created_at: string; // ISO8601
 }
 
 interface SupportChat {
-  id: string
-  messages: SupportMessage[]
+  id: string;
+  messages: SupportMessage[];
 }
 
 interface SupportChatListItem {
-  id: string
-  user_id: string
-  user_email: string
-  last_message_at: string | null
-  last_message_preview: string | null
-  last_message_sender: 'user' | 'admin' | null
-  message_count: number
-  unread: boolean
-  archived: boolean
+  id: string;
+  user_id: string;
+  user_email: string;
+  last_message_at: string | null;
+  last_message_preview: string | null;
+  last_message_sender: "user" | "admin" | null;
+  message_count: number;
+  unread: boolean;
+  archived: boolean;
 }
 
 interface AdminSupportChat {
-  id: string
-  user_id: string
-  user_email: string
-  archived: boolean
-  messages: SupportMessage[]
+  id: string;
+  user_id: string;
+  user_email: string;
+  archived: boolean;
+  messages: SupportMessage[];
 }
 
 // WebSocket message types
 interface ChatChannelMessage {
-  type: 'new_message'
-  message: SupportMessage
+  type: "new_message";
+  message: SupportMessage;
 }
 
 interface AdminNotificationMessage {
-  type: 'new_user_message'
-  chat_id: string
-  user_email: string
-  message: SupportMessage
+  type: "new_user_message";
+  chat_id: string;
+  user_email: string;
+  message: SupportMessage;
 }
 ```
 
@@ -443,6 +467,7 @@ interface AdminNotificationMessage {
 ## Testing Checklist
 
 After implementation:
+
 - [ ] User can open widget and send message
 - [ ] Admin sees message in real-time on dashboard
 - [ ] Admin can reply and user sees it instantly
@@ -472,6 +497,7 @@ After implementation:
 ### Ruby on Rails
 
 **Models:**
+
 ```ruby
 # app/models/support_chat.rb
 class SupportChat < ApplicationRecord
@@ -527,6 +553,7 @@ end
 ```
 
 **Channel:**
+
 ```ruby
 # app/channels/support_chat_channel.rb
 class SupportChatChannel < ApplicationCable::Channel
@@ -546,6 +573,7 @@ end
 ```
 
 **Migration:**
+
 ```ruby
 create_table :support_chats, id: :uuid do |t|
   t.references :user, type: :uuid, null: false, foreign_key: true, index: { unique: true }
@@ -568,70 +596,79 @@ add_index :support_messages, [:support_chat_id, :created_at]
 ### React (with any backend)
 
 **Hook:**
+
 ```typescript
 // hooks/useSupportChat.ts
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useState, useRef, useCallback } from "react";
 
 export function useSupportChat(websocketUrl: string) {
-  const [chat, setChat] = useState<Chat | null>(null)
-  const [connected, setConnected] = useState(false)
-  const wsRef = useRef<WebSocket | null>(null)
-  const seenIds = useRef(new Set<string>())
+  const [chat, setChat] = useState<Chat | null>(null);
+  const [connected, setConnected] = useState(false);
+  const wsRef = useRef<WebSocket | null>(null);
+  const seenIds = useRef(new Set<string>());
 
   useEffect(() => {
-    fetch('/api/support_chat').then(r => r.json()).then(data => {
-      setChat(data)
-      data.messages.forEach((m: Message) => seenIds.current.add(m.id))
-    })
-  }, [])
+    fetch("/api/support_chat")
+      .then((r) => r.json())
+      .then((data) => {
+        setChat(data);
+        data.messages.forEach((m: Message) => seenIds.current.add(m.id));
+      });
+  }, []);
 
   useEffect(() => {
-    if (!chat?.id) return
-    const ws = new WebSocket(`${websocketUrl}?chat_id=${chat.id}`)
-    wsRef.current = ws
+    if (!chat?.id) return;
+    const ws = new WebSocket(`${websocketUrl}?chat_id=${chat.id}`);
+    wsRef.current = ws;
 
-    ws.onopen = () => setConnected(true)
-    ws.onclose = () => setConnected(false)
+    ws.onopen = () => setConnected(true);
+    ws.onclose = () => setConnected(false);
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      if (data.type === 'new_message' && !seenIds.current.has(data.message.id)) {
-        seenIds.current.add(data.message.id)
-        setChat(prev => prev ? { ...prev, messages: [...prev.messages, data.message] } : prev)
+      const data = JSON.parse(event.data);
+      if (
+        data.type === "new_message" &&
+        !seenIds.current.has(data.message.id)
+      ) {
+        seenIds.current.add(data.message.id);
+        setChat((prev) =>
+          prev ? { ...prev, messages: [...prev.messages, data.message] } : prev,
+        );
       }
-    }
-    return () => ws.close()
-  }, [chat?.id])
+    };
+    return () => ws.close();
+  }, [chat?.id]);
 
   const sendMessage = useCallback((content: string) => {
-    wsRef.current?.send(JSON.stringify({ action: 'send_message', content }))
-  }, [])
+    wsRef.current?.send(JSON.stringify({ action: "send_message", content }));
+  }, []);
 
-  return { chat, connected, sendMessage }
+  return { chat, connected, sendMessage };
 }
 ```
 
 **Widget Component:**
+
 ```tsx
 // components/ChatWidget.tsx
 export function ChatWidget() {
-  const [isOpen, setIsOpen] = useState(false)
-  const { chat, connected, sendMessage } = useSupportChat('/ws/chat')
-  const [input, setInput] = useState('')
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [isOpen, setIsOpen] = useState(false);
+  const { chat, connected, sendMessage } = useSupportChat("/ws/chat");
+  const [input, setInput] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const unreadCount = chat?.messages.filter(
-    m => m.sender_type === 'admin' && !m.read_at
-  ).length ?? 0
+  const unreadCount =
+    chat?.messages.filter((m) => m.sender_type === "admin" && !m.read_at)
+      .length ?? 0;
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [chat?.messages])
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chat?.messages]);
 
   const handleSend = () => {
-    if (!input.trim()) return
-    sendMessage(input.trim())
-    setInput('')
-  }
+    if (!input.trim()) return;
+    sendMessage(input.trim());
+    setInput("");
+  };
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
@@ -639,83 +676,108 @@ export function ChatWidget() {
         <div className="w-80 h-96 bg-white rounded-lg shadow-xl flex flex-col">
           <header className="p-3 border-b flex justify-between items-center">
             <span>Support Chat</span>
-            <span className={`w-2 h-2 rounded-full ${connected ? 'bg-green-500' : 'bg-gray-400'}`} />
+            <span
+              className={`w-2 h-2 rounded-full ${connected ? "bg-green-500" : "bg-gray-400"}`}
+            />
           </header>
           <div className="flex-1 overflow-y-auto p-3 space-y-2">
-            {chat?.messages.map(m => (
-              <div key={m.id} className={`p-2 rounded ${m.sender_type === 'user' ? 'bg-blue-100 ml-auto' : 'bg-gray-100'}`}>
+            {chat?.messages.map((m) => (
+              <div
+                key={m.id}
+                className={`p-2 rounded ${m.sender_type === "user" ? "bg-blue-100 ml-auto" : "bg-gray-100"}`}
+              >
                 {m.content}
               </div>
             ))}
             <div ref={messagesEndRef} />
           </div>
           <div className="p-3 border-t flex gap-2">
-            <input value={input} onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleSend()}
-              className="flex-1 border rounded px-2" placeholder="Type a message..." />
-            <button onClick={handleSend} className="px-3 py-1 bg-blue-500 text-white rounded">Send</button>
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && !e.shiftKey && handleSend()
+              }
+              className="flex-1 border rounded px-2"
+              placeholder="Type a message..."
+            />
+            <button
+              onClick={handleSend}
+              className="px-3 py-1 bg-blue-500 text-white rounded"
+            >
+              Send
+            </button>
           </div>
         </div>
       ) : (
-        <button onClick={() => setIsOpen(true)} className="w-14 h-14 bg-blue-500 rounded-full text-white relative">
+        <button
+          onClick={() => setIsOpen(true)}
+          className="w-14 h-14 bg-blue-500 rounded-full text-white relative"
+        >
           💬
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 bg-red-500 text-xs w-5 h-5 rounded-full flex items-center justify-center">
-              {unreadCount > 9 ? '9+' : unreadCount}
+              {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           )}
         </button>
       )}
     </div>
-  )
+  );
 }
 ```
 
 ### Next.js (App Router)
 
 **API Route:**
+
 ```typescript
 // app/api/support-chat/route.ts
-import { getServerSession } from 'next-auth'
-import { prisma } from '@/lib/prisma'
+import { getServerSession } from "next-auth";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
-  const session = await getServerSession()
-  if (!session?.user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+  const session = await getServerSession();
+  if (!session?.user)
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   let chat = await prisma.supportChat.findUnique({
     where: { userId: session.user.id },
-    include: { messages: { orderBy: { createdAt: 'asc' } } }
-  })
+    include: { messages: { orderBy: { createdAt: "asc" } } },
+  });
 
   if (!chat) {
     chat = await prisma.supportChat.create({
       data: { userId: session.user.id },
-      include: { messages: true }
-    })
+      include: { messages: true },
+    });
   }
 
-  return Response.json(chat)
+  return Response.json(chat);
 }
 ```
 
 **WebSocket with Pusher/Ably (serverless-friendly):**
+
 ```typescript
 // For serverless, use Pusher, Ably, or similar
-import Pusher from 'pusher'
-const pusher = new Pusher({ appId, key, secret, cluster })
+import Pusher from "pusher";
+const pusher = new Pusher({ appId, key, secret, cluster });
 
 // When message is created:
-await pusher.trigger(`support-chat-${chatId}`, 'new-message', messageData)
+await pusher.trigger(`support-chat-${chatId}`, "new-message", messageData);
 
 // Client-side with pusher-js:
-const channel = pusher.subscribe(`support-chat-${chatId}`)
-channel.bind('new-message', (data) => { /* update state */ })
+const channel = pusher.subscribe(`support-chat-${chatId}`);
+channel.bind("new-message", (data) => {
+  /* update state */
+});
 ```
 
 ### PHP/Laravel
 
 **Models:**
+
 ```php
 // app/Models/SupportChat.php
 class SupportChat extends Model
@@ -753,6 +815,7 @@ class SupportMessage extends Model
 ```
 
 **Broadcasting Event:**
+
 ```php
 // app/Events/NewSupportMessage.php
 class NewSupportMessage implements ShouldBroadcast
@@ -770,40 +833,41 @@ class NewSupportMessage implements ShouldBroadcast
 ### Vue.js
 
 **Composable:**
+
 ```typescript
 // composables/useSupportChat.ts
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from "vue";
 
 export function useSupportChat() {
-  const chat = ref<Chat | null>(null)
-  const connected = ref(false)
-  let ws: WebSocket | null = null
-  const seenIds = new Set<string>()
+  const chat = ref<Chat | null>(null);
+  const connected = ref(false);
+  let ws: WebSocket | null = null;
+  const seenIds = new Set<string>();
 
   onMounted(async () => {
-    const res = await fetch('/api/support-chat')
-    chat.value = await res.json()
-    chat.value?.messages.forEach(m => seenIds.add(m.id))
+    const res = await fetch("/api/support-chat");
+    chat.value = await res.json();
+    chat.value?.messages.forEach((m) => seenIds.add(m.id));
 
-    ws = new WebSocket(`/ws/chat?id=${chat.value?.id}`)
-    ws.onopen = () => connected.value = true
-    ws.onclose = () => connected.value = false
+    ws = new WebSocket(`/ws/chat?id=${chat.value?.id}`);
+    ws.onopen = () => (connected.value = true);
+    ws.onclose = () => (connected.value = false);
     ws.onmessage = (e) => {
-      const data = JSON.parse(e.data)
-      if (data.type === 'new_message' && !seenIds.has(data.message.id)) {
-        seenIds.add(data.message.id)
-        chat.value?.messages.push(data.message)
+      const data = JSON.parse(e.data);
+      if (data.type === "new_message" && !seenIds.has(data.message.id)) {
+        seenIds.add(data.message.id);
+        chat.value?.messages.push(data.message);
       }
-    }
-  })
+    };
+  });
 
-  onUnmounted(() => ws?.close())
+  onUnmounted(() => ws?.close());
 
   const sendMessage = (content: string) => {
-    ws?.send(JSON.stringify({ action: 'send_message', content }))
-  }
+    ws?.send(JSON.stringify({ action: "send_message", content }));
+  };
 
-  return { chat, connected, sendMessage }
+  return { chat, connected, sendMessage };
 }
 ```
 
@@ -812,21 +876,25 @@ export function useSupportChat() {
 ## Database Recommendations
 
 ### PostgreSQL (Recommended)
+
 - Use UUID primary keys for security (non-guessable IDs)
 - Use `timestamptz` for all datetime columns
 - Add GIN index on content for full-text search (optional)
 
 ### MySQL
+
 - Use `CHAR(36)` or `BINARY(16)` for UUIDs
 - Use `DATETIME(6)` for microsecond precision
 - Consider `utf8mb4` charset for emoji support
 
 ### SQLite (Development/Small Scale)
+
 - Works fine for prototyping
 - Store UUIDs as TEXT
 - No native datetime type, store as ISO8601 strings
 
 ### MongoDB (Document Store)
+
 - Embed messages in chat document if message count is bounded
 - Or use separate collection with chat_id reference
 - Use TTL index on archived chats for auto-cleanup (optional)
@@ -836,12 +904,14 @@ export function useSupportChat() {
 ## Email Processing Recommendations
 
 ### Transactional Email Services
+
 - **Postmark** - Best deliverability, simple API
 - **SendGrid** - Good free tier, robust
 - **AWS SES** - Cheapest at scale
 - **Resend** - Modern DX, React email templates
 
 ### Implementation Pattern
+
 ```pseudo
 // Always use background jobs for email
 Job: SendSupportReplyNotification
@@ -863,6 +933,7 @@ Job: SendSupportReplyNotification
 ```
 
 ### Email Template Tips
+
 - Include message preview (truncated)
 - Add direct link to open chat (if web app)
 - Keep subject simple: "New reply from [App] Support"
@@ -872,18 +943,20 @@ Job: SendSupportReplyNotification
 
 ## Real-Time Technology Options
 
-| Technology | Best For | Serverless? |
-|------------|----------|-------------|
-| ActionCable (Rails) | Rails apps | No |
-| Socket.IO | Node.js apps | No |
-| Pusher | Any stack | Yes |
-| Ably | Any stack | Yes |
-| Supabase Realtime | Supabase users | Yes |
-| Firebase RTDB | Firebase users | Yes |
-| Server-Sent Events | Simple one-way | Yes |
+| Technology          | Best For       | Serverless? |
+| ------------------- | -------------- | ----------- |
+| ActionCable (Rails) | Rails apps     | No          |
+| Socket.IO           | Node.js apps   | No          |
+| Pusher              | Any stack      | Yes         |
+| Ably                | Any stack      | Yes         |
+| Supabase Realtime   | Supabase users | Yes         |
+| Firebase RTDB       | Firebase users | Yes         |
+| Server-Sent Events  | Simple one-way | Yes         |
 
 ### Fallback Strategy
+
 If WebSocket unavailable, implement polling:
+
 ```pseudo
 // Poll every 5 seconds when disconnected
 if (!websocket.connected) {

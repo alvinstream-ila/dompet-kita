@@ -30,7 +30,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -68,19 +70,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const authValue = React.useMemo(() => ({ 
-    user, 
-    loading, 
-    login, 
-    logout, 
-    isAuthenticated: !!user,
-    isVerified: !!user?.email_verified_at
-  }), [user, loading]);
+  const authValue = React.useMemo(
+    () => ({
+      user,
+      loading,
+      login,
+      logout,
+      isAuthenticated: !!user,
+      isVerified: !!user?.email_verified_at,
+    }),
+    [user, loading]
+  );
 
   return (
-    <AuthContext.Provider value={authValue}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>
   );
 };
 

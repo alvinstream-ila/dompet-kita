@@ -31,6 +31,7 @@
 ### Canonical Patterns
 
 **Validation of Dynamic Collections:**
+
 ```csharp
 this.ValidationRule(
         StagesSource
@@ -44,6 +45,7 @@ this.ValidationRule(
 
 **Filtering Nulls:**
 Use `WhereNotNull()` in reactive pipelines.
+
 ```csharp
 this.WhenAnyValue(x => x.DurationPreset).WhereNotNull()
 ```

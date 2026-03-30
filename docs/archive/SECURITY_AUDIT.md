@@ -1,18 +1,21 @@
 # Security Assessment - Dompet Kita
 
 ## Overview
+
 This document summarizes the security posture of the Dompet Kita application (Laravel Backend + React Frontend) as of March 2026.
 
 ## Findings
 
 ### 1. Authentication & Session Management
-- **Token Storage (Frontend)**: 
+
+- **Token Storage (Frontend)**:
   - **Status**: 🟢 **MITIGATED (Partial)**
   - **Detail**: Tokens are stored in `localStorage` (`auth_token`).
   - **Action Taken**: While `localStorage` remains in use for now (requiring SPA refactor for cookies), **XSS protection** has been strengthened via strict Content-Security-Policy (CSP) headers.
   - **Recommendation**: Plan a full transition to HttpOnly cookies for long-term security.
 
 ### 2. Infrastructure & Headers
+
 - **Security Headers (Backend)**:
   - **Status**: ✅ **FIXED**
   - **Detail**: `SecurityHeaders` middleware implemented.
@@ -32,6 +35,7 @@ This document summarizes the security posture of the Dompet Kita application (La
     - General API: 60 requests/min.
 
 ### 3. Data Integrity & Validation
+
 - **Mass Assignment**:
   - **Status**: ✅ **VERIFIED**
   - **Detail**: `UserController` uses explicit request validation before updating model attributes, ensuring no unauthorized fields can be modified.
@@ -42,6 +46,7 @@ This document summarizes the security posture of the Dompet Kita application (La
   - **Recommendation**: Maintain strict validation rules for all user-provided data.
 
 ### 4. Injection Vulnerabilities
+
 - **SQL Injection**:
   - **Status**: ✅ **GOOD**
   - **Detail**: Predominant use of Eloquent and query builder with parameter binding.
@@ -51,6 +56,7 @@ This document summarizes the security posture of the Dompet Kita application (La
   - **Detail**: React's automatic escaping handles most cases. No `dangerouslySetInnerHTML` found.
 
 ## Hardening Roadmap (Proposed)
+
 1.  **Phase 1**: Implement standard Security Headers in Backend.
 2.  **Phase 2**: Configure Rate Limiting for sensitive endpoints (Login, AI).
 3.  **Phase 3**: (Optional but recommended) Transition Frontend to HttpOnly Cookies.

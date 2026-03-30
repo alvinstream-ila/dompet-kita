@@ -17,11 +17,13 @@ Use this skill when you need to analyze AWS spending, identify cost optimization
 ## Core Capabilities
 
 **Cost Analysis**
+
 - Parse AWS Cost Explorer data for trends and anomalies
 - Break down costs by service, region, and resource tags
 - Identify month-over-month spending increases
 
 **Resource Optimization**
+
 - Detect idle EC2 instances (low CPU utilization)
 - Find unattached EBS volumes and old snapshots
 - Identify unused Elastic IPs
@@ -29,6 +31,7 @@ Use this skill when you need to analyze AWS spending, identify cost optimization
 - Find old S3 objects eligible for lifecycle policies
 
 **Savings Recommendations**
+
 - Suggest Reserved Instance/Savings Plans opportunities
 - Recommend instance rightsizing based on CloudWatch metrics
 - Identify resources in expensive regions
@@ -37,6 +40,7 @@ Use this skill when you need to analyze AWS spending, identify cost optimization
 ## AWS CLI Commands
 
 ### Get Cost and Usage
+
 ```bash
 # Last 30 days cost by service
 aws ce get-cost-and-usage \
@@ -53,6 +57,7 @@ aws ce get-cost-and-usage \
 ```
 
 ### Find Unused Resources
+
 ```bash
 # Unattached EBS volumes
 aws ec2 describe-volumes \
@@ -83,6 +88,7 @@ aws ec2 describe-snapshots \
 ```
 
 ### Rightsizing Analysis
+
 ```bash
 # List EC2 instances with their types
 aws ec2 describe-instances \
@@ -141,17 +147,20 @@ aws cloudwatch get-metric-statistics \
 ## Example Prompts
 
 **Analysis**
+
 - "Show me AWS costs for the last 3 months broken down by service"
 - "What are my top 10 most expensive resources?"
 - "Compare this month's spending to last month"
 
 **Optimization**
+
 - "Find all unattached EBS volumes and calculate savings"
 - "Identify EC2 instances with <5% CPU utilization"
 - "Suggest Reserved Instance purchases based on usage"
 - "Calculate savings from deleting snapshots older than 90 days"
 
 **Implementation**
+
 - "Create a script to delete unattached volumes"
 - "Set up a budget alert for $1000/month"
 - "Generate a cost optimization report for leadership"

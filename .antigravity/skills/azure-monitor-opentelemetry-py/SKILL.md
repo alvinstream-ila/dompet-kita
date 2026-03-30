@@ -3,7 +3,7 @@ name: azure-monitor-opentelemetry-py
 description: Azure Monitor OpenTelemetry Distro for Python. Use for one-line Application Insights setup with auto-instrumentation.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure Monitor OpenTelemetry Distro for Python
@@ -188,30 +188,30 @@ configure_azure_monitor(
 
 ## Auto-Instrumentations Included
 
-| Library | Telemetry Type |
-|---------|---------------|
-| Flask | Traces |
-| Django | Traces |
-| FastAPI | Traces |
-| Requests | Traces |
-| urllib3 | Traces |
-| httpx | Traces |
-| aiohttp | Traces |
-| psycopg2 | Traces |
-| pymysql | Traces |
-| pymongo | Traces |
-| redis | Traces |
+| Library  | Telemetry Type |
+| -------- | -------------- |
+| Flask    | Traces         |
+| Django   | Traces         |
+| FastAPI  | Traces         |
+| Requests | Traces         |
+| urllib3  | Traces         |
+| httpx    | Traces         |
+| aiohttp  | Traces         |
+| psycopg2 | Traces         |
+| pymysql  | Traces         |
+| pymongo  | Traces         |
+| redis    | Traces         |
 
 ## Configuration Options
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `connection_string` | Application Insights connection string | From env var |
-| `credential` | Azure credential for AAD auth | None |
-| `sampling_ratio` | Sampling rate (0.0 to 1.0) | 1.0 |
-| `resource` | OpenTelemetry Resource | Auto-detected |
-| `instrumentations` | List of instrumentations to enable | All |
-| `enable_live_metrics` | Enable Live Metrics stream | False |
+| Parameter             | Description                            | Default       |
+| --------------------- | -------------------------------------- | ------------- |
+| `connection_string`   | Application Insights connection string | From env var  |
+| `credential`          | Azure credential for AAD auth          | None          |
+| `sampling_ratio`      | Sampling rate (0.0 to 1.0)             | 1.0           |
+| `resource`            | OpenTelemetry Resource                 | Auto-detected |
+| `instrumentations`    | List of instrumentations to enable     | All           |
+| `enable_live_metrics` | Enable Live Metrics stream             | False         |
 
 ## Best Practices
 
@@ -224,4 +224,5 @@ configure_azure_monitor(
 7. **Use AAD authentication** for production workloads
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

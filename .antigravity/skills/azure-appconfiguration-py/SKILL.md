@@ -3,7 +3,7 @@ name: azure-appconfiguration-py
 description: Azure App Configuration SDK for Python. Use for centralized configuration management, feature flags, and dynamic settings.
 risk: unknown
 source: community
-date_added: '2026-02-27'
+date_added: "2026-02-27"
 ---
 
 # Azure App Configuration SDK for Python
@@ -218,30 +218,30 @@ async def main():
         base_url=endpoint,
         credential=credential
     )
-    
+
     setting = await client.get_configuration_setting(key="app:message")
     print(setting.value)
-    
+
     await client.close()
     await credential.close()
 ```
 
 ## Client Operations
 
-| Operation | Description |
-|-----------|-------------|
-| `get_configuration_setting` | Get single setting |
-| `set_configuration_setting` | Create or update setting |
-| `delete_configuration_setting` | Delete setting |
-| `list_configuration_settings` | List with filters |
-| `set_read_only` | Lock/unlock setting |
-| `begin_create_snapshot` | Create point-in-time snapshot |
-| `list_snapshots` | List all snapshots |
+| Operation                      | Description                   |
+| ------------------------------ | ----------------------------- |
+| `get_configuration_setting`    | Get single setting            |
+| `set_configuration_setting`    | Create or update setting      |
+| `delete_configuration_setting` | Delete setting                |
+| `list_configuration_settings`  | List with filters             |
+| `set_read_only`                | Lock/unlock setting           |
+| `begin_create_snapshot`        | Create point-in-time snapshot |
+| `list_snapshots`               | List all snapshots            |
 
 ## Best Practices
 
 1. **Use labels** for environment separation (dev, staging, prod)
-2. **Use key prefixes** for logical grouping (app:database:*, app:cache:*)
+2. **Use key prefixes** for logical grouping (app:database:_, app:cache:_)
 3. **Make production settings read-only** to prevent accidental changes
 4. **Create snapshots** before deployments for rollback capability
 5. **Use Entra ID** instead of connection strings in production
@@ -249,4 +249,5 @@ async def main():
 7. **Use feature flags** for gradual rollouts and A/B testing
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

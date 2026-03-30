@@ -1,83 +1,83 @@
-# 💰 Dompet Kita (Production Edition)
+# 💰 Dompet Kita (Professional Monorepo Edition)
 
-Aplikasi pencatatan keuangan premium untuk **Alvin & Ila**. Proyek ini telah melewati fase transformasi total ke arsitektur **API-First** yang modern, aman, dan siap pakai.
+Aplikasi pencatatan keuangan premium untuk **Alvin & Ila**. Proyek ini menggunakan arsitektur **API-First** modern dengan standar infrastruktur kelas dunia (DevOps & Automation).
 
 ---
 
 ## 🌐 Live URLs
+
 - **Frontend (Production)**: [https://dompet-kita-six.vercel.app/](https://dompet-kita-six.vercel.app/)
 - **Backend API (Production)**: [https://dompet-kita-production.up.railway.app/](https://dompet-kita-production.up.railway.app/)
 
-## 🏗️ Digital Infrastructure
+## 🏗️ Digital Infrastructure & Cloud
+
 Aplikasi ini berjalan di ekosistem cloud modern:
-1.  **Frontend**: React 19 (Vite) di-host di **Vercel** dengan SPA routing.
-2.  **Backend**: Laravel 12 (PHP 8.4) di-host di **Railway** (Singapore Region).
-3.  **Database**: Managed PostgreSQL di **Supabase** (Port 6543 Connection Pooler).
-4.  **Storage**: S3-Compatible Storage via **Storj** (Distributed Cloud Storage).
-5.  **Mail**: SMTP Transactional via **Gmail Official**.
-6.  **Security**: Audit 0 Vulnerabilities, Sentry Error Tracking, & Proteksi Berlapis.
+
+1.  **Frontend**: React 19 (Vite) di-host di **Vercel**.
+2.  **Backend**: Laravel 12 (PHP 8.4) di-host di **Railway**.
+3.  **Database**: Managed PostgreSQL di **Supabase** (Transaction Pooler).
+4.  **Storage**: S3-Compatible via **Storj** (Distributed Object Storage).
+5.  **External**: Google Gemini AI (Insights) & Penpot (Design Sync).
 
 ---
 
-## 💎 Technical Documentation
+## 🔐 3. Bank-Grade Security (The Fortress)
 
-### 🏦 Backend Architecture
-**Dompet Kita** adalah sistem API-driven yang tangguh untuk mengelola data keuangan kompleks (Income/Expense, Asset, Loans, Planning).
+Dompet Kita dirancang dengan lapisan pertahanan mendalam (**Defense-in-depth**):
 
-| Component | Technology |
-| :--- | :--- |
-| **Language** | PHP 8.4 |
-| **Framework** | Laravel 12.x |
-| **Database** | PostgreSQL (Supabase) |
-| **Auth** | Laravel Sanctum & Socialite (Google/Facebook) |
-| **AI** | Google Gemini AI (Insight Generator) |
-| **Mail** | SMTP Gmail (Secure SSL 465) |
-| **Storage** | Storj (S3 Protocol) |
-
-**Key Intelligence**:
-- **Gatekeeper Logic**: Mesin wawasan yang berinteraksi berdasarkan saldo 30 hari terakhir.
-- **Database Model**: Skema terstruktur untuk `users`, `transactions`, `assets`, `loans`, `goals`, dan `holidays`.
-- **API Security**: Semua endpoint publik dilindungi oleh Laravel Sanctum (Bearer Token).
-
-[Lihat Master Guide Database](./docs/MASTER_GUIDE_DATABASE.md)
+- **🛡️ Row Level Security (RLS)**: Proteksi data langsung di level PostgreSQL (Supabase).
+- **🔑 Field-Level Encryption**: Data sensitif (Google ID, Partner Name, Descriptions) dienkripsi otomatis sebelum disimpan.
+- **📦 Private Cloud Storage**: File struk di Storj bersifat privat, hanya dapat diakses melalui **Temporal Signed URLs** (berlaku 15 menit).
+- **🕵️ Audit Trail (CCTV)**: Setiap perubahan data (Edit/Hapus) dicatat dalam riwayat perubahan aset/transaksi.
+- **🕸️ Honeypot & Throttle**: Deteksi pendaftaran bot otomatis dan perlindungan dari serangan Brute Force.
+- **📱 Device Tracking**: Mencatat IP dan perangkat (User Agent) setiap kali terjadi akses masuk.
 
 ---
 
-### 🎨 Frontend Architecture
-Frontend berfokus pada "Aesthetic Precision" dengan performa tinggi.
+## 🛡️ 4. Developer Experience & Automation (Elite Suite)
 
-| Component | Technology |
-| :--- | :--- |
-| **Framework** | React 19 (Stable) |
-| **Build Tool** | Vite 6.x |
-| **State/Data** | TanStack Query v5 + Zustand |
-| **Notifications** | Sonner (In-App Premium Glassmorphism) |
-| **Animations** | Framer Motion (PopLayout & Layout Transitions) |
-| **Styling** | Tailwind CSS 4.x (OKLCH Colors) |
-| **Monitoring** | Sentry (Production Error Tracking) |
+Kami mengutamakan **Developer Happiness** dan **Code Health**. Project ini dilengkapi dengan sistem otomatisasi "Penjaga Pintu" (Git Hooks):
 
-**Feature Spotlight**:
-- **Dynamic Wealth Tracker**: Progress bar "Freedom" yang terhubung otomatis ke tabungan mimpi kita. ✨
-- **Optimistic UI**: Penambahan data instan tanpa menunggu loading server (Assets & Goals).
-- **In-App Notification**: Notifikasi premium di dalam aplikasi tanpa interupsi browser.
-- **Aesthetic Error Boundary**: Halaman error yang cantik dan fungsional jika terjadi kendala teknis.
+### 💂‍♂️ Git Hooks & Automation (Husky)
 
-[Lihat Detail Technical Documentation](./docs/TECHNICAL_DOCUMENTATION.md)
+Setiap kali kamu melakukan `git commit`, sistem akan melakukan:
+
+- **Frontend**: Menjalankan `Prettier` untuk merapikan kode secara otomatis.
+- **Backend**: Menjalankan `php artisan maintenance:verify` untuk audit kesehatan menyeluruh.
+- **Security**: Mencegah commit jika ditemukan celah keamanan atau error fatal.
+
+### 🔍 Command Center (CLI)
+
+Pusat kontrol utama untuk pengelolaan sistem tingkat tinggi (Artisan CLI):
+
+- `php artisan app:wealth-status` — **Full Dashboard Snapshot** (Saldo + Aset + Goals + Loans).
+- `php artisan app:security-audit` — **Security Scanner** (Cek login mencurigakan & skor sistem).
+- `php artisan app:database-optimize` — **Pro Maintenance** (Sapu bersih cache & log lama).
+- `php artisan app:asset-manage` — Kelola kekayaan & update nilai aset.
+- `php artisan app:storage-manage` — Kelola file Cloud Storage (Storj).
+- `php artisan app:penpot-manage` — Sinkronisasi aset desain dari Penpot.
+- `php artisan maintenance:verify` — **The Vitality Check** (Unified Audit & Optimization).
+
+### 📊 Quality & Performance Tools
+
+- **PHP Insights & Enlightn**: Audit kualitas & keamanan mendalam ekosistem Laravel.
+- **Larastan & Pint**: Analisis statis dan formatting otomatis tingkat tinggi.
+- **Laravel Pail**: Live debugging logs di terminal yang cantik.
+
+---
+
+## 📜 Dokumentasi Lanjutan
+
+- [docs/TECHNICAL_DOCUMENTATION.md](./docs/TECHNICAL_DOCUMENTATION.md) - Detail Teknis & Keamanan.
+- [docs/MASTER_GUIDE_DATABASE.md](./docs/MASTER_GUIDE_DATABASE.md) - Panduan Database.
+- [docs/SECURITY_OVERVIEW.md](./docs/SECURITY_OVERVIEW.md) - Strategi Keamanan.
+
+## 🚀 Memulai Pengembangan Lokal
+
+1.  **Clone**: `git clone <repo-url>`
+2.  **Setup**: `npm run setup` (Menginstall semua dependensi, generate key, dan migrate database).
+3.  **Run**: `npm run start` (Menjalankan Frontend & Backend secara bersamaan).
 
 ---
 
-## 📜 Dokumentasi Pendukung
-Semua log pengembangan dan audit keamanan tersedia di folder `docs/`:
-- [docs/TECHNICAL_DOCUMENTATION.md](./docs/TECHNICAL_DOCUMENTATION.md) - Dokumentasi teknis lengkap (Frontend & Backend).
-- [docs/MASTER_GUIDE_DATABASE.md](./docs/MASTER_GUIDE_DATABASE.md) - Panduan tunggal database (Awam & Teknis).
-- [docs/SECURITY_OVERVIEW.md](./docs/SECURITY_OVERVIEW.md) - Strategi & Laporan audit keamanan terbaru.
-- [docs/PRODUCTION_LOGS.md](./docs/PRODUCTION_LOGS.md) - Detail perjalanan fase 1-13.
-- [docs/FINAL_WALKTHROUGH.md](./docs/FINAL_WALKTHROUGH.md) - Rekapitulasi fitur & hasil testing.
-
-## 🛠️ Pengembangan Lokal
-1. **Root**: `npm run install-all`
-2. **Frontend**: `npm run dev` (dari root)
-3. **Backend**: `php artisan serve` (dari folder `backend/`)
-
----
-*Dibuat dengan ❤️ untuk masa depan Alvin & Ila. Project Status: **LIVE & SECURED***
+_Dibuat dengan ❤️ untuk masa depan Alvin & Ila. Sistem ini dijaga secara otomatis oleh **Husky & Antigravity AI**._

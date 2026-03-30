@@ -1,29 +1,28 @@
+import { spawn } from "child_process";
 
-import { spawn } from 'child_process';
-
-const server = spawn('node', ['build/index.js'], {
-  cwd: 'C:/Programing alvin/Dompet kita/mcp-server'
+const server = spawn("node", ["build/index.js"], {
+  cwd: "C:/Programing alvin/Dompet kita/mcp-server",
 });
 
-server.stdout.on('data', (data) => {
-  console.log('Server Output:', data.toString());
+server.stdout.on("data", (data) => {
+  console.log("Server Output:", data.toString());
 });
 
-server.stderr.on('data', (data) => {
-  console.error('Server Error:', data.toString());
+server.stderr.on("data", (data) => {
+  console.error("Server Error:", data.toString());
 });
 
 setTimeout(() => {
   const callRequest = {
-    jsonrpc: '2.0',
+    jsonrpc: "2.0",
     id: 1,
-    method: 'tools/call',
+    method: "tools/call",
     params: {
-      name: 'get_financial_status',
-      arguments: {}
-    }
+      name: "get_financial_status",
+      arguments: {},
+    },
   };
-  server.stdin.write(JSON.stringify(callRequest) + '\n');
+  server.stdin.write(JSON.stringify(callRequest) + "\n");
 }, 2000);
 
 setTimeout(() => {

@@ -47,8 +47,11 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
   updateSettings: async (newSettings) => {
     const current = get();
     const finalSettings = { ...current, ...newSettings };
-    
-    if (newSettings.currencyFormat && newSettings.currencyFormat !== current.currencyFormat) {
+
+    if (
+      newSettings.currencyFormat &&
+      newSettings.currencyFormat !== current.currencyFormat
+    ) {
       const newRate = await fetchExchangeRate(newSettings.currencyFormat);
       finalSettings.exchangeRate = newRate;
     }

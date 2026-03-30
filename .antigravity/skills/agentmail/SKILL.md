@@ -73,6 +73,7 @@ curl -X POST https://api.theagentmail.net/v1/accounts/{accountId}/webhooks \
 ```
 
 Webhook deliveries include two security headers:
+
 - `X-AgentMail-Signature` -- HMAC-SHA256 hex digest of the request body, signed with the webhook secret
 - `X-AgentMail-Timestamp` -- millisecond timestamp of when the delivery was sent
 
@@ -81,7 +82,12 @@ Verify the signature and reject requests with timestamps older than 5 minutes to
 ```typescript
 import { createHmac } from "crypto";
 
-const verifyWebhook = (body: string, signature: string, timestamp: string, secret: string) => {
+const verifyWebhook = (
+  body: string,
+  signature: string,
+  timestamp: string,
+  secret: string,
+) => {
   if (Date.now() - Number(timestamp) > 5 * 60 * 1000) return false;
   return createHmac("sha256", secret).update(body).digest("hex") === signature;
 };
@@ -98,34 +104,35 @@ Returns `{"data": {"url": "https://signed-download-url..."}}`.
 
 ## Full API reference
 
-| Method | Path | Description | Karma |
-|--------|------|-------------|-------|
-| POST | `/v1/accounts` | Create email account | -10 |
-| GET | `/v1/accounts` | List all accounts | |
-| GET | `/v1/accounts/:id` | Get account details | |
-| DELETE | `/v1/accounts/:id` | Delete account | +10 |
-| POST | `/v1/accounts/:id/messages` | Send email | -1 |
-| GET | `/v1/accounts/:id/messages` | List messages | |
-| GET | `/v1/accounts/:id/messages/:msgId` | Get full message | |
-| GET | `/v1/accounts/:id/messages/:msgId/attachments/:attId` | Get attachment URL | |
-| POST | `/v1/accounts/:id/webhooks` | Register webhook | |
-| GET | `/v1/accounts/:id/webhooks` | List webhooks | |
-| DELETE | `/v1/accounts/:id/webhooks/:whId` | Delete webhook | |
-| GET | `/v1/karma` | Get balance + events | |
+| Method | Path                                                  | Description          | Karma |
+| ------ | ----------------------------------------------------- | -------------------- | ----- |
+| POST   | `/v1/accounts`                                        | Create email account | -10   |
+| GET    | `/v1/accounts`                                        | List all accounts    |       |
+| GET    | `/v1/accounts/:id`                                    | Get account details  |       |
+| DELETE | `/v1/accounts/:id`                                    | Delete account       | +10   |
+| POST   | `/v1/accounts/:id/messages`                           | Send email           | -1    |
+| GET    | `/v1/accounts/:id/messages`                           | List messages        |       |
+| GET    | `/v1/accounts/:id/messages/:msgId`                    | Get full message     |       |
+| GET    | `/v1/accounts/:id/messages/:msgId/attachments/:attId` | Get attachment URL   |       |
+| POST   | `/v1/accounts/:id/webhooks`                           | Register webhook     |       |
+| GET    | `/v1/accounts/:id/webhooks`                           | List webhooks        |       |
+| DELETE | `/v1/accounts/:id/webhooks/:whId`                     | Delete webhook       |       |
+| GET    | `/v1/karma`                                           | Get balance + events |       |
 
 ## Karma system
 
 Every action has a karma cost or reward:
 
-| Event | Karma | Why |
-|---|---|---|
-| `money_paid` | +100 | Purchase credits |
-| `email_received` | +2 | Someone replied from a trusted domain |
-| `account_deleted` | +10 | Karma refunded when you delete an address |
-| `email_sent` | -1 | Sending costs karma |
-| `account_created` | -10 | Creating addresses costs karma |
+| Event             | Karma | Why                                       |
+| ----------------- | ----- | ----------------------------------------- |
+| `money_paid`      | +100  | Purchase credits                          |
+| `email_received`  | +2    | Someone replied from a trusted domain     |
+| `account_deleted` | +10   | Karma refunded when you delete an address |
+| `email_sent`      | -1    | Sending costs karma                       |
+| `account_created` | -10   | Creating addresses costs karma            |
 
 **Important rules:**
+
 - Karma is only awarded for inbound emails from trusted providers (Gmail, Outlook, Yahoo, iCloud, ProtonMail, Fastmail, Hey, etc.). Emails from unknown/throwaway domains don't earn karma.
 - You only earn karma once per sender until the agent replies. If sender X emails you 5 times without a reply, only the first earns karma. Reply to X, and the next email from X earns karma again.
 - Deleting an account refunds the 10 karma it cost to create.
@@ -175,11 +182,15 @@ console.log(karma.balance);
 import { AgentMailError } from "@agentmail/sdk";
 
 try {
-  await mail.messages.send(accountId, { to: ["a@b.com"], subject: "Hi", text: "Hey" });
+  await mail.messages.send(accountId, {
+    to: ["a@b.com"],
+    subject: "Hi",
+    text: "Hey",
+  });
 } catch (e) {
   if (e instanceof AgentMailError) {
-    console.log(e.status);   // 402, 404, 401, etc.
-    console.log(e.code);     // "INSUFFICIENT_KARMA", "NOT_FOUND", etc.
+    console.log(e.status); // 402, 404, 401, etc.
+    console.log(e.code); // "INSUFFICIENT_KARMA", "NOT_FOUND", etc.
     console.log(e.message);
   }
 }
@@ -199,16 +210,17 @@ const account = await mail.accounts.create({
 // Poll for verification email
 for (let i = 0; i < 30; i++) {
   const messages = await mail.messages.list(account.id);
-  const verification = messages.find(m =>
-    m.subject.toLowerCase().includes("verify") ||
-    m.subject.toLowerCase().includes("confirm")
+  const verification = messages.find(
+    (m) =>
+      m.subject.toLowerCase().includes("verify") ||
+      m.subject.toLowerCase().includes("confirm"),
   );
   if (verification) {
     const detail = await mail.messages.get(account.id, verification.id);
     // Parse verification link/code from detail.bodyText or detail.bodyHtml
     break;
   }
-  await new Promise(r => setTimeout(r, 2000));
+  await new Promise((r) => setTimeout(r, 2000));
 }
 ```
 
@@ -223,25 +235,57 @@ const sent = await mail.messages.send(account.id, {
 
 for (let i = 0; i < 60; i++) {
   const messages = await mail.messages.list(account.id);
-  const reply = messages.find(m =>
-    m.direction === "inbound" && m.timestamp > sent.timestamp
+  const reply = messages.find(
+    (m) => m.direction === "inbound" && m.timestamp > sent.timestamp,
   );
   if (reply) {
     const detail = await mail.messages.get(account.id, reply.id);
     // Process reply
     break;
   }
-  await new Promise(r => setTimeout(r, 5000));
+  await new Promise((r) => setTimeout(r, 5000));
 }
 ```
 
 ## Types
 
 ```typescript
-type Account = { id: string; address: string; displayName: string | null; createdAt: number };
-type Message = { id: string; from: string; to: string[]; subject: string; direction: "inbound" | "outbound"; status: string; timestamp: number };
-type MessageDetail = Message & { cc: string[] | null; bcc: string[] | null; bodyText: string | null; bodyHtml: string | null; inReplyTo: string | null; references: string | null; attachments: AttachmentMeta[] };
-type AttachmentMeta = { id: string; filename: string; contentType: string; size: number };
+type Account = {
+  id: string;
+  address: string;
+  displayName: string | null;
+  createdAt: number;
+};
+type Message = {
+  id: string;
+  from: string;
+  to: string[];
+  subject: string;
+  direction: "inbound" | "outbound";
+  status: string;
+  timestamp: number;
+};
+type MessageDetail = Message & {
+  cc: string[] | null;
+  bcc: string[] | null;
+  bodyText: string | null;
+  bodyHtml: string | null;
+  inReplyTo: string | null;
+  references: string | null;
+  attachments: AttachmentMeta[];
+};
+type AttachmentMeta = {
+  id: string;
+  filename: string;
+  contentType: string;
+  size: number;
+};
 type KarmaBalance = { balance: number; events: KarmaEvent[] };
-type KarmaEvent = { id: string; type: string; amount: number; timestamp: number; metadata?: Record<string, unknown> };
+type KarmaEvent = {
+  id: string;
+  type: string;
+  amount: number;
+  timestamp: number;
+  metadata?: Record<string, unknown>;
+};
 ```

@@ -33,11 +33,13 @@ Blueprint is for multi-session, multi-agent engineering projects where each step
 ## Examples
 
 ### Example 1: Database migration
+
 ```
 /blueprint myapp "migrate database to PostgreSQL"
 ```
 
 ### Example 2: Plugin extraction
+
 ```
 /blueprint antbot "extract providers into plugins"
 ```

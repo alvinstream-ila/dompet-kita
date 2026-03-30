@@ -28,6 +28,7 @@ Perfect for REST APIs, GraphQL APIs, and WebSocket APIs.
 ### Step 1: Analyze the API Structure
 
 First, I'll examine your API codebase to understand:
+
 - Available endpoints and routes
 - HTTP methods (GET, POST, PUT, DELETE, etc.)
 - Request parameters and body structure
@@ -40,23 +41,27 @@ First, I'll examine your API codebase to understand:
 For each endpoint, I'll create documentation including:
 
 **Endpoint Details:**
+
 - HTTP method and URL path
 - Brief description of what it does
 - Authentication requirements
 - Rate limiting information (if applicable)
 
 **Request Specification:**
+
 - Path parameters
 - Query parameters
 - Request headers
 - Request body schema (with types and validation rules)
 
 **Response Specification:**
+
 - Success response (status code + body structure)
 - Error responses (all possible error codes)
 - Response headers
 
 **Code Examples:**
+
 - cURL command
 - JavaScript/TypeScript (fetch/axios)
 - Python (requests)
@@ -65,6 +70,7 @@ For each endpoint, I'll create documentation including:
 ### Step 3: Add Usage Guidelines
 
 I'll include:
+
 - Getting started guide
 - Authentication setup
 - Common use cases
@@ -76,6 +82,7 @@ I'll include:
 ### Step 4: Document Error Handling
 
 Clear error documentation including:
+
 - All possible error codes
 - Error message formats
 - Troubleshooting guide
@@ -84,6 +91,7 @@ Clear error documentation including:
 ### Step 5: Create Interactive Examples
 
 Where possible, I'll provide:
+
 - Postman collection
 - OpenAPI/Swagger specification
 - Interactive code examples
@@ -105,22 +113,22 @@ Creates a new user account.
 **Request Body:**
 \`\`\`json
 {
-  "email": "user@example.com",      // Required: Valid email address
-  "password": "SecurePass123!",     // Required: Min 8 chars, 1 uppercase, 1 number
-  "name": "John Doe",               // Required: 2-50 characters
-  "role": "user"                    // Optional: "user" or "admin" (default: "user")
+"email": "user@example.com", // Required: Valid email address
+"password": "SecurePass123!", // Required: Min 8 chars, 1 uppercase, 1 number
+"name": "John Doe", // Required: 2-50 characters
+"role": "user" // Optional: "user" or "admin" (default: "user")
 }
 \`\`\`
 
 **Success Response (201 Created):**
 \`\`\`json
 {
-  "id": "usr_1234567890",
-  "email": "user@example.com",
-  "name": "John Doe",
-  "role": "user",
-  "createdAt": "2026-01-20T10:30:00Z",
-  "emailVerified": false
+"id": "usr_1234567890",
+"email": "user@example.com",
+"name": "John Doe",
+"role": "user",
+"createdAt": "2026-01-20T10:30:00Z",
+"emailVerified": false
 }
 \`\`\`
 
@@ -129,17 +137,17 @@ Creates a new user account.
 - `400 Bad Request` - Invalid input data
   \`\`\`json
   {
-    "error": "VALIDATION_ERROR",
-    "message": "Invalid email format",
-    "field": "email"
+  "error": "VALIDATION_ERROR",
+  "message": "Invalid email format",
+  "field": "email"
   }
   \`\`\`
 
 - `409 Conflict` - Email already exists
   \`\`\`json
   {
-    "error": "EMAIL_EXISTS",
-    "message": "An account with this email already exists"
+  "error": "EMAIL_EXISTS",
+  "message": "An account with this email already exists"
   }
   \`\`\`
 
@@ -148,28 +156,28 @@ Creates a new user account.
 **Example Request (cURL):**
 \`\`\`bash
 curl -X POST https://api.example.com/api/v1/users \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "user@example.com",
-    "password": "SecurePass123!",
-    "name": "John Doe"
-  }'
+ -H "Authorization: Bearer YOUR_TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{
+"email": "user@example.com",
+"password": "SecurePass123!",
+"name": "John Doe"
+}'
 \`\`\`
 
 **Example Request (JavaScript):**
 \`\`\`javascript
 const response = await fetch('https://api.example.com/api/v1/users', {
-  method: 'POST',
-  headers: {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    email: 'user@example.com',
-    password: 'SecurePass123!',
-    name: 'John Doe'
-  })
+method: 'POST',
+headers: {
+'Authorization': `Bearer ${token}`,
+'Content-Type': 'application/json'
+},
+body: JSON.stringify({
+email: 'user@example.com',
+password: 'SecurePass123!',
+name: 'John Doe'
+})
 });
 
 const user = await response.json();
@@ -181,16 +189,16 @@ console.log(user);
 import requests
 
 response = requests.post(
-    'https://api.example.com/api/v1/users',
-    headers={
-        'Authorization': f'Bearer {token}',
-        'Content-Type': 'application/json'
-    },
-    json={
-        'email': 'user@example.com',
-        'password': 'SecurePass123!',
-        'name': 'John Doe'
-    }
+'https://api.example.com/api/v1/users',
+headers={
+'Authorization': f'Bearer {token}',
+'Content-Type': 'application/json'
+},
+json={
+'email': 'user@example.com',
+'password': 'SecurePass123!',
+'name': 'John Doe'
+}
 )
 
 user = response.json()
@@ -208,62 +216,62 @@ Fetch user information by ID.
 **Query:**
 \`\`\`graphql
 query GetUser($id: ID!) {
-  user(id: $id) {
-    id
-    email
-    name
-    role
-    createdAt
-    posts {
-      id
-      title
-      publishedAt
-    }
-  }
+user(id: $id) {
+id
+email
+name
+role
+createdAt
+posts {
+id
+title
+publishedAt
+}
+}
 }
 \`\`\`
 
 **Variables:**
 \`\`\`json
 {
-  "id": "usr_1234567890"
+"id": "usr_1234567890"
 }
 \`\`\`
 
 **Response:**
 \`\`\`json
 {
-  "data": {
-    "user": {
-      "id": "usr_1234567890",
-      "email": "user@example.com",
-      "name": "John Doe",
-      "role": "user",
-      "createdAt": "2026-01-20T10:30:00Z",
-      "posts": [
-        {
-          "id": "post_123",
-          "title": "My First Post",
-          "publishedAt": "2026-01-21T14:00:00Z"
-        }
-      ]
-    }
-  }
+"data": {
+"user": {
+"id": "usr_1234567890",
+"email": "user@example.com",
+"name": "John Doe",
+"role": "user",
+"createdAt": "2026-01-20T10:30:00Z",
+"posts": [
+{
+"id": "post_123",
+"title": "My First Post",
+"publishedAt": "2026-01-21T14:00:00Z"
+}
+]
+}
+}
 }
 \`\`\`
 
 **Errors:**
 \`\`\`json
 {
-  "errors": [
-    {
-      "message": "User not found",
-      "extensions": {
-        "code": "USER_NOT_FOUND",
-        "userId": "usr_1234567890"
-      }
-    }
-  ]
+"errors": [
+{
+"message": "User not found",
+"extensions": {
+"code": "USER_NOT_FOUND",
+"userId": "usr_1234567890"
+}
+}
+]
 }
 \`\`\`
 ```
@@ -282,17 +290,17 @@ All API requests require authentication using Bearer tokens.
 **Request:**
 \`\`\`json
 {
-  "email": "user@example.com",
-  "password": "your-password"
+"email": "user@example.com",
+"password": "your-password"
 }
 \`\`\`
 
 **Response:**
 \`\`\`json
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expiresIn": 3600,
-  "refreshToken": "refresh_token_here"
+"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+"expiresIn": 3600,
+"refreshToken": "refresh_token_here"
 }
 \`\`\`
 
@@ -313,7 +321,7 @@ Tokens expire after 1 hour. Use the refresh token to get a new access token:
 **Request:**
 \`\`\`json
 {
-  "refreshToken": "refresh_token_here"
+"refreshToken": "refresh_token_here"
 }
 \`\`\`
 ```
@@ -395,32 +403,40 @@ Tokens expire after 1 hour. Use the refresh token to get a new access token:
 ## Common Pitfalls
 
 ### Problem: Documentation Gets Out of Sync
+
 **Symptoms:** Examples don't work, parameters are wrong, endpoints return different data
-**Solution:** 
+**Solution:**
+
 - Generate docs from code comments/annotations
 - Use tools like Swagger/OpenAPI
 - Add API tests that validate documentation
 - Review docs with every API change
 
 ### Problem: Missing Error Documentation
+
 **Symptoms:** Users don't know how to handle errors, support tickets increase
 **Solution:**
+
 - Document every possible error code
 - Provide clear error messages
 - Include troubleshooting steps
 - Show example error responses
 
 ### Problem: Examples Don't Work
+
 **Symptoms:** Users can't get started, frustration increases
 **Solution:**
+
 - Test every code example
 - Use real, working endpoints
 - Include complete examples (not fragments)
 - Provide a sandbox environment
 
 ### Problem: Unclear Parameter Requirements
+
 **Symptoms:** Users send invalid requests, validation errors
 **Solution:**
+
 - Mark required vs optional clearly
 - Document data types and formats
 - Show validation rules
@@ -429,7 +445,9 @@ Tokens expire after 1 hour. Use the refresh token to get a new access token:
 ## Tools and Formats
 
 ### OpenAPI/Swagger
+
 Generate interactive documentation:
+
 ```yaml
 openapi: 3.0.0
 info:
@@ -444,11 +462,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateUserRequest'
+              $ref: "#/components/schemas/CreateUserRequest"
 ```
 
 ### Postman Collection
+
 Export collection for easy testing:
+
 ```json
 {
   "info": {

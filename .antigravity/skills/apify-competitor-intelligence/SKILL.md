@@ -8,6 +8,7 @@ description: Analyze competitor strategies, content, pricing, ads, and market po
 Analyze competitors using Apify Actors to extract data from multiple platforms.
 
 ## Prerequisites
+
 (No need to check it upfront)
 
 - `.env` file with `APIFY_TOKEN`
@@ -31,36 +32,36 @@ Task Progress:
 
 Select the appropriate Actor based on analysis needs:
 
-| User Need | Actor ID | Best For |
-|-----------|----------|----------|
-| Competitor business data | `compass/crawler-google-places` | Location analysis |
-| Competitor contact discovery | `poidata/google-maps-email-extractor` | Email extraction |
-| Feature benchmarking | `compass/google-maps-extractor` | Detailed business data |
-| Competitor review analysis | `compass/Google-Maps-Reviews-Scraper` | Review comparison |
-| Hotel competitor data | `voyager/booking-scraper` | Hotel benchmarking |
-| Hotel review comparison | `voyager/booking-reviews-scraper` | Review analysis |
-| Competitor ad strategies | `apify/facebook-ads-scraper` | Ad creative analysis |
-| Competitor page metrics | `apify/facebook-pages-scraper` | Page performance |
-| Competitor content analysis | `apify/facebook-posts-scraper` | Post strategies |
-| Competitor reels performance | `apify/facebook-reels-scraper` | Reels analysis |
-| Competitor audience analysis | `apify/facebook-comments-scraper` | Comment sentiment |
-| Competitor event monitoring | `apify/facebook-events-scraper` | Event tracking |
-| Competitor audience overlap | `apify/facebook-followers-following-scraper` | Follower analysis |
-| Competitor review benchmarking | `apify/facebook-reviews-scraper` | Review comparison |
-| Competitor ad monitoring | `apify/facebook-search-scraper` | Ad discovery |
-| Competitor profile metrics | `apify/instagram-profile-scraper` | Profile analysis |
-| Competitor content monitoring | `apify/instagram-post-scraper` | Post tracking |
-| Competitor engagement analysis | `apify/instagram-comment-scraper` | Comment analysis |
-| Competitor reel performance | `apify/instagram-reel-scraper` | Reel metrics |
-| Competitor growth tracking | `apify/instagram-followers-count-scraper` | Follower tracking |
-| Comprehensive competitor data | `apify/instagram-scraper` | Full analysis |
-| API-based competitor analysis | `apify/instagram-api-scraper` | API access |
-| Competitor video analysis | `streamers/youtube-scraper` | Video metrics |
-| Competitor sentiment analysis | `streamers/youtube-comments-scraper` | Comment sentiment |
-| Competitor channel metrics | `streamers/youtube-channel-scraper` | Channel analysis |
-| TikTok competitor analysis | `clockworks/tiktok-scraper` | TikTok data |
-| Competitor video strategies | `clockworks/tiktok-video-scraper` | Video analysis |
-| Competitor TikTok profiles | `clockworks/tiktok-profile-scraper` | Profile data |
+| User Need                      | Actor ID                                     | Best For               |
+| ------------------------------ | -------------------------------------------- | ---------------------- |
+| Competitor business data       | `compass/crawler-google-places`              | Location analysis      |
+| Competitor contact discovery   | `poidata/google-maps-email-extractor`        | Email extraction       |
+| Feature benchmarking           | `compass/google-maps-extractor`              | Detailed business data |
+| Competitor review analysis     | `compass/Google-Maps-Reviews-Scraper`        | Review comparison      |
+| Hotel competitor data          | `voyager/booking-scraper`                    | Hotel benchmarking     |
+| Hotel review comparison        | `voyager/booking-reviews-scraper`            | Review analysis        |
+| Competitor ad strategies       | `apify/facebook-ads-scraper`                 | Ad creative analysis   |
+| Competitor page metrics        | `apify/facebook-pages-scraper`               | Page performance       |
+| Competitor content analysis    | `apify/facebook-posts-scraper`               | Post strategies        |
+| Competitor reels performance   | `apify/facebook-reels-scraper`               | Reels analysis         |
+| Competitor audience analysis   | `apify/facebook-comments-scraper`            | Comment sentiment      |
+| Competitor event monitoring    | `apify/facebook-events-scraper`              | Event tracking         |
+| Competitor audience overlap    | `apify/facebook-followers-following-scraper` | Follower analysis      |
+| Competitor review benchmarking | `apify/facebook-reviews-scraper`             | Review comparison      |
+| Competitor ad monitoring       | `apify/facebook-search-scraper`              | Ad discovery           |
+| Competitor profile metrics     | `apify/instagram-profile-scraper`            | Profile analysis       |
+| Competitor content monitoring  | `apify/instagram-post-scraper`               | Post tracking          |
+| Competitor engagement analysis | `apify/instagram-comment-scraper`            | Comment analysis       |
+| Competitor reel performance    | `apify/instagram-reel-scraper`               | Reel metrics           |
+| Competitor growth tracking     | `apify/instagram-followers-count-scraper`    | Follower tracking      |
+| Comprehensive competitor data  | `apify/instagram-scraper`                    | Full analysis          |
+| API-based competitor analysis  | `apify/instagram-api-scraper`                | API access             |
+| Competitor video analysis      | `streamers/youtube-scraper`                  | Video metrics          |
+| Competitor sentiment analysis  | `streamers/youtube-comments-scraper`         | Comment sentiment      |
+| Competitor channel metrics     | `streamers/youtube-channel-scraper`          | Channel analysis       |
+| TikTok competitor analysis     | `clockworks/tiktok-scraper`                  | TikTok data            |
+| Competitor video strategies    | `clockworks/tiktok-video-scraper`            | Video analysis         |
+| Competitor TikTok profiles     | `clockworks/tiktok-profile-scraper`          | Profile data           |
 
 ### Step 2: Fetch Actor Schema
 
@@ -73,6 +74,7 @@ export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "A
 Replace `ACTOR_ID` with the selected Actor (e.g., `compass/crawler-google-places`).
 
 This returns:
+
 - Actor description and README
 - Required and optional input parameters
 - Output fields (if available)
@@ -80,6 +82,7 @@ This returns:
 ### Step 3: Ask User Preferences
 
 Before running, ask:
+
 1. **Output format**:
    - **Quick answer** - Display top few results in chat (no file saved)
    - **CSV** - Full export with all fields
@@ -89,6 +92,7 @@ Before running, ask:
 ### Step 4: Run the Script
 
 **Quick answer (display in chat, no file):**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -96,6 +100,7 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ```
 
 **CSV:**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -105,6 +110,7 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ```
 
 **JSON:**
+
 ```bash
 node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --actor "ACTOR_ID" \
@@ -116,11 +122,11 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 ### Step 5: Summarize Findings
 
 After completion, report:
+
 - Number of competitors analyzed
 - File location and name
 - Key competitive insights
 - Suggested next steps (deeper analysis, benchmarking)
-
 
 ## Error Handling
 

@@ -1,40 +1,39 @@
 import React, { useState, useEffect, type SyntheticEvent } from 'react';
-import { useAddTransaction, useUpdateTransaction } from '@/hooks/useTransactions';
-import { 
+import {
+  useAddTransaction,
+  useUpdateTransaction,
+} from '@/hooks/useTransactions';
+import {
   Loader2,
   ImageIcon,
   Check,
   CalendarIcon,
   Target,
-  Sparkles
+  Sparkles,
 } from 'lucide-react';
-import { format } from "date-fns";
-import { id } from "date-fns/locale";
+import { format } from 'date-fns';
+import { id } from 'date-fns/locale';
 import api from '@/lib/axios';
 import { motion } from 'framer-motion';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+} from '@/components/ui/select';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { cn, formatToRupiah, getTerbilang } from "@/lib/utils";
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { cn, formatToRupiah, getTerbilang } from '@/lib/utils';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/constants';
 
 export interface TransactionFormProps {
@@ -56,34 +55,53 @@ export interface TransactionFormProps {
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-export const TransactionForm: React.FC<TransactionFormProps> = ({ 
-  onSuccess, 
+export const TransactionForm: React.FC<TransactionFormProps> = ({
+  onSuccess,
   onCancel,
   onTypeChange,
   mode = 'create',
   transactionId,
-  initialData 
+  initialData,
 }) => {
   const addTransactionMutation = useAddTransaction();
   const updateTransactionMutation = useUpdateTransaction();
-  
+
   const [loading, setLoading] = useState(false);
-  const [type, setType] = useState<'expense' | 'income'>(initialData?.type || 'expense');
-  const [amount, setAmount] = useState(initialData?.amount ? formatToRupiah(initialData.amount.toString()) : '');
-  const [description, setDescription] = useState(initialData?.description || '');
-  const [category, setCategory] = useState(initialData?.category || (type === 'expense' ? EXPENSE_CATEGORIES[0] : INCOME_CATEGORIES[0]));
-  const [subCategory, setSubCategory] = useState(initialData?.sub_category || 'Pribadi');
-  const [date, setDate] = useState<Date>(initialData?.date ? new Date(initialData.date) : new Date());
+  const [type, setType] = useState<'expense' | 'income'>(
+    initialData?.type || 'expense'
+  );
+  const [amount, setAmount] = useState(
+    initialData?.amount ? formatToRupiah(initialData.amount.toString()) : ''
+  );
+  const [description, setDescription] = useState(
+    initialData?.description || ''
+  );
+  const [category, setCategory] = useState(
+    initialData?.category ||
+      (type === 'expense' ? EXPENSE_CATEGORIES[0] : INCOME_CATEGORIES[0])
+  );
+  const [subCategory, setSubCategory] = useState(
+    initialData?.sub_category || 'Pribadi'
+  );
+  const [date, setDate] = useState<Date>(
+    initialData?.date ? new Date(initialData.date) : new Date()
+  );
   const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(initialData?.receipt_url || null);
+  const [preview, setPreview] = useState<string | null>(
+    initialData?.receipt_url || null
+  );
   const [uploading, setUploading] = useState(false);
   const [scanning, setScanning] = useState(false);
 
-  const isPending = loading || uploading || addTransactionMutation.isPending || updateTransactionMutation.isPending;
-  
-  const modeLabel = mode === 'create' ? "SIMPAN" : "PERBARUI";
+  const isPending =
+    loading ||
+    uploading ||
+    addTransactionMutation.isPending ||
+    updateTransactionMutation.isPending;
+
+  const modeLabel = mode === 'create' ? 'SIMPAN' : 'PERBARUI';
   const submitLabel = isPending ? (
-    <Loader2 className="size-5 animate-spin mx-auto" />
+    <Loader2 className="mx-auto size-5 animate-spin" />
   ) : (
     `${modeLabel} TRANSAKSI`
   );
@@ -99,9 +117,14 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
   useEffect(() => {
     if (initialData) {
       setType(initialData.type || 'expense');
-      setAmount(initialData.amount ? formatToRupiah(initialData.amount.toString()) : '');
+      setAmount(
+        initialData.amount ? formatToRupiah(initialData.amount.toString()) : ''
+      );
       setDescription(initialData.description || '');
-      setCategory(initialData.category || (type === 'expense' ? EXPENSE_CATEGORIES[0] : INCOME_CATEGORIES[0]));
+      setCategory(
+        initialData.category ||
+          (type === 'expense' ? EXPENSE_CATEGORIES[0] : INCOME_CATEGORIES[0])
+      );
       setSubCategory(initialData.sub_category || 'Pribadi');
       setDate(initialData.date ? new Date(initialData.date) : new Date());
       setPreview(initialData.receipt_url || null);
@@ -132,39 +155,51 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
   const handleScan = async () => {
     if (!file && !preview) return;
     setScanning(true);
-    
+
     try {
-      let base64Data = preview?.startsWith('data:') ? preview.split(',')[1] : null;
-      
+      let base64Data = preview?.startsWith('data:')
+        ? preview.split(',')[1]
+        : null;
+
       if (!base64Data && file) {
-          const reader = new FileReader();
-          const b64 = await new Promise((resolve) => {
-              reader.onload = () => resolve(reader.result);
-              reader.readAsDataURL(file);
-          });
-          base64Data = (b64 as string).split(',')[1];
+        const reader = new FileReader();
+        const b64 = await new Promise((resolve) => {
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
+        base64Data = (b64 as string).split(',')[1];
       }
 
       if (!base64Data) throw new Error('Preview data not available');
-      
+
       const response = await api.post('/ai/analyze-receipt', {
         image: base64Data,
-        mime_type: file?.type || 'image/jpeg'
+        mime_type: file?.type || 'image/jpeg',
       });
 
       if (response.data.success) {
-        const { amount: extractedAmount, merchant, message } = response.data.data;
-        
-        if (extractedAmount) setAmount(formatToRupiah(extractedAmount.toString()));
+        const {
+          amount: extractedAmount,
+          merchant,
+          message,
+        } = response.data.data;
+
+        if (extractedAmount)
+          setAmount(formatToRupiah(extractedAmount.toString()));
         if (merchant) setDescription(merchant);
-        
-        alert(message || 'AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️');
+
+        alert(
+          message ||
+            'AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️'
+        );
       } else {
         throw new Error(response.data.message || 'Gagal scan struk');
       }
     } catch (error) {
       console.error('Scan error via backend:', error);
-      alert('Maaf, AI gagal membaca struk ini. Coba ketik manual ya Sayang! 🥺');
+      alert(
+        'Maaf, AI gagal membaca struk ini. Coba ketik manual ya Sayang! 🥺'
+      );
     } finally {
       setScanning(false);
     }
@@ -188,15 +223,15 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         category,
         sub_category: subCategory,
         type,
-        date: format(date, "yyyy-MM-dd"),
+        date: format(date, 'yyyy-MM-dd'),
         receipt_url,
-        note: null
+        note: null,
       };
 
       if (mode === 'edit' && transactionId) {
         await updateTransactionMutation.mutateAsync({
           id: transactionId.toString(),
-          ...payload
+          ...payload,
         });
       } else {
         await addTransactionMutation.mutateAsync(payload);
@@ -210,7 +245,11 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         setPreview(null);
       }
     } catch (error) {
-      alert(error instanceof Error ? error.message : 'Terjadi kesalahan saat menyimpan transaksi');
+      alert(
+        error instanceof Error
+          ? error.message
+          : 'Terjadi kesalahan saat menyimpan transaksi'
+      );
     } finally {
       setLoading(false);
       setUploading(false);
@@ -223,22 +262,27 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
     setAmount(formatted);
   };
 
-  const categoriesToDisplay = type === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
+  const categoriesToDisplay =
+    type === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Custom Tabs Switcher */}
-      <Tabs value={type} onValueChange={(v: string) => setType(v as 'expense' | 'income')} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 p-1 bg-white shadow-lg rounded-xl border border-slate-100 h-auto">
-          <TabsTrigger 
-            value="expense" 
-            className="py-2.5 rounded-lg font-black text-[10px] transition-all uppercase tracking-wider data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-md"
+      <Tabs
+        value={type}
+        onValueChange={(v: string) => setType(v as 'expense' | 'income')}
+        className="w-full"
+      >
+        <TabsList className="grid h-auto w-full grid-cols-2 rounded-xl border border-slate-100 bg-white p-1 shadow-lg">
+          <TabsTrigger
+            value="expense"
+            className="rounded-lg py-2.5 text-[10px] font-black tracking-wider uppercase transition-all data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-md"
           >
             PENGELUARAN
           </TabsTrigger>
-          <TabsTrigger 
-            value="income" 
-            className="py-2.5 rounded-lg font-black text-[10px] transition-all uppercase tracking-wider data-[state=active]:bg-emerald-500 data-[state=active]:text-white data-[state=active]:shadow-md"
+          <TabsTrigger
+            value="income"
+            className="rounded-lg py-2.5 text-[10px] font-black tracking-wider uppercase transition-all data-[state=active]:bg-emerald-500 data-[state=active]:text-white data-[state=active]:shadow-md"
           >
             PEMASUKAN
           </TabsTrigger>
@@ -247,23 +291,32 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
 
       <div className="grid grid-cols-2 gap-3">
         {/* Date Picker */}
-        <div className="space-y-1.5 flex flex-col">
-          <Label className="text-[10px] font-black text-slate-800 uppercase tracking-widest px-1">Tanggal</Label>
+        <div className="flex flex-col space-y-1.5">
+          <Label className="px-1 text-[10px] font-black tracking-widest text-slate-800 uppercase">
+            Tanggal
+          </Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                variant={"outline"}
+                variant={'outline'}
                 type="button"
                 className={cn(
-                  "w-full justify-start text-left font-bold text-[12px] h-10 rounded-xl bg-slate-50 border-slate-200 hover:bg-slate-100 px-3.5",
-                  !date && "text-muted-foreground"
+                  'h-10 w-full justify-start rounded-xl border-slate-200 bg-slate-50 px-3.5 text-left text-[12px] font-bold hover:bg-slate-100',
+                  !date && 'text-muted-foreground'
                 )}
               >
                 <CalendarIcon className="mr-2 h-3.5 w-3.5 opacity-70" />
-                {date ? format(date, "d MMM yyyy", { locale: id }) : <span>Pilih</span>}
+                {date ? (
+                  format(date, 'd MMM yyyy', { locale: id })
+                ) : (
+                  <span>Pilih</span>
+                )}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 rounded-2xl overflow-hidden shadow-2xl border-none" align="start">
+            <PopoverContent
+              className="w-auto overflow-hidden rounded-2xl border-none p-0 shadow-2xl"
+              align="start"
+            >
               <Calendar
                 mode="single"
                 selected={date}
@@ -276,15 +329,21 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         </div>
 
         {/* Kategori */}
-        <div className="space-y-1.5 flex flex-col">
-          <Label className="text-[10px] font-black text-slate-800 uppercase tracking-widest px-1">Kategori</Label>
+        <div className="flex flex-col space-y-1.5">
+          <Label className="px-1 text-[10px] font-black tracking-widest text-slate-800 uppercase">
+            Kategori
+          </Label>
           <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger className="w-full h-10 rounded-xl bg-slate-50 border-slate-200 focus:ring-slate-200 font-extrabold text-[12px] px-3.5 transition-all">
+            <SelectTrigger className="h-10 w-full rounded-xl border-slate-200 bg-slate-50 px-3.5 text-[12px] font-extrabold transition-all focus:ring-slate-200">
               <SelectValue placeholder="Pilih" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl shadow-xl border-slate-100">
+            <SelectContent className="rounded-xl border-slate-100 shadow-xl">
               {categoriesToDisplay.map((cat) => (
-                <SelectItem key={cat} value={cat} className="font-bold text-[12px] focus:bg-slate-50 rounded-lg">
+                <SelectItem
+                  key={cat}
+                  value={cat}
+                  className="rounded-lg text-[12px] font-bold focus:bg-slate-50"
+                >
                   {cat}
                 </SelectItem>
               ))}
@@ -293,38 +352,47 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         </div>
       </div>
 
-      <div className="space-y-1.5 flex flex-col">
-        <Label className="text-[10px] font-black text-slate-800 uppercase tracking-widest px-1">Kategori Khusus</Label>
+      <div className="flex flex-col space-y-1.5">
+        <Label className="px-1 text-[10px] font-black tracking-widest text-slate-800 uppercase">
+          Kategori Khusus
+        </Label>
         <Select value={subCategory} onValueChange={setSubCategory}>
-          <SelectTrigger className="w-full h-10 rounded-xl bg-slate-50 border-slate-200 focus:ring-slate-200 font-extrabold text-[12px] px-3.5">
+          <SelectTrigger className="h-10 w-full rounded-xl border-slate-200 bg-slate-50 px-3.5 text-[12px] font-extrabold focus:ring-slate-200">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="rounded-xl shadow-xl border-slate-100">
-            <SelectItem value="Pribadi" className="font-bold text-[12px]">Pribadi</SelectItem>
-            <SelectItem value="Keluarga" className="font-bold text-[12px]">Keluarga</SelectItem>
-            <SelectItem value="Tabungan" className="font-bold text-[12px]">Tabungan</SelectItem>
-            <SelectItem value="Investasi" className="font-bold text-[12px]">Investasi</SelectItem>
+          <SelectContent className="rounded-xl border-slate-100 shadow-xl">
+            <SelectItem value="Pribadi" className="text-[12px] font-bold">
+              Pribadi
+            </SelectItem>
+            <SelectItem value="Keluarga" className="text-[12px] font-bold">
+              Keluarga
+            </SelectItem>
+            <SelectItem value="Tabungan" className="text-[12px] font-bold">
+              Tabungan
+            </SelectItem>
+            <SelectItem value="Investasi" className="text-[12px] font-bold">
+              Investasi
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
 
-      <div className="space-y-1.5 flex flex-col">
-        <Label className="text-[10px] font-black text-slate-800 uppercase tracking-widest px-1">Keterangan / Rincian</Label>
+      <div className="flex flex-col space-y-1.5">
+        <Label className="px-1 text-[10px] font-black tracking-widest text-slate-800 uppercase">
+          Keterangan / Rincian
+        </Label>
         <Input
           placeholder="Misal : Ongkos Perjalanan"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full h-10 bg-slate-50 border-slate-200 rounded-xl px-3.5 focus-visible:ring-slate-200 font-bold text-[12px] placeholder:text-slate-400 placeholder:font-medium"
+          className="h-10 w-full rounded-xl border-slate-200 bg-slate-50 px-3.5 text-[12px] font-bold placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-slate-200"
           required
         />
       </div>
 
-      <AmountInput 
-        amount={amount}
-        onChange={handleAmountChange}
-      />
+      <AmountInput amount={amount} onChange={handleAmountChange} />
 
-      <ReceiptSection 
+      <ReceiptSection
         preview={preview}
         scanning={scanning}
         file={file}
@@ -345,24 +413,26 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
 
       <div className="flex gap-3 pt-2">
         {onCancel && (
-            <Button
-                type="button"
-                variant="outline"
-                onClick={onCancel}
-                className="flex-1 h-11 rounded-2xl font-black text-[12px] uppercase border-slate-200"
-            >
-                BATAL
-            </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            className="h-11 flex-1 rounded-2xl border-slate-200 text-[12px] font-black uppercase"
+          >
+            BATAL
+          </Button>
         )}
         <Button
-            type="submit"
-            disabled={isPending}
-            className={cn(
-            "flex-1 h-11 rounded-2xl shadow-lg active:scale-[0.98] transition-all text-[12px] font-black tracking-widest text-white uppercase",
-            type === 'expense' ? "bg-slate-900 hover:bg-black shadow-slate-900/10" : "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/10"
-            )}
+          type="submit"
+          disabled={isPending}
+          className={cn(
+            'h-11 flex-1 rounded-2xl text-[12px] font-black tracking-widest text-white uppercase shadow-lg transition-all active:scale-[0.98]',
+            type === 'expense'
+              ? 'bg-slate-900 shadow-slate-900/10 hover:bg-black'
+              : 'bg-emerald-600 shadow-emerald-600/10 hover:bg-emerald-700'
+          )}
         >
-            {submitLabel}
+          {submitLabel}
         </Button>
       </div>
     </form>
@@ -375,22 +445,26 @@ interface AmountInputProps {
 }
 
 const AmountInput: React.FC<AmountInputProps> = ({ amount, onChange }) => (
-  <div className="space-y-1.5 flex flex-col pt-1">
-    <div className="flex justify-between items-end px-1">
-      <Label className="text-[10px] font-black text-slate-800 uppercase tracking-widest">Nominal (Rp)</Label>
+  <div className="flex flex-col space-y-1.5 pt-1">
+    <div className="flex items-end justify-between px-1">
+      <Label className="text-[10px] font-black tracking-widest text-slate-800 uppercase">
+        Nominal (Rp)
+      </Label>
       <span className="text-[10px] font-bold text-blue-500 italic">
         {amount && getTerbilang(Number.parseInt(amount.replaceAll('.', '')))}
       </span>
     </div>
     <div className="relative">
-      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-black text-base select-none">Rp.</span>
+      <span className="absolute top-1/2 left-4 -translate-y-1/2 text-base font-black text-slate-500 select-none">
+        Rp.
+      </span>
       <Input
         type="text"
         inputMode="numeric"
         placeholder="0"
         value={amount}
         onChange={onChange}
-        className="w-full h-12 bg-slate-100/50 border-slate-200 rounded-2xl pl-12 pr-4 text-xl font-black text-slate-900 focus-visible:ring-slate-300 shadow-inner appearance-none"
+        className="h-12 w-full appearance-none rounded-2xl border-slate-200 bg-slate-100/50 pr-4 pl-12 text-xl font-black text-slate-900 shadow-inner focus-visible:ring-slate-300"
         required
       />
     </div>
@@ -416,34 +490,40 @@ const ReceiptSection: React.FC<ReceiptSectionProps> = ({
   scanStatusLabel,
   onFileSelect,
   onFileRemove,
-  onScan
+  onScan,
 }) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   return (
     <div className="space-y-4">
       {preview && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative aspect-video rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 group"
+          className="group relative aspect-video overflow-hidden rounded-2xl border border-slate-200 bg-slate-100"
         >
-          <img src={preview} alt="Receipt preview" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <Button 
-              type="button" 
-              variant="destructive" 
-              size="sm" 
-              className="rounded-full h-8 px-3 text-[10px] font-black"
+          <img
+            src={preview}
+            alt="Receipt preview"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              className="h-8 rounded-full px-3 text-[10px] font-black"
               onClick={onFileRemove}
             >
               Hapus
             </Button>
           </div>
           {scanning && (
-            <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2">
-              <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-              <span className="text-[10px] font-black text-blue-600 animate-pulse tracking-widest">ANALYZING...</span>
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-white/60 backdrop-blur-[2px]">
+              <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+              <span className="animate-pulse text-[10px] font-black tracking-widest text-blue-600">
+                ANALYZING...
+              </span>
             </div>
           )}
         </motion.div>
@@ -459,7 +539,9 @@ const ReceiptSection: React.FC<ReceiptSectionProps> = ({
               const f = e.target.files?.[0];
               if (f) {
                 if (f.size > MAX_FILE_SIZE) {
-                  alert('Ukuran file terlalu besar! Maksimal 5MB ya Sayang.. ❤️');
+                  alert(
+                    'Ukuran file terlalu besar! Maksimal 5MB ya Sayang.. ❤️'
+                  );
                 } else {
                   onFileSelect(f);
                 }
@@ -472,13 +554,19 @@ const ReceiptSection: React.FC<ReceiptSectionProps> = ({
             variant="outline"
             onClick={() => fileInputRef.current?.click()}
             className={cn(
-              "h-9 rounded-full border-dashed border-2 px-5 transition-all outline-none",
-              (file || preview) ? "bg-emerald-50 border-emerald-200 text-emerald-600 hover:bg-emerald-100" : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+              'h-9 rounded-full border-2 border-dashed px-5 transition-all outline-none',
+              file || preview
+                ? 'border-emerald-200 bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
+                : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
             )}
           >
-            <div className="flex items-center space-x-2 cursor-pointer">
-              {(file || preview) ? <Check className="size-3.5 shrink-0" /> : <ImageIcon className="size-3.5 shrink-0" />}
-              <span className="text-[9px] font-black uppercase tracking-widest truncate max-w-[80px]">
+            <div className="flex cursor-pointer items-center space-x-2">
+              {file || preview ? (
+                <Check className="size-3.5 shrink-0" />
+              ) : (
+                <ImageIcon className="size-3.5 shrink-0" />
+              )}
+              <span className="max-w-[80px] truncate text-[9px] font-black tracking-widest uppercase">
                 {receiptStatusLabel}
               </span>
             </div>
@@ -488,13 +576,17 @@ const ReceiptSection: React.FC<ReceiptSectionProps> = ({
             <Button
               type="button"
               variant="outline"
-              className="h-9 rounded-full border-dashed border-2 px-5 transition-all text-blue-600 border-blue-200 hover:bg-blue-50 bg-white"
+              className="h-9 rounded-full border-2 border-dashed border-blue-200 bg-white px-5 text-blue-600 transition-all hover:bg-blue-50"
               disabled={scanning}
               onClick={onScan}
             >
-              <div className="flex items-center space-x-2 cursor-pointer">
-                {scanning ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
-                <span className="text-[9px] font-black uppercase tracking-widest">
+              <div className="flex cursor-pointer items-center space-x-2">
+                {scanning ? (
+                  <Loader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <Sparkles className="size-3.5" />
+                )}
+                <span className="text-[9px] font-black tracking-widest uppercase">
                   {scanStatusLabel}
                 </span>
               </div>
@@ -502,10 +594,15 @@ const ReceiptSection: React.FC<ReceiptSectionProps> = ({
           )}
         </div>
 
-        <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
-           <Target className="size-3.5 text-slate-500" />
-           <span className="text-[9px] font-black text-slate-800 uppercase tracking-widest">SPLIT BILL</span>
-           <input type="checkbox" className="size-3.5 accent-slate-900 cursor-pointer rounded-sm" />
+        <div className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-3 py-1.5">
+          <Target className="size-3.5 text-slate-500" />
+          <span className="text-[9px] font-black tracking-widest text-slate-800 uppercase">
+            SPLIT BILL
+          </span>
+          <input
+            type="checkbox"
+            className="size-3.5 cursor-pointer rounded-sm accent-slate-900"
+          />
         </div>
       </div>
     </div>

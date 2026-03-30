@@ -60,11 +60,13 @@ MultivariateClient client = new AnomalyDetectorClientBuilder()
 ## Key Concepts
 
 ### Univariate Anomaly Detection
+
 - **Batch Detection**: Analyze entire time series at once
 - **Streaming Detection**: Real-time detection on latest data point
 - **Change Point Detection**: Detect trend changes in time series
 
 ### Multivariate Anomaly Detection
+
 - Detect anomalies across 300+ correlated signals
 - Uses Graph Attention Network for inter-correlations
 - Three-step process: Train → Inference → Results
@@ -116,10 +118,10 @@ if (lastResult.isAnomaly()) {
 ### Change Point Detection
 
 ```java
-UnivariateChangePointDetectionOptions changeOptions = 
+UnivariateChangePointDetectionOptions changeOptions =
     new UnivariateChangePointDetectionOptions(series, TimeGranularity.DAILY);
 
-UnivariateChangePointDetectionResult changeResult = 
+UnivariateChangePointDetectionResult changeResult =
     univariateClient.detectUnivariateChangePoint(changeOptions);
 
 for (int i = 0; i < changeResult.getIsChangePoint().size(); i++) {
@@ -164,7 +166,7 @@ MultivariateBatchDetectionOptions detectionOptions = new MultivariateBatchDetect
     .setEndTime(OffsetDateTime.parse("2023-07-31T00:00:00Z"))
     .setTopContributorCount(10);
 
-MultivariateDetectionResult detectionResult = 
+MultivariateDetectionResult detectionResult =
     multivariateClient.detectMultivariateBatchAnomaly(modelId, detectionOptions);
 
 String resultId = detectionResult.getResultId();
@@ -190,7 +192,7 @@ MultivariateLastDetectionOptions lastOptions = new MultivariateLastDetectionOpti
     ))
     .setTopContributorCount(5);
 
-MultivariateLastDetectionResult lastResult = 
+MultivariateLastDetectionResult lastResult =
     multivariateClient.detectMultivariateLastAnomaly(modelId, lastOptions);
 
 if (lastResult.getValue().isAnomaly()) {
@@ -258,4 +260,5 @@ AZURE_ANOMALY_DETECTOR_API_KEY=<your-api-key>
 - "Azure AI Anomaly Detector"
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.

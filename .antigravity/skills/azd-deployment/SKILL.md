@@ -95,12 +95,12 @@ hooks:
     shell: sh
     run: |
       echo "Before provisioning..."
-      
+
   postprovision:
     shell: sh
     run: |
       echo "After provisioning - set up RBAC, etc."
-      
+
   postdeploy:
     shell: sh
     run: |
@@ -110,12 +110,12 @@ hooks:
 
 ### Key azure.yaml Options
 
-| Option | Description |
-|--------|-------------|
-| `remoteBuild: true` | Build images in Azure Container Registry (recommended) |
-| `context: .` | Docker build context relative to project path |
-| `host: containerapp` | Deploy to Azure Container Apps |
-| `infra.provider: bicep` | Use Bicep for infrastructure |
+| Option                  | Description                                            |
+| ----------------------- | ------------------------------------------------------ |
+| `remoteBuild: true`     | Build images in Azure Container Registry (recommended) |
+| `context: .`            | Docker build context relative to project path          |
+| `host: containerapp`    | Deploy to Azure Container Apps                         |
+| `infra.provider: bicep` | Use Bicep for infrastructure                           |
 
 ## Environment Variables Flow
 
@@ -149,7 +149,7 @@ azd env set AZURE_SEARCH_ENDPOINT "https://my-search.search.windows.net"
 
 # Set during init
 azd env new prod
-azd env set AZURE_OPENAI_ENDPOINT "..." 
+azd env set AZURE_OPENAI_ENDPOINT "..."
 ```
 
 ### Bicep Output → Environment Variable
@@ -221,6 +221,7 @@ env: [
 ```
 
 Frontend nginx proxies to internal URL:
+
 ```nginx
 location /api {
     proxy_pass $BACKEND_URL;
@@ -249,14 +250,14 @@ hooks:
     shell: sh
     run: |
       PRINCIPAL_ID="${BACKEND_PRINCIPAL_ID}"
-      
+
       # Azure OpenAI access
       az role assignment create \
         --assignee-object-id "$PRINCIPAL_ID" \
         --assignee-principal-type ServicePrincipal \
         --role "Cognitive Services OpenAI User" \
         --scope "$OPENAI_RESOURCE_ID" 2>/dev/null || true
-      
+
       # Azure AI Search access
       az role assignment create \
         --assignee-object-id "$PRINCIPAL_ID" \
@@ -299,4 +300,5 @@ az containerapp logs show -n <app> -g <rg> --follow  # Stream logs
 5. **`|| true` in hooks** - Prevent RBAC "already exists" errors from failing deploy
 
 ## When to Use
+
 This skill is applicable to execute the workflow or actions described in the overview.
