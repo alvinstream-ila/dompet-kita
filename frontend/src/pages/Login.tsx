@@ -41,7 +41,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleAuth = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleAuth = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setSuccessMessage(null);

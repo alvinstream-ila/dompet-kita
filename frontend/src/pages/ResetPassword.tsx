@@ -18,7 +18,7 @@ const ResetPassword: React.FC = () => {
   const token = searchParams.get('token');
   const email = searchParams.get('email');
 
-  const handleReset = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleReset = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (password !== passwordConfirmation) {
       setError('Passwordnya nggak sama nih sayang, cek lagi ya? 🥺');
