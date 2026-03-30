@@ -94,35 +94,7 @@ export const ReceiptScanner: React.FC = () => {
 
       <Card className="overflow-hidden bg-white/70 backdrop-blur-xl shadow-2xl rounded-[40px] border-none p-6 md:p-8">
         <AnimatePresence mode="wait">
-          {!image ? (
-            <motion.div 
-              key="uploader"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="aspect-3/4 border-4 border-dashed border-slate-100 rounded-[30px] flex flex-col items-center justify-center gap-4 bg-slate-50/50"
-            >
-              <div className="p-6 rounded-full bg-pink-50 text-pink-500 mb-2">
-                <ImageIcon className="w-12 h-12" />
-              </div>
-              <div className="text-center px-6">
-                <p className="font-bold text-slate-800 mb-1">Foto struk belanjanya dong, Sayang!</p>
-                <p className="text-xs text-slate-400 font-medium">Biar aku catat semuanya ke tabungan mimpi kita ❤️</p>
-              </div>
-              <div className="flex gap-3 mt-4">
-                <Button onClick={() => fileInputRef.current?.click()} className="rounded-2xl bg-slate-900 px-6 font-bold uppercase tracking-wider h-12 shadow-lg hover:shadow-xl transition-all">
-                  <Upload className="w-4 h-4 mr-2" /> Pilih Foto
-                </Button>
-              </div>
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                onChange={handleFileUpload} 
-                accept="image/*" 
-                className="hidden" 
-              />
-            </motion.div>
-          ) : (
+          {image ? (
             <motion.div 
               key="preview"
               initial={{ opacity: 0, scale: 0.95 }}
@@ -138,6 +110,7 @@ export const ReceiptScanner: React.FC = () => {
                       setScanResult(null);
                   }}
                   className="absolute top-4 right-4 p-2 bg-slate-900/40 backdrop-blur-md rounded-full text-white hover:bg-slate-900 transition-colors"
+                  type="button"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -185,6 +158,34 @@ export const ReceiptScanner: React.FC = () => {
                   )}
                 </Button>
               )}
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="uploader"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="aspect-3/4 border-4 border-dashed border-slate-100 rounded-[30px] flex flex-col items-center justify-center gap-4 bg-slate-50/50"
+            >
+              <div className="p-6 rounded-full bg-pink-50 text-pink-500 mb-2">
+                <ImageIcon className="w-12 h-12" />
+              </div>
+              <div className="text-center px-6">
+                <p className="font-bold text-slate-800 mb-1">Foto struk belanjanya dong, Sayang!</p>
+                <p className="text-xs text-slate-400 font-medium">Biar aku catat semuanya ke tabungan mimpi kita ❤️</p>
+              </div>
+              <div className="flex gap-3 mt-4">
+                <Button onClick={() => fileInputRef.current?.click()} className="rounded-2xl bg-slate-900 px-6 font-bold uppercase tracking-wider h-12 shadow-lg hover:shadow-xl transition-all">
+                  <Upload className="w-4 h-4 mr-2" /> Pilih Foto
+                </Button>
+              </div>
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleFileUpload} 
+                accept="image/*" 
+                className="hidden" 
+              />
             </motion.div>
           )}
         </AnimatePresence>
