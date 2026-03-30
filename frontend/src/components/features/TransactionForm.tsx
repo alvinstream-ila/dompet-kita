@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAddTransaction } from '@/hooks/useTransactions';
+import { useAddTransaction, useUpdateTransaction } from '@/hooks/useTransactions';
 import { 
   Loader2,
   ImageIcon,
@@ -35,11 +35,14 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn, formatToRupiah, getTerbilang } from "@/lib/utils";
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/constants';
 
 export interface TransactionFormProps {
   onSuccess?: () => void;
   onCancel?: () => void;
   onTypeChange?: (type: 'expense' | 'income') => void;
+  mode?: 'create' | 'edit';
+  transactionId?: number;
   initialData?: {
     amount?: number;
     description?: string;
@@ -51,37 +54,19 @@ export interface TransactionFormProps {
   };
 }
 
-const EXPENSE_CATEGORIES = [
-  'Makanan & Minuman',
-  'Transportasi',
-  'Kebutuhan Rumah',
-  'Belanja',
-  'Hiburan',
-  'Kesehatan',
-  'Pendidikan',
-  'Tagihan & Utilitas',
-  'Lainnya'
-];
-
-const INCOME_CATEGORIES = [
-  'Gaji',
-  'Investasi',
-  'Hadiah',
-  'Bisnis',
-  'Penjualan',
-  'Bonus',
-  'Lainnya'
-];
-
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export const TransactionForm: React.FC<TransactionFormProps> = ({ 
   onSuccess, 
   onCancel,
   onTypeChange,
+  mode = 'create',
+  transactionId,
   initialData 
 }) => {
   const addTransactionMutation = useAddTransaction();
+  const updateTransactionMutation = useUpdateTransaction();
+  
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState<'expense' | 'income'>(initialData?.type || 'expense');
   const [amount, setAmount] = useState(initialData?.amount ? formatToRupiah(initialData.amount.toString()) : '');
@@ -99,15 +84,16 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
   }, [type, onTypeChange]);
 
   useEffect(() => {
-    // Only update default category if not pre-provided in initialData
-    if (!initialData?.category) {
-      if (type === 'expense') {
-        setCategory(EXPENSE_CATEGORIES[0]);
-      } else {
-        setCategory(INCOME_CATEGORIES[0]);
-      }
+    if (initialData) {
+      setType(initialData.type || 'expense');
+      setAmount(initialData.amount ? formatToRupiah(initialData.amount.toString()) : '');
+      setDescription(initialData.description || '');
+      setCategory(initialData.category || (type === 'expense' ? EXPENSE_CATEGORIES[0] : INCOME_CATEGORIES[0]));
+      setSubCategory(initialData.sub_category || 'Pribadi');
+      setDate(initialData.date ? new Date(initialData.date) : new Date());
+      setPreview(initialData.receipt_url || null);
     }
-  }, [type, initialData?.category]);
+  }, [initialData]);
 
   const handleFileUpload = async (selectedFile: File) => {
     try {
@@ -183,7 +169,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         setUploading(false);
       }
 
-      addTransactionMutation.mutate({
+      const payload = {
         amount: parseInt(amount.replace(/\./g, '')),
         description,
         category,
@@ -192,20 +178,26 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         date: format(date, "yyyy-MM-dd"),
         receipt_url,
         note: null
-      }, {
-        onSuccess: () => {
-          onSuccess?.();
-          setAmount('');
-          setDescription('');
-          setFile(null);
-          setPreview(null);
-        },
-        onError: (error) => {
-          alert(error instanceof Error ? error.message : 'Terjadi kesalahan saat menyimpan transaksi');
-        }
-      });
+      };
+
+      if (mode === 'edit' && transactionId) {
+        await updateTransactionMutation.mutateAsync({
+          id: transactionId,
+          ...payload
+        });
+      } else {
+        await addTransactionMutation.mutateAsync(payload);
+      }
+
+      onSuccess?.();
+      if (mode === 'create') {
+        setAmount('');
+        setDescription('');
+        setFile(null);
+        setPreview(null);
+      }
     } catch (error) {
-      alert(error instanceof Error ? error.message : 'Terjadi kesalahan');
+      alert(error instanceof Error ? error.message : 'Terjadi kesalahan saat menyimpan transaksi');
     } finally {
       setLoading(false);
       setUploading(false);
@@ -395,13 +387,13 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
             asChild
             className={cn(
               "h-9 rounded-full border-dashed border-2 px-5 transition-all outline-none",
-              file ? "bg-emerald-50 border-emerald-200 text-emerald-600 hover:bg-emerald-100" : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+              (file || (mode === 'edit' && preview)) ? "bg-emerald-50 border-emerald-200 text-emerald-600 hover:bg-emerald-100" : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
             )}
           >
             <label htmlFor="receipt-upload" className="cursor-pointer space-x-2">
-              {file ? <Check className="size-3.5 shrink-0" /> : <ImageIcon className="size-3.5 shrink-0" />}
+              {(file || (mode === 'edit' && preview)) ? <Check className="size-3.5 shrink-0" /> : <ImageIcon className="size-3.5 shrink-0" />}
               <span className="text-[9px] font-black uppercase tracking-widest truncate max-w-[80px]">
-                {file ? file.name : 'STRUK'}
+                {file ? file.name : (mode === 'edit' && preview ? 'STRUK ADA' : 'STRUK')}
               </span>
             </label>
           </Button>
@@ -444,16 +436,16 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         )}
         <Button
             type="submit"
-            disabled={loading || uploading}
+            disabled={loading || uploading || addTransactionMutation.isPending || updateTransactionMutation.isPending}
             className={cn(
             "flex-1 h-11 rounded-2xl shadow-lg active:scale-[0.98] transition-all text-[12px] font-black tracking-widest text-white uppercase",
             type === 'expense' ? "bg-slate-900 hover:bg-black shadow-slate-900/10" : "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/10"
             )}
         >
-            {loading || uploading ? (
+            {loading || uploading || addTransactionMutation.isPending || updateTransactionMutation.isPending ? (
             <Loader2 className="size-5 animate-spin" />
             ) : (
-            "SIMPAN TRANSAKSI"
+            mode === 'create' ? "SIMPAN TRANSAKSI" : "PERBARUI TRANSAKSI"
             )}
         </Button>
       </div>

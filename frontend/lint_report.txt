@@ -1,0 +1,24 @@
+﻿
+> dompet-kita@0.0.0 lint
+> eslint .
+
+
+C:\Programing alvin\Dompet kita\frontend\src\pages\Login.tsx
+  281:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Programing alvin\Dompet kita\frontend\src\pages\Wealth.tsx
+  116:7  error  Compilation Skipped: Existing memoization could not be preserved
+
+React Compiler has skipped optimizing this component because the existing manual memoization could not be preserved. This dependency may be mutated later, which could cause the value to change unexpectedly.
+
+C:\Programing alvin\Dompet kita\frontend\src\pages\Wealth.tsx:116:7
+  114 |     if (lastValue === 0) return 0;
+  115 |     return ((currentValue - lastValue) / lastValue) * 100;
+> 116 |   }, [wealthHistory]);
+      |       ^^^^^^^^^^^^^ This dependency may be modified later
+  117 |
+  118 |   const freedomProgress = React.useMemo(() => {
+  119 |     if (goals.length === 0) return 0;  react-hooks/preserve-manual-memoization
+
+Γ£û 2 problems (2 errors, 0 warnings)
+

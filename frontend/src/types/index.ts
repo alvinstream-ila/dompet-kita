@@ -59,3 +59,29 @@ export interface Goal {
   status: 'active' | 'completed';
   user_id?: string;
 }
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  full_name?: string | null;
+  avatar_url?: string | null;
+  partner_name?: string | null;
+  anniversary_date?: string | null;
+  timezone?: string;
+  budget_cycle_start?: number;
+  is_privacy_mode?: boolean;
+  is_eco_mode?: boolean;
+  currency_format?: string;
+  exchange_rate?: number;
+  monthly_budget_limit?: number;
+  email_verified_at?: string | null;
+}
+
+export interface WealthHistoryItem {
+  id: string;
+  user_id: string;
+  month: number;
+  year: number;
+  total_value: number;
+}

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->text('note')->nullable();
             $table->string('receipt_url')->nullable();
             $table->timestamps();
-            
+
             $table->index('date');
             $table->index('type');
         });

@@ -31,7 +31,7 @@ return new class extends Migration
                 'is_privacy_mode',
                 'is_eco_mode',
                 'currency_format',
-                'monthly_budget_limit'
+                'monthly_budget_limit',
             ]);
         });
     }

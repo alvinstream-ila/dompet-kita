@@ -60,8 +60,9 @@ const Login: React.FC = () => {
         const { data } = await api.post('/login', { email, password });
         setAuthData(data.access_token, data.user);
       }
-    } catch (error: any) {
-      const message = error.response?.data?.message || 
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      const message = err.response?.data?.message || 
         (isForgotPassword ? 'Gagal kirim link, coba lagi ya sayang? ❤️' : 
          isSignUp ? 'Gagal daftar, Sayang. Cek lagi datanya ya? ❤️' : 
          'Email atau password salah, Sayang. Coba lagi ya? ❤️');
@@ -277,7 +278,7 @@ const Login: React.FC = () => {
 };
 
 // Simple helper for class names
-function clsx(...args: any[]) {
+function clsx(...args: (string | undefined | null | false)[]) {
     return args.filter(Boolean).join(' ');
 }
 

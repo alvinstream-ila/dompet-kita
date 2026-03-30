@@ -34,13 +34,13 @@ class VerifyEmailNotification extends VerifyEmail
      */
     public function toMail($notifiable)
     {
-        Log::info('Sending PREMIUM verification email to: ' . $notifiable->email);
+        Log::info('Sending PREMIUM verification email to: '.$notifiable->email);
 
         return (new MailMessage)
             ->subject('Verifikasi Email Dompet Kita ✨')
             ->view('emails.verify-email', [
                 'verificationUrl' => $this->verificationUrl($notifiable),
-                'notifiable' => $notifiable
+                'notifiable' => $notifiable,
             ]);
     }
 }

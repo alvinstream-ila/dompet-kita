@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
+use Exception;
 use Gemini;
 use Gemini\Data\Blob;
 use Gemini\Enums\MimeType;
 use Illuminate\Support\Facades\Log;
-use Exception;
 use RuntimeException;
 
 /**
@@ -28,38 +28,38 @@ class AiService
 
         try {
             $apiKey = \config('services.gemini.key');
-            $client = \Gemini::client($apiKey);
-            
-            $enumMimeType = \Gemini\Enums\MimeType::tryFrom($mimeType) ?? \Gemini\Enums\MimeType::IMAGE_JPEG;
+            $client = Gemini::client($apiKey);
+
+            $enumMimeType = MimeType::tryFrom($mimeType) ?? MimeType::IMAGE_JPEG;
 
             $response = $client->generativeModel('gemini-flash-latest')
                 ->generateContent([
                     $prompt,
-                    new \Gemini\Data\Blob(
+                    new Blob(
                         mimeType: $enumMimeType,
                         data: $base64Data
-                    )
+                    ),
                 ]);
 
             $jsonText = $response->text();
         } catch (Exception $e) {
-            Log::error('GEMINI_API_ERROR (Receipt Scan): ' . $e->getMessage(), [
+            Log::error('GEMINI_API_ERROR (Receipt Scan): '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
-                'mime' => $mimeType
+                'mime' => $mimeType,
             ]);
-            throw new RuntimeException('Maaf Sayang, Google Gemini lagi capek. Coba lagi atau input manual ya! ❤️');
+            throw new RuntimeException('Gemini Gagal: '.$e->getMessage());
         }
 
-        Log::debug('RAW_AI_RESPONSE: ' . $jsonText);
-        
+        Log::debug('RAW_AI_RESPONSE: '.$jsonText);
+
         // Advanced cleanup: Find the first { and the last } in the response
         if (preg_match('/\{.*\}/s', $jsonText, $matches)) {
             $jsonText = $matches[0];
         }
-        
+
         $result = json_decode(trim($jsonText), true);
 
-        if (!$result || !isset($result['amount'])) {
+        if (! $result || ! isset($result['amount'])) {
             Log::error('AI_SCAN_PARSING_FAILED', ['raw' => $jsonText]);
             throw new RuntimeException('Maaf Sayang, AI lagi bingung baca struknya. Coba ketik manual ya! ❤️');
         }
@@ -67,7 +67,7 @@ class AiService
         return [
             'amount' => (int) $result['amount'],
             'merchant' => $result['merchant'] ?? 'Toko Tidak Terbaca',
-            'message' => $result['message'] ?? 'AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️'
+            'message' => $result['message'] ?? 'AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️',
         ];
     }
 
@@ -95,17 +95,18 @@ PROMPT;
 
         try {
             $apiKey = \config('services.gemini.key');
-            $client = \Gemini::client($apiKey);
+            $client = Gemini::client($apiKey);
             $response = $client->generativeModel('gemini-flash-latest')->generateContent($prompt);
             $jsonText = $response->text();
         } catch (Exception $e) {
-             Log::error('GEMINI_INSIGHT_ERROR: ' . $e->getMessage());
-             return [
+            Log::error('GEMINI_INSIGHT_ERROR: '.$e->getMessage());
+
+            return [
                 'title' => 'Sayang Terharu ✨',
-                'insight' => 'Waktunya mulai petualangan baru kita, Sayang! Yuk, mulai catat pengeluaran pertama kita biar impian kita makin dekat? ❤️'
-             ];
+                'insight' => 'Waktunya mulai petualangan baru kita, Sayang! Yuk, mulai catat pengeluaran pertama kita biar impian kita makin dekat? ❤️',
+            ];
         }
-        
+
         if (preg_match('/\{.*\}/s', $jsonText, $matches)) {
             $jsonText = $matches[0];
         }
@@ -113,7 +114,7 @@ PROMPT;
 
         return [
             'title' => $data['title'] ?? 'Sayang Terharu ✨',
-            'insight' => $data['insight'] ?? 'Something went wrong with AI response.'
+            'insight' => $data['insight'] ?? 'Something went wrong with AI response.',
         ];
     }
 }

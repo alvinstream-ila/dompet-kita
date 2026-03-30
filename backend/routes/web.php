@@ -7,6 +7,6 @@ Route::get('/', function () {
         'app' => '💰 Dompet Kita (Evolution Edition)',
         'owner' => 'Alvin & Ila',
         'status' => 'Backend Active & Running 🐘',
-        'health_check' => url('/up')
+        'health_check' => url('/up'),
     ]);
 });

@@ -11,7 +11,7 @@ class WealthHistory extends Model
         'user_id',
         'month',
         'year',
-        'total_value'
+        'total_value',
     ];
 
     /**

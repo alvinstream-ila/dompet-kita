@@ -1,0 +1,15 @@
+﻿ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé    SonarQube CLI  v0.7.0     Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+Usage: sonar analyze [options] [command]
+
+Analyze code for security issues
+
+Options:
+  -h, --help                    display help for command
+
+Commands:
+  secrets [options] [paths...]  Scan files or stdin for hardcoded secrets
+  sqaa [options]                Run SQAA server-side analysis on a file
+                                (SonarQube Cloud only)

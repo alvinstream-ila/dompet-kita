@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -43,7 +43,7 @@ test('it accepts valid image file uploads', function () {
 test('it prevents unauthorized access to other users transactions', function () {
     $alvin = User::factory()->create();
     $ila = User::factory()->create();
-    
+
     $transaction = Transaction::factory()->create([
         'user_id' => $alvin->id,
         'description' => 'Alvin Confidential',

@@ -31,7 +31,7 @@ return new class extends Migration
                 'avatar_url',
                 'partner_name',
                 'anniversary_date',
-                'timezone'
+                'timezone',
             ]);
         });
     }

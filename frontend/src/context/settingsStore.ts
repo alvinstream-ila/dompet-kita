@@ -18,6 +18,7 @@ export interface SettingsState {
 interface SettingsStore extends SettingsState {
   setSettings: (settings: Partial<SettingsState>) => void;
   updateSettings: (newSettings: Partial<SettingsState>) => Promise<void>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   syncWithUser: (user: any) => Promise<void>;
 }
 
@@ -45,7 +46,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
 
   updateSettings: async (newSettings) => {
     const current = get();
-    let finalSettings = { ...current, ...newSettings };
+    const finalSettings = { ...current, ...newSettings };
     
     if (newSettings.currencyFormat && newSettings.currencyFormat !== current.currencyFormat) {
       const newRate = await fetchExchangeRate(newSettings.currencyFormat);

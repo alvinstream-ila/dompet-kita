@@ -21,9 +21,10 @@ export const VerificationBanner: React.FC = () => {
       setSent(true);
       // Keep "sent" status for 10 seconds for better visibility
       setTimeout(() => setSent(false), 10000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to resend verification', err);
-      setError(err.response?.data?.message || 'Gagal kirim link nih sayang, coba lagi nanti ya? 🥺');
+      const errorObj = err as { response?: { data?: { message?: string } } };
+      setError(errorObj.response?.data?.message || 'Gagal kirim link nih sayang, coba lagi nanti ya? 🥺');
     } finally {
       setLoading(false);
     }

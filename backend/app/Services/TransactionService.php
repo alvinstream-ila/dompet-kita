@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\Transaction;
 use App\Enums\TransactionType;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
-use App\Services\BudgetService;
 
 class TransactionService
 {
@@ -31,9 +30,9 @@ class TransactionService
             ->groupBy('type')
             ->get();
 
-        $income = $summary->firstWhere('type', TransactionType::INCOME)?->total 
+        $income = $summary->firstWhere('type', TransactionType::INCOME)?->total
                   ?? $summary->firstWhere('type', TransactionType::INCOME->value)?->total ?? 0;
-        $expense = $summary->firstWhere('type', TransactionType::EXPENSE)?->total 
+        $expense = $summary->firstWhere('type', TransactionType::EXPENSE)?->total
                    ?? $summary->firstWhere('type', TransactionType::EXPENSE->value)?->total ?? 0;
 
         $recentTransactions = Transaction::where('user_id', $userId)
@@ -50,7 +49,7 @@ class TransactionService
             'period' => [
                 'start' => $startDate->toIso8601String(),
                 'end' => $endDate->toIso8601String(),
-            ]
+            ],
         ];
     }
 }

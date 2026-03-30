@@ -24,12 +24,15 @@ class AssetController extends Controller
         $validated['user_id'] = $request->user()->id;
         $asset = Asset::create($validated);
         $this->updateWealthSnapshot($request);
+
         return $asset;
     }
 
     public function update(Request $request, Asset $asset)
     {
-        if ($asset->user_id !== $request->user()->id) abort(403);
+        if ($asset->user_id !== $request->user()->id) {
+            abort(403);
+        }
 
         $validated = $request->validate([
             'name' => 'sometimes|string|max:100',
@@ -39,14 +42,18 @@ class AssetController extends Controller
 
         $asset->update($validated);
         $this->updateWealthSnapshot($request);
+
         return $asset;
     }
 
     public function destroy(Request $request, Asset $asset)
     {
-        if ($asset->user_id !== $request->user()->id) abort(403);
+        if ($asset->user_id !== $request->user()->id) {
+            abort(403);
+        }
         $asset->delete();
         $this->updateWealthSnapshot($request);
+
         return response()->json(null, 204);
     }
 

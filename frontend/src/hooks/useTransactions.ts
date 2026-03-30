@@ -39,7 +39,7 @@ export function useAddTransaction() {
     onMutate: async (newTransaction) => {
       await queryClient.cancelQueries({ queryKey: ['financial_summary'] });
       const previousSummary = queryClient.getQueryData(['financial_summary']);
-      queryClient.setQueryData(['financial_summary'], (old: any) => {
+      queryClient.setQueryData(['financial_summary'], (old: { income?: number; expense?: number; balance?: number } | undefined) => {
         if (!old) return old;
         const amount = Number(newTransaction.amount);
         const isIncome = newTransaction.type === 'income';

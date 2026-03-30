@@ -9,30 +9,34 @@ class BudgetService
     /**
      * Calculate start and end dates based on budget cycle.
      * Expects 0-indexed month from frontend or defaults to current.
-     * 
-     * @param int|null $month 0-indexed month (0-11)
-     * @param int|null $year
-     * @param int $budgetCycleStart
-     * @return array ['start' => Carbon, 'end' => Carbon]
+     *
+     * @param  int|null  $month  0-indexed month (0-11)
+     * @return array<string, Carbon> ['start' => Carbon, 'end' => Carbon]
      */
     public function getBudgetCycleDates(?int $month, ?int $year, int $budgetCycleStart = 1): array
     {
-        $computedMonth = (int) ($month !== null && $month >= 0 && $month <= 11 ? $month : now()->month - 1) + 1;
-        $computedYear = (int) ($year !== null && $year > 1900 && $year < 2100 ? $year : now()->year);
+        // Frontend uses 0-indexed months (0-11), PHP Carbon uses 1-indexed (1-12)
+        $monthIsValid = ($month !== null && $month >= 0 && $month <= 11);
+        $targetMonth = $monthIsValid ? $month + 1 : now()->month;
 
-        $currentMonthDate = Carbon::create($computedYear, $computedMonth, 15);
+        $yearIsValid = ($year !== null && $year > 1900 && $year < 2100);
+        $targetYear = $yearIsValid ? $year : now()->year;
+
+        // Anchor in the middle of current target month to avoid edge-case shifts
+        $anchorDate = Carbon::create($targetYear, $targetMonth, 15);
 
         if ($budgetCycleStart === 1) {
-            $startDate = $currentMonthDate->copy()->startOfMonth();
-            $endDate = $currentMonthDate->copy()->endOfMonth();
+            $startDate = $anchorDate->copy()->startOfMonth();
+            $endDate = $anchorDate->copy()->endOfMonth();
         } else {
-            $endDate = Carbon::create($computedYear, $computedMonth, $budgetCycleStart - 1)->endOfDay();
+            // Cycle e.g. 25-24: End is current month 24th, Start is previous month 25th
+            $endDate = Carbon::create($targetYear, $targetMonth, $budgetCycleStart - 1)->endOfDay();
             $startDate = $endDate->copy()->subMonth()->addDay()->startOfDay();
         }
 
         return [
             'start' => $startDate,
-            'end' => $endDate
+            'end' => $endDate,
         ];
     }
 }

@@ -57,7 +57,8 @@ export const ReceiptScanner: React.FC = () => {
       } else {
         throw new Error(aiResponse.data.message || 'Gagal menganalisis struk.');
       }
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } }; message?: string };
       console.error('Scan error', err);
       const backendMessage = err?.response?.data?.message || err.message;
       alert(`Maaf Sayang, ada kendala: ${backendMessage}. Coba lagi atau upload manual ya! ❤️`);

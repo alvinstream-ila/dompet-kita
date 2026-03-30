@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\TransactionType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,7 +22,7 @@ class TransactionResource extends JsonResource
             'category' => $this->category,
             'sub_category' => $this->sub_category,
             // Menangani baik Enum object (setelah cast) maupun string raw
-            'type' => $this->type instanceof \App\Enums\TransactionType ? $this->type->value : $this->type,
+            'type' => $this->type instanceof TransactionType ? $this->type->value : $this->type,
             'description' => $this->description,
             'note' => $this->note,
             'receipt_url' => $this->receipt_url,

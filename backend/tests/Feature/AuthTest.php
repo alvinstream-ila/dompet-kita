@@ -17,15 +17,15 @@ test('user can login with correct credentials', function () {
     ]);
 
     $response->assertStatus(200)
-             ->assertJsonStructure(['access_token', 'user']);
+        ->assertJsonStructure(['access_token', 'user']);
 });
 
 test('authenticated user can get their profile', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)
-                     ->getJson('/api/user');
+        ->getJson('/api/user');
 
     $response->assertStatus(200)
-             ->assertJsonFragment(['email' => $user->email]);
+        ->assertJsonFragment(['email' => $user->email]);
 });

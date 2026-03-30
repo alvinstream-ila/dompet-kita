@@ -2,11 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function update(Request $request)
+    /**
+     * @OA\Put(
+     *     path="/user/profile",
+     *     summary="Update user profile",
+     *     tags={"User"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(mediaType="application/json", @OA\Schema(ref="#/components/schemas/UpdateUserRequest"))
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Profil berhasil diperbarui ya sayang! ✨"),
+     *             @OA\Property(property="user", ref="#/components/schemas/UserResource")
+     *         )
+     *     )
+     * )
+     */
+    public function update(Request $request): JsonResponse
     {
         $user = $request->user();
 
@@ -17,7 +40,13 @@ class UserController extends Controller
             'partner_name' => 'sometimes|nullable|string|max:255',
             'anniversary_date' => 'sometimes|nullable|date',
             'timezone' => 'sometimes|string|max:100',
-            'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
+            'email' => [
+                'sometimes', 
+                'string', 
+                'email', 
+                'max:255', 
+                Rule::unique('users')->ignore($user->id)
+            ],
             'budget_cycle_start' => 'sometimes|integer|min:1|max:31',
             'is_privacy_mode' => 'sometimes|boolean',
             'is_eco_mode' => 'sometimes|boolean',
@@ -30,11 +59,29 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'Profil berhasil diperbarui ya sayang! ✨',
-            'user' => $user
+            'user' => new UserResource($user),
         ]);
     }
 
-    public function changePassword(Request $request)
+    /**
+     * @OA\Post(
+     *     path="/user/change-password",
+     *     summary="Change user password",
+     *     tags={"User"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             required={"current_password","new_password","new_password_confirmation"},
+     *             @OA\Property(property="current_password", type="string", example="password123"),
+     *             @OA\Property(property="new_password", type="string", example="newsecret123"),
+     *             @OA\Property(property="new_password_confirmation", type="string", example="newsecret123")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Success"),
+     *     @OA\Response(response=422, description="Validation Error")
+     * )
+     */
+    public function changePassword(Request $request): JsonResponse
     {
         $request->validate([
             'current_password' => 'required',
@@ -43,18 +90,18 @@ class UserController extends Controller
 
         $user = $request->user();
 
-        if (!\Illuminate\Support\Facades\Hash::check($request->current_password, $user->password)) {
+        if ($user->password && ! Hash::check($request->current_password, $user->password)) {
             return response()->json([
-                'message' => 'Password lama kamu salah, Sayang. Cek lagi ya! 🥺'
+                'message' => 'Password lama kamu salah, Sayang. Cek lagi ya! 🥺',
             ], 422);
         }
 
         $user->update([
-            'password' => \Illuminate\Support\Facades\Hash::make($request->new_password)
+            'password' => Hash::make($request->new_password),
         ]);
 
         return response()->json([
-            'message' => 'Password berhasil diganti! Jaga baik-baik ya Sayang! 🔐💖'
+            'message' => 'Password berhasil diganti! Jaga baik-baik ya Sayang! 🔐💖',
         ]);
     }
 }

@@ -19,39 +19,17 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from "@/lib/utils";
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/constants';
 
 interface CategoryManagementModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-// Mock initial categories (usually should come from a store or DB)
-const INITIAL_EXPENSE_CATEGORIES = [
-  'Makanan & Minuman',
-  'Transportasi',
-  'Kebutuhan Rumah',
-  'Belanja',
-  'Hiburan',
-  'Kesehatan',
-  'Pendidikan',
-  'Tagihan & Utilitas',
-  'Lainnya'
-];
-
-const INITIAL_INCOME_CATEGORIES = [
-  'Gaji',
-  'Investasi',
-  'Hadiah',
-  'Bisnis',
-  'Penjualan',
-  'Bonus',
-  'Lainnya'
-];
-
 export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState<'expense' | 'income'>('expense');
-  const [expenseCats, setExpenseCats] = useState(INITIAL_EXPENSE_CATEGORIES);
-  const [incomeCats, setIncomeCats] = useState(INITIAL_INCOME_CATEGORIES);
+  const [expenseCats, setExpenseCats] = useState(EXPENSE_CATEGORIES);
+  const [incomeCats, setIncomeCats] = useState(INCOME_CATEGORIES);
   const [newCategory, setNewCategory] = useState('');
 
   const currentCats = activeTab === 'expense' ? expenseCats : incomeCats;
@@ -101,7 +79,6 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
         </DialogHeader>
 
         <div className="px-8 pb-10 -mt-8 relative z-20 space-y-6">
-          {/* Tabs Switcher */}
           <div className="flex p-1.5 bg-white shadow-xl rounded-2xl border border-slate-100">
              <button 
                onClick={() => setActiveTab('expense')}
@@ -125,7 +102,6 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
              </button>
           </div>
 
-          {/* Add Form */}
           <form onSubmit={handleAddCategory} className="flex gap-2">
             <div className="relative flex-1">
               <Input 
@@ -140,7 +116,6 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
             </Button>
           </form>
 
-          {/* List Container */}
           <div className="max-h-[300px] overflow-y-auto pr-2 space-y-2 custom-scrollbar">
             <AnimatePresence mode="popLayout">
               {currentCats.map((cat) => (

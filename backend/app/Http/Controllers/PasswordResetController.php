@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 
 class PasswordResetController extends Controller
 {
@@ -20,11 +20,11 @@ class PasswordResetController extends Controller
             $request->only('email')
         );
 
-        \Illuminate\Support\Facades\Log::info('Password Reset Status: ' . $status . ' for email: ' . $request->email);
+        Log::info('Password Reset Status: '.$status.' for email: '.$request->email);
 
         return $status === Password::RESET_LINK_SENT
             ? response()->json(['message' => 'Link reset password sudah dikirim ke email kamu, Sayang! ❤️'])
-            : response()->json(['message' => __($status) . ' (Status: ' . $status . ')'], 400);
+            : response()->json(['message' => __($status).' (Status: '.$status.')'], 400);
     }
 
     public function reset(Request $request)
@@ -39,7 +39,7 @@ class PasswordResetController extends Controller
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
                 $user->forceFill([
-                    'password' => Hash::make($password)
+                    'password' => Hash::make($password),
                 ])->setRememberToken(Str::random(60));
 
                 $user->save();

@@ -25,18 +25,24 @@ class LoanController extends Controller
         ]);
 
         $validated['user_id'] = $request->user()->id;
+
         return Loan::create($validated);
     }
 
     public function show(Request $request, Loan $loan)
     {
-        if ($loan->user_id !== $request->user()->id) abort(403);
+        if ($loan->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
         return $loan;
     }
 
     public function update(Request $request, Loan $loan)
     {
-        if ($loan->user_id !== $request->user()->id) abort(403);
+        if ($loan->user_id !== $request->user()->id) {
+            abort(403);
+        }
 
         $validated = $request->validate([
             'type' => 'sometimes|in:utang,piutang',
@@ -49,13 +55,17 @@ class LoanController extends Controller
         ]);
 
         $loan->update($validated);
+
         return $loan;
     }
 
     public function destroy(Request $request, Loan $loan)
     {
-        if ($loan->user_id !== $request->user()->id) abort(403);
+        if ($loan->user_id !== $request->user()->id) {
+            abort(403);
+        }
         $loan->delete();
+
         return response()->json(null, 204);
     }
 }

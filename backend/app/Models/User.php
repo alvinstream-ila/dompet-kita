@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\VerifyEmailNotification;
 use Database\Factories\UserFactory;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
+use Illuminate\Support\Facades\URL;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -59,7 +61,45 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'anniversary_date' => 'date',
+            'budget_cycle_start' => 'integer',
+            'is_privacy_mode' => 'boolean',
+            'is_eco_mode' => 'boolean',
+            'exchange_rate' => 'float',
+            'monthly_budget_limit' => 'float',
         ];
+    }
+
+    /* Relationships */
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function assets()
+    {
+        return $this->hasMany(Asset::class);
+    }
+
+    public function goals()
+    {
+        return $this->hasMany(Goal::class);
+    }
+
+    public function loans()
+    {
+        return $this->hasMany(Loan::class);
+    }
+
+    public function holidays()
+    {
+        return $this->hasMany(Holiday::class);
+    }
+
+    public function wealthHistories()
+    {
+        return $this->hasMany(WealthHistory::class);
     }
 
     /**
@@ -70,8 +110,8 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function sendPasswordResetNotification($token)
     {
-        $url = (config('app.frontend_url') ?? 'http://localhost:5173') . '/reset-password?token=' . $token . '&email=' . $this->email;
-        $this->notify(new \Illuminate\Auth\Notifications\ResetPassword($url));
+        $url = (config('app.frontend_url') ?? 'http://localhost:5173').'/reset-password?token='.$token.'&email='.$this->email;
+        $this->notify(new ResetPassword($url));
     }
 
     /**
@@ -81,7 +121,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function sendEmailVerificationNotification()
     {
-        $originalUrl = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+        $originalUrl = URL::temporarySignedRoute(
             'verification.verify',
             now()->addMinutes(config('auth.verification.expire', 60)),
             [
@@ -90,8 +130,8 @@ class User extends Authenticatable implements MustVerifyEmail
             ]
         );
 
-        $frontendUrl = (config('app.frontend_url') ?? 'https://dompet-kita-six.vercel.app') . '/verify-email?url=' . urlencode($originalUrl);
-        
-        $this->notify(new \App\Notifications\VerifyEmailNotification($frontendUrl));
+        $frontendUrl = (config('app.frontend_url') ?? 'https://dompet-kita-six.vercel.app').'/verify-email?url='.urlencode($originalUrl);
+
+        $this->notify(new VerifyEmailNotification($frontendUrl));
     }
 }

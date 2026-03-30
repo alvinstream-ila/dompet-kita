@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Middleware\SecurityHeaders;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Support\Facades\Log;
-
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,23 +16,23 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
-        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+        $middleware->append(SecurityHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->report(function (\Throwable $e) {
-            Log::error('PRODUCTION_ERROR: ' . $e->getMessage(), [
+        $exceptions->report(function (Throwable $e) {
+            Log::error('PRODUCTION_ERROR: '.$e->getMessage(), [
                 'exception' => get_class($e),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
             ]);
         });
-        
-        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, $request) {
+
+        $exceptions->render(function (AuthenticationException $e, $request) {
             if ($request->is('api/*')) {
                 return response()->json([
                     'message' => 'Sayang, kamu belum login ya? Yuk login dulu.. 🌸',
-                    'success' => false
+                    'success' => false,
                 ], 401);
             }
         });

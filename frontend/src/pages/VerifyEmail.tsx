@@ -25,9 +25,10 @@ const VerifyEmail: React.FC = () => {
         setStatus('success');
         setMessage('Email kamu sudah terverifikasi! Sekarang kita bisa lanjut nabung bareng ya sayang! ✨');
         setTimeout(() => navigate('/'), 3000);
-      } catch (error) {
+      } catch (error: unknown) {
         setStatus('error');
-        const errorMsg = (error as any).response?.data?.message || 'Gagal memverifikasi email, coba minta link baru ya sayang? ❤️';
+        const err = error as { response?: { data?: { message?: string } } };
+        const errorMsg = err.response?.data?.message || 'Gagal memverifikasi email, coba minta link baru ya sayang? ❤️';
         setMessage(errorMsg);
       }
     };

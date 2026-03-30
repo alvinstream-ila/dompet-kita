@@ -25,12 +25,15 @@ class GoalController extends Controller
         ]);
 
         $validated['user_id'] = $request->user()->id;
+
         return Goal::create($validated);
     }
 
     public function update(Request $request, Goal $goal)
     {
-        if ($goal->user_id !== $request->user()->id) abort(403);
+        if ($goal->user_id !== $request->user()->id) {
+            abort(403);
+        }
 
         $validated = $request->validate([
             'name' => 'sometimes|string',
@@ -43,13 +46,17 @@ class GoalController extends Controller
         ]);
 
         $goal->update($validated);
+
         return $goal;
     }
 
     public function destroy(Request $request, Goal $goal)
     {
-        if ($goal->user_id !== $request->user()->id) abort(403);
+        if ($goal->user_id !== $request->user()->id) {
+            abort(403);
+        }
         $goal->delete();
+
         return response()->json(null, 204);
     }
 }

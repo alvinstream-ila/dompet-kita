@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transaction;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use App\Enums\TransactionType;
 use App\Http\Resources\TransactionResource;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rule;
+use App\Models\Transaction;
 use App\Services\BudgetService;
 use App\Services\TransactionService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class TransactionController extends Controller
 {
     protected BudgetService $budgetService;
+
     protected TransactionService $transactionService;
 
     public function __construct(BudgetService $budgetService, TransactionService $transactionService)
@@ -24,7 +25,8 @@ class TransactionController extends Controller
         $this->budgetService = $budgetService;
         $this->transactionService = $transactionService;
     }
-    public function index(Request $request)
+
+    public function index(Request $request): AnonymousResourceCollection|JsonResponse
     {
         try {
             $user = $request->user();
@@ -41,18 +43,20 @@ class TransactionController extends Controller
 
             $limit = min((int) $request->input('limit', 20), 100);
             $transactions = $query->orderBy('date', 'desc')->paginate($limit);
+
             return TransactionResource::collection($transactions);
         } catch (\Exception $e) {
-            Log::error('TRANSACTION_INDEX_ERROR: ' . $e->getMessage(), [
+            Log::error('TRANSACTION_INDEX_ERROR: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
                 'user' => $request->user()?->id,
-                'params' => $request->all()
+                'params' => $request->all(),
             ]);
+
             return response()->json(['error' => 'Gagal mengambil data transaksi sayang. 🥺'], 500);
         }
     }
 
-    public function summary(Request $request)
+    public function summary(Request $request): JsonResponse
     {
         try {
             $user = $request->user();
@@ -67,14 +71,15 @@ class TransactionController extends Controller
                 'expense' => $data['expense'],
                 'balance' => $data['balance'],
                 'transactions' => TransactionResource::collection($data['recentTransactions']),
-                'period' => $data['period']
+                'period' => $data['period'],
             ]);
         } catch (\Exception $e) {
-            Log::error('TRANSACTION_SUMMARY_ERROR: ' . $e->getMessage(), [
+            Log::error('TRANSACTION_SUMMARY_ERROR: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
                 'user' => $request->user()?->id,
-                'params' => $request->all()
+                'params' => $request->all(),
             ]);
+
             return response()->json(['error' => 'Gagal menghitung ringkasan transaksi sayang. 🥺'], 500);
         }
     }
@@ -98,11 +103,11 @@ class TransactionController extends Controller
         Cache::forget("ai_insight_{$request->user()->id}");
 
         return (new TransactionResource($transaction))
-                    ->response()
-                    ->setStatusCode(201);
+            ->response()
+            ->setStatusCode(201);
     }
 
-    public function update(Request $request, Transaction $transaction)
+    public function update(Request $request, Transaction $transaction): TransactionResource
     {
         if ($transaction->user_id !== $request->user()->id) {
             abort(403);
@@ -122,10 +127,11 @@ class TransactionController extends Controller
         $transaction->update($validated);
         $transaction->refresh();
         Cache::forget("ai_insight_{$request->user()->id}");
+
         return new TransactionResource($transaction);
     }
 
-    public function destroy(Request $request, Transaction $transaction)
+    public function destroy(Request $request, Transaction $transaction): JsonResponse
     {
         if ($transaction->user_id !== $request->user()->id) {
             abort(403);
@@ -133,6 +139,7 @@ class TransactionController extends Controller
 
         $transaction->delete();
         Cache::forget("ai_insight_{$request->user()->id}");
+
         return response()->json(null, 204);
     }
 }

@@ -25,18 +25,24 @@ class HolidayController extends Controller
         ]);
 
         $validated['user_id'] = $request->user()->id;
+
         return Holiday::create($validated);
     }
 
     public function show(Request $request, Holiday $holiday)
     {
-        if ($holiday->user_id !== $request->user()->id) abort(403);
+        if ($holiday->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
         return $holiday;
     }
 
     public function update(Request $request, Holiday $holiday)
     {
-        if ($holiday->user_id !== $request->user()->id) abort(403);
+        if ($holiday->user_id !== $request->user()->id) {
+            abort(403);
+        }
 
         $validated = $request->validate([
             'destination' => 'sometimes|string',
@@ -49,13 +55,17 @@ class HolidayController extends Controller
         ]);
 
         $holiday->update($validated);
+
         return $holiday;
     }
 
     public function destroy(Request $request, Holiday $holiday)
     {
-        if ($holiday->user_id !== $request->user()->id) abort(403);
+        if ($holiday->user_id !== $request->user()->id) {
+            abort(403);
+        }
         $holiday->delete();
+
         return response()->json(null, 204);
     }
 }

@@ -3,32 +3,51 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
-use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Support\Facades\Auth;
 use Exception;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
+use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\AbstractProvider;
 
 class SocialAuthController extends Controller
 {
-    public function redirectToProvider($provider)
+    /**
+     * Redirect to social provider auth page.
+     * 
+     * @param string $provider
+     * @return RedirectResponse
+     */
+    public function redirectToProvider(string $provider): RedirectResponse
     {
-        /** @var \Laravel\Socialite\Two\AbstractProvider $driver */
+        /** @var AbstractProvider $driver */
         $driver = Socialite::driver($provider);
+
         return $driver->stateless()->redirect();
     }
 
-    public function handleProviderCallback($provider)
+    /**
+     * Handle provider authentication callback.
+     * 
+     * @param string $provider
+     * @return RedirectResponse|JsonResponse
+     */
+    public function handleProviderCallback(string $provider): RedirectResponse|JsonResponse
     {
         try {
-            /** @var \Laravel\Socialite\Two\AbstractProvider $driver */
+            /** @var AbstractProvider $driver */
             $driver = Socialite::driver($provider);
             $socialUser = $driver->stateless()->user();
         } catch (Exception $e) {
-            return response()->json(['message' => 'Gagal login lewat ' . ucfirst($provider) . ' nih sayang, coba lagi ya? 🥺'], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal login lewat '.ucfirst($provider).' nih sayang, coba lagi ya? 🥺'
+            ], 400);
         }
 
         $user = User::where('email', $socialUser->getEmail())->first();
 
+        // Update or Create User
         if ($user) {
             $user->update([
                 'social_id' => $socialUser->getId(),
@@ -43,20 +62,19 @@ class SocialAuthController extends Controller
                 'social_id' => $socialUser->getId(),
                 'social_type' => $provider,
                 'avatar_url' => $socialUser->getAvatar(),
-                'password' => null, // No password for social login users
-                'email_verified_at' => now(), 
+                'password' => null, 
+                'email_verified_at' => now(),
             ]);
-            
-            event(new \Illuminate\Auth\Events\Registered($user));
+
+            event(new Registered($user));
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // Since this is a JSON API, we typically redirect back to the frontend with the token
-        // Or return JSON if handled via popups. 
-        // For simple integration, let's redirect to a frontend URL that handles the token.
-        $frontendUrl = config('app.frontend_url') ?? 'http://localhost:5173';
-        
-        return redirect()->away($frontendUrl . '/auth/callback?token=' . $token);
+        // Redirect to Frontend callback route
+        $frontendUrl = config('app.frontend_url', 'http://localhost:5173');
+        $callbackUrl = rtrim($frontendUrl, '/') . '/auth/callback?token=' . $token;
+
+        return redirect()->away($callbackUrl);
     }
 }
