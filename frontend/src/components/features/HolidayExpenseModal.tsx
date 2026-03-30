@@ -27,10 +27,14 @@ export const HolidayExpenseModal: React.FC<HolidayExpenseModalProps> = ({
 }) => {
   const [expenseAmount, setExpenseAmount] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const amount = parseInt(expenseAmount.replace(/[^0-9]/g, ''));
-    if (isNaN(amount)) return;
+    if (!holiday) return;
+    
+    // Modern pattern: use Number.parseInt and replaceAll with \D for better clarity
+    const amount = Number.parseInt(expenseAmount.replaceAll(/\D/g, ''), 10);
+    
+    if (Number.isNaN(amount)) return;
     onSubmit(amount);
     setExpenseAmount('');
   };
