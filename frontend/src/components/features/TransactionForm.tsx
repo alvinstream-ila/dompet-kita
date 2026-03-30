@@ -80,11 +80,17 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
   const [scanning, setScanning] = useState(false);
 
   const isPending = loading || uploading || addTransactionMutation.isPending || updateTransactionMutation.isPending;
+  
+  const modeLabel = mode === 'create' ? "SIMPAN" : "PERBARUI";
   const submitLabel = isPending ? (
     <Loader2 className="size-5 animate-spin mx-auto" />
   ) : (
-    mode === 'create' ? "SIMPAN TRANSAKSI" : "PERBARUI TRANSAKSI"
+    `${modeLabel} TRANSAKSI`
   );
+
+  const receiptDisplayLabel = mode === 'edit' ? 'STRUK ADA' : 'STRUK';
+  const receiptStatusLabel = file ? file.name : receiptDisplayLabel;
+  const scanStatusLabel = scanning ? 'SCANNING...' : 'SCAN AI';
 
   useEffect(() => {
     if (onTypeChange) onTypeChange(type);
@@ -164,7 +170,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
@@ -400,7 +406,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
             <label htmlFor="receipt-upload" className="cursor-pointer space-x-2">
               {(file || (mode === 'edit' && preview)) ? <Check className="size-3.5 shrink-0" /> : <ImageIcon className="size-3.5 shrink-0" />}
               <span className="text-[9px] font-black uppercase tracking-widest truncate max-w-[80px]">
-                {file ? file.name : (mode === 'edit' ? 'STRUK ADA' : 'STRUK')}
+                {receiptStatusLabel}
               </span>
             </label>
           </Button>
@@ -416,7 +422,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
               <div className="flex items-center space-x-2 cursor-pointer">
                 {scanning ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
                 <span className="text-[9px] font-black uppercase tracking-widest">
-                  {scanning ? 'SCANNING...' : 'SCAN AI'}
+                  {scanStatusLabel}
                 </span>
               </div>
             </Button>
