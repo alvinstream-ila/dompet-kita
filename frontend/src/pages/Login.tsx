@@ -60,17 +60,25 @@ const Login: React.FC = () => {
         setAuthData(data.access_token, data.user);
       }
     } catch (error: any) {
-      const message = error.response?.data?.message || 
-        (isForgotPassword ? 'Gagal kirim link, coba lagi ya sayang? ❤️' : 
-         isSignUp ? 'Gagal daftar, Sayang. Cek lagi datanya ya? ❤️' : 
-         'Email atau password salah, Sayang. Coba lagi ya? ❤️');
+      const defaultErrors: Record<AuthMode, string> = {
+        forgot: 'Gagal kirim link, coba lagi ya sayang? ❤️',
+        signup: 'Gagal daftar, Sayang. Cek lagi datanya ya? ❤️',
+        login: 'Email atau password salah, Sayang. Coba lagi ya? ❤️'
+      };
+
+      const message = error.response?.data?.message || defaultErrors[mode];
       alert(message);
     } finally {
       setLoading(false);
     }
   };
 
-  const mode: AuthMode = isForgotPassword ? 'forgot' : isSignUp ? 'signup' : 'login';
+  const getMode = (): AuthMode => {
+    if (isForgotPassword) return 'forgot';
+    if (isSignUp) return 'signup';
+    return 'login';
+  };
+  const mode = getMode();
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-transparent font-inter">
