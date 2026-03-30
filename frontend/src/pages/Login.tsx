@@ -4,6 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import { Mail, Lock, Loader2, LogIn, User, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+export type AuthMode = 'forgot' | 'signup' | 'login';
 
 const CustomLogo: React.FC = () => (
   <div className="w-9 h-9 md:w-12 md:h-12 relative flex items-center justify-center p-1.5 bg-white/95 backdrop-blur-md rounded-xl shadow-sm border border-white/50">
@@ -31,10 +34,6 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
-
-  React.useEffect(() => {
-    console.log('Build Version: af66315-fix-v2');
-  }, []);
   
   // Form States
   const [name, setName] = useState('');
@@ -42,7 +41,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setSuccessMessage(null);
@@ -60,9 +59,8 @@ const Login: React.FC = () => {
         const { data } = await api.post('/login', { email, password });
         setAuthData(data.access_token, data.user);
       }
-    } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string } } };
-      const message = err.response?.data?.message || 
+    } catch (error: any) {
+      const message = error.response?.data?.message || 
         (isForgotPassword ? 'Gagal kirim link, coba lagi ya sayang? ❤️' : 
          isSignUp ? 'Gagal daftar, Sayang. Cek lagi datanya ya? ❤️' : 
          'Email atau password salah, Sayang. Coba lagi ya? ❤️');
@@ -72,114 +70,64 @@ const Login: React.FC = () => {
     }
   };
 
+  const mode: AuthMode = isForgotPassword ? 'forgot' : isSignUp ? 'signup' : 'login';
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-transparent font-inter">
-      {/* Top Branding Area */}
-      <div className="absolute top-4 md:top-8 left-1/2 -translate-x-1/2 md:left-8 md:translate-x-0 flex items-center gap-3 z-20">
-         <CustomLogo />
-         <div className="flex flex-col">
-            <h1 className="text-lg md:text-xl font-black text-slate-900 tracking-tighter leading-none text-left">Dompet Kita</h1>
-            <span className="text-[12px] font-script text-pink-500 drop-shadow-sm transform -rotate-1">Financial Planner</span>
-         </div>
-      </div>
+      <Branding />
 
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-[400px] relative z-50"
       >
-        {/* Main Card */}
         <div className="bg-white/40 backdrop-blur-2xl rounded-[48px] border border-white/60 shadow-2xl p-8 pt-12 md:p-10 md:pt-14 relative overflow-hidden z-50">
           
           <AnimatePresence mode="wait">
             <motion.div
-              key={isForgotPassword ? 'forgot' : isSignUp ? 'signup' : 'login'}
+              key={mode}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
               className="space-y-6 relative z-50"
             >
-              {/* Header Icon & Title */}
-              <div className="flex flex-col items-center">
-                <div className="w-20 h-20 bg-white/90 backdrop-blur-xl rounded-[28px] shadow-xl border border-white flex items-center justify-center mb-6 transform hover:rotate-6 transition-transform cursor-pointer group">
-                  {isForgotPassword ? (
-                    <Lock className="w-10 h-10 text-yellow-500 group-hover:scale-110 transition-transform" />
-                  ) : isSignUp ? (
-                    <User className="w-10 h-10 text-pink-500 group-hover:scale-110 transition-transform" />
-                  ) : (
-                    <LogIn className="w-10 h-10 text-slate-900 group-hover:scale-110 transition-transform" />
-                  )}
-                </div>
-                <h2 className="text-2xl font-black text-slate-800 tracking-tight text-center uppercase">
-                  {isForgotPassword ? 'Reset Password' : isSignUp ? 'Create New Account' : 'Sign In With Email'}
-                </h2>
-                <p className="text-slate-600 font-bold text-[12px] text-center mt-1 uppercase tracking-wider">
-                   {isForgotPassword ? 'Biar Kami Bantu Ingat Kembali' : isSignUp ? 'Join Us To Start Managing Better' : 'Make Your Dream Come True With Planning Your Finance'}
-                </p>
-              </div>
+              <AuthHeader mode={mode} />
 
-              {successMessage && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex items-start gap-3"
-                >
-                  <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 text-emerald-600">
-                    <CheckCircle className="w-4 h-4" />
-                  </div>
-                  <p className="text-[11px] font-bold text-emerald-700 leading-relaxed">
-                    {successMessage}
-                  </p>
-                </motion.div>
-              )}
+              <SuccessAlert message={successMessage} />
 
-              {/* Form */}
               <form onSubmit={handleAuth} className="space-y-4">
                 {isSignUp && (
-                  <div className="relative group">
-                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-pink-500 transition-colors">
-                      <User className="w-5 h-5" />
-                    </div>
-                    <input 
-                      type="text" 
-                      placeholder="Your Panggilan Sayang" 
-                      className="w-full h-14 bg-slate-200/50 border-none rounded-full pl-14 pr-6 font-bold text-slate-700 placeholder:text-slate-400 focus:ring-4 focus:ring-pink-500/20 outline-none transition-all"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required={isSignUp}
-                    />
-                  </div>
+                  <AuthInput 
+                    icon={<User className="w-5 h-5" />}
+                    placeholder="Your Panggilan Sayang"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    focusColor="pink"
+                  />
                 )}
 
-                <div className="relative group">
-                  <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors">
-                    <Mail className="w-5 h-5" />
-                  </div>
-                  <input 
-                    type="email" 
-                    placeholder="Email Address" 
-                    className="w-full h-14 bg-slate-200/50 border-none rounded-full pl-14 pr-6 font-bold text-slate-700 placeholder:text-slate-400 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
+                <AuthInput 
+                  icon={<Mail className="w-5 h-5" />}
+                  placeholder="Email Address"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  focusColor="blue"
+                />
 
                 {!isForgotPassword && (
-                  <div className="relative group">
-                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors">
-                      <Lock className="w-5 h-5" />
-                    </div>
-                    <input 
-                      type="password" 
-                      placeholder="Password" 
-                      className="w-full h-14 bg-slate-200/50 border-none rounded-full pl-14 pr-6 font-bold text-slate-700 placeholder:text-slate-400 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required={!isForgotPassword}
-                    />
-                  </div>
+                  <AuthInput 
+                    icon={<Lock className="w-5 h-5" />}
+                    placeholder="Password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    focusColor="blue"
+                  />
                 )}
 
                 {!isSignUp && !isForgotPassword && (
@@ -194,92 +142,215 @@ const Login: React.FC = () => {
                   </div>
                 )}
 
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className={clsx(
-                    "w-full h-14 rounded-full text-white font-black text-lg tracking-tight shadow-xl transition-all active:scale-[0.98] uppercase mt-2",
-                    isSignUp ? "bg-pink-500 hover:bg-pink-600 shadow-pink-500/30" : 
-                    isForgotPassword ? "bg-yellow-500 hover:bg-yellow-600 shadow-yellow-500/30 text-slate-900" :
-                    "bg-blue-500 hover:bg-blue-600 shadow-blue-500/30"
-                  )}
-                >
-                  {loading ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : 
-                   (isForgotPassword ? 'Send Reset Link' : isSignUp ? 'Create Account' : 'Log In')}
-                </Button>
+                <SubmitButton 
+                  loading={loading}
+                  mode={mode}
+                />
               </form>
 
-              {/* Mode Switcher */}
-              <div className="text-center pt-2 pb-4">
-                <button 
-                  onClick={() => {
-                    setIsSignUp(!isSignUp);
-                    setIsForgotPassword(false);
-                  }}
-                  className="text-[11px] font-black text-slate-500 hover:text-slate-900 uppercase tracking-widest transition-all"
-                >
-                  {isForgotPassword ? 'Sudah Ingat? Masuk Lagi' : isSignUp ? 'Sudah Punya Akun? Masuk Di Sini' : 'Belum Punya Akun? Daftar Sekarang'}
-                </button>
-                {isForgotPassword && (
-                  <button 
-                    onClick={() => setIsForgotPassword(false)}
-                    className="block mx-auto mt-4 text-[11px] font-black text-slate-400 hover:text-slate-800 uppercase tracking-widest transition-all"
-                  >
-                    Batal
-                  </button>
-                )}
-              </div>
+              <ModeSwitcher 
+                mode={mode}
+                onSignUpToggle={() => {
+                  setIsSignUp(!isSignUp);
+                  setIsForgotPassword(false);
+                }}
+                onCancelForgot={() => setIsForgotPassword(false)}
+              />
             </motion.div>
           </AnimatePresence>
 
-          {/* Social Auth - Outside Animation Container for better stability */}
-          <div className="mt-4 pt-6 border-t border-slate-200/50 relative z-200">
-            <div className="flex flex-col items-center gap-6">
-              <p className="text-[11px] font-black text-slate-600 uppercase tracking-widest">Or {isSignUp ? 'sign up' : 'sign in'} with</p>
-              <div className="flex items-center gap-4">
-                <button 
-                  type="button" 
-                  onClick={() => {
-                    const apiUrl = import.meta.env.VITE_API_URL || 'https://dompet-kita-production.up.railway.app/api';
-                    console.log('Redirecting to Google with API:', apiUrl);
-                    globalThis.location.href = `${apiUrl}/auth/google`;
-                  }}
-                  className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-300"
-                >
-                  <GoogleIcon />
-                </button>
-                <button 
-                  type="button" 
-                  onClick={() => {
-                    const apiUrl = import.meta.env.VITE_API_URL || 'https://dompet-kita-production.up.railway.app/api';
-                    console.log('Redirecting to Facebook with API:', apiUrl);
-                    globalThis.location.href = `${apiUrl}/auth/facebook`;
-                  }}
-                  className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-300"
-                >
-                  <FacebookLogo />
-                </button>
-                <button 
-                  type="button" 
-                  className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-300"
-                >
-                  <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
-                    <Mail className="w-6 h-6 text-white" />
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-
+          <SocialAuth isSignUp={isSignUp} />
         </div>
       </motion.div>
     </div>
   );
 };
 
-// Simple helper for class names
-function clsx(...args: (string | undefined | null | false)[]) {
-    return args.filter(Boolean).join(' ');
+const Branding = () => (
+  <div className="absolute top-4 md:top-8 left-1/2 -translate-x-1/2 md:left-8 md:translate-x-0 flex items-center gap-3 z-20">
+    <CustomLogo />
+    <div className="flex flex-col">
+      <h1 className="text-lg md:text-xl font-black text-slate-900 tracking-tighter leading-none text-left">Dompet Kita</h1>
+      <span className="text-[12px] font-script text-pink-500 drop-shadow-sm transform -rotate-1">Financial Planner</span>
+    </div>
+  </div>
+);
+
+const AuthHeader = ({ mode }: { mode: AuthMode }) => {
+  const config: Record<AuthMode, { icon: React.ReactNode, title: string, sub: string }> = {
+    forgot: {
+      icon: <Lock className="w-10 h-10 text-yellow-500 group-hover:scale-110 transition-transform" />,
+      title: 'Reset Password',
+      sub: 'Biar Kami Bantu Ingat Kembali'
+    },
+    signup: {
+      icon: <User className="w-10 h-10 text-pink-500 group-hover:scale-110 transition-transform" />,
+      title: 'Create New Account',
+      sub: 'Join Us To Start Managing Better'
+    },
+    login: {
+      icon: <LogIn className="w-10 h-10 text-slate-900 group-hover:scale-110 transition-transform" />,
+      title: 'Sign In With Email',
+      sub: 'Make Your Dream Come True With Planning Your Finance'
+    }
+  };
+
+  const { icon, title, sub } = config[mode];
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className="w-20 h-20 bg-white/90 backdrop-blur-xl rounded-[28px] shadow-xl border border-white flex items-center justify-center mb-6 transform hover:rotate-6 transition-transform cursor-pointer group">
+        {icon}
+      </div>
+      <h2 className="text-2xl font-black text-slate-800 tracking-tight text-center uppercase">
+        {title}
+      </h2>
+      <p className="text-slate-600 font-bold text-[12px] text-center mt-1 uppercase tracking-wider">
+        {sub}
+      </p>
+    </div>
+  );
+};
+
+const SuccessAlert = ({ message }: { message: string | null }) => {
+  if (!message) return null;
+  return (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex items-start gap-3"
+    >
+      <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 text-emerald-600">
+        <CheckCircle className="w-4 h-4" />
+      </div>
+      <p className="text-[11px] font-bold text-emerald-700 leading-relaxed">
+        {message}
+      </p>
+    </motion.div>
+  );
+};
+
+interface AuthInputProps {
+  icon: React.ReactNode;
+  placeholder: string;
+  type?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+  focusColor: 'pink' | 'blue';
 }
+
+const AuthInput = ({ icon, placeholder, type = 'text', value, onChange, required, focusColor }: AuthInputProps) => {
+  const ringColor = focusColor === 'pink' ? 'focus:ring-pink-500/20' : 'focus:ring-blue-500/20';
+  const iconColor = focusColor === 'pink' ? 'group-focus-within:text-pink-500' : 'group-focus-within:text-blue-500';
+
+  return (
+    <div className="relative group">
+      <div className={cn("absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 transition-colors", iconColor)}>
+        {icon}
+      </div>
+      <input 
+        type={type}
+        placeholder={placeholder}
+        className={cn(
+          "w-full h-14 bg-slate-200/50 border-none rounded-full pl-14 pr-6 font-bold text-slate-700 placeholder:text-slate-400 outline-none transition-all",
+          "focus:ring-4",
+          ringColor
+        )}
+        value={value}
+        onChange={onChange}
+        required={required}
+      />
+    </div>
+  );
+};
+
+const SubmitButton = ({ loading, mode }: { loading: boolean, mode: AuthMode }) => {
+  const config: Record<AuthMode, { bg: string, label: string }> = {
+    forgot: {
+      bg: "bg-yellow-500 hover:bg-yellow-600 shadow-yellow-500/30 text-slate-900",
+      label: 'Send Reset Link'
+    },
+    signup: {
+      bg: "bg-pink-500 hover:bg-pink-600 shadow-pink-500/30 text-white",
+      label: 'Create Account'
+    },
+    login: {
+      bg: "bg-blue-500 hover:bg-blue-600 shadow-blue-500/30 text-white",
+      label: 'Log In'
+    }
+  };
+
+  const { bg, label } = config[mode];
+
+  return (
+    <Button
+      type="submit"
+      disabled={loading}
+      className={cn(
+        "w-full h-14 rounded-full font-black text-lg tracking-tight shadow-xl transition-all active:scale-[0.98] uppercase mt-2",
+        bg
+      )}
+    >
+      {loading ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : label}
+    </Button>
+  );
+};
+
+const ModeSwitcher = ({ mode, onSignUpToggle, onCancelForgot }: { mode: AuthMode, onSignUpToggle: () => void, onCancelForgot: () => void }) => {
+  const labels: Record<AuthMode, string> = {
+    forgot: 'Sudah Ingat? Masuk Lagi',
+    signup: 'Sudah Punya Akun? Masuk Di Sini',
+    login: 'Belum Punya Akun? Daftar Sekarang'
+  };
+  
+  return (
+    <div className="text-center pt-2 pb-4">
+      <button 
+        onClick={onSignUpToggle}
+        className="text-[11px] font-black text-slate-500 hover:text-slate-900 uppercase tracking-widest transition-all"
+      >
+        {labels[mode]}
+      </button>
+      {mode === 'forgot' && (
+        <button 
+          onClick={onCancelForgot}
+          className="block mx-auto mt-4 text-[11px] font-black text-slate-400 hover:text-slate-800 uppercase tracking-widest transition-all"
+        >
+          Batal
+        </button>
+      )}
+    </div>
+  );
+};
+
+const SocialAuth = ({ isSignUp }: { isSignUp: boolean }) => (
+  <div className="mt-4 pt-6 border-t border-slate-200/50 relative z-200">
+    <div className="flex flex-col items-center gap-6">
+      <p className="text-[11px] font-black text-slate-600 uppercase tracking-widest">Or {isSignUp ? 'sign up' : 'sign in'} with</p>
+      <div className="flex items-center gap-4">
+        <SocialButton onClick={() => handleSocialAuth('google')} icon={<GoogleIcon />} />
+        <SocialButton onClick={() => handleSocialAuth('facebook')} icon={<FacebookLogo />} />
+        <SocialButton onClick={() => {}} icon={<div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm"><Mail className="w-6 h-6 text-white" /></div>} />
+      </div>
+    </div>
+  </div>
+);
+
+const handleSocialAuth = (provider: 'google' | 'facebook') => {
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://dompet-kita-production.up.railway.app/api';
+  console.log(`Redirecting to ${provider} with API:`, apiUrl);
+  globalThis.location.href = `${apiUrl}/auth/${provider}`;
+};
+
+const SocialButton = ({ onClick, icon }: { onClick: () => void, icon: React.ReactNode }) => (
+  <button 
+    type="button" 
+    onClick={onClick}
+    className="w-[84px] h-[72px] bg-slate-100/80 hover:bg-white rounded-[28px] border border-slate-200/50 flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md relative z-300"
+  >
+    {icon}
+  </button>
+);
 
 export default Login;
