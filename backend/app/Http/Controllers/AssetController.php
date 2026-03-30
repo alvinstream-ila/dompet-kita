@@ -2,18 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AssetResource;
 use App\Models\Asset;
 use App\Models\WealthHistory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class AssetController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
-        return Asset::where('user_id', $request->user()->id)->orderBy('type')->get();
+        $assets = Asset::where('user_id', $request->user()->id)
+            ->orderBy('type')
+            ->get();
+
+        return AssetResource::collection($assets);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): AssetResource
     {
         $validated = $request->validate([
             'name' => 'required|string|max:100',
@@ -25,13 +32,13 @@ class AssetController extends Controller
         $asset = Asset::create($validated);
         $this->updateWealthSnapshot($request);
 
-        return $asset;
+        return new AssetResource($asset);
     }
 
-    public function update(Request $request, Asset $asset)
+    public function update(Request $request, Asset $asset): AssetResource
     {
         if ($asset->user_id !== $request->user()->id) {
-            abort(403);
+            \abort(403);
         }
 
         $validated = $request->validate([
@@ -43,30 +50,30 @@ class AssetController extends Controller
         $asset->update($validated);
         $this->updateWealthSnapshot($request);
 
-        return $asset;
+        return new AssetResource($asset);
     }
 
-    public function destroy(Request $request, Asset $asset)
+    public function destroy(Request $request, Asset $asset): JsonResponse
     {
         if ($asset->user_id !== $request->user()->id) {
-            abort(403);
+            \abort(403);
         }
         $asset->delete();
         $this->updateWealthSnapshot($request);
 
-        return response()->json(null, 204);
+        return \response()->json(null, 204);
     }
 
-    private function updateWealthSnapshot(Request $request)
+    private function updateWealthSnapshot(Request $request): void
     {
         $user = $request->user();
-        $month = now()->month;
-        $year = now()->year;
+        $month = \now()->month;
+        $year = \now()->year;
         $total = Asset::where('user_id', $user->id)->sum('value');
 
         WealthHistory::updateOrCreate(
             ['user_id' => $user->id, 'month' => $month, 'year' => $year],
-            ['total_value' => $total]
+            ['total_value' => (float) $total]
         );
     }
 }

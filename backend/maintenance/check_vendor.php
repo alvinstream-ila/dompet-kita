@@ -26,5 +26,5 @@ function checkDir($dir)
 }
 
 echo "Checking vendor directory for syntax errors...\n";
-checkDir(__DIR__.'/vendor');
+checkDir(dirname(__DIR__).'/vendor');
 echo "Done.\n";

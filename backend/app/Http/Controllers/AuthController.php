@@ -45,9 +45,9 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
+        \event(new Registered($user));
 
-        return response()->json([
+        return \response()->json([
             'message' => 'Registrasi sukses! Silakan cek email kamu buat konfirmasi ya, Sayang! ❤️',
             'user' => $user,
         ]);
@@ -89,7 +89,7 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
+        return \response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
             'user' => $user,
@@ -110,7 +110,7 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json([
+        return \response()->json([
             'message' => 'Sampai jumpa lagi, Sayang! ❤️',
         ]);
     }

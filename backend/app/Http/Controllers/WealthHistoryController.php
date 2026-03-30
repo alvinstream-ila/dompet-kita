@@ -2,27 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\WealthHistoryResource;
 use App\Models\Asset;
 use App\Models\WealthHistory;
-use App\Http\Resources\WealthHistoryResource;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class WealthHistoryController extends Controller
 {
     /**
-     * @OA\Get(
-     *     path="/wealth-history",
-     *     summary="Get historical wealth data",
-     *     tags={"Wealth"},
-     *     security={{"sanctum":{}}},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Success",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/WealthHistoryResource"))
-     *     )
-     * )
+     * Get historical wealth data
      */
     public function index(Request $request): JsonResponse
     {
@@ -43,20 +33,22 @@ class WealthHistoryController extends Controller
             ->limit(5)
             ->get();
 
-        // Convert histories to resource collection
+        // Convert histories to resource collection and then to array
         $historyData = WealthHistoryResource::collection($histories->reverse())->toArray($request);
 
         // Always add current real asset sum as the latest point
         $currentWealth = Asset::where('user_id', $user->id)->sum('value');
 
-        // Append current month data
-        $historyData[] = [
+        // Append current month data using the Resource to keep it consistent
+        $nowResource = new WealthHistoryResource([
             'month' => $now->format('M'),
-            'value' => (int) $currentWealth,
+            'value' => (float) $currentWealth,
             'year' => $now->year,
             'raw_month' => $now->month,
-        ];
+        ]);
 
-        return response()->json($historyData);
+        $historyData[] = $nowResource->toArray($request);
+
+        return \response()->json($historyData);
     }
 }
