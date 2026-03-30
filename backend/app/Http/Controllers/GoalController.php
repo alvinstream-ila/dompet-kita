@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GoalResource;
 use App\Models\Goal;
 use Illuminate\Http\Request;
 
@@ -9,7 +10,11 @@ class GoalController extends Controller
 {
     public function index(Request $request)
     {
-        return Goal::where('user_id', $request->user()->id)->orderBy('deadline', 'asc')->get();
+        $goals = Goal::where('user_id', $request->user()->id)
+            ->orderBy('deadline', 'asc')
+            ->get();
+
+        return GoalResource::collection($goals);
     }
 
     public function store(Request $request)
@@ -26,13 +31,15 @@ class GoalController extends Controller
 
         $validated['user_id'] = $request->user()->id;
 
-        return Goal::create($validated);
+        $goal = Goal::create($validated);
+
+        return new GoalResource($goal);
     }
 
     public function update(Request $request, Goal $goal)
     {
         if ($goal->user_id !== $request->user()->id) {
-            abort(403);
+            \abort(403);
         }
 
         $validated = $request->validate([
@@ -47,16 +54,16 @@ class GoalController extends Controller
 
         $goal->update($validated);
 
-        return $goal;
+        return new GoalResource($goal);
     }
 
     public function destroy(Request $request, Goal $goal)
     {
         if ($goal->user_id !== $request->user()->id) {
-            abort(403);
+            \abort(403);
         }
         $goal->delete();
 
-        return response()->json(null, 204);
+        return \response()->json(null, 204);
     }
 }

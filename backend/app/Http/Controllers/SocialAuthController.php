@@ -39,7 +39,7 @@ class SocialAuthController extends Controller
             $driver = Socialite::driver($provider);
             $socialUser = $driver->stateless()->user();
         } catch (Exception $e) {
-            return response()->json([
+            return \response()->json([
                 'status' => 'error',
                 'message' => 'Gagal login lewat '.ucfirst($provider).' nih sayang, coba lagi ya? 🥺'
             ], 400);
@@ -53,7 +53,7 @@ class SocialAuthController extends Controller
                 'social_id' => $socialUser->getId(),
                 'social_type' => $provider,
                 'avatar_url' => $user->avatar_url ?? $socialUser->getAvatar(),
-                'email_verified_at' => $user->email_verified_at ?? now(),
+                'email_verified_at' => $user->email_verified_at ?? \now(),
             ]);
         } else {
             $user = User::create([
@@ -62,19 +62,19 @@ class SocialAuthController extends Controller
                 'social_id' => $socialUser->getId(),
                 'social_type' => $provider,
                 'avatar_url' => $socialUser->getAvatar(),
-                'password' => null, 
-                'email_verified_at' => now(),
+                'password' => null,
+                'email_verified_at' => \now(),
             ]);
 
-            event(new Registered($user));
+            \event(new Registered($user));
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         // Redirect to Frontend callback route
-        $frontendUrl = config('app.frontend_url', 'http://localhost:5173');
+        $frontendUrl = \config('app.frontend_url', 'http://localhost:5173');
         $callbackUrl = rtrim($frontendUrl, '/') . '/auth/callback?token=' . $token;
 
-        return redirect()->away($callbackUrl);
+        return \redirect()->away($callbackUrl);
     }
 }

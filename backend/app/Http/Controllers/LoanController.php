@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\LoanResource;
 use App\Models\Loan;
 use Illuminate\Http\Request;
 
@@ -9,7 +10,11 @@ class LoanController extends Controller
 {
     public function index(Request $request)
     {
-        return Loan::where('user_id', $request->user()->id)->orderBy('created_at', 'desc')->get();
+        $loans = Loan::where('user_id', $request->user()->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return LoanResource::collection($loans);
     }
 
     public function store(Request $request)
@@ -26,22 +31,24 @@ class LoanController extends Controller
 
         $validated['user_id'] = $request->user()->id;
 
-        return Loan::create($validated);
+        $loan = Loan::create($validated);
+
+        return new LoanResource($loan);
     }
 
     public function show(Request $request, Loan $loan)
     {
         if ($loan->user_id !== $request->user()->id) {
-            abort(403);
+            \abort(403);
         }
 
-        return $loan;
+        return new LoanResource($loan);
     }
 
     public function update(Request $request, Loan $loan)
     {
         if ($loan->user_id !== $request->user()->id) {
-            abort(403);
+            \abort(403);
         }
 
         $validated = $request->validate([
@@ -56,16 +63,16 @@ class LoanController extends Controller
 
         $loan->update($validated);
 
-        return $loan;
+        return new LoanResource($loan);
     }
 
     public function destroy(Request $request, Loan $loan)
     {
         if ($loan->user_id !== $request->user()->id) {
-            abort(403);
+            \abort(403);
         }
         $loan->delete();
 
-        return response()->json(null, 204);
+        return \response()->json(null, 204);
     }
 }

@@ -41,10 +41,10 @@ class UserController extends Controller
             'anniversary_date' => 'sometimes|nullable|date',
             'timezone' => 'sometimes|string|max:100',
             'email' => [
-                'sometimes', 
-                'string', 
-                'email', 
-                'max:255', 
+                'sometimes',
+                'string',
+                'email',
+                'max:255',
                 Rule::unique('users')->ignore($user->id)
             ],
             'budget_cycle_start' => 'sometimes|integer|min:1|max:31',
@@ -57,7 +57,7 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return response()->json([
+        return \response()->json([
             'message' => 'Profil berhasil diperbarui ya sayang! ✨',
             'user' => new UserResource($user),
         ]);
@@ -91,7 +91,7 @@ class UserController extends Controller
         $user = $request->user();
 
         if ($user->password && ! Hash::check($request->current_password, $user->password)) {
-            return response()->json([
+            return \response()->json([
                 'message' => 'Password lama kamu salah, Sayang. Cek lagi ya! 🥺',
             ], 422);
         }
@@ -100,7 +100,7 @@ class UserController extends Controller
             'password' => Hash::make($request->new_password),
         ]);
 
-        return response()->json([
+        return \response()->json([
             'message' => 'Password berhasil diganti! Jaga baik-baik ya Sayang! 🔐💖',
         ]);
     }

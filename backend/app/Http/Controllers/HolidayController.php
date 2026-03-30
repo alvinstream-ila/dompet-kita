@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\HolidayResource;
 use App\Models\Holiday;
 use Illuminate\Http\Request;
 
@@ -9,7 +10,11 @@ class HolidayController extends Controller
 {
     public function index(Request $request)
     {
-        return Holiday::where('user_id', $request->user()->id)->orderBy('created_at', 'desc')->get();
+        $holidays = Holiday::where('user_id', $request->user()->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return HolidayResource::collection($holidays);
     }
 
     public function store(Request $request)
@@ -26,22 +31,24 @@ class HolidayController extends Controller
 
         $validated['user_id'] = $request->user()->id;
 
-        return Holiday::create($validated);
+        $holiday = Holiday::create($validated);
+
+        return new HolidayResource($holiday);
     }
 
     public function show(Request $request, Holiday $holiday)
     {
         if ($holiday->user_id !== $request->user()->id) {
-            abort(403);
+            \abort(403);
         }
 
-        return $holiday;
+        return new HolidayResource($holiday);
     }
 
     public function update(Request $request, Holiday $holiday)
     {
         if ($holiday->user_id !== $request->user()->id) {
-            abort(403);
+            \abort(403);
         }
 
         $validated = $request->validate([
@@ -56,16 +63,16 @@ class HolidayController extends Controller
 
         $holiday->update($validated);
 
-        return $holiday;
+        return new HolidayResource($holiday);
     }
 
     public function destroy(Request $request, Holiday $holiday)
     {
         if ($holiday->user_id !== $request->user()->id) {
-            abort(403);
+            \abort(403);
         }
         $holiday->delete();
 
-        return response()->json(null, 204);
+        return \response()->json(null, 204);
     }
 }
