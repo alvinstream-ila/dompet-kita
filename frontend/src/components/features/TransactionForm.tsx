@@ -319,122 +319,29 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         />
       </div>
 
-      <div className="space-y-1.5 flex flex-col pt-1">
-        <div className="flex justify-between items-end px-1">
-          <Label className="text-[10px] font-black text-slate-800 uppercase tracking-widest">Nominal (Rp)</Label>
-          <span className="text-[10px] font-bold text-blue-500 italic">
-            {amount && getTerbilang(Number.parseInt(amount.replaceAll('.', '')))}
-          </span>
-        </div>
-        <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-black text-base select-none">Rp.</span>
-          <Input
-            type="text"
-            inputMode="numeric"
-            placeholder="0"
-            value={amount}
-            onChange={handleAmountChange}
-            className="w-full h-12 bg-slate-100/50 border-slate-200 rounded-2xl pl-12 pr-4 text-xl font-black text-slate-900 focus-visible:ring-slate-300 shadow-inner appearance-none"
-            required
-          />
-        </div>
-      </div>
+      <AmountInput 
+        amount={amount}
+        onChange={handleAmountChange}
+      />
 
-      {preview && (
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative aspect-video rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 group"
-        >
-          <img src={preview} alt="Receipt preview" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <Button 
-              type="button" 
-              variant="destructive" 
-              size="sm" 
-              className="rounded-full h-8 px-3 text-[10px] font-black"
-              onClick={() => {
-                setFile(null);
-                setPreview(null);
-              }}
-            >
-              Hapus
-            </Button>
-          </div>
-          {scanning && (
-            <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2">
-              <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-              <span className="text-[10px] font-black text-blue-600 animate-pulse tracking-widest">ANALYZING...</span>
-            </div>
-          )}
-        </motion.div>
-      )}
-
-      <div className="flex items-center justify-between pt-1">
-        <div className="flex items-center gap-2">
-          <input
-            type="file"
-            id="receipt-upload"
-            className="hidden"
-            onChange={(e) => {
-              const selectedFile = e.target.files?.[0];
-              if (selectedFile && selectedFile.size > MAX_FILE_SIZE) {
-                alert('Ukuran file terlalu besar! Maksimal 5MB ya Sayang.. ❤️');
-                e.target.value = '';
-                setFile(null);
-                setPreview(null);
-              } else if (selectedFile) {
-                setFile(selectedFile);
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  setPreview(reader.result as string);
-                };
-                reader.readAsDataURL(selectedFile);
-              }
-            }}
-            accept="image/*,.pdf"
-          />
-          <Button
-            type="button"
-            variant="outline"
-            asChild
-            className={cn(
-              "h-9 rounded-full border-dashed border-2 px-5 transition-all outline-none",
-              (file || (mode === 'edit' && preview)) ? "bg-emerald-50 border-emerald-200 text-emerald-600 hover:bg-emerald-100" : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
-            )}
-          >
-            <label htmlFor="receipt-upload" className="cursor-pointer space-x-2">
-              {(file || (mode === 'edit' && preview)) ? <Check className="size-3.5 shrink-0" /> : <ImageIcon className="size-3.5 shrink-0" />}
-              <span className="text-[9px] font-black uppercase tracking-widest truncate max-w-[80px]">
-                {receiptStatusLabel}
-              </span>
-            </label>
-          </Button>
-
-          {(file || preview?.startsWith('data:')) && (
-            <Button
-              type="button"
-              variant="outline"
-              className="h-9 rounded-full border-dashed border-2 px-5 transition-all text-blue-600 border-blue-200 hover:bg-blue-50 bg-white"
-              disabled={scanning}
-              onClick={handleScan}
-            >
-              <div className="flex items-center space-x-2 cursor-pointer">
-                {scanning ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
-                <span className="text-[9px] font-black uppercase tracking-widest">
-                  {scanStatusLabel}
-                </span>
-              </div>
-            </Button>
-          )}
-        </div>
-
-        <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
-           <Target className="size-3.5 text-slate-500" />
-           <span className="text-[9px] font-black text-slate-800 uppercase tracking-widest">SPLIT BILL</span>
-           <input type="checkbox" className="size-3.5 accent-slate-900 cursor-pointer rounded-sm" />
-        </div>
-      </div>
+      <ReceiptSection 
+        preview={preview}
+        scanning={scanning}
+        file={file}
+        receiptStatusLabel={receiptStatusLabel}
+        scanStatusLabel={scanStatusLabel}
+        onFileSelect={(f) => {
+          setFile(f);
+          const reader = new FileReader();
+          reader.onloadend = () => setPreview(reader.result as string);
+          reader.readAsDataURL(f);
+        }}
+        onFileRemove={() => {
+          setFile(null);
+          setPreview(null);
+        }}
+        onScan={handleScan}
+      />
 
       <div className="flex gap-3 pt-2">
         {onCancel && (
@@ -459,5 +366,148 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         </Button>
       </div>
     </form>
+  );
+};
+
+interface AmountInputProps {
+  amount: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+const AmountInput: React.FC<AmountInputProps> = ({ amount, onChange }) => (
+  <div className="space-y-1.5 flex flex-col pt-1">
+    <div className="flex justify-between items-end px-1">
+      <Label className="text-[10px] font-black text-slate-800 uppercase tracking-widest">Nominal (Rp)</Label>
+      <span className="text-[10px] font-bold text-blue-500 italic">
+        {amount && getTerbilang(Number.parseInt(amount.replaceAll('.', '')))}
+      </span>
+    </div>
+    <div className="relative">
+      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-black text-base select-none">Rp.</span>
+      <Input
+        type="text"
+        inputMode="numeric"
+        placeholder="0"
+        value={amount}
+        onChange={onChange}
+        className="w-full h-12 bg-slate-100/50 border-slate-200 rounded-2xl pl-12 pr-4 text-xl font-black text-slate-900 focus-visible:ring-slate-300 shadow-inner appearance-none"
+        required
+      />
+    </div>
+  </div>
+);
+
+interface ReceiptSectionProps {
+  preview: string | null;
+  scanning: boolean;
+  file: File | null;
+  receiptStatusLabel: string;
+  scanStatusLabel: string;
+  onFileSelect: (file: File) => void;
+  onFileRemove: () => void;
+  onScan: () => void;
+}
+
+const ReceiptSection: React.FC<ReceiptSectionProps> = ({
+  preview,
+  scanning,
+  file,
+  receiptStatusLabel,
+  scanStatusLabel,
+  onFileSelect,
+  onFileRemove,
+  onScan
+}) => {
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  return (
+    <div className="space-y-4">
+      {preview && (
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative aspect-video rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 group"
+        >
+          <img src={preview} alt="Receipt preview" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <Button 
+              type="button" 
+              variant="destructive" 
+              size="sm" 
+              className="rounded-full h-8 px-3 text-[10px] font-black"
+              onClick={onFileRemove}
+            >
+              Hapus
+            </Button>
+          </div>
+          {scanning && (
+            <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2">
+              <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+              <span className="text-[10px] font-black text-blue-600 animate-pulse tracking-widest">ANALYZING...</span>
+            </div>
+          )}
+        </motion.div>
+      )}
+
+      <div className="flex items-center justify-between pt-1">
+        <div className="flex items-center gap-2">
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) {
+                if (f.size > MAX_FILE_SIZE) {
+                  alert('Ukuran file terlalu besar! Maksimal 5MB ya Sayang.. ❤️');
+                } else {
+                  onFileSelect(f);
+                }
+              }
+            }}
+            accept="image/*,.pdf"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => fileInputRef.current?.click()}
+            className={cn(
+              "h-9 rounded-full border-dashed border-2 px-5 transition-all outline-none",
+              (file || preview) ? "bg-emerald-50 border-emerald-200 text-emerald-600 hover:bg-emerald-100" : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+            )}
+          >
+            <div className="flex items-center space-x-2 cursor-pointer">
+              {(file || preview) ? <Check className="size-3.5 shrink-0" /> : <ImageIcon className="size-3.5 shrink-0" />}
+              <span className="text-[9px] font-black uppercase tracking-widest truncate max-w-[80px]">
+                {receiptStatusLabel}
+              </span>
+            </div>
+          </Button>
+
+          {(file || preview?.startsWith('data:')) && (
+            <Button
+              type="button"
+              variant="outline"
+              className="h-9 rounded-full border-dashed border-2 px-5 transition-all text-blue-600 border-blue-200 hover:bg-blue-50 bg-white"
+              disabled={scanning}
+              onClick={onScan}
+            >
+              <div className="flex items-center space-x-2 cursor-pointer">
+                {scanning ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
+                <span className="text-[9px] font-black uppercase tracking-widest">
+                  {scanStatusLabel}
+                </span>
+              </div>
+            </Button>
+          )}
+        </div>
+
+        <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
+           <Target className="size-3.5 text-slate-500" />
+           <span className="text-[9px] font-black text-slate-800 uppercase tracking-widest">SPLIT BILL</span>
+           <input type="checkbox" className="size-3.5 accent-slate-900 cursor-pointer rounded-sm" />
+        </div>
+      </div>
+    </div>
   );
 };
