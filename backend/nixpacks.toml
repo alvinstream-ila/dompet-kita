@@ -1,5 +1,11 @@
 [phases.setup]
-nixPkgs = ["...", "php82", "php82Packages.composer", "nodejs"]
+nixPkgs = ["php83", "php83Packages.composer"]
+
+[phases.install]
+cmds = ["composer install --no-dev --optimize-autoloader --no-cache"]
+
+[phases.build]
+cmds = ["php artisan config:cache", "php artisan route:cache", "php artisan view:cache"]
 
 [start]
-cmd = "php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan serve --host=0.0.0.0 --port=$PORT"
+cmd = "heroku-php-apache2 public/"
