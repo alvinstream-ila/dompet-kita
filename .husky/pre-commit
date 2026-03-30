@@ -1,4 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# 🛡️ Security Gate: Block commits that fail our security/quality threshold
+php backend/artisan security:gate --min-score=90 || exit 1
+
+# ✅ If gate passes, run lint-staged for code formatting
 npx lint-staged

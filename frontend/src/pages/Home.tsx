@@ -108,7 +108,10 @@ const Home: React.FC = () => {
             </div>
             <CardHeader className="mb-8 p-0">
               <CardTitle className="flex items-center gap-3 text-xl font-black tracking-tight text-slate-800 md:text-2xl">
-                <div className="h-6 w-2 rounded-full bg-blue-500" />
+                <div
+                  className="h-6 w-2 rounded-full"
+                  style={{ background: 'var(--color-blue-royal)' }}
+                />
                 Analisis Pengeluaran Mingguan
               </CardTitle>
             </CardHeader>

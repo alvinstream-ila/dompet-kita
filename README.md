@@ -1,6 +1,6 @@
-# 💰 Dompet Kita (Professional Monorepo Edition)
+# 💰 Dompet Kita (Elite Monorepo Edition)
 
-Aplikasi pencatatan keuangan premium untuk **Alvin & Ila**. Proyek ini menggunakan arsitektur **API-First** modern dengan standar infrastruktur kelas dunia (DevOps & Automation).
+Aplikasi pencatatan keuangan premium untuk **Alvin & Ila**. Proyek ini menggunakan arsitektur **API-First** modern dengan standar infrastruktur kelas dunia, CLI AI Autopilot, dan sistem keamanan berlapis setara perbankan.
 
 ---
 
@@ -9,75 +9,120 @@ Aplikasi pencatatan keuangan premium untuk **Alvin & Ila**. Proyek ini menggunak
 - **Frontend (Production)**: [https://dompet-kita-six.vercel.app/](https://dompet-kita-six.vercel.app/)
 - **Backend API (Production)**: [https://dompet-kita-production.up.railway.app/](https://dompet-kita-production.up.railway.app/)
 
+---
+
 ## 🏗️ Digital Infrastructure & Cloud
 
-Aplikasi ini berjalan di ekosistem cloud modern:
-
-1.  **Frontend**: React 19 (Vite) di-host di **Vercel**.
-2.  **Backend**: Laravel 12 (PHP 8.4) di-host di **Railway**.
-3.  **Database**: Managed PostgreSQL di **Supabase** (Transaction Pooler).
-4.  **Storage**: S3-Compatible via **Storj** (Distributed Object Storage).
-5.  **External**: Google Gemini AI (Insights) & Penpot (Design Sync).
-
----
-
-## 🔐 3. Bank-Grade Security (The Fortress)
-
-Dompet Kita dirancang dengan lapisan pertahanan mendalam (**Defense-in-depth**):
-
-- **🛡️ Row Level Security (RLS)**: Proteksi data langsung di level PostgreSQL (Supabase).
-- **🔑 Field-Level Encryption**: Data sensitif (Google ID, Partner Name, Descriptions) dienkripsi otomatis sebelum disimpan.
-- **📦 Private Cloud Storage**: File struk di Storj bersifat privat, hanya dapat diakses melalui **Temporal Signed URLs** (berlaku 15 menit).
-- **🕵️ Audit Trail (CCTV)**: Setiap perubahan data (Edit/Hapus) dicatat dalam riwayat perubahan aset/transaksi.
-- **🕸️ Honeypot & Throttle**: Deteksi pendaftaran bot otomatis dan perlindungan dari serangan Brute Force.
-- **📱 Device Tracking**: Mencatat IP dan perangkat (User Agent) setiap kali terjadi akses masuk.
+| Layer | Technology |
+|:------|:-----------|
+| **Frontend** | React 19 + Vite 6.x → Vercel (Singapore) |
+| **Backend** | Laravel 12 + PHP 8.4 → Railway (Singapore) |
+| **Database** | PostgreSQL + RLS → Supabase |
+| **Storage** | S3-Compatible → Storj (Distributed) |
+| **AI** | Google Gemini AI (Insights & Autopilot) |
+| **Monitoring** | Sentry (Error Tracking) |
+| **MCP** | Custom Dompet Kita MCP v3.0 (AI Bridge) |
 
 ---
 
-## 🛡️ 4. Developer Experience & Automation (Elite Suite)
+## 🔐 Bank-Grade Security (The Fortress)
 
-Kami mengutamakan **Developer Happiness** dan **Code Health**. Project ini dilengkapi dengan sistem otomatisasi "Penjaga Pintu" (Git Hooks):
+Dompet Kita dirancang dengan **Defense-in-Depth** — 7 lapis pertahanan:
 
-### 💂‍♂️ Git Hooks & Automation (Husky)
-
-Setiap kali kamu melakukan `git commit`, sistem akan melakukan:
-
-- **Frontend**: Menjalankan `Prettier` untuk merapikan kode secara otomatis.
-- **Backend**: Menjalankan `php artisan maintenance:verify` untuk audit kesehatan menyeluruh.
-- **Security**: Mencegah commit jika ditemukan celah keamanan atau error fatal.
-
-### 🔍 Command Center (CLI)
-
-Pusat kontrol utama untuk pengelolaan sistem tingkat tinggi (Artisan CLI):
-
-- `php artisan app:wealth-status` — **Full Dashboard Snapshot** (Saldo + Aset + Goals + Loans).
-- `php artisan app:security-audit` — **Security Scanner** (Cek login mencurigakan & skor sistem).
-- `php artisan app:database-optimize` — **Pro Maintenance** (Sapu bersih cache & log lama).
-- `php artisan app:asset-manage` — Kelola kekayaan & update nilai aset.
-- `php artisan app:storage-manage` — Kelola file Cloud Storage (Storj).
-- `php artisan app:penpot-manage` — Sinkronisasi aset desain dari Penpot.
-- `php artisan maintenance:verify` — **The Vitality Check** (Unified Audit & Optimization).
-
-### 📊 Quality & Performance Tools
-
-- **PHP Insights & Enlightn**: Audit kualitas & keamanan mendalam ekosistem Laravel.
-- **Larastan & Pint**: Analisis statis dan formatting otomatis tingkat tinggi.
-- **Laravel Pail**: Live debugging logs di terminal yang cantik.
+| # | Lapisan | Implementasi |
+|:--|:--------|:-------------|
+| 1 | **Row Level Security** | RLS aktif di semua tabel PostgreSQL |
+| 2 | **Field Encryption** | AES-256-CBC Encrypted Casts (Google ID, Partner, Descriptions) |
+| 3 | **Private Storage** | Storj Private Vault + Temporal Signed URLs (15 menit) |
+| 4 | **Honeypot** | `spatie/laravel-honeypot` — memblokir bot otomatis |
+| 5 | **Rate Limiting** | Throttle 5x/menit pada endpoint sensitif |
+| 6 | **Audit Trail** | `spatie/laravel-activitylog` — CCTV digital setiap perubahan data |
+| 7 | **Device Tracking** | Login History (IP + User Agent) setiap akses masuk |
 
 ---
 
-## 📜 Dokumentasi Lanjutan
+## 🤖 Advanced CLI Suite (The Command Center)
 
-- [docs/TECHNICAL_DOCUMENTATION.md](./docs/TECHNICAL_DOCUMENTATION.md) - Detail Teknis & Keamanan.
-- [docs/MASTER_GUIDE_DATABASE.md](./docs/MASTER_GUIDE_DATABASE.md) - Panduan Database.
-- [docs/SECURITY_OVERVIEW.md](./docs/SECURITY_OVERVIEW.md) - Strategi Keamanan.
+Dompet Kita memiliki ekosistem **CLI mutakhir** yang bisa melakukan perbaikan mandiri dan analisis finansial.
+
+### ⚡ Backend (Artisan)
+
+| Command | Kategori | Deskripsi |
+|:--------|:---------|:----------|
+| `php artisan maintenance:verify` | 🔍 Audit | Sistem audit menyeluruh (Pint, PHPStan, Enlightn, Rector) |
+| `php artisan maintenance:repair` | 🤖 AI Autopilot | Auto-fix error via Gemini AI |
+| `php artisan security:gate` | 🛡️ Pre-Commit | Blokir commit jika skor keamanan < 90/100 |
+| `php artisan security:gate --min-score=95` | 🛡️ Pre-Commit | Custom threshold |
+| `php artisan honeypot:audit` | 🕸️ Radar | Visualisasi bot attack dari Honeypot logs |
+| `php artisan cloud:status` | 🛰️ DevOps | Status real-time Railway, Supabase, Storj |
+| `php artisan cfo:analyze` | 💰 CFO AI | Analisis transaksi bulanan + saran strategis Gemini |
+| `php artisan cfo:forecast --months=12` | 📈 CFO AI | Proyeksi kekayaan N bulan ke depan |
+| `php artisan app:wealth-status` | 📊 Dashboard | Snapshot aset, goals, dan utang |
+| `php artisan app:security-audit` | 🔐 Security | Scanner login mencurigakan + skor sistem |
+| `php artisan app:database-optimize` | 🧹 Maintenance | Bersihkan cache & log lama |
+| `php artisan app:storage-manage list` | ☁️ Storage | Kelola file Cloud Storj |
+
+### 🎨 Frontend (npm)
+
+| Command | Deskripsi |
+|:--------|:----------|
+| `npm run design:audit` | Scan komponen untuk "Generic Color" trap |
+| `npm run seo:check` | Validasi Title, Meta Description, H1 per halaman |
+| `npm run secure:assets` | Pastikan semua gambar menggunakan Signed URLs |
+| `npm run ci:frontend-check` | Jalankan ketiganya sekaligus (CI Pipeline) |
+
+---
+
+## 🔌 MCP Server (AI Bridge) v3.0
+
+MCP Server kita bertindak sebagai **jembatan murni** antara AI Agent dan CLI Artisan.
+
+Tools yang tersedia untuk AI:
+`get_financial_status`, `budget_guard`, `loan_tracker`, `asset_manage`, `goal_check`, `holiday_plan`, `system_status`, `security_scan`, `cloud_sync_check`, `storage_assistant`, `penpot_assistant`, `maintenance_tool`, **`security_gate`**, **`honeypot_radar`**, **`cfo_forecast`**, **`maintenance_repair`**
+
+---
+
+## 💂 Git Hooks (Husky) — Pre-Commit Pipeline
+
+Setiap `git commit` akan menjalankan pipeline ini secara otomatis:
+
+```
+git commit
+  └─▶ 🛡️ security:gate --min-score=90  (blokir jika sistem tidak sehat)
+  └─▶ ✨ lint-staged
+        ├─ Frontend: Prettier (format otomatis)
+        └─ Backend: maintenance:verify (audit cepat)
+```
+
+---
 
 ## 🚀 Memulai Pengembangan Lokal
 
-1.  **Clone**: `git clone <repo-url>`
-2.  **Setup**: `npm run setup` (Menginstall semua dependensi, generate key, dan migrate database).
-3.  **Run**: `npm run start` (Menjalankan Frontend & Backend secara bersamaan).
+```bash
+# 1. Clone & Setup
+git clone <repo-url>
+npm run setup
+
+# 2. Jalankan Dev Server (Frontend + Backend paralel)
+npm run start
+
+# 3. Audit sistem sebelum push
+php backend/artisan maintenance:verify
+npm run ci:frontend-check --prefix frontend
+```
 
 ---
 
-_Dibuat dengan ❤️ untuk masa depan Alvin & Ila. Sistem ini dijaga secara otomatis oleh **Husky & Antigravity AI**._
+## 📚 Dokumentasi Lanjutan
+
+| Dokumen | Deskripsi |
+|:--------|:----------|
+| [docs/cli_roadmap.md](./docs/cli_roadmap.md) | Roadmap & status CLI mutakhir |
+| [docs/TECHNICAL_DOCUMENTATION.md](./docs/TECHNICAL_DOCUMENTATION.md) | Detail stack teknis |
+| [docs/SECURITY_OVERVIEW.md](./docs/SECURITY_OVERVIEW.md) | Strategi keamanan berlapis |
+| [docs/MASTER_GUIDE_DATABASE.md](./docs/MASTER_GUIDE_DATABASE.md) | Panduan database & migrasi |
+| [docs/RULES.md](./docs/RULES.md) | Aturan pengembangan |
+
+---
+
+_Dibuat dengan ❤️ untuk masa depan Alvin & Ila. Dijaga otomatis oleh **Husky + Security Gate + Antigravity AI**._

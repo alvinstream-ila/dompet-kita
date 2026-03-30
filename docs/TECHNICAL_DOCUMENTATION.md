@@ -1,125 +1,230 @@
-# 💎 Dompet Kita Technical Documentation
+# 💎 Dompet Kita — Technical Documentation
 
-Welcome to the comprehensive technical documentation for **Dompet Kita**, a secure, AI-powered financial manager designed for Alvin & Ila.
+Dokumentasi teknis komprehensif untuk **Dompet Kita**, platform keuangan premium berbasis AI untuk Alvin & Ila.
+
+> [!IMPORTANT]
+> Diperbarui: 30 Maret 2026 — v3.0 (Elite CLI Suite + Frontend Mastery)
 
 ---
 
 ## 🏗️ 1. System Architecture & Philosophy
 
-Project ini menggunakan pendekatan **"Core-First CLI"**. Semua logika bisnis penting (Keuangan, Aset, Audit) wajib berada di dalam **Laravel Artisan CLI**.
+Proyek ini menggunakan pendekatan **"Core-First CLI"**:
 
-- **MCP Server**: Berperan sebagai jembatan (bridge) murni antara AI Agent dan CLI.
-- **User Interface**: Frontend React berinteraksi dengan API, sementara pengembang (Developer) berinteraksi via terminal.
-
----
-
-## 🏦 2. Backend Documentation (Laravel 12.x)
-
-### 🛠️ Technical Stack
-
-| Component     | Technology                    |
-| :------------ | :---------------------------- |
-| **Language**  | PHP 8.4 (JIT Enabled)         |
-| **Framework** | Laravel 12.x                  |
-| **Database**  | PostgreSQL (Supabase)         |
-| **Auth**      | Laravel Sanctum (Token-based) |
-| **Storage**   | Storj (S3 Compatible)         |
-
-### ⚡ Professional Developer Suite
-
-Project ini dilengkapi dengan alat bantu otomatis untuk menjaga kualitas kode (Code Quality):
-
-- **Laravel Pint**: Formatting kode otomatis sesuai standar PSR-12.
-- **Larastan**: Analisis statis untuk mencegah bug sebelum runtime.
-- **PHP Insights**: Audit kualitas, arsitektur, dan kompleksitas kode.
-- **Enlightn**: Audit keamanan (Security) khusus ekosistem Laravel.
-- **Rector**: Refactoring otomatis untuk menjaga kode tetap modern.
-- **Laravel Pail**: Live debugging logs langsung di terminal.
-
-### 🛡️ System Audit Command
-
-Gunakan satu perintah untuk mengecek seluruh kesehatan sistem:
-
-```bash
-php artisan maintenance:verify
+```
+┌─────────────────────────────────────────────────────┐
+│                   AI Agent (Antigravity)             │
+└───────────────────┬─────────────────────────────────┘
+                    │ MCP Protocol (v3.0)
+┌───────────────────▼─────────────────────────────────┐
+│             MCP Server (dompet-kita-mcp)             │
+│           Pure Bridge — No Business Logic            │
+└──────────┬──────────────────────────┬───────────────┘
+           │ CLI                      │ API
+┌──────────▼──────────┐   ┌──────────▼───────────────┐
+│  Laravel Artisan    │   │   React 19 Frontend       │
+│  (Business Logic)   │   │   (User Interface)        │
+└──────────┬──────────┘   └──────────────────────────┘
+           │
+┌──────────▼──────────────────────────────────────────┐
+│  PostgreSQL (Supabase) + Storj + Gemini AI          │
+└─────────────────────────────────────────────────────┘
 ```
 
-Perintah ini akan menjalankan: Check Style -> Static Analysis -> Security Audit -> Cloud Sync -> Database Optimize.
+**Prinsip Utama:**
+- Semua logika bisnis wajib ada di **Laravel Artisan CLI**
+- MCP Server hanya berperan sebagai **translator** murni
+- Frontend berinteraksi dengan API; Developer berinteraksi via Terminal
 
 ---
 
-## 🔐 3. Data Security & Privacy (The Fortress)
+## 🏦 2. Backend — Laravel 12.x
 
-Dompet Kita menggunakan standar keamanan setara aplikasi perbankan (Defense-in-depth):
+### Tech Stack
 
-### 🛡️ 7 Pilar Keamanan
+| Komponen | Teknologi |
+|:---------|:----------|
+| **Language** | PHP 8.4 (JIT Enabled) |
+| **Framework** | Laravel 12.x |
+| **Database** | PostgreSQL (Supabase Transaction Pooler) |
+| **Auth** | Laravel Sanctum (Token-based, Revocable) |
+| **Storage** | Storj (S3 Compatible, Distributed) |
+| **AI Integration** | Google Gemini API (via GeminiService) |
+| **Security Packages** | spatie/laravel-honeypot, spatie/laravel-activitylog |
 
-1. **Row Level Security (RLS)**: Proteksi di level database (Supabase) yang menjamin data hanya bisa diakses oleh pemilik aslinya.
-2. **Field-Level Encryption**: Data sensitif (`social_id`, `partner_name`, `description`) dienkripsi sebelum masuk ke database menggunakan Laravel Encrypted Casts.
-3. **Private Storage Visibility**: Semua file (struk) di Storj bersifat **Private** secara default.
-4. **Temporal Signed URLs**: Akses ke file privat hanya diperbolehkan melalui "Kunci Sementara" (Signed URL) yang berlaku selama 15 menit.
-5. **Honeypot Protection**: Menggunakan `spatie/laravel-honeypot` untuk memblokir pendaftaran bot otomatis.
-6. **Strict Rate Limiting**: Batasan percobaan login (5x/menit) dan aktivitas API untuk mencegah serangan Brute Force.
-7. **Login History & Device Tracking**: Mencatat IP Address dan User Agent setiap kali terjadi akses login.
+### Code Quality Suite (Otomatis)
 
-### 🕵️ Audit Trail (CCTV Digital)
+| Tool | Fungsi |
+|:-----|:-------|
+| **Laravel Pint** | Auto-formatting PSR-12 |
+| **Larastan (PHPStan)** | Static analysis, mencegah bug runtime |
+| **PHP Insights** | Audit kualitas & kompleksitas kode |
+| **Enlightn** | Security audit khusus ekosistem Laravel |
+| **Rector** | Refactoring otomatis — kode selalu modern |
+| **Laravel Pail** | Live debugging logs di terminal |
 
-Setiap perubahan pada data finansial (`Transaction`, `Asset`, `Loan`) dicatat oleh **Spatie Activity Log**. Admin dapat melihat riwayat perubahan data (nilai lama vs nilai baru).
+### Advanced CLI Commands (v3.0)
+
+#### 🔍 System Maintenance
+```bash
+php artisan maintenance:verify        # Unified audit (Pint→PHPStan→Enlightn→Rector)
+php artisan maintenance:repair        # AI Autopilot: auto-fix issues via Gemini
+```
+
+#### 🛡️ Security
+```bash
+php artisan security:gate             # Quality gate (default min-score: 90)
+php artisan security:gate --min-score=95   # Custom threshold
+php artisan honeypot:audit            # Visual bot-attack radar
+```
+
+#### 🛰️ DevOps Observatory
+```bash
+php artisan cloud:status              # Dashboard Railway + Supabase + Storj
+```
+
+#### 💰 Financial Intelligence (CFO Hub)
+```bash
+php artisan cfo:analyze               # AI insights transaksi bulanan (Gemini)
+php artisan cfo:forecast              # Proyeksi kekayaan 12 bulan default
+php artisan cfo:forecast --months=6   # Custom N bulan
+```
+
+#### 📊 Dashboard Utilities
+```bash
+php artisan app:wealth-status         # Snapshot aset, goals, utang
+php artisan app:security-audit        # Scanner login mencurigakan
+php artisan app:database-optimize     # Bersihkan cache & log lama
+php artisan app:storage-manage list   # Kelola file Storj
+```
 
 ---
 
-## 🎨 4. Frontend Documentation (React 19)
+## 🎨 3. Frontend — React 19 + Vite 6.x
 
-### 🛠️ Technical Stack
+### Tech Stack
 
-| Component         | Technology                                  |
-| :---------------- | :------------------------------------------ |
-| **Framework**     | React 19 (Vite 6.x)                         |
-| **Language**      | TypeScript (Strict Mode)                    |
-| **Styling**       | Tailwind CSS 4.x + Framer Motion            |
-| **Data Fetching** | TanStack Query v5                           |
-| **Security**      | `eslint-plugin-security` (Continuous Audit) |
+| Komponen | Teknologi |
+|:---------|:----------|
+| **Framework** | React 19 (Concurrent Mode) |
+| **Build Tool** | Vite 6.x |
+| **Language** | TypeScript (Strict Mode) |
+| **Styling** | Tailwind CSS 4.x + Custom Design Tokens |
+| **Animations** | Framer Motion |
+| **Data Fetching** | TanStack Query v5 |
+| **Security Lint** | eslint-plugin-security (Continuous Audit) |
 
-### 💂‍♂️ Git Hooks & Automation (Husky)
+### Design System
 
-Kami menggunakan **Husky** dan **lint-staged** untuk menjamin kualitas kode di setiap `git commit`:
+CSS Variables (Design Tokens) tersimpan di `src/index.css`:
 
-- Komit akan ditolak jika kode berantakan (tidak lolos Prettier).
-- Komit akan ditolak jika backend audit (`maintenance:verify`) gagal.
-- _Hasil_: Repository selalu dalam keadaan "Green" (Sehat).
+```css
+--color-pink-primary: #ff78a4;   /* Brand accent */
+--color-blue-royal: #4a6cf7;    /* Royal blue CTA */
+--color-green-stat: #2ecc71;    /* Income indicator */
+--color-red-stat: #e74c3c;      /* Expense indicator */
+--glass-blur: 32px;             /* Glassmorphism depth */
+--font-display: 'Plus Jakarta Sans'; /* Headings */
+--font-body: 'Inter';           /* Body text */
+```
+
+> [!NOTE]
+> **Aturan Design**: Gunakan SELALU CSS variables di atas. Dilarang menggunakan generic Tailwind colors (seperti `blue-500`, `red-500`) agar brand consistency terjaga.
+
+### Frontend CLI Audit Suite
+
+```bash
+npm run design:audit        # Scan komponen untuk generic colors
+npm run seo:check           # Validasi SEO metadata setiap halaman
+npm run secure:assets       # Pastikan gambar menggunakan Signed URLs
+npm run ci:frontend-check   # Jalankan ketiganya sekaligus
+```
+
+### SEO Checklist (Per Halaman)
+
+- ✅ `<title>` unik dan deskriptif
+- ✅ `<meta name="description">` yang memikat
+- ✅ Satu `<h1>` per halaman
+- ✅ Semantic HTML5 (`<header>`, `<main>`, `<section>`)
+- ✅ Open Graph + Twitter Card di `index.html`
+- ✅ `lang="id"` (konten Bahasa Indonesia)
 
 ---
 
-## 🛠️ 5. Power-User CLI Suite (The Command Center)
+## 🔌 4. MCP Server (AI Bridge) — v3.0
 
-Daftar perintah Artisan khusus untuk pengelolaan tingkat tinggi:
+### Philosophy
 
-| Command                             | Description                                                               |
-| :---------------------------------- | :------------------------------------------------------------------------ |
-| `php artisan app:wealth-status`     | **Financial Dashboard**: Ringkasan Harta, Goals, dan Utang/Piutang.       |
-| `php artisan app:security-audit`    | **Security Scanner**: Mencari login mencurigakan & skor kesehatan sistem. |
-| `php artisan app:database-optimize` | **Pro Maintenance**: Membersihkan cache & log lama secara otomatis.       |
-| `php artisan maintenance:verify`    | **Unified Audit**: Menjalankan seluruh rangkaian tes kesehatan sistem.    |
+MCP Server adalah **jembatan murni** (Pure Bridge). Tidak ada business logic di sini. Semua logika dialihkan ke Artisan CLI.
+
+### Registered Tools (16 Tools)
+
+| Tool | Artisan Command |
+|:-----|:----------------|
+| `get_financial_status` | `app:wealth-status` |
+| `budget_guard` | Budget monitoring |
+| `loan_tracker` | Loan management |
+| `asset_manage` | Asset operations |
+| `goal_check` | Goal tracking |
+| `holiday_plan` | Holiday planning |
+| `system_status` | `app:security-audit` |
+| `security_scan` | `app:security-audit` |
+| `cloud_sync_check` | `cloud:status` |
+| `storage_assistant` | `app:storage-manage` |
+| `penpot_assistant` | `app:penpot-manage` |
+| `maintenance_tool` | `maintenance:verify` |
+| `security_gate` ⭐ | `security:gate` |
+| `honeypot_radar` ⭐ | `honeypot:audit` |
+| `cfo_forecast` ⭐ | `cfo:forecast` |
+| `maintenance_repair` ⭐ | `maintenance:repair` |
+
+⭐ = Ditambahkan di v3.0
+
+---
+
+## 💂 5. Git Hooks (Husky) — Pre-Commit Pipeline
+
+```
+git commit
+  │
+  ├─▶ [1] 🛡️  php artisan security:gate --min-score=90
+  │           Status EXIT 1? → Commit DITOLAK
+  │           Status EXIT 0? → Lanjut ke langkah 2
+  │
+  └─▶ [2] ✨  npx lint-staged
+              ├─ *.tsx / *.ts → Prettier (auto-format)
+              └─ *.php → php artisan maintenance:verify (quick audit)
+```
 
 ---
 
 ## 🌐 6. Infrastructure & Deployment
 
-- **Frontend**: Vercel (Singapore)
-- **Backend**: Railway (Singapore)
-- **Database**: Supabase
-- **Object Storage**: Storj (Gateway.io)
-- **Monitoring**: Sentry (Error Tracking) & Google Search Console (SEO)
+| Service | Platform | Region |
+|:--------|:---------|:-------|
+| Frontend | Vercel | Singapore |
+| Backend API | Railway | Singapore |
+| Database | Supabase | Singapore |
+| Object Storage | Storj | Distributed Global |
+| Error Monitoring | Sentry | Cloud |
 
 ---
 
 ## ⚙️ 7. Development Workflow
 
-1. **Instalasi**: `npm run setup` (Menginstall frontend & backend sekaligus).
-2. **Menjalankan Dev**: `npm run start` (Frontend & Backend berjalan paralel).
-3. **Audit Manual**: `php artisan maintenance:verify` (Lakukan ini sebelum melakukan Push).
+```bash
+# Setup (Pertama kali)
+npm run setup
+
+# Jalankan Dev
+npm run start           # Frontend + Backend paralel
+
+# Sebelum git push — wajib lolos semua ini:
+php backend/artisan maintenance:verify
+npm run ci:frontend-check --prefix frontend
+```
 
 ---
 
-> [!IMPORTANT]
-> Dokumentasi ini diperbarui pada 30 Maret 2026. Prioritaskan penggunaan CLI untuk tugas-tugas administratif sistem guna menjaga konsistensi data dan integritas keamanan.
+> [!TIP]
+> Jalankan `php artisan list` untuk melihat semua perintah CLI yang tersedia dalam namespace: `app:`, `maintenance:`, `cfo:`, `cloud:`, `security:`, `honeypot:`.

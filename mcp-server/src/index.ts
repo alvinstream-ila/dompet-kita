@@ -25,7 +25,7 @@ const execPromise = promisify(exec);
 const server = new Server(
   {
     name: "dompet-kita-mcp",
-    version: "2.0.0",
+    version: "3.0.0",
   },
   {
     capabilities: {
@@ -148,6 +148,41 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
         },
       },
+      {
+        name: "security_gate",
+        description: "Run security quality gate before commit/deploy. Blocks if score below threshold.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            min_score: { type: "number", description: "Minimum acceptable score (default 90)" },
+          },
+        },
+      },
+      {
+        name: "honeypot_radar",
+        description: "Display visual bot attack radar from Honeypot logs",
+        inputSchema: { type: "object", properties: {} },
+      },
+      {
+        name: "cfo_forecast",
+        description: "Project wealth trajectory for Alvin & Ila using historical data + Gemini AI advice",
+        inputSchema: {
+          type: "object",
+          properties: {
+            months: { type: "number", description: "Number of months to forecast (default 12)" },
+          },
+        },
+      },
+      {
+        name: "maintenance_repair",
+        description: "AI Autopilot: detect and auto-repair code quality issues using Gemini AI",
+        inputSchema: {
+          type: "object",
+          properties: {
+            dry_run: { type: "boolean", description: "Preview fixes without writing to files" },
+          },
+        },
+      },
     ],
   };
 });
@@ -210,6 +245,21 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         command =
           `${artisanPath} maintenance:verify` +
           (args?.script ? ` "${args.script}"` : "");
+        break;
+      case "security_gate":
+        command = `${artisanPath} security:gate` +
+          (args?.min_score ? ` --min-score=${args.min_score}` : "");
+        break;
+      case "honeypot_radar":
+        command = `${artisanPath} honeypot:audit`;
+        break;
+      case "cfo_forecast":
+        command = `${artisanPath} cfo:forecast` +
+          (args?.months ? ` --months=${args.months}` : "");
+        break;
+      case "maintenance_repair":
+        command = `${artisanPath} maintenance:repair` +
+          (args?.dry_run ? ` --dry-run` : "");
         break;
       default:
         throw new Error(`Unknown tool: ${name}`);

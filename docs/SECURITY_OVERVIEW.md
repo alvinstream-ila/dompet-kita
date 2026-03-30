@@ -1,55 +1,152 @@
-# 🔐 Dompet Kita: Security Architecture Overview (Blueprint)
+# 🔐 Dompet Kita — Security Architecture Overview
 
-Project **Dompet Kita** menerapkan strategi **"Defense in Depth"** (Pertahanan Berlapis). Keamanan tidak hanya diletakkan pada satu titik, melainkan menyebar dari kodingan (Frontend/Backend) hingga ke level Infrastruktur (Database/Storage).
+Proyek **Dompet Kita** menerapkan strategi **"Defense in Depth"** — keamanan berlapis dari kode hingga infrastruktur.
+
+> [!CAUTION]
+> Jangan pernah membagikan `.env` atau `APP_KEY`. Kehilangan kunci enkripsi = kehilangan seluruh data finansial yang terenkripsi selamanya.
 
 ---
 
-## 🏗️ 1. Database Level: Row Level Security (RLS)
+## 🗼 Arsitektur Keamanan Berlapis (7 Pilar)
 
-Kami tidak hanya mengandalkan filter `WHERE user_id = ?` di kodingan. Kami menerapkan **RLS** langsung di PostgreSQL (Supabase).
+```
+┌─────────────────────────────────────────────────────────┐
+│  Layer 7: MONITORING — Sentry + Activity Log (CCTV)     │
+├─────────────────────────────────────────────────────────┤
+│  Layer 6: DEVICE TRACKING — Login History (IP + UA)     │
+├─────────────────────────────────────────────────────────┤
+│  Layer 5: TRAFFIC CONTROL — Rate Limit + Honeypot       │
+├─────────────────────────────────────────────────────────┤
+│  Layer 4: SIGNED STORAGE — Private Vault + 15min Token  │
+├─────────────────────────────────────────────────────────┤
+│  Layer 3: AUTH — Sanctum Token (Revocable)              │
+├─────────────────────────────────────────────────────────┤
+│  Layer 2: ENCRYPTION — AES-256-CBC (Field-Level)        │
+├─────────────────────────────────────────────────────────┤
+│  Layer 1: DATABASE — Row Level Security (PostgreSQL)     │
+└─────────────────────────────────────────────────────────┘
+```
 
-- **Mekanisme**: Setiap tabel utama (`transactions`, `assets`, `loans`, `goals`, `holidays`) memiliki kebijakan (Policy) PostgreSQL.
-- **Keunggulan**: Sekalipun ada bug di kodingan Laravel yang lupa memfilter user, database akan menolak memberikan data jika `auth.uid()` tidak sesuai dengan pemilik baris data tersebut.
+---
+
+## 🏛️ 1. Database Level: Row Level Security (RLS)
+
+Perlindungan langsung di level PostgreSQL — tidak bisa di-bypass dari kode.
+
+- **Tabel yang dilindungi**: `users`, `transactions`, `assets`, `loans`, `goals`, `holidays`, `wealth_histories`
+- **Mekanisme**: Policy PostgreSQL memastikan setiap query hanya mengembalikan baris milik user yang sedang aktif
+- **Keunggulan**: Sekalipun ada bug Laravel yang lupa filter `user_id`, database akan menolak memberikan data orang lain
+- **Migrasi**: `2026_03_30_000000_enable_rls_on_all_tables.php`
 
 ---
 
 ## 🔒 2. Data Level: Field-Level Encryption
 
-Data yang bersifat sangat privat tidak disimpan dalam bentuk teks biasa (Plaintext).
+Data paling sensitif dienkripsi sebelum masuk ke database.
 
-- **Data yang Dienkripsi**:
-  - `users.social_id`: ID unik dari Google Login.
-  - `users.partner_name`: Informasi pasangan.
-  - `transactions.description`: Detail pengeluaran yang mungkin bersifat rahasia.
-- **Mekanisme**: Menggunakan algoritma **AES-256-CBC Encrypted Casts** bawaan Laravel. Kunci enkripsi (`APP_KEY`) disimpan aman di variabel lingkungan (Environment Variables) Railway.
+| Field | Model | Alasan |
+|:------|:------|:-------|
+| `social_id` | User | ID Google Login |
+| `partner_name` | User | Informasi pasangan |
+| `description` | Transaction | Detail pengeluaran pribadi |
+
+- **Algoritma**: AES-256-CBC via Laravel Encrypted Casts
+- **Kunci**: `APP_KEY` disimpan di Railway Environment Variables
+- **Transparansi**: Enkripsi/dekripsi terjadi otomatis, kode tidak perlu intervensi manual
 
 ---
 
 ## 📦 3. Storage Level: Private Vault & Signed URLs
 
-Semua file struk belanja (`Receipts`) dikelola dengan standar akses ketat:
+Semua file struk belanja dikelola dengan akses bertingkat:
 
-- **Visibility: Private**: File tidak bisa diakses via URL publik (`403 Forbidden`).
-- **Temporary Access**: Aplikasi akan membuatkan **Signed URL** (Token unik) setiap kali user ingin melihat file. Token ini hanya berlaku selama **15 menit**.
-- **Distributed Storage**: Menggunakan **Storj** yang terdesentralisasi, menjamin redundansi data tinggi dan ketersediaan global.
+```
+User Request → Backend → Generate Signed URL (15 menit) → Storj Private Bucket
+```
+
+- **Visibility**: `private` — URL publik langsung → **403 Forbidden**
+- **Temporary Token**: Berlaku 15 menit, setelah itu kadaluarsa otomatis
+- **Infra**: Storj (terdesentralisasi) — data replikasi tinggi, tidak ada single point of failure
+- **CLI Audit**: `npm run secure:assets` memvalidasi tidak ada hardcoded public URL di frontend
 
 ---
 
 ## 🚦 4. Traffic & Access Control
 
-- **Rate Limiting (Throttling)**: API membatasi jumlah request per menit untuk mencegah serangan Brute Force dan DoS.
-- **Honeypot Protection**: Menggunakan "Field Siluman" pada form registrasi dan ganti password. Bot otomatis akan mengisi field ini, yang memicu penolakan otomatis dari server.
-- **Sanctum Authentication**: Menggunakan token API yang aman dan dapat ditarik kembali (Revocable) kapan saja.
+### Honeypot (Bot Protection)
+- **Package**: `spatie/laravel-honeypot`
+- **Mekanisme**: Field tersembunyi di form registrasi & reset password
+- **Cara Kerja**: Bot otomatis mengisi semua field → honeypot terisi → request ditolak server
+- **CLI Monitor**: `php artisan honeypot:audit` — visualisasi radar serangan bot
+
+### Rate Limiting
+- Login endpoint: **5 percobaan/menit** (Throttle)
+- API sensitif: Custom throttle middleware
+- Tujuan: Mencegah Brute Force & DoS attack
 
 ---
 
-## 🕵️ 5. Monitoring & Accountability
+## 📱 5. Auth & Session
 
-- **Full Audit Trail**: Setiap aksi `Create`, `Update`, dan `Delete` dicatat dengan detail (Siapa, Kapan, Data Sebelum, Data Sesudah).
-- **Exception Tracking**: Menggunakan **Sentry** untuk menangkap error keamanan di produksi secara real-time.
-- **Security Audit CLI**: Perintah `php artisan app:security-audit` memungkinkan pemindaian kesehatan sistem secara mandiri.
+- **Package**: Laravel Sanctum
+- **Token Style**: API Token (bukan cookie — aman untuk mobile/SPA)
+- **Revocable**: Token bisa dicabut kapan saja (`php artisan sanctum:prune-expired`)
+- **Login History**: Setiap login berhasil dicatat IP Address + User Agent device
 
 ---
 
-> [!CAUTION]
-> Jangan pernah membagikan `.env` file atau `APP_KEY` kepada siapa pun. Kehilangan kunci enkripsi berarti kehilangan seluruh data finansial yang telah terenkripsi selamanya.
+## 🕵️ 6. Audit Trail (CCTV Digital)
+
+Setiap aksi pada data finansial dicatat lengkap oleh `spatie/laravel-activitylog`:
+
+| Event | Yang Dicatat |
+|:------|:------------|
+| `CREATE` | Model baru + Siapa yang membuat + Timestamp |
+| `UPDATE` | Field yang berubah (sebelum vs sesudah) |
+| `DELETE` | Data yang dihapus (soft record) |
+
+**Model yang dimonitor**: `Transaction`, `Asset`, `Loan`, `Goal`
+
+**CLI Monitor**: Honeypot intercepts juga dicatat di activity log dengan tag `honeypot_intercept`.
+
+---
+
+## 🛡️ 7. Developer Security Gate (Pre-Commit)
+
+Setiap `git commit` harus melewati security checkpoint:
+
+```bash
+php artisan security:gate --min-score=90
+```
+
+- Skor < 90 → Commit **otomatis ditolak** (exit 1)
+- Skor ≥ 90 → Commit diizinkan lanjut
+- Terintegrasi ke Husky pre-commit hook
+
+---
+
+## 🔑 Environment Variables (Wajib Dijaga)
+
+```env
+APP_KEY=           # Master encryption key — RAHASIA MUTLAK
+SUPABASE_URL=      # Database connection
+SUPABASE_KEY=      # Supabase service key
+STORJ_ACCESS_KEY=  # Cloud storage access
+STORJ_SECRET_KEY=  # Cloud storage secret
+GEMINI_API_KEY=    # AI integration key
+```
+
+> [!WARNING]
+> `.env` wajib ada di `.gitignore`. Periksa dengan `git status` sebelum commit. Gunakan `php artisan security:gate` untuk memastikan tidak ada secret yang bocor.
+
+---
+
+## 🔭 Monitoring & Incident Response
+
+| Tool | Fungsi |
+|:-----|:-------|
+| **Sentry** | Real-time error tracking di produksi |
+| **Activity Log** | Audit trail lengkap semua perubahan data |
+| **Honeypot Radar** | `php artisan honeypot:audit` — peta serangan bot |
+| **Security Gate** | Pre-commit validation — skor sistem |
+| **Cloud Status** | `php artisan cloud:status` — health monitoring |

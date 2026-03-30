@@ -34,7 +34,7 @@ return new class extends Migration
             // For a shared DB role like Laravel, RLS is often used to ensure data integrity.
         }
         
-        $this->command->info("Row Level Security enabled on " . count($tables) . " tables.");
+        // RLS enabled on all tables.
     }
 
     /**
