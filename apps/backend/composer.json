@@ -21,10 +21,10 @@
         "sentry/sentry-laravel": "^4.22",
         "spatie/laravel-activitylog": "^5.0",
         "spatie/laravel-honeypot": "^4.7",
-        "symfony/google-mailer": "^8.0",
-        "symfony/http-client": "^8.0",
-        "symfony/mailer": "^8.0",
-        "symfony/mime": "^8.0"
+        "symfony/google-mailer": "^7.2",
+        "symfony/http-client": "^7.2",
+        "symfony/mailer": "^7.2",
+        "symfony/mime": "^7.2"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "*",
