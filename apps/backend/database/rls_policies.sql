@@ -13,35 +13,35 @@ ALTER TABLE "wealth_histories" ENABLE ROW LEVEL SECURITY;
 -- 2. Create Policies for 'users' table
 -- User hanya bisa melihat datanya sendiri
 CREATE POLICY "Users can only view their own profile" ON "users"
-FOR SELECT USING (auth.uid() = id);
+FOR SELECT USING ((auth.uid())::text = (id)::text);
 
 -- 3. Create Policies for 'transactions' table
 CREATE POLICY "Users can manage their own transactions" ON "transactions"
-FOR ALL USING (auth.uid() = user_id);
+FOR ALL USING ((auth.uid())::text = (user_id)::text);
 
 -- 4. Create Policies for 'assets' table
 CREATE POLICY "Users can manage their own assets" ON "assets"
-FOR ALL USING (auth.uid() = user_id);
+FOR ALL USING ((auth.uid())::text = (user_id)::text);
 
 -- 5. Create Policies for 'loans' table
 CREATE POLICY "Users can manage their own loans" ON "loans"
-FOR ALL USING (auth.uid() = user_id);
+FOR ALL USING ((auth.uid())::text = (user_id)::text);
 
 -- 6. Create Policies for 'goals' table
 CREATE POLICY "Users can manage their own goals" ON "goals"
-FOR ALL USING (auth.uid() = user_id);
+FOR ALL USING ((auth.uid())::text = (user_id)::text);
 
 -- 7. Create Policies for 'holidays' table
 CREATE POLICY "Users can manage their own holidays" ON "holidays"
-FOR ALL USING (auth.uid() = user_id);
+FOR ALL USING ((auth.uid())::text = (user_id)::text);
 
 -- 8. Create Policies for 'wealth_histories' table
 CREATE POLICY "Users can view their own wealth history" ON "wealth_histories"
-FOR SELECT USING (auth.uid() = user_id);
+FOR SELECT USING ((auth.uid())::text = (user_id)::text);
 
 -- 9. Create Policies for 'budgets' table
 CREATE POLICY "Users can manage their own budgets" ON "budgets"
-FOR ALL USING (auth.uid() = user_id);
+FOR ALL USING ((auth.uid())::text = (user_id)::text);
 
 -- 💡 CATATAN: 
 -- Kebijakan di atas menggunakan `auth.uid()`. 

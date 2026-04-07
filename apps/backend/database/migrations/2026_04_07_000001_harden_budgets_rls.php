@@ -23,7 +23,7 @@ return new class extends Migration
             CREATE POLICY "Users can manage their own budgets"
             ON budgets
             FOR ALL
-            USING ((SELECT auth.uid())::text = user_id::text);
+            USING ((auth.uid())::text = (user_id)::text);
         ');
     }
 
