@@ -1,0 +1,50 @@
+{
+  "name": "dompet-kita-monorepo",
+  "private": true,
+  "version": "6.3.0",
+  "description": "Dompet Kita: Sentient Core v6.3 | Elite Guard (100/100) | Phase 6 Singularity",
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @dompet-kita/frontend",
+    "start": "npx concurrently \"npm run dev -w @dompet-kita/frontend\" \"php -S localhost:8000 -t apps/backend/public\"",
+    "backend": "php -S localhost:8000 -t apps/backend/public",
+    "frontend-install": "npm install -w @dompet-kita/frontend",
+    "backend-install": "composer install --working-dir=apps/backend",
+    "install-all": "npm run frontend-install && npm run backend-install",
+    "setup": "npm run install-all && php apps/backend/artisan key:generate && php apps/backend/artisan migrate",
+    "migrate": "php apps/backend/artisan migrate",
+    "security-gate": "php apps/backend/artisan security:gate --min-score=100",
+    "test:e2e": "npx playwright test",
+    "test:e2e-ui": "npx playwright test --ui",
+    "supabase": "supabase",
+    "uplink": "infra\\bin\\uplink",
+    "rclone": "infra\\bin\\rclone --config infra\\config\\rclone.conf",
+    "prepare": "node -e \"if(process.env.NODE_ENV !== 'production' && require('fs').existsSync('.git')){require('child_process').execSync('husky install')}\" || exit 0"
+  },
+  "lint-staged": {
+    "frontend/src/**/*.{ts,tsx,css}": [
+      "prettier --write"
+    ],
+    "backend/app/**/*.php": [
+      "php backend/artisan maintenance:verify"
+    ]
+  },
+  "keywords": [],
+  "author": "Antigravity & Alvin",
+  "license": "ISC",
+  "dependencies": {
+    "pg": "^8.20.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "supabase": "^2.84.5"
+  }
+}

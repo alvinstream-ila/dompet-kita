@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Actions\Finance\Asset;
+
+use App\Actions\BaseAction;
+use App\Actions\Finance\Wealth\UpdateWealthSnapshotAction;
+use App\Models\Asset;
+use App\Models\User;
+
+class CreateAssetAction extends BaseAction
+{
+    public function __construct(
+        protected UpdateWealthSnapshotAction $updateWealthSnapshotAction
+    ) {}
+
+    public function execute(User $user, array $data): Asset
+    {
+        $data['user_id'] = $user->id;
+        $asset = Asset::create($data);
+
+        $this->updateWealthSnapshotAction->execute($user);
+
+        return $asset;
+    }
+}

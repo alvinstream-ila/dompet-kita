@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Actions\Finance\Transaction;
+
+use App\Actions\BaseAction;
+use App\Enums\TransactionType;
+use App\Models\Transaction;
+use App\Services\BudgetService;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+
+class GetTransactionSummaryAction extends BaseAction
+{
+    public function __construct(protected BudgetService $budgetService) {}
+
+    public function execute(int $userId, ?int $month, ?int $year, int $budgetCycleStart): array
+    {
+        $cacheKey = "transaction_summary_{$userId}_".($month ?? 'all').'_'.($year ?? 'all')."_{$budgetCycleStart}";
+
+        return Cache::remember($cacheKey, 3600, function () use ($userId, $month, $year, $budgetCycleStart) {
+            $dates = $this->budgetService->getBudgetCycleDates($month, $year, $budgetCycleStart);
+            $startDate = $dates['start'];
+            $endDate = $dates['end'];
+
+            $summary = Transaction::where('user_id', $userId)
+                ->whereBetween('date', [$startDate, $endDate])
+                ->select('type', DB::raw('SUM(amount) as total'))
+                ->groupBy('type')
+                ->get();
+
+            $income = $summary->firstWhere('type', TransactionType::INCOME)?->total
+                      ?? $summary->firstWhere('type', TransactionType::INCOME->value)?->total ?? 0;
+            $expense = $summary->firstWhere('type', TransactionType::EXPENSE)?->total
+                       ?? $summary->firstWhere('type', TransactionType::EXPENSE->value)?->total ?? 0;
+
+            $recentTransactions = Transaction::where('user_id', $userId)
+                ->whereBetween('date', [$startDate, $endDate])
+                ->orderBy('date', 'desc')
+                ->limit(10)
+                ->get();
+
+            return [
+                'income' => (float) $income,
+                'expense' => (float) $expense,
+                'balance' => (float) ($income - $expense),
+                'recentTransactions' => $recentTransactions,
+                'period' => [
+                    'start' => $startDate->toIso8601String(),
+                    'end' => $endDate->toIso8601String(),
+                ],
+            ];
+        });
+    }
+}

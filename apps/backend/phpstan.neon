@@ -1,0 +1,21 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+
+    paths:
+        - app/
+        - database/
+        - tests/
+
+    # Level 7 for robust hardening without excessive boilerplate noise
+    level: 7
+
+    ignoreErrors:
+        # Resolving legacy ignore rules
+        # - '#PHPDoc tag @var#'
+
+    excludePaths:
+        - ./*/*/FileToBeExcluded.php
+
+    # checkMissingIterableValueType: false

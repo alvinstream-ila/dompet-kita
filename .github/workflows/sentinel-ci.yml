@@ -1,0 +1,89 @@
+name: Dompet Kita Sentinel CI (v6.3)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  audit-and-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: dompet_kita_test
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Setup PHP
+        uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2
+        with:
+          php-version: '8.4'
+          extensions: dom, curl, libxml, mbstring, zip, pdo, bcmath, json, pgsql, pdo_pgsql
+          coverage: none
+          
+      - name: Install Monorepo Dependencies (Sentinel-Shield Mode)
+        # S6505 Hardening: Disallowing shell scripts during installation
+        run: npm ci --ignore-scripts
+        
+      - name: Install Backend Dependencies (Vulnerability Shield)
+        # PHP Hardening: Disallowing auto-scripts during composer install
+        working-directory: ./apps/backend
+        run: |
+          composer install --prefer-dist --no-progress --no-interaction --no-scripts
+          cp .env.example .env
+          php artisan key:generate
+        
+      - name: Setup Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Backend Logic Tests
+        working-directory: ./apps/backend
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: dompet_kita_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: password
+        run: php artisan test --env=testing
+        
+      - name: Run Full-Spectrum E2E Sentinel
+        run: npm run test:e2e
+        env:
+          DATABASE_URL: postgres://postgres:password@localhost:5432/dompet_kita_test
+
+      - name: Run Sentinel Security Gate
+        working-directory: ./apps/backend
+        run: php artisan security:gate --min-score=90
+        
+      - name: Build Production Bundle
+        working-directory: ./apps/frontend
+        run: npm run build
+
+      - name: Upload Test Results Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdateAssetRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     */
+    public function rules(): array
+    {
+        return [
+            'name' => ['sometimes', 'string', 'max:100'],
+            'type' => ['sometimes', 'string', 'max:50'],
+            'value' => ['sometimes', 'numeric', 'min:0', 'max:1000000000000'],
+        ];
+    }
+}

@@ -1,0 +1,156 @@
+<?php
+
+namespace App\Services\Cfo;
+
+use App\Models\Transaction;
+use App\Models\TransactionInsight;
+use App\Models\User;
+use App\Services\AI\AiProviderManager;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+
+class QuantumInsightEngine
+{
+    protected AiProviderManager $aiManager;
+
+    public function __construct(AiProviderManager $aiManager)
+    {
+        $this->aiManager = $aiManager;
+    }
+
+    /**
+     * Generate fresh insights for a specific user.
+     */
+    public function generateInsights(User $user): void
+    {
+        Log::info("Quantum Insight Engine: Started analysis for User {$user->id}");
+
+        // 1. Core Data Gathering (Last 30 Days)
+        $endDate = Carbon::now();
+        $startDate = Carbon::now()->subDays(30);
+
+        $transactions = Transaction::withoutGlobalScopes()
+            ->where('user_id', $user->id)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->orderBy('date', 'desc')
+            ->get();
+
+        if ($transactions->isEmpty()) {
+            Log::info("Quantum Insight Engine: No transactions found for User {$user->id}. Skipping.");
+
+            return;
+        }
+
+        // 2. Prepare Data for AI Analysis
+        $summary = [
+            'total_expense' => $transactions->where('type', 'expense')->sum('amount'),
+            'total_income' => $transactions->where('type', 'income')->sum('amount'),
+            'category_breakdown' => $transactions->where('type', 'expense')
+                ->groupBy('category')
+                ->map(fn ($group) => $group->sum('amount')),
+            'transaction_count' => $transactions->count(),
+            'recent_history' => $transactions->take(15)->map(fn ($t) => [
+                'date' => $t->date,
+                'desc' => $t->description,
+                'amount' => $t->amount,
+                'cat' => $t->category,
+            ]),
+        ];
+
+        // 3. AI Cognitive Reasoning Prompt
+        $prompt = $this->buildAnalysisPrompt($user->name, $summary);
+
+        try {
+            $aiResponse = $this->aiManager->generateText($prompt);
+            Log::debug('Quantum Insight Engine: Raw AI Response: '.$aiResponse);
+
+            $cleanJson = $this->cleanJsonResponse($aiResponse);
+            $insights = json_decode($cleanJson, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                Log::warning('Quantum Insight Engine: JSON Decode Failed: '.json_last_error_msg());
+
+                return;
+            }
+
+            if (isset($insights['findings'])) {
+                Log::info('Quantum Insight Engine: Found '.count($insights['findings']).' findings.');
+                foreach ($insights['findings'] as $finding) {
+                    $this->persistInsight($user->id, $finding);
+                }
+            } else {
+                Log::info('Quantum Insight Engine: No findings key in AI response.');
+            }
+        } catch (\Exception $e) {
+            Log::error('Quantum Insight Engine Failed: '.$e->getMessage());
+        }
+    }
+
+    protected function buildAnalysisPrompt(string $userName, array $summary): string
+    {
+        $jsonSummary = json_encode($summary);
+
+        return "You are the CFO AI Sentinel for Dompet Kita. Analyze this 30-day financial summary for {$userName}:
+        
+        DATA:
+        {$jsonSummary}
+        
+        TASK:
+        1. Hunt for 'Financial Leakages' (micro-spending like small recurring expenses, overspending in non-essential categories).
+        2. Identify 'Optimization Opportunities' (how to save Rp 100k - Rp 500k based on patterns).
+        3. Spot 'Positive Trends' (achievements in saving or income growth).
+        
+        OUTPUT FORMAT: Strict JSON only.
+        {
+          \"findings\": [
+            {
+              \"type\": \"leak|optimization|trend|achievement\",
+              \"title\": \"Short catchy title\",
+              \"content\": \"Detailed SENTIENT explanation in Indonesian. Mention specific Rp amounts.\",
+              \"impact_value\": 50000, 
+              \"action_url\": \"/transactions\"
+            }
+          ]
+        }
+        
+        Note: Speak in a professional yet loving tone (sentient persona).";
+    }
+
+    protected function persistInsight(string $userId, array $finding): void
+    {
+        // Avoid duplicate active insights with same title in last 7 days
+        $exists = TransactionInsight::withoutGlobalScopes()
+            ->where('user_id', $userId)
+            ->where('title', $finding['title'])
+            ->where('created_at', '>=', now()->subDays(7))
+            ->exists();
+
+        if (! $exists) {
+            TransactionInsight::create([
+                'user_id' => $userId,
+                'type' => $finding['type'] ?? 'trend',
+                'title' => $finding['title'],
+                'content' => $finding['content'],
+                'impact_value' => $finding['impact_value'] ?? 0,
+                'status' => 'new',
+                'action_url' => $finding['action_url'] ?? null,
+                'metadata' => $finding,
+            ]);
+        }
+    }
+
+    protected function cleanJsonResponse(string $response): string
+    {
+        // Try to extract content between ```json and ```
+        if (preg_match('/```json\s*(.*?)\s*```/s', $response, $matches)) {
+            return trim($matches[1]);
+        }
+
+        // Try to extract content between { and }
+        if (preg_match('/({.*})/s', $response, $matches)) {
+            return trim($matches[1]);
+        }
+
+        return trim($response);
+    }
+}

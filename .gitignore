@@ -1,0 +1,71 @@
+# Dependencies
+**/node_modules/
+**/vendor/
+
+# Build & Output
+**/dist/
+**/dist-ssr/
+**/build/
+**/public/build/
+**/public/hot/
+**/public/storage/
+**/.next/
+**/.vercel/
+**/.turbo/
+stats.html
+
+# Environment (CRITICAL)
+.env
+.env.*
+!.env.example
+*.local
+frontend/.env.local
+backend/.env
+backend/.env.*
+mcp-server/.env
+
+# Editor & IDE
+.cursor/
+.vscode/
+.idea/
+*.suo
+*.sln
+
+# OS Junk
+.DS_Store
+Thumbs.db
+Desktop.ini
+**/infra/bin/
+**/playwright-report/
+**/test-results/
+
+# Logs
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+
+# AI Agents & IDE Metadata
+.agent/
+.agents/
+.claude/
+.continue/
+.vercel
+.env*.local
+**/.turbo
+**/out
+
+# Project Specific Workspace & Logs
+Dompet kita.code-workspace
+backend/production_logs.txt
+
+# Automated Testing (Testsprite)
+testsprite_tests/
+backend/testsprite_tests/
+
+# Infrastructure & Backups
+infra/config/rclone.conf
+infra/scripts/*.local.ps1
+
+# E2E Testing Output
+playwright-report/
+test-results/

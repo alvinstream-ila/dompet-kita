@@ -1,0 +1,32 @@
+# 🧱 Dompet Kita - Prettier Ignore List
+
+# Dependencies
+node_modules
+vendor
+dist
+build
+.next
+
+# Project Specific
+storage
+bootstrap/cache
+public/build
+public/storage
+
+# AI & Internal
+.antigravity
+.gemini
+.brain
+.brain_dump
+.vscode
+.idea
+
+# Media & Binary
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.pdf
+*.zip
+*.ico

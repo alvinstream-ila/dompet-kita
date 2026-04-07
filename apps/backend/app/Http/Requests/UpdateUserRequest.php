@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class UpdateUserRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     */
+    public function rules(): array
+    {
+        $userId = $this->user()->id;
+
+        return [
+            'name' => ['sometimes', 'string', 'max:255'],
+            'full_name' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'avatar_url' => ['sometimes', 'nullable', 'string', 'max:2048'],
+            'partner_name' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'anniversary_date' => ['sometimes', 'nullable', 'date'],
+            'timezone' => ['sometimes', 'string', 'max:100'],
+            'email' => [
+                'sometimes',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users')->ignore($userId),
+            ],
+            'budget_cycle_start' => ['sometimes', 'integer', 'min:1', 'max:31'],
+            'is_privacy_mode' => ['sometimes', 'boolean'],
+            'is_eco_mode' => ['sometimes', 'boolean'],
+            'currency_format' => ['sometimes', 'string', 'max:10'],
+            'exchange_rate' => ['sometimes', 'numeric', 'min:0'],
+            'monthly_budget_limit' => ['sometimes', 'numeric', 'min:0'],
+            'two_factor_enabled' => ['sometimes', 'boolean'],
+        ];
+    }
+}

@@ -1,0 +1,40 @@
+# Changelog - Dompet Kita
+
+All notable changes to this project will be documented in this file.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [7.1.18] - 2026-04-07 (Sovereign Singularity & COA Protocol)
+
+### Added
+- **Council of Agents (COA) Protocol**: Officially integrated the **Prophet**, **Crafter**, **Guardian**, and **Prosecutor** roles into the core development engine.
+- **Detailed Folder Tree**: Comprehensive source mapping in `README.md` for enhanced modular maintainability.
+- **Sentry v10 Instrumentation**: Modernized error tracking via `instrumentation.ts` for both Node and Edge runtimes.
+- **Digital Inheritance Pillar**: Formalized the **Legacy Audit Hub** as a core domain in the Master Core.
+- **Railway Mastery**: Explicitly documented **Railway** as the primary backend production hub.
+
+### Changed
+- **Tech Stack Harmonization**: Updated core documentation to reflect **Next.js 15 (App Router)** and **Laravel 11 (PHP 8.4)** as the stable baseline.
+- **Modernized .cursorrules**: Realigned frontend development rules with the latest **Tailwind CSS 4 (OKLCH)** and **React 19** standards.
+- **Master Core Elevation**: Reflowed `DOMPET_KITA_CORE.md` from v6.3 to **v7.1.18 Sovereignty**.
+
+### Security
+- **The Fortress Hardening**: Enhanced **PII masking** and **Supabase RLS** rules documentation in the Master Core.
+
+## [6.3.0] - 2026-04-01 (Sentient Core & Transcendence)
+
+### Added
+- **Stochastic Intelligence**: Monte Carlo engine for financial simulations (P10/P50/P90).
+- **VibeGuard Sentinel**: Automated glassmorphism and modern color space validation for UI components.
+- **Deep Security Scan**: Snyk integration for autonomous backend code patching.
+- **Session Purifier**: Git integrated end-of-session auto cleanup workflow.
+- **Cloud Orchestrator**: Unification of Railway, Supabase, and Storj backups via `cloud:sync`.
+- **E2E Testing Base**: Playwright test suite for unified frontend and backend integration validation.
+- **Docker Compose**: Pre-configured setup for local PostgreSQL, Redis, and Minio dependencies.
+- **Github Actions**: Automated complete CI/CD pipeline guarding production deployments.
+
+### Changed
+- Standardized `package.json` as an NPM Workspace to govern frontend and backend concurrently.
+
+### Security
+- Automated tracking and encryptions of sensitive assets within the `WealthHistory` modules.

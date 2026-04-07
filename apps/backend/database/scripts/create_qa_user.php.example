@@ -1,0 +1,47 @@
+<?php
+
+use App\Models\User;
+use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Support\Facades\Hash;
+
+require __DIR__.'/vendor/autoload.php';
+$app = require_once __DIR__.'/bootstrap/app.php';
+$app->make(Kernel::class)->bootstrap();
+
+$user = User::where('email', 'alvin@test.com')->first() ?: new User(['email' => 'alvin@test.com']);
+$user->fill([
+    'name' => 'QA Sentinel',
+    'password' => Hash::make('password123'),
+    'email_verified_at' => now(),
+]);
+$user->save();
+
+// Create multiple snapshots for E2E count verification
+$months = [
+    ['m' => now()->format('m'), 'y' => now()->format('Y'), 'val' => 500000000],
+    ['m' => now()->subMonth()->format('m'), 'y' => now()->subMonth()->format('Y'), 'val' => 480000000],
+    ['m' => now()->subMonths(2)->format('m'), 'y' => now()->subMonths(2)->format('Y'), 'val' => 450000000],
+];
+
+foreach ($months as $m) {
+    $user->wealthHistories()->updateOrCreate(
+        ['month' => $m['m'], 'year' => $m['y']],
+        ['total_value' => $m['val'], 'created_at' => now(), 'updated_at' => now()]
+    );
+}
+
+// Ensure at least one Asset for SystemStatus reporting
+$user->assets()->updateOrCreate(
+    ['name' => 'Tabungan Utama'],
+    [
+        'type' => 'Cash',
+        'value' => 500000000,
+        'quantity' => 1,
+        'unit' => 'Account',
+        'is_market_synced' => false,
+    ]
+);
+
+echo 'SUCCESS: User '.$user->email.' created/updated with ID: '.$user->id."\n";
+echo 'PASSWORD CHECK (password123): '.(Hash::check('password123', $user->password) ? 'OK' : 'FAIL')."\n";
+echo "SUCCESS: 3 Wealth Snapshots created for baseline audit.\n";
