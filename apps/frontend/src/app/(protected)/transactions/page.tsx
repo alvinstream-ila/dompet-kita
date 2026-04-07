@@ -9,6 +9,8 @@ import { serverApi } from '@/lib/server-api';
  * Transactions Page (RSC)
  * Prefetches the first page of transactions for instant loading.
  */
+export const dynamic = 'force-dynamic';
+
 export default async function TransactionsPage() {
   const queryClient = getQueryClient();
 

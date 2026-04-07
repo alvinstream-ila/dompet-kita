@@ -23,7 +23,11 @@
     "supabase": "supabase",
     "uplink": "infra\\bin\\uplink",
     "rclone": "infra\\bin\\rclone --config infra\\config\\rclone.conf",
-    "prepare": "node -e \"if(process.env.NODE_ENV !== 'production' && require('fs').existsSync('.git')){require('child_process').execSync('husky install')}\" || exit 0"
+    "prepare": "node -e \"if(process.env.NODE_ENV !== 'production' && !process.env.CI && !process.env.VERCEL && require('fs').existsSync('.git')){require('child_process').execSync('husky install')}\" || exit 0"
+  },
+  "overrides": {
+    "glob": "^9.0.0",
+    "rimraf": "^4.0.0"
   },
   "lint-staged": {
     "frontend/src/**/*.{ts,tsx,css}": [

@@ -11,6 +11,8 @@ import { getUserProfileAction } from '@/features/auth/actions/user';
  * This is now a Server Component that prefetches data
  * to ensure the page has information immediately on load.
  */
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const queryClient = getQueryClient();
 
