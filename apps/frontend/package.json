@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "design:audit": "echo '🔍 Running AI Design Audit...' && node scripts/design-audit.js",
     "seo:check": "echo '⚡ Checking SEO Vitality...' && node scripts/seo-check.js",
     "secure:assets": "echo '🔐 Running Secure Asset Audit...' && node scripts/secure-assets.js",
