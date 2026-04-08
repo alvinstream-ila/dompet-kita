@@ -40,7 +40,7 @@ export const AiGuardianCard: React.FC = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className={cn(
-                "relative overflow-hidden rounded-[40px] p-6 shadow-2xl transition-all md:p-8",
+                "relative overflow-hidden rounded-[40px] p-6 shadow-2xl transition-all md:p-8 transform-gpu",
                 statusConfig.bg,
                 statusConfig.border,
                 isCrisis && "border-2"
@@ -50,7 +50,7 @@ export const AiGuardianCard: React.FC = () => {
             <div className="absolute inset-0 opacity-10 pointer-events-none">
                 <div className="grid grid-cols-6 gap-4 p-4">
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => (
-                        <div key={`bg-dot-${n}`} className="h-8 w-8 rounded-full bg-blue-400 blur-xl" />
+                        <div key={`bg-dot-${n}`} className="h-8 w-8 rounded-full bg-blue-400 blur-xl transform-gpu" />
                     ))}
                 </div>
             </div>

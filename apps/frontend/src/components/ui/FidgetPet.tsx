@@ -116,7 +116,7 @@ export const FidgetPet: React.FC = () => {
               initial={{ opacity: 0, scale: 0.8, y: 20, x: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 20, x: 20 }}
-              className="mr-2 mb-2 flex w-[320px] flex-col overflow-hidden rounded-[32px] border border-white/20 bg-white/80 shadow-2xl backdrop-blur-xl md:w-[380px]"
+              className="mr-2 mb-2 flex w-[320px] flex-col overflow-hidden rounded-[32px] border border-white/20 bg-white/80 shadow-2xl backdrop-blur-md md:w-[380px]"
             >
               {/* Header */}
               <div className={cn(
@@ -236,7 +236,8 @@ export const FidgetPet: React.FC = () => {
             }}
             className={cn(
               'relative flex h-18 w-18 items-center justify-center rounded-[28px] text-white shadow-[0_20px_50px_rgba(0,0,0,0.2)]',
-              'bg-linear-to-br ring-4 ring-white/30 backdrop-blur-sm',
+              'bg-linear-to-br ring-4 ring-white/30 backdrop-blur-sm transform-gpu',
+              'backface-visibility-hidden',
               getPetColor()
             )}
           >

@@ -42,12 +42,13 @@ return [
     'ai' => [
         'primary' => env('AI_PRIMARY_PROVIDER', 'groq'),
         'groq' => [
-            'api_key' => env('GROQ_API_KEY'),
+            'key' => env('GROQ_API_KEY'),
             'model' => env('GROQ_MODEL', 'llama-3.3-70b-versatile'),
         ],
         'openrouter' => [
-            'api_key' => env('OPENROUTER_API_KEY'),
-            'model' => env('OPENROUTER_MODEL', 'meta-llama/llama-3.3-70b-instruct:free'),
+            'key' => env('OPENROUTER_API_KEY'),
+            'model_text' => env('OPENROUTER_MODEL_TEXT', 'meta-llama/llama-3.3-70b-instruct:free'),
+            'model_vision' => env('OPENROUTER_MODEL_VISION', 'google/gemini-flash-1.5-exp:free'),
         ],
     ],
 

@@ -69,7 +69,7 @@ export const AIInsightCard: React.FC = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="group relative h-full overflow-hidden rounded-[40px] border-none bg-white p-6 shadow-xl transition-all hover:-translate-y-1 md:p-8"
+      className="group relative h-full overflow-hidden rounded-[40px] border-none bg-white p-6 shadow-xl transition-all hover:-translate-y-1 md:p-8 transform-gpu"
     >
       {/* Decorative gradient background */}
       <div className="absolute inset-0 bg-linear-to-br from-pink-500/5 via-violet-500/5 to-transparent opacity-100" />

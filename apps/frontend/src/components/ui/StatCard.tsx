@@ -77,7 +77,7 @@ export const StatCard = React.memo(
     return (
       <Card
         className={cn(
-          'group relative cursor-pointer overflow-hidden rounded-[32px] border-none bg-white shadow-[0_15px_40px_-15px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-1 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.12)] active:scale-[0.95]',
+          'group relative cursor-pointer overflow-hidden rounded-[32px] border-none bg-white shadow-[0_15px_40px_-15px_rgba(0,0,0,0.08)] transition-[transform,shadow,scale] duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.12)] active:scale-[0.95]',
           colors.shadow,
           className
         )}

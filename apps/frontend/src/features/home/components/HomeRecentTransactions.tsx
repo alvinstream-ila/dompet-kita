@@ -94,7 +94,7 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
 }) => {
   return (
     <div className="mt-8 pb-12 md:mt-12 lg:col-span-12">
-      <Card className="glass-premium group relative overflow-hidden rounded-[32px] border border-none border-white/60 bg-white p-6 shadow-2xl sm:p-8 md:rounded-[64px] md:p-12">
+      <Card className="glass-premium group relative overflow-hidden rounded-[32px] border border-none border-white/60 bg-white p-6 shadow-2xl sm:p-8 md:rounded-[64px] md:p-12 backdrop-blur-lg">
         {/* Decorative background gradients */}
         <div className="absolute top-0 right-0 -z-10 h-96 w-96 rounded-full bg-blue-400/10 blur-[120px] transition-transform duration-1000 group-hover:scale-125" />
         <div className="absolute bottom-0 left-0 -z-10 h-96 w-96 rounded-full bg-pink-400/10 blur-[120px] transition-transform duration-1000 group-hover:scale-125" />
@@ -157,7 +157,7 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
                 }}
                 onClick={() => onNavigate('/transactions')}
                 className={cn(
-                  'group hover:shadow-3xl relative flex cursor-pointer items-center gap-5 overflow-hidden rounded-[40px] border border-white/80 bg-white/90 p-6 shadow-xl shadow-slate-100/50 backdrop-blur-xl transition-all hover:shadow-slate-200/60',
+                  'group hover:shadow-3xl relative flex cursor-pointer items-center gap-5 overflow-hidden rounded-[40px] border border-white/80 bg-white/90 p-6 shadow-xl shadow-slate-100/50 backdrop-blur-md transition-all hover:shadow-slate-200/60 transform-gpu',
                   t.type === 'income'
                     ? 'hover:border-emerald-200/50'
                     : 'hover:border-pink-200/50'

@@ -2,6 +2,7 @@
 
 namespace App\Services\AI;
 
+use App\Exceptions\AiServiceException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -46,7 +47,7 @@ class AiProviderManager
                 return $result['text'];
             } catch (\Exception $e) {
                 $errors[] = $provider->getName().': '.$e->getMessage();
-                $this->onFailure($provider, $e);
+                $this->onFailure($provider);
 
                 if ($this->shouldFailover($e)) {
                     continue;
@@ -56,7 +57,7 @@ class AiProviderManager
             }
         }
 
-        throw new \Exception('Semua asisten AI sedang sibuk Sayang. Coba lagi sebentar lagi ya! ❤️ ['.implode(' | ', $errors).']');
+        throw new AiServiceException('Semua asisten AI sedang sibuk Sayang. Coba lagi sebentar lagi ya! ❤️ ['.implode(' | ', $errors).']');
     }
 
     /**
@@ -82,7 +83,7 @@ class AiProviderManager
                 return $result['text'];
             } catch (\Exception $e) {
                 $errors[] = $provider->getName().': '.$e->getMessage();
-                $this->onFailure($provider, $e);
+                $this->onFailure($provider);
 
                 if ($this->shouldFailover($e)) {
                     continue;
@@ -92,7 +93,7 @@ class AiProviderManager
             }
         }
 
-        throw new \Exception('Maaf Sayang, AI gagal baca struknya nih. Mungkin lagi capek. Coba lagi ya! ❤️ ['.implode(' | ', $errors).']');
+        throw new AiServiceException('Maaf Sayang, AI gagal baca struknya nih. Mungkin lagi capek. Coba lagi ya! ❤️ ['.implode(' | ', $errors).']');
     }
 
     /**
@@ -118,7 +119,7 @@ class AiProviderManager
                 return $result['text'];
             } catch (\Exception $e) {
                 $errors[] = $provider->getName().': '.$e->getMessage();
-                $this->onFailure($provider, $e);
+                $this->onFailure($provider);
 
                 if ($this->shouldFailover($e)) {
                     continue;
@@ -128,7 +129,7 @@ class AiProviderManager
             }
         }
 
-        throw new \Exception('Maaf Sayang, AI gagal memproses suaramu. Coba lagi ya! ❤️ ['.implode(' | ', $errors).']');
+        throw new AiServiceException('Maaf Sayang, AI gagal memproses suaramu. Coba lagi ya! ❤️ ['.implode(' | ', $errors).']');
     }
 
     /**
@@ -161,7 +162,7 @@ class AiProviderManager
         );
     }
 
-    protected function onFailure(AiProviderInterface $provider, \Exception $e): void
+    protected function onFailure(AiProviderInterface $provider): void
     {
         $key = 'ai_provider_errors_'.$provider->getName();
         $errors = (int) Cache::get($key, 0) + 1;
@@ -178,13 +179,14 @@ class AiProviderManager
         }
     }
 
-    /**
-     * Determine if we should failover to the next provider.
-     */
     protected function shouldFailover(\Exception $e): bool
     {
-        // Failover dynamically on ANY API error (including 404 model not found).
-        // The error threshold will naturally quarantine providers that consistently fail.
+        // Failover dynamically on ANY API error or network timeout.
+        // We log the specific error in the onFailure method.
+        $message = $e->getMessage();
+        
+        Log::warning("AI Failover Decision: Error '{$message}' triggered failover.");
+
         return true;
     }
 
@@ -196,5 +198,15 @@ class AiProviderManager
             Cache::forget("ai_provider_failures_{$name}");
         }
         Log::info('AI Provider Manager states have been force reset.');
+    }
+
+    /**
+     * Get the registered providers (primarily for diagnostics).
+     *
+     * @return AiProviderInterface[]
+     */
+    public function getProviders(): array
+    {
+        return $this->providers;
     }
 }
