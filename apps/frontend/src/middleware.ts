@@ -38,10 +38,10 @@ export function middleware(request: NextRequest) {
   // - CSP: Restrict resource loading to trusted domains
   const cspHeader = `
     default-src 'self';
-    connect-src 'self' http://localhost:8000 https://*.supabase.co https://*.sentry.io;
-    script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.sentry.io;
+    connect-src 'self' http://localhost:8000 https://dompet-kita-production.up.railway.app https://dompet-kita-official.up.railway.app https://*.supabase.co https://*.sentry.io;
+    script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://*.sentry.io;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    img-src 'self' blob: data: https://dompet-kita-production.up.railway.app https://*.supabase.co;
+    img-src 'self' blob: data: https://dompet-kita-production.up.railway.app https://dompet-kita-official.up.railway.app https://*.supabase.co;
     font-src 'self' https://fonts.gstatic.com;
     object-src 'none';
     base-uri 'self';
