@@ -18,10 +18,11 @@ class AiMaintenanceController extends Controller
                 'message' => 'AI Provider quarantine and failure states have been cleared in production cache.',
                 'timestamp' => now()->toDateTimeString(),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'status' => 'Error',
                 'message' => $e->getMessage(),
+                'trace' => substr($e->getTraceAsString(), 0, 500),
             ], 500);
         }
     }

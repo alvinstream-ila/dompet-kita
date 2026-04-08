@@ -36,14 +36,14 @@ class AiHealthController extends Controller
 
                 $results[$name] = [
                     'status' => 'Success',
-                    'response' => $response['text'],
+                    'response' => $response,
                     'duration' => $duration . 's',
-                    'usage' => $response['usage'],
                 ];
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $results[$name] = [
                     'status' => 'Failed',
                     'error' => $e->getMessage(),
+                    'trace' => substr($e->getTraceAsString(), 0, 500),
                 ];
             }
         }
