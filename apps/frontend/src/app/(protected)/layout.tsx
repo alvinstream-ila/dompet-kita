@@ -23,7 +23,10 @@ export default function ProtectedLayout({
 }>) {
   return (
     <NextProtectedRoute>
-      <div className="relative min-h-screen w-full bg-[#e5f1fa]">
+      <div 
+        className="relative min-h-screen w-full bg-[#e5f1fa] bg-fixed bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: 'url("/app-bg.svg")' }}
+      >
         {/* Top-level system alerts */}
         <VerificationBanner />
         
