@@ -30,11 +30,11 @@
     "rimraf": "^4.0.0"
   },
   "lint-staged": {
-    "frontend/src/**/*.{ts,tsx,css}": [
+    "apps/frontend/src/**/*.{ts,tsx,css}": [
       "prettier --write"
     ],
-    "backend/app/**/*.php": [
-      "php backend/artisan maintenance:verify"
+    "apps/backend/app/**/*.php": [
+      "php apps/backend/artisan maintenance:verify"
     ]
   },
   "keywords": [],

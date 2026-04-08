@@ -63,10 +63,10 @@ export const AIInsightCard: React.FC = () => {
         className="space-y-3"
       >
         <h5 className="text-sm leading-tight font-black tracking-tight text-pink-600 md:text-base">
-          {insight?.title}
+          {insight?.data?.title}
         </h5>
         <p className="border-l-4 border-pink-100 py-1 pl-4 text-[14px] leading-relaxed font-medium text-slate-600 italic md:text-[16px]">
-          &quot;{insight?.insight}&quot;
+          &quot;{insight?.data?.insight}&quot;
         </p>
       </motion.div>
     );

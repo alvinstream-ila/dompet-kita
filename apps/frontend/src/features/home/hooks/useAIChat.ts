@@ -4,6 +4,7 @@ import axios from '@/lib/axios';
 interface ChatResponse {
   success: boolean;
   message: string;
+  data: string;
 }
 
 export const useAIChat = () => {

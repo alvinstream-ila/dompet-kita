@@ -2,8 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/axios';
 
 export interface InsightData {
-  title: string;
-  insight: string;
+  success: boolean;
+  message: string;
+  data: {
+    title: string;
+    insight: string;
+  };
 }
 
 export function useAIInsights() {

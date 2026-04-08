@@ -23,7 +23,7 @@ export const AiGuardianCard: React.FC = () => {
         );
     }
 
-    const { prediction, rebalance } = data || {};
+    const { prediction, rebalance } = data?.data || {};
     const status = prediction?.status || 'safe';
 
     const statusConfig = {

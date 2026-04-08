@@ -154,10 +154,10 @@ class FinancialIntelligenceService
             $market = app(MarketService::class)->getRates();
 
             return [
-                'usd_idr' => (float) ($market['usd_idr'] ?? 16950.0),
+                'usd_idr' => (float) ($market['currency_rates']['IDR'] ?? 16950.0),
                 'gold_gram' => (float) ($market['gold_antam_gram'] ?? 2525000.0),
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'usd_idr' => 16950.0,
                 'gold_gram' => 2525000.0,

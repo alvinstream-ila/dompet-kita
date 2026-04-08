@@ -62,7 +62,7 @@ class AIController extends Controller
                 'message' => $result['message'] ?? 'AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️',
             ], 'Struk berhasil diproses! ✨');
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('AI_RECEIPT_SCAN_ERROR: '.$e->getMessage());
 
             return $this->error('Gagal memproses struk: '.$e->getMessage(), 500);
@@ -111,7 +111,7 @@ class AIController extends Controller
                 'insight' => $data['insight'] ?? 'Something went wrong with AI response.',
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('AI_DASHBOARD_INSIGHT_ERROR: '.$e->getMessage());
 
             return $this->success([
@@ -132,7 +132,7 @@ class AIController extends Controller
             $response = $this->processChatAction->execute($request->user(), $request->message);
 
             return $this->success($response, 'Asisten AI menjawab pesanmu! 💬');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('AI_CHAT_GENIUS_ERROR: '.$e->getMessage());
 
             return $this->error('Maaf sayang, asisten lagi istirahat bentar ya.. 🙏❤️', 500);
@@ -152,7 +152,7 @@ class AIController extends Controller
                 'prediction' => $prediction,
                 'rebalance' => $rebalance,
             ], 'Guardian AI status updated.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('AI_GUARDIAN_CONTROLLER_ERROR: '.$e->getMessage());
 
             return $this->error('Gagal mengambil status Guardian.', 500);

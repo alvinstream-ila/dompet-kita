@@ -3,19 +3,21 @@ import api from '@/lib/axios';
 
 export interface GuardianData {
   success: boolean;
-  prediction: {
-    status: 'safe' | 'CAUTION' | 'WARNING' | 'CRITICAL';
-    days_remaining: number;
-    current_cash: number;
-    burn_rate: number;
-    message: string;
-  };
-  rebalance: Array<{
-    action: 'INVEST' | 'REPLENISH' | 'HOLD';
-    amount?: number;
-    reason: string;
-  }>;
   message: string;
+  data: {
+    prediction: {
+      status: 'safe' | 'CAUTION' | 'WARNING' | 'CRITICAL';
+      days_remaining: number;
+      current_cash: number;
+      burn_rate: number;
+      message: string;
+    };
+    rebalance: Array<{
+      action: 'INVEST' | 'REPLENISH' | 'HOLD';
+      amount?: number;
+      reason: string;
+    }>;
+  };
 }
 
 export function useAiGuardian() {

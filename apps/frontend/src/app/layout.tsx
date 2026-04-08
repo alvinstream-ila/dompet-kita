@@ -26,8 +26,8 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: [
-      { url: "/logo-utama.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/logo-utama.svg" },
     ],
     apple: "/logo-utama.svg",
   },

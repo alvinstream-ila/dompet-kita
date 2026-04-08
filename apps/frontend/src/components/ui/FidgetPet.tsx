@@ -73,7 +73,7 @@ export const FidgetPet: React.FC = () => {
 
     sendMessage(userMessage, {
       onSuccess: (data) => {
-        setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: data.message }]);
+        setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: data.data }]);
       },
       onError: () => {
         setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: 'Duh maaf ya sayang, aku lagi pusing dengerin angkanya. Coba lagi nanti ya! 🥺' }]);

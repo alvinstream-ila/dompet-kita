@@ -35,7 +35,7 @@ PROMPT;
 
         try {
             $jsonText = $this->manager->generateText($prompt);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('AI_INSIGHT_ERROR: '.$e->getMessage());
 
             return [
