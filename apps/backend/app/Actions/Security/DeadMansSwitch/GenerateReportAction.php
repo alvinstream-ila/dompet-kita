@@ -20,6 +20,8 @@ class GenerateReportAction extends BaseAction
 
     /**
      * Generate a comprehensive financial snapshot (Legacy Report).
+     *
+     * @return array<string, mixed>
      */
     public function execute(User $user): array
     {
@@ -48,7 +50,7 @@ class GenerateReportAction extends BaseAction
         ];
 
         $filename = 'legacy/report_'.$user->id.'_'.date('Y_m_d').'.json';
-        Storage::disk('local')->put($filename, json_encode($data, JSON_PRETTY_PRINT));
+        Storage::disk('local')->put($filename, json_encode($data, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
 
         Log::info("Legacy report generated for user {$user->id}");
 

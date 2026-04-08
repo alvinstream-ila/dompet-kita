@@ -14,7 +14,7 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
-export default [
+const config = [
   {
     ignores: ['dist', '.next', 'node_modules', 'next-env.d.ts'],
   },
@@ -42,3 +42,5 @@ export default [
     },
   },
 ];
+
+export default config;

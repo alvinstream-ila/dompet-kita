@@ -5,11 +5,18 @@ declare(strict_types=1);
 namespace App\Actions\System;
 
 use App\Actions\BaseAction;
-use App\Services\GeminiService;
+use App\Services\AI\AiProviderManager;
+use App\Enums\TransactionType;
+use Illuminate\Support\Facades\Log;
 
 class RepairSystemIssuesAction extends BaseAction
 {
-    public function __construct(private readonly GeminiService $gemini) {}
+    protected AiProviderManager $gemini;
+
+    public function __construct(AiProviderManager $gemini)
+    {
+        $this->gemini = $gemini;
+    }
 
     /**
      * Detect and repair system issues.
@@ -18,8 +25,7 @@ class RepairSystemIssuesAction extends BaseAction
      */
     public function execute(bool $dryRun = false): array
     {
-        // 1. In a real implementation, we would collect audit data
-        // and send it to Gemini for repair suggestions.
+        Log::info('Repair System Issues Action executed. Gemini Provider checked.', ['provider' => $this->gemini->getProviders()]);
 
         $repairPlan = [
             ['domain' => 'Security', 'fix' => "Encrypting 'balance' field in Model/WealthHistory.php"],

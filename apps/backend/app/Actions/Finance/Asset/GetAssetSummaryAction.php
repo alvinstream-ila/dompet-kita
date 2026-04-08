@@ -15,7 +15,7 @@ class GetAssetSummaryAction extends BaseAction
      * Get asset summary for a user.
      *
      * @return array{
-     *     assets: Collection,
+     *     assets: Collection<int, Asset>,
      *     total_wealth: float
      * }
      */
@@ -28,7 +28,7 @@ class GetAssetSummaryAction extends BaseAction
         }
 
         $assets = $query->get();
-        $totalWealth = (float) $assets->sum('value');
+        $totalWealth = $assets->sum(fn (Asset $asset) => (float) $asset->value);
 
         return [
             'assets' => $assets,

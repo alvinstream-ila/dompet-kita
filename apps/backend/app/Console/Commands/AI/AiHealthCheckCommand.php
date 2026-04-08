@@ -50,6 +50,9 @@ class AiHealthCheckCommand extends Command
         return 1;
     }
 
+    /**
+     * @param array{status: string, message: string} $status
+     */
     private function getStatusLine(array $status): string
     {
         $label = $status['status'] === 'safe' ? '<info>SAFE</info>' : '<error>'.strtoupper($status['status']).'</error>';

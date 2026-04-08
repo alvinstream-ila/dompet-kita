@@ -24,15 +24,17 @@ class SecurityDeepAudit extends Command
      */
     protected $description = 'Deep scan for dependency and infrastructure vulnerabilities (Snyk & Composer Audit)';
 
+    private const SEPARATOR = '========================================';
+
     /**
      * Execute the console command.
      */
     public function handle(PerformDeepSecurityAuditAction $action): int
     {
         try {
-            $this->info('========================================');
+            $this->info(self::SEPARATOR);
             $this->info('🛡️  SNYK SENTINEL - DEEP SECURITY SCAN (v6.3)');
-            $this->info('========================================');
+            $this->info(self::SEPARATOR);
 
             $result = $action->execute();
 
@@ -54,9 +56,9 @@ class SecurityDeepAudit extends Command
                 }
             }
 
-            $this->info("\n========================================");
+            $this->info("\n".self::SEPARATOR);
             $this->info('✨ SECURITY SENTINEL SYNCHRONIZED. SYSTEM HARDENED.');
-            $this->info('========================================');
+            $this->info(self::SEPARATOR);
 
             return 0;
         } catch (Exception $e) {
@@ -71,6 +73,9 @@ class SecurityDeepAudit extends Command
         $this->line("\n🔹 ".$text);
     }
 
+    /**
+     * @param array{success: bool, output: string} $result
+     */
     private function printScanResult(array $result): void
     {
         if ($result['success']) {

@@ -11,7 +11,7 @@ class TransactionTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_can_list_transactions()
+    public function test_user_can_list_transactions(): void
     {
         $user = User::factory()->create();
         Transaction::factory()->count(3)->create(['user_id' => $user->id]);
@@ -36,7 +36,7 @@ class TransactionTest extends TestCase
             ]);
     }
 
-    public function test_user_can_create_a_transaction()
+    public function test_user_can_create_a_transaction(): void
     {
         $user = User::factory()->create();
         $transactionData = [
@@ -61,7 +61,7 @@ class TransactionTest extends TestCase
         ]);
     }
 
-    public function test_user_can_update_their_own_transaction()
+    public function test_user_can_update_their_own_transaction(): void
     {
         $user = User::factory()->create();
         $transaction = Transaction::factory()->create(['user_id' => $user->id]);
@@ -77,7 +77,7 @@ class TransactionTest extends TestCase
             ->assertJsonPath('data.description', 'Updated Dinner');
     }
 
-    public function test_user_cannot_update_someone_else_transaction()
+    public function test_user_cannot_update_someone_else_transaction(): void
     {
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
@@ -92,7 +92,7 @@ class TransactionTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function test_user_can_delete_their_own_transaction()
+    public function test_user_can_delete_their_own_transaction(): void
     {
         $user = User::factory()->create();
         $transaction = Transaction::factory()->create(['user_id' => $user->id]);
@@ -104,7 +104,7 @@ class TransactionTest extends TestCase
         $this->assertDatabaseMissing('transactions', ['id' => $transaction->id]);
     }
 
-    public function test_user_can_see_transaction_summary()
+    public function test_user_can_see_transaction_summary(): void
     {
         $user = User::factory()->create();
 
@@ -134,7 +134,7 @@ class TransactionTest extends TestCase
             ->assertJsonPath('data.balance', 60000);
     }
 
-    public function test_user_can_list_transactions_with_month_and_year_filter()
+    public function test_user_can_list_transactions_with_month_and_year_filter(): void
     {
         $user = User::factory()->create();
 

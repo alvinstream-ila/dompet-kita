@@ -18,6 +18,8 @@ class StorageService
 
     /**
      * Get base64 data and mime type from request params.
+     *
+     * @return array{0: string, 1: string}
      */
     public function getFileDataFromRequest(Request $request): array
     {
@@ -88,11 +90,15 @@ class StorageService
         }
     }
 
+    /**
+     * @return array{0: string, 1: string}
+     */
     private function formatFileData(string $content, ?string $path, ?string $url): array
     {
         $base64Data = base64_encode($content);
         $reference = $path ?: $url;
-        $ext = strtolower(pathinfo(parse_url((string) $reference, PHP_URL_PATH), PATHINFO_EXTENSION));
+        $urlPath = parse_url((string) $reference, PHP_URL_PATH);
+        $ext = strtolower(pathinfo((string) $urlPath, PATHINFO_EXTENSION));
 
         $mimeType = match ($ext) {
             'png' => 'image/png',

@@ -65,7 +65,8 @@ class LoanManage extends Command
         }
 
         $action->record($user, [
-            'debtor' => $debtor,
+            'type' => 'debt', // Default type for this command
+            'contact_name' => $debtor,
             'amount' => (float) $amount,
         ]);
 
@@ -86,7 +87,7 @@ class LoanManage extends Command
 
         $this->info('### 🏦 Active Loans');
         foreach ($loans as $loan) {
-            $this->line("- [{$loan->id}] {$loan->debtor}: Rp ".number_format((float) $loan->amount, 0, ',', '.')." ({$loan->status})");
+            $this->line("- [{$loan->id}] {$loan->contact_name}: Rp ".number_format((float) $loan->amount, 0, ',', '.')." ({$loan->status})");
         }
 
         return 0;

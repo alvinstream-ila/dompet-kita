@@ -19,8 +19,9 @@ return new class extends Migration
             }
 
             // Final verify
-            $version = DB::selectOne('SELECT version()')?->version ?? '';
-            if (! str_contains(strtolower($version), 'postgres')) {
+            $result = (array) DB::selectOne('SELECT version()');
+            $version = $result['version'] ?? '';
+            if (! str_contains(strtolower((string) $version), 'postgres')) {
                 return;
             }
         } catch (Exception $e) {
@@ -44,7 +45,8 @@ return new class extends Migration
             DB::statement("ALTER TABLE \"$table\" FORCE ROW LEVEL SECURITY;");
 
             // 3. Drop existing if any and create strict Auth Policy (Only if auth.uid() exists - Supabase Standard)
-            $hasAuthFunc = DB::selectOne("SELECT EXISTS (SELECT 1 FROM pg_proc JOIN pg_namespace ON pg_proc.pronamespace = pg_namespace.oid WHERE proname = 'uid' AND nspname = 'auth') as exists")?->exists ?? false;
+            $authCheckArray = (array) DB::selectOne("SELECT EXISTS (SELECT 1 FROM pg_proc JOIN pg_namespace ON pg_proc.pronamespace = pg_namespace.oid WHERE proname = 'uid' AND nspname = 'auth') as exists");
+            $hasAuthFunc = $authCheckArray['exists'] ?? false;
 
             DB::statement("DROP POLICY IF EXISTS \"user_exclusive_access\" ON \"$table\";");
 

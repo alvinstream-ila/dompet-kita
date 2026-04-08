@@ -10,6 +10,9 @@ class Holiday extends Model
 {
     use HasUserScope;
 
+    /**
+     * @var list<string>
+     */
     protected $fillable = [
         'user_id',
         'destination',
@@ -38,6 +41,8 @@ class Holiday extends Model
 
     /**
      * Get the user that owns the holiday.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

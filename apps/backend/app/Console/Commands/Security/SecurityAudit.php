@@ -51,6 +51,9 @@ class SecurityAudit extends Command
         }
     }
 
+    /**
+     * @param array<string> $findings
+     */
     private function printSummary(int $score, array $findings): void
     {
         $this->newLine();

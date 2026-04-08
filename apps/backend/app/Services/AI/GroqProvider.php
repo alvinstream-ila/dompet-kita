@@ -41,6 +41,12 @@ class GroqProvider implements AiProviderInterface
 
     public function generateText(string $prompt): array
     {
+        $tracer = app(LangSmithTracer::class);
+        $runId = $tracer->createRun('Groq:generateText', [
+            'prompt' => $prompt,
+            'model' => $this->model,
+        ]);
+
         try {
             $response = Http::withToken($this->apiKey)
                 ->timeout(30)
@@ -56,7 +62,7 @@ class GroqProvider implements AiProviderInterface
                 throw new \Exception('Groq API Error ('.$response->status().'): '.$response->body());
             }
 
-            return [
+            $output = [
                 'text' => $response->json('choices.0.message.content') ?? '',
                 'usage' => [
                     'prompt_tokens' => $response->json('usage.prompt_tokens', 0),
@@ -64,8 +70,13 @@ class GroqProvider implements AiProviderInterface
                     'total_tokens' => $response->json('usage.total_tokens', 0),
                 ],
             ];
+
+            $tracer->updateRun($runId, $output);
+
+            return $output;
         } catch (\Exception $e) {
             Log::error('Groq generateText error: '.$e->getMessage());
+            $tracer->updateRun($runId, [], $e);
             throw $e;
         }
     }

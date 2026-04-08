@@ -34,7 +34,7 @@ class BackupDatabaseAction extends BaseAction
         $this->export($dbUrl, $tempPath);
 
         // 2. Encrypt
-        $encryptionKey = (string) env('BACKUP_PASSWORD', 'antigravity-secret-123');
+        $encryptionKey = (string) config('app.backup_password', 'antigravity-secret-123');
         $encryptedFilename = "{$filename}.enc";
         $encryptedPath = storage_path("app/{$encryptedFilename}");
         $this->encrypt($tempPath, $encryptedPath, $encryptionKey);
@@ -44,10 +44,10 @@ class BackupDatabaseAction extends BaseAction
 
         // 4. Cleanup
         if (file_exists($tempPath)) {
-            unlink($tempPath);
+            @unlink($tempPath);
         }
         if (file_exists($encryptedPath)) {
-            unlink($encryptedPath);
+            @unlink($encryptedPath);
         }
 
         return [
@@ -72,7 +72,7 @@ class BackupDatabaseAction extends BaseAction
         exec($command, $output, $returnVar);
 
         if ($returnVar !== 0) {
-            $this->sentinel->notify('BACKUP FAILED 🚨', 'Encryption failed for database backup.', 'critical');
+            $this->sentinel->notify('Encryption failed for database backup.', 'critical', ['source' => $source]);
             throw new Exception('Failed to encrypt backup file.');
         }
     }

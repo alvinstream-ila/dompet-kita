@@ -13,6 +13,9 @@ class UpdateAssetAction extends BaseAction
         protected UpdateWealthSnapshotAction $updateWealthSnapshotAction
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function execute(User $user, Asset $asset, array $data): Asset
     {
         $asset->update($data);

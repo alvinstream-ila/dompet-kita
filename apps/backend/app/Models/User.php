@@ -30,8 +30,14 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $currency_format
  * @property float $exchange_rate
  * @property float $monthly_budget_limit
- * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property int $legacy_threshold_months
+ * @property bool $is_legacy_triggered
+ * @property int|null $partner_id
+ * @property float|null $large_expense_threshold
+ * @property User|null $partner
+ * @property \Carbon\Carbon|null $last_active_at
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  *
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
@@ -116,6 +122,11 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /* Relationships */
 
+    /**
+     * Get the partner for the user.
+     *
+     * @return BelongsTo<User, $this>
+     */
     public function partner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'partner_id');
@@ -123,6 +134,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the assets for the user.
+     *
+     * @return HasMany<Asset, $this>
      */
     public function assets(): HasMany
     {
@@ -131,6 +144,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the transactions for the user.
+     *
+     * @return HasMany<Transaction, $this>
      */
     public function transactions(): HasMany
     {
@@ -139,6 +154,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the goals for the user.
+     *
+     * @return HasMany<Goal, $this>
      */
     public function goals(): HasMany
     {
@@ -147,6 +164,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the loans for the user.
+     *
+     * @return HasMany<Loan, $this>
      */
     public function loans(): HasMany
     {
@@ -155,6 +174,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the scheduled transactions for the user.
+     *
+     * @return HasMany<ScheduledTransaction, $this>
      */
     public function scheduledTransactions(): HasMany
     {
@@ -163,6 +184,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the chat history for the user.
+     *
+     * @return HasMany<ChatHistory, $this>
      */
     public function chatHistories(): HasMany
     {
@@ -171,6 +194,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the financial wisdoms for the user.
+     *
+     * @return HasMany<FinancialWisdom, $this>
      */
     public function financialWisdoms(): HasMany
     {
@@ -179,6 +204,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the wealth histories for the user.
+     *
+     * @return HasMany<WealthHistory, $this>
      */
     public function wealthHistories(): HasMany
     {

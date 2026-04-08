@@ -85,8 +85,8 @@ class GetSystemStatusAction extends BaseAction
             'net_worth' => $assets - $loans,
             'security_alerts' => $alerts,
             'market' => [
-                'usd_idr' => (float) ($marketData['usd_idr'] ?? 16950),
-                'gold_gram' => (float) ($marketData['gold_gram'] ?? 2525000),
+                'usd_idr' => (float) $marketData['usd_idr'],
+                'gold_gram' => (float) $marketData['gold_gram'],
             ],
             'top_targets' => $targets,
         ];

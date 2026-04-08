@@ -33,6 +33,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        \Sentry\Laravel\Integration::handles($exceptions);
+
         $exceptions->report(function (Throwable $e) {
             Log::error('PRODUCTION_ERROR: '.$e->getMessage(), [
                 'exception' => get_class($e),

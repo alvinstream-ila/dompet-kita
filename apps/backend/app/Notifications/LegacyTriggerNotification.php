@@ -16,6 +16,7 @@ class LegacyTriggerNotification extends Notification
      */
     public function __construct(
         protected User $user,
+        /** @var array<string, mixed> */
         protected array $reportData
     ) {}
 
@@ -34,6 +35,7 @@ class LegacyTriggerNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        /** @var User $notifiable */
         $totalAssets = number_format($this->reportData['financial_summary']['total_assets'] ?? 0, 0, ',', '.');
         $totalLoans = number_format($this->reportData['financial_summary']['total_loans'] ?? 0, 0, ',', '.');
 

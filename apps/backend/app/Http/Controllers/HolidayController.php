@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Resources\HolidayResource;
 use App\Models\Holiday;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
 
 class HolidayController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $holidays = Holiday::where('user_id', $request->user()->id)
             ->orderBy('created_at', 'desc')
@@ -17,7 +19,7 @@ class HolidayController extends Controller
         return HolidayResource::collection($holidays);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): HolidayResource
     {
         $validated = $request->validate([
             'destination' => 'required|string',
@@ -36,7 +38,7 @@ class HolidayController extends Controller
         return new HolidayResource($holiday);
     }
 
-    public function show(Request $request, Holiday $holiday)
+    public function show(Request $request, Holiday $holiday): HolidayResource
     {
         if ($holiday->user_id !== $request->user()->id) {
             \abort(403);
@@ -45,7 +47,7 @@ class HolidayController extends Controller
         return new HolidayResource($holiday);
     }
 
-    public function update(Request $request, Holiday $holiday)
+    public function update(Request $request, Holiday $holiday): HolidayResource
     {
         if ($holiday->user_id !== $request->user()->id) {
             \abort(403);
@@ -66,7 +68,7 @@ class HolidayController extends Controller
         return new HolidayResource($holiday);
     }
 
-    public function destroy(Request $request, Holiday $holiday)
+    public function destroy(Request $request, Holiday $holiday): JsonResponse
     {
         if ($holiday->user_id !== $request->user()->id) {
             \abort(403);

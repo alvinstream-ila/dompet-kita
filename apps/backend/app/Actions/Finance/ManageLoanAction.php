@@ -13,6 +13,8 @@ class ManageLoanAction extends BaseAction
 {
     /**
      * Record a new loan.
+     *
+     * @param array<string, mixed> $data
      */
     public function record(User $user, array $data): Loan
     {
@@ -24,6 +26,8 @@ class ManageLoanAction extends BaseAction
 
     /**
      * List all loans.
+     *
+     * @return Collection<int, Loan>
      */
     public function list(?User $user = null): Collection
     {

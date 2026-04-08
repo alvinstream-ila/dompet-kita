@@ -25,7 +25,7 @@ class GuardianAnalyzeAction extends BaseAction
      *     status: string,
      *     current_cash: float,
      *     burn_rate: float,
-     *     days_remaining: int|string,
+     *     days_remaining: float,
      *     message: string,
      *     ai_advice: ?string,
      *     opportunities: array<int, array{action: string, reason: string}>
@@ -40,11 +40,11 @@ class GuardianAnalyzeAction extends BaseAction
             $prediction = $this->intel->predictLiquidityCrisis($user);
 
             $result = [
-                'status' => (string) ($prediction['status'] ?? 'unknown'),
-                'current_cash' => (float) ($prediction['current_cash'] ?? 0),
-                'burn_rate' => (float) ($prediction['burn_rate'] ?? 0),
-                'days_remaining' => $prediction['days_remaining'] ?? 0,
-                'message' => (string) ($prediction['message'] ?? ''),
+                'status' => (string) $prediction['status'],
+                'current_cash' => (float) $prediction['current_cash'],
+                'burn_rate' => (float) $prediction['burn_rate'],
+                'days_remaining' => (float) $prediction['days_remaining'],
+                'message' => (string) $prediction['message'],
                 'ai_advice' => null,
                 'opportunities' => [],
             ];
@@ -66,8 +66,12 @@ class GuardianAnalyzeAction extends BaseAction
                 Log::channel('single')->warning("CRITICAL LIQUIDITY ALERT - User {$user->id}: {$result['message']}");
             } else {
                 // Check Rebalancing opportunities if safe
+                /** @var array<int, array{action: string, amount?: float, reason: string}> $rebalancing */
                 $rebalancing = $this->intel->generateRebalanceAdvice($user);
-                $result['opportunities'] = array_filter($rebalancing, fn ($adv) => ($adv['action'] ?? '') === 'INVEST');
+                
+                /** @var array<int, array{action: string, reason: string}> $opportunities */
+                $opportunities = array_values(array_filter($rebalancing, fn ($adv) => $adv['action'] === 'INVEST'));
+                $result['opportunities'] = $opportunities;
             }
 
             return $result;

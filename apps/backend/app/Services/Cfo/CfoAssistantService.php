@@ -46,7 +46,7 @@ class CfoAssistantService
         Transaction::create([
             'user_id' => $scheduled->user_id,
             'amount' => $scheduled->amount,
-            'type' => TransactionType::from($scheduled->type),
+            'type' => $scheduled->type,
             'category' => $scheduled->category,
             'description' => "CFO Auto: {$scheduled->description}",
             'date' => now(), // Execute on current date
@@ -66,20 +66,20 @@ class CfoAssistantService
         $nextDate = Carbon::parse($scheduled->next_due_date);
 
         switch ($scheduled->recurrence) {
-            case 'daily':
+            case \App\Enums\RecurrenceFrequency::DAILY:
                 $nextDate->addDay();
                 break;
-            case 'weekly':
+            case \App\Enums\RecurrenceFrequency::WEEKLY:
                 $nextDate->addWeek();
                 break;
-            case 'monthly':
+            case \App\Enums\RecurrenceFrequency::MONTHLY:
                 $nextDate->addMonth();
                 break;
-            case 'yearly':
+            case \App\Enums\RecurrenceFrequency::YEARLY:
                 $nextDate->addYear();
                 break;
             default:
-                $scheduled->status = 'finished'; // If no valid recurrence, finish it
+                $scheduled->status = \App\Enums\ScheduleStatus::FINISHED; // If no valid recurrence, finish it
                 break;
         }
 

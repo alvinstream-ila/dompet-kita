@@ -93,6 +93,9 @@ class ProcessChatAction
         return $ctx;
     }
 
+    /**
+     * @param array{simulated_cash: float, impact_on_liquidity_days: int|float, days_remaining_simulated: int|float, is_risky: bool} $sim
+     */
     private function formatSimulationResult(array $sim): string
     {
         $text = "Jika melakukan pengeluaran ini:\n";
@@ -142,6 +145,9 @@ class ProcessChatAction
         return (float) $numStr * $multiplier;
     }
 
+    /**
+     * @param array<string, mixed> $metadata
+     */
     private function saveHistory(User $user, string $role, string $content, array $metadata = []): void
     {
         ChatHistory::create([

@@ -28,6 +28,8 @@ class ChatHistory extends Model
 
     /**
      * Get the user that owns the chat history.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

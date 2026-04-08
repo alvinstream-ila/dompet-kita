@@ -24,7 +24,7 @@ class MarketService
     /**
      * Get current market rates with robust caching and failover.
      *
-     * @return array{currency_rates: array<string, float>, gold_antam_gram: float, last_updated: string}
+     * @return array{currency_rates: array<string, float>, gold_antam_gram: float, inflation_rate: float, last_updated: string}
      */
     public function getRates(): array
     {
@@ -42,6 +42,7 @@ class MarketService
                 return [
                     'currency_rates' => array_map('floatval', $data['rates'] ?? ['IDR' => self::FAILOVER_USD_IDR]),
                     'gold_antam_gram' => self::FAILOVER_GOLD_ANTAM, // Fallback for gold
+                    'inflation_rate' => 0.035, // Default 3.5%
                     'last_updated' => now()->toIso8601String(),
                 ];
             } catch (\Exception $e) {
@@ -50,10 +51,26 @@ class MarketService
                 return [
                     'currency_rates' => ['IDR' => self::FAILOVER_USD_IDR],
                     'gold_antam_gram' => self::FAILOVER_GOLD_ANTAM,
+                    'inflation_rate' => 0.035,
                     'last_updated' => now()->toIso8601String(),
                 ];
             }
         });
+    }
+
+    /**
+     * Get a specific rate for a currency pair.
+     */
+    public function getRate(string $from, string $to): float
+    {
+        $rates = $this->getRates();
+
+        // Standardized to IDR base for now as per app logic
+        if ($to === 'IDR' && isset($rates['currency_rates'][$from])) {
+            return $rates['currency_rates'][$from];
+        }
+
+        return 1.0;
     }
 
     /**

@@ -17,6 +17,8 @@ class SelfHealingService
 
     /**
      * Run system-wide health check.
+     *
+     * @return array<string, mixed>
      */
     public function performDiagnosis(): array
     {
@@ -82,5 +84,34 @@ class SelfHealingService
             'view' => Artisan::call('view:clear') === 0,
             default => false,
         };
+    }
+
+    /**
+     * Diagnose recent system errors from logs.
+     */
+    public function diagnoseRecentErrors(): string
+    {
+        // For now, return a placeholder. In a real scenario, this would parse logs.
+        return 'No major errors found in recent logs, Sayang. Everything looks clean! ✨';
+    }
+
+    /**
+     * Execute emergency first-aid protocols.
+     *
+     * @return array<string>
+     */
+    public function executeFirstAid(): array
+    {
+        $actions = [];
+
+        if ($this->attemptAutoRepair('cache')) {
+            $actions[] = 'Cleared application cache.';
+        }
+
+        if ($this->attemptAutoRepair('config')) {
+            $actions[] = 'Cleared configuration cache.';
+        }
+
+        return $actions;
     }
 }

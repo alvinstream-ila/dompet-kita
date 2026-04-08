@@ -12,6 +12,9 @@ class StoreTransactionAction extends BaseAction
 {
     use ClearsTransactionCache;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function execute(User $user, array $data): Transaction
     {
         $data['user_id'] = $user->id;

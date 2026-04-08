@@ -47,6 +47,7 @@ class WealthHistoryController extends Controller
             'raw_month' => $now->month,
         ]);
 
+        /** @var array<int, array<string, mixed>> $historyData */
         $historyData[] = $nowResource->toArray($request);
 
         return \response()->json($historyData);

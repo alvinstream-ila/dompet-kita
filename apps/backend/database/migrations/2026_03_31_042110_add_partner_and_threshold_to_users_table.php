@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('partner_id')->nullable()->constrained('users')->onDelete('set null')->after('id');
+            $table->foreignId('partner_id')->nullable()->after('id')->constrained('users')->onDelete('set null');
             $table->decimal('large_expense_threshold', 15, 2)->default(1000000)->after('monthly_budget_limit');
         });
     }

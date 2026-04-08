@@ -68,7 +68,7 @@ class PenpotManage extends Command
         $this->info('### 🎨 Fetching Penpot Project File Detail');
         $project = $action->getProject((string) $projectId);
 
-        $this->line(json_encode($project, JSON_PRETTY_PRINT));
+        $this->line((string) json_encode($project, JSON_PRETTY_PRINT));
 
         return 0;
     }

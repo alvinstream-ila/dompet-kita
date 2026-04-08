@@ -21,6 +21,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(property="currency_format", type="string", example="IDR")
  * )
  */
+/**
+ * @mixin \App\Models\User
+ */
 class UserResource extends JsonResource
 {
     /**

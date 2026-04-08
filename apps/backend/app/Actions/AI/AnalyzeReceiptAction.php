@@ -16,6 +16,9 @@ class AnalyzeReceiptAction extends BaseAction
         protected PrivacyFilter $filter
     ) {}
 
+    /**
+     * @return array<string, mixed>
+     */
     public function execute(string $base64Data, string $mimeType): array
     {
         $prompt = "You are a sweet and smart financial partner for 'Dompet Kita' app.

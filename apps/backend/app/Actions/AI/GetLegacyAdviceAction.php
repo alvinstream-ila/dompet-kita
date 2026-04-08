@@ -15,6 +15,9 @@ class GetLegacyAdviceAction extends BaseAction
         protected PrivacyFilter $filter
     ) {}
 
+    /**
+     * @param array<string, mixed> $report
+     */
     public function execute(User $user, array $report): string
     {
         $maskedName = $this->filter->mask($user->name);

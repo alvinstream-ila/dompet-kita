@@ -9,6 +9,9 @@ use Illuminate\Http\Response;
 
 class InsightController extends Controller
 {
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function generate(Request $request, QuantumInsightEngine $engine)
     {
         $user = $request->user();
@@ -21,6 +24,9 @@ class InsightController extends Controller
         ]);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, TransactionInsight>
+     */
     public function index()
     {
         // HasUserScope handles the owner filtering
@@ -29,6 +35,11 @@ class InsightController extends Controller
             ->get();
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\TransactionInsight $insight
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(Request $request, TransactionInsight $insight)
     {
         $validated = $request->validate([
@@ -40,6 +51,10 @@ class InsightController extends Controller
         return response()->json($insight);
     }
 
+    /**
+     * @param \App\Models\TransactionInsight $insight
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function destroy(TransactionInsight $insight)
     {
         $insight->delete();

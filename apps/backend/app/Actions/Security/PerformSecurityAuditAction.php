@@ -35,6 +35,10 @@ class PerformSecurityAuditAction extends BaseAction
         ];
     }
 
+    /**
+     * @param int $score
+     * @param array<int, string> $findings
+     */
     private function auditLoginHistory(int &$score, array &$findings): void
     {
         $suspiciousLogins = LoginHistory::where('created_at', '>=', now()->subDay())
@@ -48,6 +52,10 @@ class PerformSecurityAuditAction extends BaseAction
         }
     }
 
+    /**
+     * @param int $score
+     * @param array<int, string> $findings
+     */
     private function auditSensitiveFileExposure(int &$score, array &$findings): void
     {
         if (File::exists(public_path('.env'))) {
@@ -56,17 +64,26 @@ class PerformSecurityAuditAction extends BaseAction
         }
     }
 
+    /**
+     * @param int $score
+     * @param array<int, string> $findings
+     */
     private function auditRLS(int &$score, array &$findings): void
     {
         // RLS Check for PostgreSQL
+        /** @var array<int, \stdClass> $rlsStatus */
         $rlsStatus = DB::select("SELECT relname, relrowsecurity FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND relname = 'transactions'");
 
-        if (! empty($rlsStatus) && ! $rlsStatus[0]->relrowsecurity) {
+        if (! empty($rlsStatus) && isset($rlsStatus[0]->relrowsecurity) && ! $rlsStatus[0]->relrowsecurity) {
             $findings[] = 'Database Row Level Security (RLS) is not active on transactions table.';
             $score -= 20;
         }
     }
 
+    /**
+     * @param int $score
+     * @param array<int, string> $findings
+     */
     private function auditActivityLog(int &$score, array &$findings): void
     {
         if (DB::table('activity_log')->count() === 0) {
@@ -75,6 +92,10 @@ class PerformSecurityAuditAction extends BaseAction
         }
     }
 
+    /**
+     * @param int $score
+     * @param array<int, string> $findings
+     */
     private function audit2FA(int &$score, array &$findings): void
     {
         $usersWithout2FA = DB::table('users')->whereRaw('two_factor_enabled = false')->count();
@@ -84,25 +105,35 @@ class PerformSecurityAuditAction extends BaseAction
         }
     }
 
+    /**
+     * @param int $score
+     * @param array<int, string> $findings
+     */
     private function auditLogSanity(int &$score, array &$findings): void
     {
         $logPath = storage_path('logs/laravel.log');
         if (File::exists($logPath)) {
             $logContent = file_get_contents($logPath);
-            if (strlen($logContent) > 50000) {
-                $logContent = substr($logContent, -50000);
-            }
-            $sensitiveKeywords = ['DB_PASSWORD', 'APP_KEY', 'AWS_SECRET', 'STRIPE_SECRET', 'BACKUP_PASSWORD', 'DB_URL'];
-            foreach ($sensitiveKeywords as $keyword) {
-                if (str_contains($logContent, $keyword)) {
-                    $findings[] = "Log Leak Warning: Found sensitive keyword '$keyword' in recent system logs.";
-                    $score -= 5;
-                    break;
+            if ($logContent !== false) {
+                if (strlen($logContent) > 50000) {
+                    $logContent = (string) substr($logContent, -50000);
+                }
+                $sensitiveKeywords = ['DB_PASSWORD', 'APP_KEY', 'AWS_SECRET', 'STRIPE_SECRET', 'BACKUP_PASSWORD', 'DB_URL'];
+                foreach ($sensitiveKeywords as $keyword) {
+                    if (str_contains($logContent, $keyword)) {
+                        $findings[] = "Log Leak Warning: Found sensitive keyword '$keyword' in recent system logs.";
+                        $score -= 5;
+                        break;
+                    }
                 }
             }
         }
     }
 
+    /**
+     * @param int $score
+     * @param array<int, string> $findings
+     */
     private function auditTestCoverage(int &$score, array &$findings): void
     {
         $testPath = base_path('tests/Feature');

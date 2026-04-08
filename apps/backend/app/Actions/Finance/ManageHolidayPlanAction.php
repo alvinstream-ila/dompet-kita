@@ -13,6 +13,8 @@ class ManageHolidayPlanAction extends BaseAction
 {
     /**
      * Create a new holiday plan.
+     *
+     * @param array<string, mixed> $data
      */
     public function create(User $user, array $data): Holiday
     {
@@ -25,6 +27,8 @@ class ManageHolidayPlanAction extends BaseAction
 
     /**
      * List all holiday plans.
+     *
+     * @return Collection<int, Holiday>
      */
     public function list(?User $user = null): Collection
     {

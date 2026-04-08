@@ -29,6 +29,9 @@ class PerformAiSelfAuditAction extends BaseAction
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     private function checkArchitecture(): array
     {
         $backendPath = base_path('app/Console/Commands');
@@ -45,6 +48,9 @@ class PerformAiSelfAuditAction extends BaseAction
         return $violations;
     }
 
+    /**
+     * @return array<string>
+     */
     private function checkTechnicalDebt(): array
     {
         $debt = [];

@@ -37,6 +37,9 @@ class Loan extends Model
             ->dontLogEmptyChanges();
     }
 
+    /**
+     * @var list<string>
+     */
     protected $fillable = [
         'user_id',
         'type',
@@ -67,6 +70,8 @@ class Loan extends Model
 
     /**
      * Get the user that owns the loan.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

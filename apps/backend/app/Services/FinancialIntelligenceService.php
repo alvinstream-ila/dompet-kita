@@ -125,6 +125,8 @@ class FinancialIntelligenceService
 
     /**
      * Simulate the financial impact of an additional expense.
+     *
+     * @return array{simulated_cash: float, impact_on_liquidity_days: float, days_remaining_simulated: float, is_risky: bool}
      */
     public function simulateFinancialImpact(User $user, float $amount, bool $includePartner = false): array
     {
@@ -155,7 +157,7 @@ class FinancialIntelligenceService
 
             return [
                 'usd_idr' => (float) ($market['currency_rates']['IDR'] ?? 16950.0),
-                'gold_gram' => (float) ($market['gold_antam_gram'] ?? 2525000.0),
+                'gold_gram' => (float) $market['gold_antam_gram'],
             ];
         } catch (\Throwable $e) {
             return [

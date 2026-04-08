@@ -26,7 +26,7 @@ class AiDoctorCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $this->info('🩺 AI Assistant Doctor: Running Diagnostics...');
         $this->newLine();

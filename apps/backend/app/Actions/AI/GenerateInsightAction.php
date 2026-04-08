@@ -15,6 +15,9 @@ class GenerateInsightAction extends BaseAction
         protected PrivacyFilter $filter
     ) {}
 
+    /**
+     * @return array{title: string, insight: string}
+     */
     public function execute(string $incomeStr, string $expenseStr, string $savingsStr, string $summaryText): array
     {
         $prompt = <<<PROMPT

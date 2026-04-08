@@ -31,6 +31,8 @@ class ManagePenpotAction extends BaseAction
 
     /**
      * Get project detail from Penpot.
+     *
+     * @return array<string, mixed>
      */
     public function getProject(string $projectId): array
     {
@@ -46,7 +48,7 @@ class ManagePenpotAction extends BaseAction
 
     private function getToken(): string
     {
-        $token = config('services.penpot.token') ?? env('PENPOT_TOKEN');
+        $token = config('services.penpot.token');
         if (! $token) {
             throw new Exception('PENPOT_TOKEN is missing in configuration.');
         }

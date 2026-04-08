@@ -9,6 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property string $name
+ * @property AssetType $type
+ * @property float $quantity
+ * @property string|null $unit
+ * @property bool $is_market_synced
+ * @property float $value
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ */
 class Asset extends Model
 {
     use HasUserScope, LogsActivity;
@@ -47,6 +59,9 @@ class Asset extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -54,6 +69,9 @@ class Asset extends Model
 
     /**
      * Scope for assets that should be synced with market rates.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<Asset> $query
+     * @return \Illuminate\Database\Eloquent\Builder<Asset>
      */
     public function scopeMarketSynced($query)
     {

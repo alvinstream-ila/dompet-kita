@@ -5,6 +5,9 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin \App\Models\Asset
+ */
 class AssetResource extends JsonResource
 {
     /**
@@ -19,7 +22,7 @@ class AssetResource extends JsonResource
             'name' => $this->name,
             'type' => $this->type,
             'value' => (float) $this->value,
-            'updated_at' => $this->updated_at?->toIso8601String(),
+            'updated_at' => $this->updated_at->toIso8601String(),
         ];
     }
 }

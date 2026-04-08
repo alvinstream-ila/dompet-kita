@@ -31,6 +31,9 @@ class AiWatchdog
         Cache::put('ai_perf_history', $history, now()->addDays(7));
     }
 
+    /**
+     * @return array<string, array{name: string, status: string, recent_latency: float}>
+     */
     public static function getStatus(): array
     {
         return collect([
@@ -46,6 +49,9 @@ class AiWatchdog
         })->toArray();
     }
 
+    /**
+     * @return array{prompt: int, completion: int, total: int}
+     */
     public static function getTokenUsage(string $name): array
     {
         $history = Cache::get('ai_perf_history', []);

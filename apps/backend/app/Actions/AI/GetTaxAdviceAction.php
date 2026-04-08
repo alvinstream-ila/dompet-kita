@@ -15,6 +15,9 @@ class GetTaxAdviceAction extends BaseAction
         protected PrivacyFilter $filter
     ) {}
 
+    /**
+     * @param array<string, mixed> $estimate
+     */
     public function execute(User $user, array $estimate): string
     {
         $maskedName = $this->filter->mask($user->name);

@@ -32,7 +32,7 @@ class PerformDeepSecurityAuditAction extends BaseAction
             $gitignoreFile = base_path('.gitignore');
             if (file_exists($gitignoreFile)) {
                 $gitignore = file_get_contents($gitignoreFile);
-                if (! str_contains($gitignore, '.env')) {
+                if ($gitignore !== false && ! str_contains($gitignore, '.env')) {
                     $secretsFindings[] = 'CRITICAL: .env is not in gitignore!';
                 }
             }

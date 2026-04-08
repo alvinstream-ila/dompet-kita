@@ -11,8 +11,7 @@ use App\Services\SelfHealingService;
 class PerformSelfHealingAction extends BaseAction
 {
     public function __construct(
-        private readonly SelfHealingService $healer,
-        private readonly GeminiService $gemini
+        private readonly SelfHealingService $healer
     ) {}
 
     /**
@@ -38,7 +37,7 @@ class PerformSelfHealingAction extends BaseAction
             ];
         }
 
-        $aiAdvice = $this->healer->getAiDeepDiagnosis($diagnosis, $this->gemini);
+        $aiAdvice = $this->healer->getAiDeepDiagnosis($diagnosis);
         $actionsTaken = [];
 
         if ($autoFix) {

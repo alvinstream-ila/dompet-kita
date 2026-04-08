@@ -22,6 +22,8 @@ class ForecastWealthAction extends BaseAction
 
     /**
      * Forecast wealth trajectory for the next 12 months.
+     *
+     * @return array<string, mixed>
      */
     public function execute(User $user, int $months = 12): array
     {
@@ -54,20 +56,24 @@ class ForecastWealthAction extends BaseAction
 
         $avgMonthlySavings = ($totalIncome - $totalExpense) / $monthCount;
 
-        $projection = [];
+        /** @var \Illuminate\Support\Collection<int, array<string, mixed>> $projection */
+        $projection = collect([]);
         $runningWealth = $netWorth > 0 ? $netWorth : 0;
-        $inflationMonthly = $market['inflation_rate'] / 12;
+        /** @var float $inflationRate */
+        $inflationRate = $market['inflation_rate'];
+        $inflationMonthly = $inflationRate / 12;
 
         for ($i = 1; $i <= $months; $i++) {
             // [ASP-v2] Adjusted for Inflation (Using real-time inflation proxy)
             $runningWealth = ($runningWealth + $avgMonthlySavings) * (1 - $inflationMonthly);
-            $projection[] = [
+            $projection->push([
                 'month' => Carbon::now()->addMonths($i)->format('M Y'),
                 'estimated_net_worth' => max(0, $runningWealth),
-            ];
+            ]);
         }
 
-        $lastWealth = end($projection)['estimated_net_worth'];
+        $lastItem = $projection->last();
+        $lastWealth = $lastItem ? $lastItem['estimated_net_worth'] : 0;
 
         try {
             $advice = $this->getWealthAdviceAction->execute($user, [

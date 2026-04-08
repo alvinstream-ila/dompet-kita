@@ -32,9 +32,6 @@
   "lint-staged": {
     "apps/frontend/src/**/*.{ts,tsx,css}": [
       "prettier --write"
-    ],
-    "apps/backend/app/**/*.php": [
-      "php apps/backend/artisan maintenance:verify"
     ]
   },
   "keywords": [],

@@ -56,8 +56,8 @@ class TransactionResource extends JsonResource
             'description' => $this->description,
             'note' => $this->note,
             'receipt_url' => $receiptUrl,
-            'created_at' => $this->created_at?->toIso8601String(),
-            'updated_at' => $this->updated_at?->toIso8601String(),
+            'created_at' => $this->created_at->toIso8601String(),
+            'updated_at' => $this->updated_at->toIso8601String(),
         ];
     }
 }

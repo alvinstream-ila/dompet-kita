@@ -11,13 +11,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TransactionInsight extends Model
 {
-    /** @use HasFactory<TransactionInsightFactory> */
-    use HasFactory, HasUserScope, HasUuids;
+    use HasUserScope, HasUuids;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'user_id',
@@ -45,6 +44,8 @@ class TransactionInsight extends Model
 
     /**
      * Get the user that owns the insight.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

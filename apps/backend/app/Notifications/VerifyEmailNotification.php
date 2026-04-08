@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\Log;
 
 class VerifyEmailNotification extends VerifyEmail
 {
-    public $verificationUrl;
+    public string $verificationUrl;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($verificationUrl)
+    public function __construct(string $verificationUrl)
     {
         $this->verificationUrl = $verificationUrl;
     }

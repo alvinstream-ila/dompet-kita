@@ -14,6 +14,8 @@ class SimulatePurchaseAction extends BaseAction
 
     /**
      * [ASP-v2] What-If Simulation: Calculate impact of big purchases on goals.
+     *
+     * @return array<string, mixed>
      */
     public function execute(User $user, float $amount, string $reason): array
     {

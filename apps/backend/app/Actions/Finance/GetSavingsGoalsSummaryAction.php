@@ -15,7 +15,7 @@ class GetSavingsGoalsSummaryAction extends BaseAction
      * Get goals and progress for a user.
      *
      * @return array{
-     *     goals: Collection,
+     *     goals: Collection<int, Goal>,
      *     overall_progress: float
      * }
      */
@@ -29,8 +29,8 @@ class GetSavingsGoalsSummaryAction extends BaseAction
 
         $goals = $query->get();
 
-        $totalTarget = (float) $goals->sum('target_amount');
-        $totalCurrent = (float) $goals->sum('current_amount');
+        $totalTarget = $goals->sum(fn(Goal $g) => (float) $g->target_amount);
+        $totalCurrent = $goals->sum(fn(Goal $g) => (float) $g->current_amount);
         $overallProgress = $totalTarget > 0 ? ($totalCurrent / $totalTarget) * 100 : 0;
 
         return [

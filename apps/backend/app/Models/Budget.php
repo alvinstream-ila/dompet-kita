@@ -9,13 +9,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Budget extends Model
 {
-    /** @use HasFactory<BudgetFactory> */
-    use HasFactory;
+    // No factory locally available
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'user_id',
@@ -34,6 +33,8 @@ class Budget extends Model
 
     /**
      * Get the user that owns the budget.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

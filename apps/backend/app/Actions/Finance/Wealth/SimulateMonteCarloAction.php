@@ -15,6 +15,8 @@ class SimulateMonteCarloAction extends BaseAction
     /**
      * [ASP-v3] Probability Engine: Monte Carlo Simulation (100 Iterations).
      * Returns 10th, 50th, and 90th percentile trajectories.
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function execute(User $user, int $months = 12): array
     {

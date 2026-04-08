@@ -38,15 +38,14 @@ class BackupDatabase extends Command
             $this->info("Backup completed & encrypted successfully: {$result['path']}");
 
             $sentinel->notify(
-                'BACKUP SUCCESS 🛡️',
-                "Database berhasil di-backup dan di-enkripsi (AES-256).\nFile: `{$result['filename']}`\nStatus: Secure in Storj.",
+                "BACKUP SUCCESS 🛡️\nDatabase berhasil di-backup dan di-enkripsi (AES-256).\nFile: `{$result['filename']}`\nStatus: Secure in Storj.",
                 'info'
             );
 
             return 0;
         } catch (Exception $e) {
             $this->error("Fatal Error: {$e->getMessage()}");
-            $sentinel->notify('BACKUP FAILED 🚨', "Database backup failed: {$e->getMessage()}", 'critical');
+            $sentinel->notify("BACKUP FAILED 🚨: {$e->getMessage()}", 'critical');
 
             return 1;
         }

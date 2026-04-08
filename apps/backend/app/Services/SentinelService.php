@@ -63,6 +63,8 @@ class SentinelService
 
     /**
      * Audit log a specific user action for Digital Inheritance trail.
+     *
+     * @param array<string, mixed> $data
      */
     public function auditAction(string $userId, string $action, array $data = []): void
     {

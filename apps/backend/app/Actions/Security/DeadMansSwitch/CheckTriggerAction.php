@@ -28,10 +28,13 @@ class CheckTriggerAction extends BaseAction
             ->whereNotNull('partner_id') // Must have a partner/heir
             ->get();
 
+        /** @var User $user */
         foreach ($usersToTrigger as $user) {
             $thresholdDate = Carbon::now()->subMonths($user->legacy_threshold_months ?? 6);
 
-            if ($user->last_active_at->lessThan($thresholdDate)) {
+            // Ensure last_active_at is treated as Carbon
+            $lastActive = $user->last_active_at;
+            if ($lastActive instanceof Carbon && $lastActive->lessThan($thresholdDate)) {
                 $this->triggerLegacyProcess($user);
                 $triggeredCount++;
             }
@@ -53,6 +56,7 @@ class CheckTriggerAction extends BaseAction
         $reportData = $this->generateReportAction->execute($user);
 
         // Notify the partner
+        /** @var User|null $partner */
         $partner = $user->partner()->first();
         if ($partner) {
             $partner->notify(new LegacyTriggerNotification($user, $reportData));

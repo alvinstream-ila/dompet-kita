@@ -28,7 +28,11 @@ class GoogleMailTransport extends AbstractTransport
      */
     protected function doSend(SentMessage $message): void
     {
-        $email = MessageConverter::toEmail($message->getOriginalMessage());
+        $original = $message->getOriginalMessage();
+        if (!$original instanceof \Symfony\Component\Mime\Message) {
+            throw new MailTransportException('Expected Symfony Message, got '.get_debug_type($original));
+        }
+        $email = MessageConverter::toEmail($original);
 
         // Gmail API requires the message to be base64url encoded.
         $rawMessage = rtrim(strtr(base64_encode($email->toString()), '+/', '-_'), '=');

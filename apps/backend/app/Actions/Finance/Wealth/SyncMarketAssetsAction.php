@@ -14,6 +14,8 @@ class SyncMarketAssetsAction extends BaseAction
 
     /**
      * Synchronize all user assets that are linked to market rates.
+     *
+     * @return array{updated: int, alerts: int}
      */
     public function execute(): array
     {
@@ -31,11 +33,11 @@ class SyncMarketAssetsAction extends BaseAction
                 $unit = strtoupper($asset->unit);
 
                 // 1. Physical Gold Logic
-                if ($asset->type === 'gold' && $unit === 'GRAM') {
+                if ($asset->type === \App\Enums\AssetType::INVESTMENT && $unit === 'GRAM') {
                     $newValue = $asset->quantity * $market['gold_antam_gram'];
                 }
                 // 2. Foreign Currency Logic (USD, SGD, etc.)
-                elseif ($asset->type === 'fcy' || in_array($unit, ['USD', 'SGD', 'EUR', 'JPY', 'GBP'])) {
+                elseif ($asset->type === \App\Enums\AssetType::CASH && in_array($unit, ['USD', 'SGD', 'EUR', 'JPY', 'GBP'])) {
                     $rate = $this->marketService->getRate($unit, 'IDR');
                     $newValue = $asset->quantity * $rate;
                 }

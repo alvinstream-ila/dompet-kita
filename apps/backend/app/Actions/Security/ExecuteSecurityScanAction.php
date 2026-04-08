@@ -21,13 +21,13 @@ class ExecuteSecurityScanAction extends BaseAction
     public function execute(): array
     {
         // 1. Laravel Security Audit
-        $laravelResult = Process::run('php backend/artisan about --only=environment', null, base_path('..'));
+        $laravelResult = Process::path(base_path('..'))->run('php backend/artisan about --only=environment');
 
         // 2. Composer Audit
-        $composerResult = Process::run('composer audit', null, base_path());
+        $composerResult = Process::path(base_path())->run('composer audit');
 
         // 3. Basic Snyk Scan
-        $snykResult = Process::run('snyk test', null, base_path());
+        $snykResult = Process::path(base_path())->run('snyk test');
 
         return [
             'laravel' => ['output' => $laravelResult->output()],

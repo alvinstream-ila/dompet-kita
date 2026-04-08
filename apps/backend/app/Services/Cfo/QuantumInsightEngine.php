@@ -91,7 +91,8 @@ class QuantumInsightEngine
             if (isset($insights['findings'])) {
                 Log::info('Quantum Insight Engine: Found '.count($insights['findings']).' findings.');
                 foreach ($insights['findings'] as $finding) {
-                    $this->persistInsight($user->id, $finding);
+                    /** @var array<string, mixed> $finding */
+                    $this->persistInsight((string) $user->id, $finding);
                 }
             } else {
                 Log::info('Quantum Insight Engine: No findings key in AI response.');
@@ -101,6 +102,9 @@ class QuantumInsightEngine
         }
     }
 
+    /**
+     * @param array<string, mixed> $summary
+     */
     protected function buildAnalysisPrompt(string $userName, array $summary): string
     {
         $jsonSummary = json_encode($summary);
@@ -131,6 +135,9 @@ class QuantumInsightEngine
         Note: Speak in a professional yet loving tone (sentient persona).";
     }
 
+    /**
+     * @param array<string, mixed> $finding
+     */
     protected function persistInsight(string $userId, array $finding): void
     {
         // Avoid duplicate active insights with same title in last 7 days

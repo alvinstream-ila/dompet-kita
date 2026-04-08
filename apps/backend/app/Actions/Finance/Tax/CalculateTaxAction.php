@@ -17,6 +17,8 @@ class CalculateTaxAction extends BaseAction
      * 250jt - 500jt: 25%
      * 500jt - 5m: 30%
      * > 5m: 35%
+     *
+     * @var array<int, array{limit: float, rate: float}>
      */
     private array $brackets = [
         ['limit' => 60000000, 'rate' => 0.05],
@@ -36,6 +38,8 @@ class CalculateTaxAction extends BaseAction
 
     /**
      * Calculate taxable income and estimated tax for a given year.
+     *
+     * @return array<string, mixed>
      */
     public function execute(User $user, int $year): array
     {

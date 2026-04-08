@@ -6,10 +6,23 @@ use App\Traits\HasUserScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $user_id
+ * @property string $name
+ * @property float $target_amount
+ * @property float $current_amount
+ * @property \Carbon\Carbon|null $deadline
+ * @property string $category
+ * @property string $status
+ * @property string|null $icon
+ */
 class Goal extends Model
 {
     use HasUserScope;
 
+    /**
+     * @var list<string>
+     */
     protected $fillable = [
         'user_id',
         'name',
@@ -38,6 +51,8 @@ class Goal extends Model
 
     /**
      * Get the user that owns the goal.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

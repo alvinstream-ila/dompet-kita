@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 
 class PasswordResetController extends Controller
 {
-    public function sendResetLinkEmail(Request $request)
+    public function sendResetLinkEmail(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate(['email' => 'required|email']);
 
@@ -27,7 +27,7 @@ class PasswordResetController extends Controller
             : response()->json(['message' => __($status).' (Status: '.$status.')'], 400);
     }
 
-    public function reset(Request $request)
+    public function reset(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'token' => 'required',

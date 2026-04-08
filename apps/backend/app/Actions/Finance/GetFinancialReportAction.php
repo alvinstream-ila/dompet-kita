@@ -21,7 +21,7 @@ class GetFinancialReportAction extends BaseAction
      *     income: float,
      *     expense: float,
      *     net: float,
-     *     top_spending: Collection
+     *     top_spending: Collection<int, Transaction>
      * }
      */
     public function execute(string $monthStr, ?User $user = null): array
@@ -37,8 +37,8 @@ class GetFinancialReportAction extends BaseAction
 
         $txs = $query->get();
 
-        $income = (float) $txs->where('type', TransactionType::INCOME)->sum('amount');
-        $expense = (float) $txs->where('type', TransactionType::EXPENSE)->sum('amount');
+        $income = $txs->where('type', TransactionType::INCOME)->sum(fn(Transaction $t) => (float) $t->amount);
+        $expense = $txs->where('type', TransactionType::EXPENSE)->sum(fn(Transaction $t) => (float) $t->amount);
 
         $topSpending = $txs->where('type', TransactionType::EXPENSE)
             ->sortByDesc('amount')

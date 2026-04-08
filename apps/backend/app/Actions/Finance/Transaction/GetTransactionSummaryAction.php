@@ -13,6 +13,15 @@ class GetTransactionSummaryAction extends BaseAction
 {
     public function __construct(protected BudgetService $budgetService) {}
 
+    /**
+     * @return array{
+     *     income: float,
+     *     expense: float,
+     *     balance: float,
+     *     recentTransactions: \Illuminate\Database\Eloquent\Collection<int, Transaction>,
+     *     period: array{start: string, end: string}
+     * }
+     */
     public function execute(int $userId, ?int $month, ?int $year, int $budgetCycleStart): array
     {
         $cacheKey = "transaction_summary_{$userId}_".($month ?? 'all').'_'.($year ?? 'all')."_{$budgetCycleStart}";
@@ -28,10 +37,10 @@ class GetTransactionSummaryAction extends BaseAction
                 ->groupBy('type')
                 ->get();
 
-            $income = $summary->firstWhere('type', TransactionType::INCOME)?->total
-                      ?? $summary->firstWhere('type', TransactionType::INCOME->value)?->total ?? 0;
-            $expense = $summary->firstWhere('type', TransactionType::EXPENSE)?->total
-                       ?? $summary->firstWhere('type', TransactionType::EXPENSE->value)?->total ?? 0;
+            $income = $summary->firstWhere('type', TransactionType::INCOME)->total
+                      ?? $summary->firstWhere('type', TransactionType::INCOME->value)->total ?? 0;
+            $expense = $summary->firstWhere('type', TransactionType::EXPENSE)->total
+                       ?? $summary->firstWhere('type', TransactionType::EXPENSE->value)->total ?? 0;
 
             $recentTransactions = Transaction::where('user_id', $userId)
                 ->whereBetween('date', [$startDate, $endDate])

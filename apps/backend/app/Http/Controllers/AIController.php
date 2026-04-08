@@ -57,9 +57,9 @@ class AIController extends Controller
 
             return $this->success([
                 'amount' => (int) $result['amount'],
-                'merchant' => $result['merchant'] ?? 'Unknown Merchant',
-                'category' => $result['category'] ?? 'Belanja',
-                'message' => $result['message'] ?? 'AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️',
+                'merchant' => $result['merchant'],
+                'category' => $result['category'],
+                'message' => $result['message'],
             ], 'Struk berhasil diproses! ✨');
 
         } catch (\Throwable $e) {
@@ -93,7 +93,10 @@ class AIController extends Controller
             $totalExpense = $transactions->filter(fn ($t) => $t->type === TransactionType::EXPENSE)->sum('amount');
             $savings = (float) $totalIncome - (float) $totalExpense;
 
-            $summaryText = $transactions->take(20)->map(fn ($t) => "{$t->date}: ".($t->type instanceof TransactionType ? $t->type->value : $t->type).' Rp '.number_format($t->amount)." ({$t->category})")->implode("\n");
+            $summaryText = $transactions->take(20)->map(function ($t) {
+                $typeStr = $t->type instanceof \App\Enums\TransactionType ? $t->type->value : (string) $t->type;
+                return "{$t->date}: {$typeStr} Rp " . number_format((float) $t->amount) . " ({$t->category})";
+            })->implode("\n");
 
             $cacheKey = "ai_insight_{$user->id}";
 
@@ -107,8 +110,8 @@ class AIController extends Controller
             });
 
             return $this->success([
-                'title' => $data['title'] ?? 'Sayang Terharu ✨',
-                'insight' => $data['insight'] ?? 'Something went wrong with AI response.',
+                'title' => $data['title'],
+                'insight' => $data['insight'],
             ]);
 
         } catch (\Throwable $e) {
@@ -124,6 +127,11 @@ class AIController extends Controller
     /**
      * Chat with the AI about financial context (Cognitive Chat Genius).
      */
+    public function check(): \Illuminate\Http\JsonResponse
+    {
+        return response()->json(['status' => 'ok']);
+    }
+
     public function chat(Request $request): JsonResponse
     {
         $request->validate(['message' => 'required|string|max:1000']);

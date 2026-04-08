@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FinancialWisdom extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'user_id',
         'type',
@@ -35,6 +33,8 @@ class FinancialWisdom extends Model
 
     /**
      * Get the user that owns the wisdom.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

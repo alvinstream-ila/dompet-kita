@@ -10,6 +10,9 @@ class WealthHistory extends Model
 {
     use HasUserScope;
 
+    /**
+     * @var list<string>
+     */
     protected $fillable = [
         'user_id',
         'month',
@@ -33,6 +36,8 @@ class WealthHistory extends Model
 
     /**
      * Get the user that owns the wealth history.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

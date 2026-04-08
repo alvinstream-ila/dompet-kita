@@ -15,6 +15,9 @@ class GetWealthAdviceAction extends BaseAction
         protected PrivacyFilter $filter
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function execute(User $user, array $data): string
     {
         $maskedName = $this->filter->mask($user->name);

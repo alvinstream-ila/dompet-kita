@@ -7,7 +7,7 @@ use App\Services\AI\AiProviderManager;
 
 class AiMaintenanceController extends Controller
 {
-    public function reset(AiProviderManager $manager)
+    public function reset(AiProviderManager $manager): \Illuminate\Http\JsonResponse
     {
         try {
             $manager->forceReset();

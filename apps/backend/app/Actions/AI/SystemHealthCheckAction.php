@@ -40,6 +40,9 @@ class SystemHealthCheckAction extends BaseAction
         return $report;
     }
 
+    /**
+     * @return array{status: string, message: string}
+     */
     private function checkDatabase(): array
     {
         try {
@@ -51,6 +54,9 @@ class SystemHealthCheckAction extends BaseAction
         }
     }
 
+    /**
+     * @return array{status: string, message: string}
+     */
     private function checkRedis(): array
     {
         try {
@@ -62,6 +68,9 @@ class SystemHealthCheckAction extends BaseAction
         }
     }
 
+    /**
+     * @return array{status: string, message: string}
+     */
     private function checkAiProvider(): array
     {
         try {

@@ -13,6 +13,9 @@ class CreateAssetAction extends BaseAction
         protected UpdateWealthSnapshotAction $updateWealthSnapshotAction
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function execute(User $user, array $data): Asset
     {
         $data['user_id'] = $user->id;

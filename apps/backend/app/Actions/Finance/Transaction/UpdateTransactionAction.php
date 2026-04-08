@@ -12,6 +12,9 @@ class UpdateTransactionAction extends BaseAction
 {
     use ClearsTransactionCache;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function execute(User $user, Transaction $transaction, array $data): Transaction
     {
         return DB::transaction(function () use ($user, $transaction, $data) {

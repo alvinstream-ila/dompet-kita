@@ -29,6 +29,7 @@ use Spatie\Activitylog\Support\LogOptions;
  */
 class Transaction extends Model
 {
+    /** @use HasFactory<\Database\Factories\TransactionFactory> */
     use HasFactory, HasUserScope, LogsActivity;
 
     public function getActivitylogOptions(): LogOptions
@@ -39,6 +40,9 @@ class Transaction extends Model
             ->dontLogEmptyChanges();
     }
 
+    /**
+     * @var list<string>
+     */
     protected $fillable = [
         'user_id',
         'amount',
@@ -69,13 +73,16 @@ class Transaction extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
     /**
-     * Get the asset associated with the transaction.
+     * @return BelongsTo<Asset, $this>
      */
     public function asset(): BelongsTo
     {
@@ -84,6 +91,9 @@ class Transaction extends Model
 
     /**
      * Scope to filter transactions by month and year based on budget cycle.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<Transaction>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<Transaction>
      */
     public function scopeFilterByPeriod($query, ?int $month, ?int $year, int $startDay = 1)
     {

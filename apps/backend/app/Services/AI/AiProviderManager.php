@@ -19,6 +19,9 @@ class AiProviderManager
 
     protected int $errorThreshold = 3;
 
+    /**
+     * @param AiProviderInterface[] $providers
+     */
     public function __construct(array $providers = [])
     {
         $this->providers = $providers;
@@ -42,7 +45,7 @@ class AiProviderManager
 
                 $result = $provider->generateText($prompt);
 
-                $this->onSuccess($provider, microtime(true) - $startTime, $result['usage'] ?? []);
+                $this->onSuccess($provider, microtime(true) - $startTime, $result['usage']);
 
                 return $result['text'];
             } catch (\Exception $e) {
@@ -81,7 +84,7 @@ class AiProviderManager
 
                 $result = $provider->generateFromImage($prompt, $base64Image, $mimeType);
 
-                $this->onSuccess($provider, microtime(true) - $startTime, $result['usage'] ?? []);
+                $this->onSuccess($provider, microtime(true) - $startTime, $result['usage']);
 
                 return $result['text'];
             } catch (\Exception $e) {
@@ -117,7 +120,7 @@ class AiProviderManager
 
                 $result = $provider->generateFromAudio($prompt, $base64Audio, $mimeType);
 
-                $this->onSuccess($provider, microtime(true) - $startTime, $result['usage'] ?? []);
+                $this->onSuccess($provider, microtime(true) - $startTime, $result['usage']);
 
                 return $result['text'];
             } catch (\Exception $e) {
@@ -150,6 +153,9 @@ class AiProviderManager
         return false;
     }
 
+    /**
+     * @param array{prompt_tokens?: int, completion_tokens?: int, total_tokens?: int} $usage
+     */
     protected function onSuccess(AiProviderInterface $provider, float $latency, array $usage = []): void
     {
         Cache::forget('ai_provider_errors_'.$provider->getName());

@@ -11,10 +11,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $id
+ * @property int $user_id
+ * @property string $description
+ * @property float $amount
+ * @property TransactionType $type
+ * @property string $category
+ * @property RecurrenceFrequency $recurrence
+ * @property \Carbon\Carbon $next_due_date
+ * @property ScheduleStatus $status
+ * @property bool $is_auto_execute
+ * @property \Carbon\Carbon|null $last_executed_at
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ */
 class ScheduledTransaction extends Model
 {
-    use HasFactory, HasUserScope, HasUuids;
+    use HasUserScope, HasUuids;
 
+    /**
+     * @var list<string>
+     */
     protected $fillable = [
         'user_id',
         'description',
@@ -46,16 +64,27 @@ class ScheduledTransaction extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder<ScheduledTransaction> $query
+     * @return \Illuminate\Database\Eloquent\Builder<ScheduledTransaction>
+     */
     public function scopeActive($query)
     {
         return $query->where('status', 'active');
     }
 
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder<ScheduledTransaction> $query
+     * @return \Illuminate\Database\Eloquent\Builder<ScheduledTransaction>
+     */
     public function scopeDue($query)
     {
         return $query->where('next_due_date', '<=', now()->toDateString());

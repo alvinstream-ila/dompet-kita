@@ -95,7 +95,7 @@ class AssetManage extends Command
 
         $this->info('### 💰 Wealth & Asset Overview');
         foreach ($assets as $asset) {
-            $this->line("- [{$asset->id}] {$asset->name} ({$asset->type}): Rp ".number_format($asset->value, 0, ',', '.'));
+            $this->line("- [{$asset->id}] {$asset->name} ({$asset->type->value}): Rp ".number_format($asset->value, 0, ',', '.'));
         }
         $this->info('----------------------------');
         $this->info('**Total Wealth:** Rp '.number_format($summary['total_wealth'], 0, ',', '.'));
