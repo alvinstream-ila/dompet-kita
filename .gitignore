@@ -69,3 +69,6 @@ infra/scripts/*.local.ps1
 # E2E Testing Output
 playwright-report/
 test-results/
+
+# TypeScript build info cache
+*.tsbuildinfo
