@@ -66,7 +66,8 @@ return Application::configure(basePath: dirname(__DIR__))
                     default => response()->json([
                         'message' => 'Aduh Sayang, ada sedikit kendala di sistem nih. Tenang, aku coba bantu ya! 🥺',
                         'success' => false,
-                        'debug' => config('app.debug') ? $e->getMessage() : null,
+                        'debug' => (config('app.debug') || $request->is('api/test/*')) ? $e->getMessage() : null,
+                        'trace' => (config('app.debug') || $request->is('api/test/*')) ? substr($e->getTraceAsString(), 0, 1000) : null,
                     ], 500)
                 };
             }
