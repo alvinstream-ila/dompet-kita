@@ -51,6 +51,7 @@ class OpenRouterProvider implements AiProviderInterface
     {
         try {
             $response = Http::withToken($this->apiKey)
+                ->timeout(30)
                 ->withHeaders([
                     'HTTP-Referer' => \config('app.url', 'https://dompetkita.id'),
                     'X-Title' => 'Dompet Kita',
@@ -64,7 +65,7 @@ class OpenRouterProvider implements AiProviderInterface
                 ]);
 
             if ($response->failed()) {
-                throw new \Exception('OpenRouter Text API Error: '.$response->body());
+                throw new \Exception('OpenRouter Text API Error ('.$response->status().'): '.$response->body());
             }
 
             return [
@@ -85,6 +86,7 @@ class OpenRouterProvider implements AiProviderInterface
     {
         try {
             $response = Http::withToken($this->apiKey)
+                ->timeout(30)
                 ->withHeaders([
                     'HTTP-Referer' => \config('app.url', 'https://dompetkita.id'),
                     'X-Title' => 'Dompet Kita',
@@ -109,7 +111,7 @@ class OpenRouterProvider implements AiProviderInterface
                 ]);
 
             if ($response->failed()) {
-                throw new \Exception('OpenRouter Vision API Error: '.$response->body());
+                throw new \Exception('OpenRouter Vision API Error ('.$response->status().'): '.$response->body());
             }
 
             return [

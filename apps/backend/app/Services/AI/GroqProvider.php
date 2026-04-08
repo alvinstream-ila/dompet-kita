@@ -43,6 +43,7 @@ class GroqProvider implements AiProviderInterface
     {
         try {
             $response = Http::withToken($this->apiKey)
+                ->timeout(30)
                 ->post($this->baseUrl, [
                     'model' => $this->model,
                     'messages' => [
@@ -52,7 +53,7 @@ class GroqProvider implements AiProviderInterface
                 ]);
 
             if ($response->failed()) {
-                throw new \Exception('Groq API Error: '.$response->body());
+                throw new \Exception('Groq API Error ('.$response->status().'): '.$response->body());
             }
 
             return [

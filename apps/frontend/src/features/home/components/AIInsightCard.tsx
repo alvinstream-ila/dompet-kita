@@ -35,12 +35,21 @@ export const AIInsightCard: React.FC = () => {
           key="error"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="flex items-center gap-3 rounded-2xl bg-amber-50 p-4 text-amber-600"
+          className="flex flex-col gap-4"
         >
-          <AlertTriangle className="h-5 w-5 shrink-0" />
-          <p className="text-xs font-bold tracking-wider uppercase">
-            Yah, AI-nya lagi istirahat bentar, Sayang.. 🥺
-          </p>
+          <div className="flex items-center gap-3 rounded-2xl bg-amber-50 p-4 text-amber-600">
+            <AlertTriangle className="h-5 w-5 shrink-0" />
+            <p className="text-[12px] font-bold tracking-tight">
+              Yah, koneksi AI-nya lagi keganggu sebentar nih Sayang.. 🥺
+            </p>
+          </div>
+          <button
+            onClick={() => refetch()}
+            className="flex items-center justify-center gap-2 rounded-xl bg-slate-50 py-2.5 text-xs font-black tracking-widest text-slate-500 uppercase transition-all hover:bg-slate-100 active:scale-95"
+          >
+            <RefreshCcw className="h-3 w-3" />
+            Coba Lagi
+          </button>
         </motion.div>
       );
     }

@@ -38,7 +38,7 @@ class AiProviderManager
 
             try {
                 $startTime = microtime(true);
-                Log::info('Trying AI Provider: '.$provider->getName().' for text generation.');
+                Log::info("Trying AI Provider: {$provider->getName()} for text generation.");
 
                 $result = $provider->generateText($prompt);
 
@@ -47,9 +47,11 @@ class AiProviderManager
                 return $result['text'];
             } catch (\Exception $e) {
                 $errors[] = $provider->getName().': '.$e->getMessage();
+                Log::warning("AI Provider {$provider->getName()} failed for text generation: ".$e->getMessage());
                 $this->onFailure($provider);
 
                 if ($this->shouldFailover($e)) {
+                    Log::info("Failing over from {$provider->getName()} due to: ".$e->getMessage());
                     continue;
                 }
 
