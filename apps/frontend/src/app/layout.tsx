@@ -25,10 +25,10 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: [
-      { url: "/icons.svg", type: "image/svg+xml" },
+      { url: "/logo-utama.svg", type: "image/svg+xml" },
       { url: "/favicon.ico" },
     ],
-    apple: "/apple-touch-icon.png",
+    apple: "/logo-utama.svg",
   },
   openGraph: {
     title: "Dompet Kita | Ultimate Wealth Management",
