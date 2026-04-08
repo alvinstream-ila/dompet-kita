@@ -6,6 +6,8 @@ import { useAuth } from '@/features/auth';
 import { Loader2 } from 'lucide-react';
 import api from '@/lib/axios';
 
+import Cookies from 'js-cookie';
+
 /**
  * AuthCallbackContent - Inner component to use useSearchParams() safely within Suspense.
  */
@@ -21,7 +23,7 @@ function AuthCallbackContent() {
       if (token) {
         try {
           // Temporarily set token to fetch user data
-          localStorage.setItem('auth_token', token);
+          Cookies.set('auth_token', token, { expires: 7, sameSite: 'lax', secure: true });
           const { data: user } = await api.get('/user');
 
           // Properly authorize via context
@@ -31,7 +33,7 @@ function AuthCallbackContent() {
           router.push('/');
         } catch (error) {
           console.error('Callback error', error);
-          localStorage.removeItem('auth_token');
+          Cookies.remove('auth_token');
           router.push('/auth/login?error=callback_failed');
         }
       } else {
