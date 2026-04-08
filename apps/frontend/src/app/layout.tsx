@@ -24,7 +24,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://dompet-kita.com'),
   manifest: "/manifest.json",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/icons.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico" },
+    ],
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
