@@ -43,12 +43,12 @@ return [
         'primary' => env('AI_PRIMARY_PROVIDER', 'groq'),
         'groq' => [
             'key' => env('GROQ_API_KEY'),
-            'model' => env('GROQ_MODEL', 'meta-llama/llama-4-scout-17b-16e-instruct'),
+            'model' => env('GROQ_MODEL', 'llama-3.3-70b-versatile'),
         ],
         'openrouter' => [
             'key' => env('OPENROUTER_API_KEY'),
-            'model_vision' => env('OPENROUTER_MODEL_VISION', 'nvidia/nemotron-nano-12b-2-vl:free'),
-            'model_text' => env('OPENROUTER_MODEL_TEXT', 'google/gemma-3n-e4b-it:free'),
+            'model_vision' => env('OPENROUTER_MODEL_VISION', 'meta-llama/llama-3.2-11b-vision-instruct:free'),
+            'model_text' => env('OPENROUTER_MODEL_TEXT', 'meta-llama/llama-3.1-8b-instruct:free'),
         ],
     ],
 

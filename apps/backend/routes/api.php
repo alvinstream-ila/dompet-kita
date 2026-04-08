@@ -78,6 +78,9 @@ Route::middleware('auth:sanctum')->post('/email/verification-notification', func
 Route::get('/auth/{provider}', [SocialAuthController::class, 'redirectToProvider']);
 Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
 
+// Diagnostic Routes (Temporary)
+Route::get('/test/ai-health', [\App\Http\Controllers\Test\AiHealthController::class, 'check']);
+
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', function (Request $request) {
