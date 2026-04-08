@@ -18,6 +18,11 @@ class SocialAuthController extends Controller
      */
     public function redirectToProvider(string $provider): RedirectResponse
     {
+        if (empty(config("services.$provider.client_id"))) {
+            Log::error("SocialAuth: Missing configuration for $provider. Check GOOGLE_CLIENT_ID in .env");
+            return redirect()->away(config('app.frontend_url') . '/auth/login?error=missing_config');
+        }
+
         /** @var AbstractProvider $driver */
         $driver = Socialite::driver($provider);
 
@@ -74,14 +79,14 @@ class SocialAuthController extends Controller
             $token = $user->createToken('auth_token')->plainTextToken;
 
             // Redirect to Frontend callback route
-            $frontendUrl = \config('app.frontend_url', 'https://dompet-kita-six.vercel.app');
+            $frontendUrl = config('app.frontend_url', 'http://localhost:3000');
             $callbackUrl = rtrim($frontendUrl, '/').'/auth/callback?token='.$token;
 
-            Log::info('Social login SUCCESS for '.$user->email);
+            Log::info("SocialAuth: Login SUCCESS for {$user->email} via {$provider}");
 
             return \redirect()->away($callbackUrl);
         } catch (Exception $e) {
-            Log::error('FAIL during handleProviderCallback logic: '.$e->getMessage(), [
+            Log::error("SocialAuth: FAIL during callback logic for {$provider}: ".$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
             ]);
 
