@@ -13,7 +13,7 @@ echo "🚀 Dompet Kita: Sovereign Health Check (v7.1.18)\n";
 echo "─────────────────────────────────────────────────\n";
 
 // 1. Check AI Provider architecture
-echo "Checking AI Provider architecture... ";
+echo 'Checking AI Provider architecture... ';
 $providerPath = __DIR__.'/../app/Services/AI/GeminiProvider.php';
 if (File::exists($providerPath)) {
     $providerCode = File::get($providerPath);
@@ -27,7 +27,7 @@ if (File::exists($providerPath)) {
 }
 
 // 2. Check Action-Based Monolith Integrity
-echo "Checking Action Architecture... ";
+echo 'Checking Action Architecture... ';
 $actionPath = __DIR__.'/../app/Actions/Financial/Asset/UpdateAssetAction.php';
 if (File::exists($actionPath)) {
     echo "SUCCESS (Actions are present)\n";
@@ -36,7 +36,7 @@ if (File::exists($actionPath)) {
 }
 
 // 3. Check Observability (Sentry)
-echo "Checking Sentry Logging... ";
+echo 'Checking Sentry Logging... ';
 $logChannels = Config::get('logging.channels');
 if (isset($logChannels['sentry'])) {
     echo "SUCCESS (Channel configured)\n";
@@ -45,7 +45,7 @@ if (isset($logChannels['sentry'])) {
 }
 
 // 4. Check Security (DB SSL & Production Guard)
-echo "Checking Security Gates... ";
+echo 'Checking Security Gates... ';
 $sslMode = Config::get('database.connections.pgsql.sslmode');
 $isProd = $app->environment('production');
 

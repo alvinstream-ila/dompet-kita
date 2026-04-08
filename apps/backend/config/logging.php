@@ -3,6 +3,7 @@
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
+use Monolog\Processor\WebProcessor;
 
 $defaultPath = storage_path('logs/laravel.log');
 
@@ -98,7 +99,7 @@ return [
                 'connectionString' => 'tls://'.env('PAPERTRAIL_URL').':'.env('PAPERTRAIL_PORT'),
             ],
             'processors' => [
-                env('LOG_PAPERTRAIL_PROCESSOR', Monolog\Processor\WebProcessor::class),
+                env('LOG_PAPERTRAIL_PROCESSOR', WebProcessor::class),
             ],
         ],
 
@@ -111,7 +112,7 @@ return [
                 'stream' => 'php://stderr',
             ],
             'processors' => [
-                Monolog\Processor\WebProcessor::class,
+                WebProcessor::class,
             ],
         ],
 

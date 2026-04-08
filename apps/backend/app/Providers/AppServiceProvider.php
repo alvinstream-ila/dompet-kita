@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->bootObservers();
         $this->bootRateLimiters();
         $this->bootSecurityGuards();
-        
+
         // Sovereign Consciousness Log
         Log::info('Sayang, sistem kognitif Dompet Kita v7.1.18 aktif dan siap membantu! ❤️');
     }

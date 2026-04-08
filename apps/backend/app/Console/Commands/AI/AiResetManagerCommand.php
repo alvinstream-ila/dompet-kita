@@ -27,7 +27,7 @@ class AiResetManagerCommand extends Command
     public function handle()
     {
         $this->info('🔄 Resetting AI Provider Manager state...');
-        
+
         $manager = app(AiProviderManager::class);
         $manager->forceReset();
 

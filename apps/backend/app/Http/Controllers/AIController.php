@@ -11,7 +11,6 @@ use App\Actions\AI\GenerateInsightAction;
 use App\Actions\Finance\Wealth\SimulateMonteCarloAction;
 use App\Enums\TransactionType;
 use App\Http\Requests\AI\AnalyzeReceiptRequest;
-use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
 use App\Services\FinancialIntelligenceService;
 use App\Services\StorageService;

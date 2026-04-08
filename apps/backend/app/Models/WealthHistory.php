@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\HasUserScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WealthHistory extends Model
 {
@@ -33,7 +34,7 @@ class WealthHistory extends Model
     /**
      * Get the user that owns the wealth history.
      */
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

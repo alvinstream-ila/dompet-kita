@@ -2,11 +2,10 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-
-use App\Models\User;
 
 class LegacyTriggerNotification extends Notification
 {
@@ -41,7 +40,7 @@ class LegacyTriggerNotification extends Notification
         return (new MailMessage)
             ->subject('Dompet Kita: Laporan Warisan Digital & Snapshot Keuangan')
             ->greeting("Halo {$notifiable->name},")
-            ->line("Sistem 'Dead Man's Switch' Dompet Kita mendeteksi bahwa akun {$this->user->name} sudah tidak aktif selama lebih dari ".($this->user->legacy_threshold_months ?? 6)." bulan.")
+            ->line("Sistem 'Dead Man's Switch' Dompet Kita mendeteksi bahwa akun {$this->user->name} sudah tidak aktif selama lebih dari ".($this->user->legacy_threshold_months ?? 6).' bulan.')
             ->line('Sebagai orang yang dipercaya, berikut adalah ringkasan aset yang terdaftar:')
             ->line("- **Total Aset Terdaftar:** Rp {$totalAssets}")
             ->line("- **Total Hutang/Pinjaman Aktif:** Rp {$totalLoans}")

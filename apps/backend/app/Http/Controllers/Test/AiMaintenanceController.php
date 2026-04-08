@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Test;
 
 use App\Http\Controllers\Controller;
 use App\Services\AI\AiProviderManager;
-use Illuminate\Http\Request;
 
 class AiMaintenanceController extends Controller
 {
@@ -12,7 +11,7 @@ class AiMaintenanceController extends Controller
     {
         try {
             $manager->forceReset();
-            
+
             return response()->json([
                 'status' => 'Success',
                 'message' => 'AI Provider quarantine and failure states have been cleared in production cache.',

@@ -40,14 +40,14 @@ return new class extends Migration
             'migrations',
             'password_reset_tokens',
             'personal_access_tokens',
-            'sessions'
+            'sessions',
         ];
 
         foreach ($internalTables as $table) {
             DB::statement("ALTER TABLE \"$table\" ENABLE ROW LEVEL SECURITY;");
             DB::statement("ALTER TABLE \"$table\" FORCE ROW LEVEL SECURITY;");
-            
-            // By adding a policy that always returns false for public/authenticated, 
+
+            // By adding a policy that always returns false for public/authenticated,
             // we ensure the scanner is satisfied and the data is secure from API access.
             DB::statement("DROP POLICY IF EXISTS \"internal_lock\" ON \"$table\";");
             DB::statement("CREATE POLICY \"internal_lock\" ON \"$table\" FOR ALL TO authenticated, anon USING (false);");
@@ -78,7 +78,7 @@ return new class extends Migration
             'migrations',
             'password_reset_tokens',
             'personal_access_tokens',
-            'sessions'
+            'sessions',
         ];
 
         foreach ($internalTables as $table) {

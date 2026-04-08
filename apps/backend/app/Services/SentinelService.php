@@ -14,15 +14,13 @@ class SentinelService
     /**
      * Notify administrators of security events.
      *
-     * @param string $message
-     * @param string $level info|warning|critical
-     * @param array<string, mixed> $context
-     * @return bool
+     * @param  string  $level  info|warning|critical
+     * @param  array<string, mixed>  $context
      */
     public function notify(string $message, string $level = 'info', array $context = []): bool
     {
-        $payload = "[SENTINEL-v7.1.18] [{$level}] " . $message;
-        
+        $payload = "[SENTINEL-v7.1.18] [{$level}] ".$message;
+
         Log::log($level, $payload, $context);
 
         if (config('services.telegram.bot_token') && config('services.telegram.chat_id')) {
@@ -49,14 +47,16 @@ class SentinelService
                     'parse_mode' => 'HTML',
                 ]);
 
-            if (!$response->successful()) {
-                Log::error('Sentinel Telegram Error: ' . $response->body());
+            if (! $response->successful()) {
+                Log::error('Sentinel Telegram Error: '.$response->body());
+
                 return false;
             }
 
             return true;
         } catch (\Exception $e) {
-            Log::warning('Sentinel Telegram Exception: ' . $e->getMessage());
+            Log::warning('Sentinel Telegram Exception: '.$e->getMessage());
+
             return false;
         }
     }

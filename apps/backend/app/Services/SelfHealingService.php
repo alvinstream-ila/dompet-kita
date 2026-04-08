@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\Asset;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -10,9 +13,7 @@ use Illuminate\Support\Facades\Log;
  */
 class SelfHealingService
 {
-    public function __construct(protected GeminiService $gemini)
-    {
-    }
+    public function __construct(protected GeminiService $gemini) {}
 
     /**
      * Run system-wide health check.
@@ -23,20 +24,20 @@ class SelfHealingService
 
         // 1. Check Database Connectivity
         try {
-            \Illuminate\Support\Facades\DB::connection()->getPdo();
+            DB::connection()->getPdo();
         } catch (\Exception $e) {
             $issues[] = ['type' => 'database', 'error' => $e->getMessage()];
         }
 
         // 2. Check Cache/Redis
         try {
-            \Illuminate\Support\Facades\Cache::put('health_check', true, 1);
+            Cache::put('health_check', true, 1);
         } catch (\Exception $e) {
             $issues[] = ['type' => 'cache', 'error' => $e->getMessage()];
         }
 
         // 3. Check for specific application-level anomalies (e.g., negative assets)
-        $negativeAssets = \App\Models\Asset::where('value', '<', 0)->count();
+        $negativeAssets = Asset::where('value', '<', 0)->count();
         if ($negativeAssets > 0) {
             $issues[] = ['type' => 'data_anomaly', 'details' => "Found {$negativeAssets} negative assets."];
         }
@@ -57,12 +58,13 @@ class SelfHealingService
      */
     public function getAiDeepDiagnosis(string $context): string
     {
-        $prompt = "Kamu adalah Sayang AI, pendamping finansial cerdas. Analisis log sistem berikut dan berikan diagnosa serta solusi teknis yang mudah dipahami (namun tetap menyertakan langkah perbaikan): \n\n" . $context;
+        $prompt = "Kamu adalah Sayang AI, pendamping finansial cerdas. Analisis log sistem berikut dan berikan diagnosa serta solusi teknis yang mudah dipahami (namun tetap menyertakan langkah perbaikan): \n\n".$context;
 
         try {
             return $this->gemini->generateText($prompt);
         } catch (\Exception $e) {
-            Log::error('SelfHealing AI Error: ' . $e->getMessage());
+            Log::error('SelfHealing AI Error: '.$e->getMessage());
+
             return 'Maaf Sayang, aku lagi kurang enak badan (AI Error). Coba cek log manual dulu ya? 🥺';
         }
     }

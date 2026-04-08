@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\HasUserScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Holiday extends Model
 {
@@ -38,7 +39,7 @@ class Holiday extends Model
     /**
      * Get the user that owns the holiday.
      */
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

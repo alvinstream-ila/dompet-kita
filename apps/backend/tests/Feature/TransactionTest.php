@@ -31,8 +31,8 @@ class TransactionTest extends TestCase
                         'category',
                         'type',
                         'description',
-                    ]
-                ]
+                    ],
+                ],
             ]);
     }
 
@@ -107,7 +107,7 @@ class TransactionTest extends TestCase
     public function test_user_can_see_transaction_summary()
     {
         $user = User::factory()->create();
-        
+
         // Income
         Transaction::factory()->create([
             'user_id' => $user->id,
@@ -137,19 +137,19 @@ class TransactionTest extends TestCase
     public function test_user_can_list_transactions_with_month_and_year_filter()
     {
         $user = User::factory()->create();
-        
+
         // Current month (Feb 2024)
         Transaction::factory()->create([
             'user_id' => $user->id,
             'date' => '2024-02-15',
-            'amount' => 50000
+            'amount' => 50000,
         ]);
 
         // Other month
         Transaction::factory()->create([
             'user_id' => $user->id,
             'date' => '2024-03-15',
-            'amount' => 75000
+            'amount' => 75000,
         ]);
 
         $response = $this->actingAs($user)

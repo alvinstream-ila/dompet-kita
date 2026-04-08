@@ -31,7 +31,7 @@ class GeminiService
         try {
             return $this->manager->generateText($prompt);
         } catch (\Exception $e) {
-            Log::error('AI Service Exception (GeminiService): ' . $e->getMessage());
+            Log::error('AI Service Exception (GeminiService): '.$e->getMessage());
 
             return 'Aduh Sayang, ada kendala pas aku lagi mikir tadi (AI Error). Coba tanya lagi beberapa saat lagi ya? ❤️';
         }

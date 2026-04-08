@@ -15,18 +15,19 @@ class AiHealthController extends Controller
         $results = [];
 
         $providers = [
-            'Groq' => new GroqProvider(),
-            'OpenRouter' => new OpenRouterProvider(),
-            'Gemini' => new GeminiProvider(),
+            'Groq' => new GroqProvider,
+            'OpenRouter' => new OpenRouterProvider,
+            'Gemini' => new GeminiProvider,
         ];
 
         foreach ($providers as $name => $provider) {
             try {
-                if (!$provider->isAvailable()) {
+                if (! $provider->isAvailable()) {
                     $results[$name] = [
                         'status' => 'Skipped',
                         'message' => 'API Key missing in config',
                     ];
+
                     continue;
                 }
 
@@ -37,7 +38,7 @@ class AiHealthController extends Controller
                 $results[$name] = [
                     'status' => 'Success',
                     'response' => $response,
-                    'duration' => $duration . 's',
+                    'duration' => $duration.'s',
                 ];
             } catch (\Throwable $e) {
                 $results[$name] = [

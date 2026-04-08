@@ -2,11 +2,16 @@
 
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SudoMode;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -24,7 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Moderate Rate Limiting for API (60 req/min)
         $middleware->api(prepend: [
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            ThrottleRequests::class.':api',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -46,19 +51,19 @@ return Application::configure(basePath: dirname(__DIR__))
                         'success' => false,
                     ], 401),
 
-                    $e instanceof \Illuminate\Validation\ValidationException => response()->json([
+                    $e instanceof ValidationException => response()->json([
                         'message' => 'Aduh Sayang, ada yang salah isi di formnya nih.. Cek lagi ya! 🥺',
                         'errors' => $e->errors(),
                         'success' => false,
                     ], 422),
 
-                    $e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException => response()->json([
+                    $e instanceof NotFoundHttpException => response()->json([
                         'message' => 'Sayang, datanya nggak ketemu nih.. Kamu cari di mana? 🔍',
                         'success' => false,
                     ], 404),
 
-                    $e instanceof \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException ||
-                    $e instanceof \Illuminate\Auth\Access\AuthorizationException => response()->json([
+                    $e instanceof AccessDeniedHttpException ||
+                    $e instanceof AuthorizationException => response()->json([
                         'message' => 'Waduh Sayang, kamu nggak punya akses ke sini.. 🔐',
                         'success' => false,
                     ], 403),

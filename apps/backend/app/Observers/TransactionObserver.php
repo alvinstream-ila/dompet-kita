@@ -15,7 +15,7 @@ class TransactionObserver
     {
         $user = $transaction->user;
 
-        if (!$user) {
+        if (! $user) {
             return;
         }
 

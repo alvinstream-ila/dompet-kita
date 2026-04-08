@@ -69,20 +69,20 @@ class QuantumInsightEngine
 
             if (json_last_error() !== JSON_ERROR_NONE) {
                 Log::warning('Quantum Insight Engine: JSON Decode Failed. Attempting heuristic extraction.');
-                
+
                 // Heuristic: If it looks like a single insight not in JSON, wrap it
-                if (strlen($cleanJson) > 50 && !str_contains($cleanJson, '{')) {
-                     $insights = [
-                         'findings' => [
-                             [
-                                 'type' => 'trend',
-                                 'title' => 'Analisis AI',
-                                 'content' => $cleanJson,
-                                 'impact_value' => 0,
-                                 'action_url' => '/transactions'
-                             ]
-                         ]
-                     ];
+                if (strlen($cleanJson) > 50 && ! str_contains($cleanJson, '{')) {
+                    $insights = [
+                        'findings' => [
+                            [
+                                'type' => 'trend',
+                                'title' => 'Analisis AI',
+                                'content' => $cleanJson,
+                                'impact_value' => 0,
+                                'action_url' => '/transactions',
+                            ],
+                        ],
+                    ];
                 } else {
                     return;
                 }

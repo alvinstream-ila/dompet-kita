@@ -15,6 +15,7 @@ trait EnumExtensions
     {
         return array_reduce(self::cases(), function ($carry, $case) {
             $carry[$case->value] = $case->label();
+
             return $carry;
         }, []);
     }
@@ -28,7 +29,7 @@ trait EnumExtensions
             'label' => $case->label(),
             'value' => $case->value,
             'color' => method_exists($case, 'color') ? $case->color() : 'gray',
-            'icon'  => method_exists($case, 'icon') ? $case->icon() : null,
+            'icon' => method_exists($case, 'icon') ? $case->icon() : null,
         ], self::cases());
     }
 

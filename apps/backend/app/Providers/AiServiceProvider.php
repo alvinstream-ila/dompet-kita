@@ -19,9 +19,9 @@ class AiServiceProvider extends ServiceProvider
         $this->app->singleton(AiProviderManager::class, function (): AiProviderManager {
             // Priority order: Groq (Primary) → OpenRouter (Fallback) → Gemini (Emergency)
             return new AiProviderManager([
-                new GroqProvider(),
-                new OpenRouterProvider(),
-                new GeminiProvider(),
+                new GroqProvider,
+                new OpenRouterProvider,
+                new GeminiProvider,
             ]);
         });
 

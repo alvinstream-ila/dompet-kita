@@ -17,7 +17,7 @@ return new class extends Migration
         // 🛡️ Enable RLS (Row Level Security) on the budgets table
         // This is the cleanest and most robust way to manage security in a Supabase + Laravel ecosystem.
         DB::statement('ALTER TABLE budgets ENABLE ROW LEVEL SECURITY;');
-        
+
         // Use high-performance (SELECT auth.uid()) pattern for Postgres optimizer
         DB::statement('
             CREATE POLICY "Users can manage their own budgets"

@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\AI;
 
-use App\Services\AI\AiProviderManager;
 use App\Services\AI\AiProviderInterface;
+use App\Services\AI\AiProviderManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 
@@ -45,22 +45,22 @@ class AiDoctorCommand extends Command
             /** @var AiProviderInterface $provider */
             $name = $provider->getName();
             $isAvailable = $provider->isAvailable() ? '✅ YES' : '❌ NO (Check Config)';
-            
-            $quarantineKey = 'ai_provider_quarantine_' . $name;
+
+            $quarantineKey = 'ai_provider_quarantine_'.$name;
             $isQuarantined = Cache::has($quarantineKey) ? '⚠️ YES (Quarantined)' : '✅ NO';
 
             $status = 'Idle';
             $latency = '-';
 
-            if ($provider->isAvailable() && !Cache::has($quarantineKey)) {
+            if ($provider->isAvailable() && ! Cache::has($quarantineKey)) {
                 try {
                     $start = microtime(true);
                     $provider->generateText('Hi');
                     $end = microtime(true);
                     $status = '✅ Healthy';
-                    $latency = round(($end - $start), 2) . 's';
+                    $latency = round(($end - $start), 2).'s';
                 } catch (\Exception $e) {
-                    $status = '❌ Failed: ' . substr($e->getMessage(), 0, 50);
+                    $status = '❌ Failed: '.substr($e->getMessage(), 0, 50);
                 }
             } else {
                 $status = 'Skipped';

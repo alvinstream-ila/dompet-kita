@@ -59,7 +59,6 @@ class BudgetService
     /**
      * Calculate budget consumption for a specific user.
      *
-     * @param User $user
      * @return array<int, array{id: string, category: string, limit: float, used: float, remaining: float, percentage: float, status: string}>
      */
     public function getBudgetUsage(User $user): array

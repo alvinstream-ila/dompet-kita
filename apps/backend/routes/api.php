@@ -13,6 +13,8 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ScheduledTransactionController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\TaxController;
+use App\Http\Controllers\Test\AiHealthController;
+use App\Http\Controllers\Test\AiMaintenanceController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WealthHistoryController;
@@ -79,8 +81,8 @@ Route::get('/auth/{provider}', [SocialAuthController::class, 'redirectToProvider
 Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
 
 // Diagnostic Routes (Temporary)
-Route::get('/test/ai-health', [\App\Http\Controllers\Test\AiHealthController::class, 'check']);
-Route::get('/test/ai-reset', [\App\Http\Controllers\Test\AiMaintenanceController::class, 'reset']);
+Route::get('/test/ai-health', [AiHealthController::class, 'check']);
+Route::get('/test/ai-reset', [AiMaintenanceController::class, 'reset']);
 
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);

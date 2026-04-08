@@ -7,11 +7,12 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 test('it rejects malicious file uploads in media controller', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $user = User::factory()->create();
     Storage::fake('storj');
 
@@ -29,7 +30,7 @@ test('it rejects malicious file uploads in media controller', function () {
 });
 
 test('it accepts valid image file uploads', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $user = User::factory()->create();
     Storage::fake('storj');
 
@@ -45,7 +46,7 @@ test('it accepts valid image file uploads', function () {
 });
 
 test('it prevents unauthorized access to other users transactions', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $alvin = User::factory()->create();
     $ila = User::factory()->create();
 

@@ -13,10 +13,12 @@ use Illuminate\Support\Facades\Log;
 class MarketService
 {
     private const CACHE_KEY = 'market_rates';
+
     private const CACHE_TTL = 3600; // 1 Hour
 
     // 2026 Sovereign Failover Constants
     private const FAILOVER_USD_IDR = 16950.0;
+
     private const FAILOVER_GOLD_ANTAM = 2525000.0;
 
     /**
@@ -31,7 +33,7 @@ class MarketService
                 // Mock Fetch (In production, replace with real API like CurrencyBeacon/GoldAPI)
                 $response = Http::timeout(5)->get('https://api.exchangerate-api.com/v4/latest/USD');
 
-                if (!$response->successful()) {
+                if (! $response->successful()) {
                     throw new MarketServiceException('Market API Unavailable');
                 }
 
@@ -43,7 +45,7 @@ class MarketService
                     'last_updated' => now()->toIso8601String(),
                 ];
             } catch (\Exception $e) {
-                Log::warning('MarketService Failover Triggered: ' . $e->getMessage());
+                Log::warning('MarketService Failover Triggered: '.$e->getMessage());
 
                 return [
                     'currency_rates' => ['IDR' => self::FAILOVER_USD_IDR],

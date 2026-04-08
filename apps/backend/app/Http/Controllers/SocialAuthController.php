@@ -20,7 +20,8 @@ class SocialAuthController extends Controller
     {
         if (empty(config("services.$provider.client_id"))) {
             Log::error("SocialAuth: Missing configuration for $provider. Check GOOGLE_CLIENT_ID in .env");
-            return redirect()->away(config('app.frontend_url') . '/auth/login?error=missing_config');
+
+            return redirect()->away(config('app.frontend_url').'/auth/login?error=missing_config');
         }
 
         /** @var AbstractProvider $driver */

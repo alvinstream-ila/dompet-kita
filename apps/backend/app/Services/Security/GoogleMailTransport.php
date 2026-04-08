@@ -29,7 +29,7 @@ class GoogleMailTransport extends AbstractTransport
     protected function doSend(SentMessage $message): void
     {
         $email = MessageConverter::toEmail($message->getOriginalMessage());
-        
+
         // Gmail API requires the message to be base64url encoded.
         $rawMessage = rtrim(strtr(base64_encode($email->toString()), '+/', '-_'), '=');
 
@@ -40,8 +40,8 @@ class GoogleMailTransport extends AbstractTransport
                 'raw' => $rawMessage,
             ]);
 
-        if (!$response->successful()) {
-            throw new MailTransportException('Gmail HTTP API Error: ' . $response->body());
+        if (! $response->successful()) {
+            throw new MailTransportException('Gmail HTTP API Error: '.$response->body());
         }
     }
 

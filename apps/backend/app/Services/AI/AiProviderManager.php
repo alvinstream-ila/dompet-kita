@@ -52,6 +52,7 @@ class AiProviderManager
 
                 if ($this->shouldFailover($e)) {
                     Log::info("Failing over from {$provider->getName()} due to: ".$e->getMessage());
+
                     continue;
                 }
 
@@ -186,7 +187,7 @@ class AiProviderManager
         // Failover dynamically on ANY API error or network timeout.
         // We log the specific error in the onFailure method.
         $message = $e->getMessage();
-        
+
         Log::warning("AI Failover Decision: Error '{$message}' triggered failover.");
 
         return true;

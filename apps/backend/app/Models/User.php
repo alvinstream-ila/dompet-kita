@@ -9,6 +9,7 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\URL;
@@ -123,7 +124,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the assets for the user.
      */
-    public function assets(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function assets(): HasMany
     {
         return $this->hasMany(Asset::class);
     }
@@ -131,7 +132,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the transactions for the user.
      */
-    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
     }
@@ -139,7 +140,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the goals for the user.
      */
-    public function goals(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function goals(): HasMany
     {
         return $this->hasMany(Goal::class);
     }
@@ -147,7 +148,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the loans for the user.
      */
-    public function loans(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function loans(): HasMany
     {
         return $this->hasMany(Loan::class);
     }
@@ -155,7 +156,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the scheduled transactions for the user.
      */
-    public function scheduledTransactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function scheduledTransactions(): HasMany
     {
         return $this->hasMany(ScheduledTransaction::class);
     }
@@ -163,7 +164,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the chat history for the user.
      */
-    public function chatHistories(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function chatHistories(): HasMany
     {
         return $this->hasMany(ChatHistory::class);
     }
@@ -171,7 +172,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the financial wisdoms for the user.
      */
-    public function financialWisdoms(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function financialWisdoms(): HasMany
     {
         return $this->hasMany(FinancialWisdom::class);
     }
@@ -179,7 +180,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the wealth histories for the user.
      */
-    public function wealthHistories(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function wealthHistories(): HasMany
     {
         return $this->hasMany(WealthHistory::class);
     }

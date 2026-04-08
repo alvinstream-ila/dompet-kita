@@ -5,6 +5,7 @@ use App\Providers\AppServiceProvider;
 use App\Providers\MailServiceProvider;
 use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use L5Swagger\L5SwaggerServiceProvider;
+use NunoMaduro\PhpInsights\Application\Adapters\Laravel\InsightsServiceProvider;
 
 return [
     AppServiceProvider::class,
@@ -12,5 +13,5 @@ return [
     IdeHelperServiceProvider::class,
     AiServiceProvider::class,
     MailServiceProvider::class,
-    \NunoMaduro\PhpInsights\Application\Adapters\Laravel\InsightsServiceProvider::class,
+    InsightsServiceProvider::class,
 ];
