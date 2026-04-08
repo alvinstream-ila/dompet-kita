@@ -48,7 +48,7 @@ class AiProviderManager
                 $errors[] = $provider->getName().': '.$e->getMessage();
                 $this->onFailure($provider, $e);
 
-                if ($this->shouldTryNext($e)) {
+                if ($this->shouldFailover($e)) {
                     continue;
                 }
 
@@ -84,7 +84,7 @@ class AiProviderManager
                 $errors[] = $provider->getName().': '.$e->getMessage();
                 $this->onFailure($provider, $e);
 
-                if ($this->shouldTryNext($e)) {
+                if ($this->shouldFailover($e)) {
                     continue;
                 }
 
@@ -120,7 +120,7 @@ class AiProviderManager
                 $errors[] = $provider->getName().': '.$e->getMessage();
                 $this->onFailure($provider, $e);
 
-                if ($this->shouldTryNext($e)) {
+                if ($this->shouldFailover($e)) {
                     continue;
                 }
 
@@ -181,10 +181,20 @@ class AiProviderManager
     /**
      * Determine if we should failover to the next provider.
      */
-    protected function shouldTryNext(\Exception $e): bool
+    protected function shouldFailover(\Exception $e): bool
     {
         // Failover dynamically on ANY API error (including 404 model not found).
         // The error threshold will naturally quarantine providers that consistently fail.
         return true;
+    }
+
+    public function forceReset(): void
+    {
+        foreach ($this->providers as $provider) {
+            $name = $provider->getName();
+            Cache::forget("ai_provider_quarantine_{$name}");
+            Cache::forget("ai_provider_failures_{$name}");
+        }
+        Log::info('AI Provider Manager states have been force reset.');
     }
 }

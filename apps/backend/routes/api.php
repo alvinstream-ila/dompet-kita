@@ -80,6 +80,7 @@ Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handlePro
 
 // Diagnostic Routes (Temporary)
 Route::get('/test/ai-health', [\App\Http\Controllers\Test\AiHealthController::class, 'check']);
+Route::get('/test/ai-reset', [\App\Http\Controllers\Test\AiMaintenanceController::class, 'reset']);
 
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
