@@ -26,7 +26,6 @@ import type { Loan, ApiError } from '@/types';
 
 export interface LoanFormProps {
   onSuccess?: () => void;
-  onCancel?: () => void;
   loan?: Loan | null;
   onTypeChange?: (type: 'utang' | 'piutang') => void;
 }
@@ -53,9 +52,7 @@ export const LoanForm: React.FC<LoanFormProps> = ({
   const [dueDate, setDueDate] = useState<Date | undefined>(
     loan?.due_date ? parseISO(loan.due_date) : undefined
   );
-  const [status] = useState<'active' | 'paid'>(
-    loan?.status || 'active'
-  );
+  const [status] = useState<'active' | 'paid'>(loan?.status || 'active');
 
   const { mutateAsync: addLoan } = useAddLoan();
   const { mutateAsync: updateLoan } = useUpdateLoan();
@@ -65,7 +62,7 @@ export const LoanForm: React.FC<LoanFormProps> = ({
   }, [type, onTypeChange]);
 
   const parseNumeric = (val: string) =>
-    Number.parseInt(val.replace(/\./g, '')) || 0;
+    Number.parseInt(val.replaceAll('.', '')) || 0;
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatToRupiah(e.target.value);
@@ -87,7 +84,7 @@ export const LoanForm: React.FC<LoanFormProps> = ({
     setRemainingAmount(formatToRupiah(newRemaining.toString()));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!amount || !contactName || !description) return;
 
@@ -104,7 +101,7 @@ export const LoanForm: React.FC<LoanFormProps> = ({
         contact_name: contactName,
         due_date: dueDate ? format(dueDate, 'yyyy-MM-dd') : null,
         created_at: format(transactionDate, 'yyyy-MM-dd'),
-        status: (numRemaining <= 0 ? 'paid' : status) as 'active' | 'paid',
+        status: numRemaining <= 0 ? 'paid' : status,
       };
 
       if (loan) {
@@ -151,186 +148,28 @@ export const LoanForm: React.FC<LoanFormProps> = ({
         </Tabs>
       )}
 
-      <div className="space-y-4">
-        <div className="space-y-1.5">
-          <Label className="flex items-center gap-2 px-1 text-[10px] font-black tracking-widest text-slate-500 uppercase">
-            <User className="size-3 text-slate-400" /> Pihak Terkait
-          </Label>
-          <Input
-            placeholder="Misal : Teman Kantor / Saudara"
-            value={contactName}
-            onChange={(e) => setContactName(e.target.value)}
-            className="h-11 w-full rounded-xl border-slate-200/60 bg-slate-50 px-4 text-sm font-bold shadow-xs transition-all focus:bg-white focus-visible:ring-slate-300"
-            required
-          />
-        </div>
+      <CommonLoanFields
+        contactName={contactName}
+        setContactName={setContactName}
+        description={description}
+        setDescription={setDescription}
+        transactionDate={transactionDate}
+        setTransactionDate={setTransactionDate}
+        dueDate={dueDate}
+        setDueDate={setDueDate}
+      />
 
-        <div className="space-y-1.5">
-          <Label className="flex items-center gap-2 px-1 text-[10px] font-black tracking-widest text-slate-500 uppercase">
-            <FileText className="size-3 text-slate-400" /> Keterangan
-          </Label>
-          <Input
-            placeholder="Sewa kos / Pinjem beli makan"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="h-11 w-full rounded-xl border-slate-200/60 bg-slate-50 px-4 text-sm font-bold shadow-xs transition-all focus:bg-white focus-visible:ring-slate-300"
-            required
-          />
-        </div>
+      {loan && (
+        <LoanPaymentProgress
+          loan={loan}
+          amount={amount}
+          remainingAmount={remainingAmount}
+          paymentAmount={paymentAmount}
+          handlePaymentChange={handlePaymentChange}
+        />
+      )}
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <Label className="flex items-center gap-2 px-1 text-[10px] font-black tracking-widest text-slate-500 uppercase">
-              <CalendarIcon className="size-3 text-slate-400" /> Tgl Mulai
-            </Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  type="button"
-                  variant={'outline'}
-                  className={cn(
-                    'h-11 w-full justify-start rounded-xl border-slate-200/60 bg-slate-50 px-4 text-left text-sm font-bold shadow-xs hover:bg-slate-100',
-                    !transactionDate && 'text-muted-foreground'
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4 opacity-50" />
-                  {transactionDate ? (
-                    format(transactionDate, 'd MMM yyyy', { locale: id })
-                  ) : (
-                    <span>Pilih</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-auto overflow-hidden rounded-3xl border-none p-0 shadow-2xl"
-                align="start"
-              >
-                <Calendar
-                  mode="single"
-                  selected={transactionDate}
-                  onSelect={(d) => d && setTransactionDate(d)}
-                  initialFocus
-                  className="bg-white"
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label className="flex items-center gap-2 px-1 text-[10px] font-black tracking-widest text-slate-500 uppercase">
-              <CalendarIcon className="size-3 text-slate-400" /> Deadline
-            </Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  type="button"
-                  variant={'outline'}
-                  className={cn(
-                    'h-11 w-full justify-start rounded-xl border-slate-200/60 bg-slate-50 px-4 text-left text-sm font-bold shadow-xs hover:bg-slate-100',
-                    !dueDate && 'text-muted-foreground'
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4 opacity-50" />
-                  {dueDate ? (
-                    format(dueDate, 'd MMM yyyy', { locale: id })
-                  ) : (
-                    <span>Batas Bayar</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-auto overflow-hidden rounded-3xl border-none p-0 shadow-2xl"
-                align="start"
-              >
-                <Calendar
-                  mode="single"
-                  selected={dueDate}
-                  onSelect={setDueDate}
-                  initialFocus
-                  className="bg-white"
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
-      </div>
-
-      {loan ? (
-        <div className="group relative mt-2 space-y-5 overflow-hidden rounded-[28px] border border-slate-200/50 bg-slate-50/80 p-5 shadow-sm backdrop-blur-xs">
-          <div className="absolute top-0 right-0 -mt-12 -mr-12 h-24 w-24 rounded-full bg-blue-500/5 transition-transform group-hover:scale-110" />
-          <div className="relative z-10 grid grid-cols-2 gap-6">
-            <div className="space-y-1">
-              <Label className="block text-[9px] font-black tracking-widest text-slate-400 uppercase">
-                Total Amanah
-              </Label>
-              <p className="text-base font-black text-slate-700">Rp {amount}</p>
-            </div>
-            <div className="space-y-1">
-              <Label className="block text-[9px] font-black tracking-widest text-emerald-500 uppercase">
-                Terbayar
-              </Label>
-              <p className="text-base font-black text-emerald-600">
-                Rp{' '}
-                {formatToRupiah(
-                  (loan.amount - loan.remaining_amount).toString()
-                )}
-              </p>
-            </div>
-          </div>
-          <div className="relative z-10 space-y-2">
-            <Label className="flex items-center gap-2 px-1 text-[10px] font-black tracking-[0.15em] text-pink-500 uppercase">
-              <Wallet className="size-3.5" /> Nominal Pembayaran Baru
-            </Label>
-            <div className="relative">
-              <Input
-                type="text"
-                inputMode="numeric"
-                placeholder="0"
-                autoFocus
-                value={paymentAmount}
-                onChange={handlePaymentChange}
-                className="h-14 w-full rounded-2xl border-pink-200 bg-white px-5 text-2xl font-black text-pink-600 shadow-sm transition-all focus:border-pink-400 focus-visible:ring-pink-100"
-              />
-              <div className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-pink-200">
-                <ArrowUpCircle className="size-6 rotate-45 opacity-20" />
-              </div>
-            </div>
-          </div>
-          <div className="relative z-10 space-y-3 pt-2">
-            <div className="flex items-end justify-between px-1">
-              <div className="space-y-0.5">
-                <Label className="block text-[9px] font-black tracking-widest text-slate-400 uppercase">
-                  Estimasi Sisa
-                </Label>
-                <span className="text-lg leading-none font-black text-rose-500">
-                  Rp {remainingAmount}
-                </span>
-              </div>
-              <div className="text-right">
-                <span className="rounded-full bg-slate-200/50 px-2 py-0.5 text-[10px] font-black text-slate-400 uppercase">
-                  {Math.round(
-                    (1 -
-                      (parseInt(remainingAmount.replace(/\./g, '')) || 0) /
-                        (parseInt(amount.replace(/\./g, '')) || 1)) *
-                      100
-                  )}
-                  % Lunas
-                </span>
-              </div>
-            </div>
-            <div className="h-3 overflow-hidden rounded-full bg-slate-200/70 p-0.5 shadow-inner">
-              <div
-                className="relative h-full rounded-full bg-linear-to-r from-emerald-400 to-emerald-600 transition-all duration-700 ease-out"
-                style={{
-                  width: `${Math.min(100, (1 - (parseInt(remainingAmount.replace(/\./g, '')) || 0) / (parseInt(amount.replace(/\./g, '')) || 1)) * 100)}%`,
-                }}
-              >
-                <div className="absolute inset-0 animate-pulse bg-white/20" />
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
+      {!loan && (
         <div className="grid grid-cols-2 gap-4 pt-2">
           <div className="space-y-2">
             <Label className="px-1 text-[10px] font-black tracking-widest text-slate-500 uppercase">
@@ -368,8 +207,8 @@ export const LoanForm: React.FC<LoanFormProps> = ({
           <div className="size-1.5 animate-pulse rounded-full bg-blue-400" />
           <span className="text-[10px] font-bold tracking-tight text-blue-600 italic">
             {getTerbilang(
-              parseInt(
-                (loan ? paymentAmount : remainingAmount).replace(/\./g, '')
+              Number.parseInt(
+                (loan ? paymentAmount : remainingAmount).replaceAll('.', '')
               )
             )}{' '}
             Rupiah
@@ -397,5 +236,219 @@ export const LoanForm: React.FC<LoanFormProps> = ({
         )}
       </Button>
     </form>
+  );
+};
+
+interface CommonLoanFieldsProps {
+  contactName: string;
+  setContactName: (val: string) => void;
+  description: string;
+  setDescription: (val: string) => void;
+  transactionDate: Date;
+  setTransactionDate: (date: Date) => void;
+  dueDate?: Date;
+  setDueDate: (date?: Date) => void;
+}
+
+const CommonLoanFields: React.FC<CommonLoanFieldsProps> = ({
+  contactName,
+  setContactName,
+  description,
+  setDescription,
+  transactionDate,
+  setTransactionDate,
+  dueDate,
+  setDueDate,
+}) => {
+  return (
+    <div className="space-y-4">
+      <div className="space-y-1.5">
+        <Label className="flex items-center gap-2 px-1 text-[10px] font-black tracking-widest text-slate-500 uppercase">
+          <User className="size-3 text-slate-400" /> Pihak Terkait
+        </Label>
+        <Input
+          placeholder="Misal : Teman Kantor / Saudara"
+          value={contactName}
+          onChange={(e) => setContactName(e.target.value)}
+          className="h-11 w-full rounded-xl border-slate-200/60 bg-slate-50 px-4 text-sm font-bold shadow-xs transition-all focus:bg-white focus-visible:ring-slate-300"
+          required
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label className="flex items-center gap-2 px-1 text-[10px] font-black tracking-widest text-slate-500 uppercase">
+          <FileText className="size-3 text-slate-400" /> Keterangan
+        </Label>
+        <Input
+          placeholder="Sewa kos / Pinjem beli makan"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="h-11 w-full rounded-xl border-slate-200/60 bg-slate-50 px-4 text-sm font-bold shadow-xs transition-all focus:bg-white focus-visible:ring-slate-300"
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <Label className="flex items-center gap-2 px-1 text-[10px] font-black tracking-widest text-slate-500 uppercase">
+            <CalendarIcon className="size-3 text-slate-400" /> Tgl Mulai
+          </Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant={'outline'}
+                className={cn(
+                  'h-11 w-full justify-start rounded-xl border-slate-200/60 bg-slate-50 px-4 text-left text-sm font-bold shadow-xs hover:bg-slate-100',
+                  !transactionDate && 'text-muted-foreground'
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4 opacity-50" />
+                {transactionDate ? (
+                  format(transactionDate, 'd MMM yyyy', { locale: id })
+                ) : (
+                  <span>Pilih</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-auto overflow-hidden rounded-3xl border-none p-0 shadow-2xl"
+              align="start"
+            >
+              <Calendar
+                mode="single"
+                selected={transactionDate}
+                onSelect={(d) => d && setTransactionDate(d)}
+                className="bg-white"
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label className="flex items-center gap-2 px-1 text-[10px] font-black tracking-widest text-slate-500 uppercase">
+            <CalendarIcon className="size-3 text-slate-400" /> Deadline
+          </Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant={'outline'}
+                className={cn(
+                  'h-11 w-full justify-start rounded-xl border-slate-200/60 bg-slate-50 px-4 text-left text-sm font-bold shadow-xs hover:bg-slate-100',
+                  !dueDate && 'text-muted-foreground'
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4 opacity-50" />
+                {dueDate ? (
+                  format(dueDate, 'd MMM yyyy', { locale: id })
+                ) : (
+                  <span>Batas Bayar</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-auto overflow-hidden rounded-3xl border-none p-0 shadow-2xl"
+              align="start"
+            >
+              <Calendar
+                mode="single"
+                selected={dueDate}
+                onSelect={setDueDate}
+                className="bg-white"
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface LoanPaymentProgressProps {
+  loan: Loan;
+  amount: string;
+  remainingAmount: string;
+  paymentAmount: string;
+  handlePaymentChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+const LoanPaymentProgress: React.FC<LoanPaymentProgressProps> = ({
+  loan,
+  amount,
+  remainingAmount,
+  paymentAmount,
+  handlePaymentChange,
+}) => {
+  const currentRemaining =
+    Number.parseInt(remainingAmount.replaceAll('.', '')) || 0;
+  const totalAmount = Number.parseInt(amount.replaceAll('.', '')) || 1;
+  const percentPaid = Math.round((1 - currentRemaining / totalAmount) * 100);
+
+  return (
+    <div className="group relative mt-2 space-y-5 overflow-hidden rounded-[28px] border border-slate-200/50 bg-slate-50/80 p-5 shadow-sm backdrop-blur-xs">
+      <div className="absolute top-0 right-0 -mt-12 -mr-12 h-24 w-24 rounded-full bg-blue-500/5 transition-transform group-hover:scale-110" />
+      <div className="relative z-10 grid grid-cols-2 gap-6">
+        <div className="space-y-1">
+          <Label className="block text-[9px] font-black tracking-widest text-slate-400 uppercase">
+            Total Amanah
+          </Label>
+          <p className="text-base font-black text-slate-700">Rp {amount}</p>
+        </div>
+        <div className="space-y-1">
+          <Label className="block text-[9px] font-black tracking-widest text-emerald-500 uppercase">
+            Terbayar
+          </Label>
+          <p className="text-base font-black text-emerald-600">
+            Rp{' '}
+            {formatToRupiah((loan.amount - loan.remaining_amount).toString())}
+          </p>
+        </div>
+      </div>
+      <div className="relative z-10 space-y-2">
+        <Label className="flex items-center gap-2 px-1 text-[10px] font-black tracking-[0.15em] text-pink-500 uppercase">
+          <Wallet className="size-3.5" /> Nominal Pembayaran Baru
+        </Label>
+        <div className="relative">
+          <Input
+            type="text"
+            inputMode="numeric"
+            placeholder="0"
+            autoFocus
+            value={paymentAmount}
+            onChange={handlePaymentChange}
+            className="h-14 w-full rounded-2xl border-pink-200 bg-white px-5 text-2xl font-black text-pink-600 shadow-sm transition-all focus:border-pink-400 focus-visible:ring-pink-100"
+          />
+          <div className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-pink-200">
+            <ArrowUpCircle className="size-6 rotate-45 opacity-20" />
+          </div>
+        </div>
+      </div>
+      <div className="relative z-10 space-y-3 pt-2">
+        <div className="flex items-end justify-between px-1">
+          <div className="space-y-0.5">
+            <Label className="block text-[9px] font-black tracking-widest text-slate-400 uppercase">
+              Estimasi Sisa
+            </Label>
+            <span className="text-lg leading-none font-black text-rose-500">
+              Rp {remainingAmount}
+            </span>
+          </div>
+          <div className="text-right">
+            <span className="rounded-full bg-slate-200/50 px-2 py-0.5 text-[10px] font-black text-slate-400 uppercase">
+              {percentPaid}% Lunas
+            </span>
+          </div>
+        </div>
+        <div className="h-3 overflow-hidden rounded-full bg-slate-200/70 p-0.5 shadow-inner">
+          <div
+            className="relative h-full rounded-full bg-linear-to-r from-emerald-400 to-emerald-600 transition-all duration-700 ease-out"
+            style={{ width: `${Math.min(100, percentPaid)}%` }}
+          >
+            <div className="absolute inset-0 animate-pulse bg-white/20" />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

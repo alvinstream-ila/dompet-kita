@@ -20,7 +20,8 @@ export async function addTransactionAction(
     revalidatePath('/transactions');
     return { success: true, data };
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Gagal Mencatat 🥺';
+    const message =
+      error instanceof Error ? error.message : 'Gagal Mencatat 🥺';
     return { success: false, error: message };
   }
 }
@@ -60,7 +61,8 @@ export async function deleteTransactionAction(id: string) {
     revalidatePath('/transactions');
     return { success: true };
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Gagal Menghapus 🥺';
+    const message =
+      error instanceof Error ? error.message : 'Gagal Menghapus 🥺';
     return { success: false, error: message };
   }
 }
@@ -68,14 +70,22 @@ export async function deleteTransactionAction(id: string) {
 /**
  * Fetch financial summary (Server-side for RSC)
  */
-export async function getFinancialSummaryAction(month?: number, year?: number, budgetCycleStart?: number) {
+export async function getFinancialSummaryAction(
+  month?: number,
+  year?: number,
+  budgetCycleStart?: number
+) {
   try {
     const params = new URLSearchParams();
     if (month !== undefined) params.set('month', month.toString());
     if (year !== undefined) params.set('year', year.toString());
-    if (budgetCycleStart !== undefined) params.set('budget_cycle_start', budgetCycleStart.toString());
+    if (budgetCycleStart !== undefined)
+      params.set('budget_cycle_start', budgetCycleStart.toString());
 
-    return await serverApi(`/transactions/summary?${params.toString()}`);
+    const response = await serverApi(
+      `/transactions/summary?${params.toString()}`
+    );
+    return response.data;
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     console.error('Failed to fetch summary:', message);

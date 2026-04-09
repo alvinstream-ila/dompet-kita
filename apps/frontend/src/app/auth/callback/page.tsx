@@ -23,12 +23,21 @@ function AuthCallbackContent() {
       if (token) {
         try {
           // Temporarily set token to fetch user data
-          Cookies.set('auth_token', token, { expires: 7, sameSite: 'lax', secure: true });
+          Cookies.set('auth_token', token, {
+            expires: 7,
+            sameSite: 'lax',
+            secure: true,
+          });
           const { data: user } = await api.get('/user');
 
           // Properly authorize via context
           login(token, user);
-          
+
+          // Check if this is a new signup to show premium onboarding toast
+          if (searchParams?.get('is_new') === '1') {
+            Cookies.set('show_welcome_toast', '1', { expires: 1 / 1440 }); // Lives for 1 minute
+          }
+
           // Redirect to home/dashboard
           router.push('/');
         } catch (error) {
@@ -49,10 +58,10 @@ function AuthCallbackContent() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#e5f1fa]">
       <div className="relative">
-        <div className="absolute inset-0 blur-2xl bg-blue-400/20 rounded-full animate-pulse" />
+        <div className="absolute inset-0 animate-pulse rounded-full bg-blue-400/20 blur-2xl" />
         <Loader2 className="relative h-16 w-16 animate-spin text-blue-500" />
       </div>
-      <p className="text-[12px] font-black tracking-[0.2em] text-slate-600 uppercase animate-pulse">
+      <p className="animate-pulse text-[12px] font-black tracking-[0.2em] text-slate-600 uppercase">
         Lagi menyambungkan diri sayang...
       </p>
     </div>
@@ -64,11 +73,13 @@ function AuthCallbackContent() {
  */
 export default function AuthCallbackPage() {
   return (
-    <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center bg-[#e5f1fa]">
-        <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-[#e5f1fa]">
+          <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
+        </div>
+      }
+    >
       <AuthCallbackContent />
     </Suspense>
   );

@@ -26,7 +26,12 @@ class UpdateUserRequest extends FormRequest
         $userId = $this->user()->id;
 
         return [
-            'name' => ['sometimes', 'string', 'max:255'],
+            'name' => [
+                'sometimes',
+                'string',
+                'max:255',
+                Rule::unique('users', 'name')->ignore($userId),
+            ],
             'full_name' => ['sometimes', 'nullable', 'string', 'max:255'],
             'avatar_url' => ['sometimes', 'nullable', 'string', 'max:2048'],
             'partner_name' => ['sometimes', 'nullable', 'string', 'max:255'],

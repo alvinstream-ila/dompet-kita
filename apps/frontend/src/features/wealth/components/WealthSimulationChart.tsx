@@ -37,13 +37,15 @@ interface WealthSimulationChartProps {
   }[];
 }
 
-export const WealthSimulationChart: React.FC<WealthSimulationChartProps> = ({ data }) => {
+export const WealthSimulationChart: React.FC<WealthSimulationChartProps> = ({
+  data,
+}) => {
   const { formatAmount } = useFormatting();
 
   if (!data || data.length === 0) return null;
 
   const labels = data.map((d) => d.month);
-  
+
   const chartData = {
     labels,
     datasets: [
@@ -134,19 +136,19 @@ export const WealthSimulationChart: React.FC<WealthSimulationChartProps> = ({ da
   return (
     <Card className="group relative overflow-hidden rounded-[40px] border-none bg-white p-8 shadow-2xl">
       <div className="absolute top-0 left-0 -mt-32 -ml-32 h-64 w-64 rounded-full bg-indigo-500/5 blur-3xl" />
-      
+
       <div className="relative z-10">
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
             <h3 className="flex items-center gap-2 text-xl font-black tracking-tight text-slate-800">
               <Sparkles className="size-5 text-amber-500" />
-              Proyeksi Masa Depan Kita
+              Proyeksi Portofolio Investasi
             </h3>
             <p className="mt-1 text-[10px] font-black tracking-widest text-slate-400 uppercase">
-              Simulasi Monte Carlo (100 Skenario)
+              Simulasi Masa Depan Aset (100 Skenario)
             </p>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black text-emerald-600 uppercase">
               <TrendingUp size={12} />
@@ -163,34 +165,40 @@ export const WealthSimulationChart: React.FC<WealthSimulationChartProps> = ({ da
           <div className="rounded-2xl bg-rose-50 p-4">
             <div className="mb-1 flex items-center gap-2 text-rose-600">
               <AlertTriangle size={14} />
-              <span className="text-[10px] font-black uppercase">Pessimistic</span>
+              <span className="text-[10px] font-black uppercase">
+                Pessimistic
+              </span>
             </div>
             <p className="text-lg font-black text-slate-800">
-              {formatAmount(data[data.length-1].pessimistic)}
+              {formatAmount(data.at(-1)?.pessimistic ?? 0)}
             </p>
           </div>
-          <div className="rounded-2xl bg-blue-50 p-4 border border-blue-100">
+          <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
             <div className="mb-1 flex items-center gap-2 text-blue-600">
               <TrendingUp size={14} />
               <span className="text-[10px] font-black uppercase">Expected</span>
             </div>
             <p className="text-lg font-black text-slate-800">
-              {formatAmount(data[data.length-1].expected)}
+              {formatAmount(data.at(-1)?.expected ?? 0)}
             </p>
           </div>
           <div className="rounded-2xl bg-emerald-50 p-4">
             <div className="mb-1 flex items-center gap-2 text-emerald-600">
               <Sparkles size={14} />
-              <span className="text-[10px] font-black uppercase">Optimistic</span>
+              <span className="text-[10px] font-black uppercase">
+                Optimistic
+              </span>
             </div>
             <p className="text-lg font-black text-slate-800">
-              {formatAmount(data[data.length-1].optimistic)}
+              {formatAmount(data.at(-1)?.optimistic ?? 0)}
             </p>
           </div>
         </div>
-        
+
         <p className="mt-4 text-center text-[9px] font-bold text-slate-400 italic">
-          *Proyeksi ini menggunakan simulasi acak berdasarkan trend tabungan & volatilitas pasar. Hasil aktual bisa berbeda ya Sayang! ❤️
+          *Proyeksi ini mensimulasikan pertumbuhan aset investasi Anda saat ini
+          tanpa tambahan suntikan dana bulanan (Injections: Rp 0). Hasil aktual
+          bisa berbeda ya Sayang! ❤️
         </p>
       </div>
     </Card>

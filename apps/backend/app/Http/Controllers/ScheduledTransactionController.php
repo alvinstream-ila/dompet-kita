@@ -94,4 +94,26 @@ class ScheduledTransactionController extends Controller
 
         return $this->success(null, 'Jadwal transaksi rutin sudah dihapus. 👋', 204);
     }
+
+    /**
+     * Execute a scheduled transaction manually.
+     */
+    public function execute(ScheduledTransaction $scheduledTransaction, \App\Services\Cfo\CfoAssistantService $cfo): JsonResponse
+    {
+        $this->authorize('update', $scheduledTransaction);
+
+        // Manually execute the transaction
+        // We use a reflection or make the method public in service if needed.
+        // For now, I'll just check if it's already public. It was protected in CfoAssistantService.
+        
+        // I will make it public in CfoAssistantService or just call it here.
+        // Actually, I'll update CfoAssistantService to make executeTransaction public.
+        
+        $cfo->executeTransactionManually($scheduledTransaction);
+
+        return $this->success(
+            new ScheduledTransactionResource($scheduledTransaction),
+            'Yeay! Tagihan sudah dilunasi dan dicatat ya Sayang! 💖'
+        );
+    }
 }

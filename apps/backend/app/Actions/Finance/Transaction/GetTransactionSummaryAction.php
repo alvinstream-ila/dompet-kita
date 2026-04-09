@@ -38,15 +38,15 @@ class GetTransactionSummaryAction extends BaseAction
                 ->groupBy('type')
                 ->get();
 
-            $income = $summary->firstWhere('type', TransactionType::INCOME)->total
-                      ?? $summary->firstWhere('type', TransactionType::INCOME->value)->total ?? 0;
-            $expense = $summary->firstWhere('type', TransactionType::EXPENSE)->total
-                       ?? $summary->firstWhere('type', TransactionType::EXPENSE->value)->total ?? 0;
+            $income = (float) ($summary->firstWhere('type', TransactionType::INCOME)?->total
+                      ?? $summary->firstWhere('type', TransactionType::INCOME->value)?->total ?? 0);
+            $expense = (float) ($summary->firstWhere('type', TransactionType::EXPENSE)?->total
+                       ?? $summary->firstWhere('type', TransactionType::EXPENSE->value)?->total ?? 0);
 
             $recentTransactions = Transaction::where('user_id', $userId)
                 ->whereBetween('date', [$startDate, $endDate])
                 ->orderBy('date', 'desc')
-                ->limit(10)
+                ->limit(5)
                 ->get();
 
             return [

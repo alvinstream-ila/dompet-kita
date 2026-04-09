@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <title>Verifikasi Email | Dompet Kita</title>
+    <title>Kode Verifikasi | Dompet Kita</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <style>
@@ -48,19 +48,21 @@
             line-height: 1.6;
             margin-bottom: 30px;
         }
-        .button-container {
-            margin-bottom: 30px;
-        }
-        .verify-button {
-            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-            border-radius: 12px;
-            color: #ffffff !important;
+        .otp-container {
+            background: #f1f5f9;
+            border-radius: 16px;
             display: inline-block;
-            font-size: 16px;
-            font-weight: 600;
-            padding: 16px 32px;
-            text-decoration: none;
-            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
+            margin: 10px 0 30px 0;
+            padding: 24px 40px;
+            letter-spacing: 8px;
+            border: 2px dashed #cbd5e1;
+        }
+        .otp-code {
+            color: #6366f1;
+            font-size: 42px;
+            font-weight: 800;
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
         }
         .footer {
             color: #94a3b8;
@@ -74,33 +76,35 @@
         .heart {
             color: #f43f5e;
         }
+        .expiry-note {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>💰 Dompet Kita</h1>
+            <h1>🛡️ Dompet Kita</h1>
         </div>
         
         <div class="content-card">
             <h2 class="welcome-text">Halo Sayang! <span class="heart">❤️</span></h2>
             <p class="description-text">
-                Senang banget kamu sudah bergabung di <b>Dompet Kita</b>! Langkah kecil ini adalah awal yang keren buat kita mengatur masa depan bareng-bareng.
+                Senang banget kamu sudah bergabung! Satu langkah terakhir nih buat mengaktifkan akun kamu dan mulai kelola masa depan bareng-bareng.
             </p>
             
             <p class="description-text">
-                Yuk, klik tombol di bawah ini buat verifikasi email kamu sekarang:
+                Silakan gunakan kode verifikasi di bawah ini untuk mengonfirmasi email kamu:
             </p>
             
-            <div class="button-container">
-                <a href="{{ $verificationUrl }}" class="verify-button">
-                    Verifikasi Akun Saya ✨
-                </a>
+            <div class="otp-container">
+                <div class="otp-code">{{ $code }}</div>
             </div>
             
-            <p class="description-text" style="font-size: 14px;">
-                Jika tombol di atas tidak berfungsi, kamu juga bisa salin link berikut ke browser kamu:<br>
-                <a href="{{ $verificationUrl }}" style="color: #6366f1; word-break: break-all;">{{ $verificationUrl }}</a>
+            <p class="expiry-note">
+                Kode ini berlaku selama 60 menit ya. Jangan berikan kode ini kepada siapapun, cukup kita berdua saja yang tahu! 😉
             </p>
         </div>
         

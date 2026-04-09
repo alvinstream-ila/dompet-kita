@@ -10,6 +10,7 @@ export interface Holiday {
   end_date: string | null;
   status: 'planning' | 'booked' | 'completed' | 'cancelled';
   itinerary: string | null;
+  image_url: string | null;
   spent?: number;
   is_favorite?: boolean;
 }
@@ -30,12 +31,12 @@ export function useAddHoliday() {
   return useMutation({
     mutationFn: async (newHoliday: Omit<Holiday, 'id'>) => {
       const { data } = await api.post('/holidays', newHoliday);
-      return data;
+      return data.data as Holiday;
     },
-    onSuccess: (data) => {
+    onSuccess: (holiday) => {
       queryClient.invalidateQueries({ queryKey: ['holidays'] });
       toast.success('Rencana Dibuat! ✨', {
-        description: `Asik! Kita mau ke ${data.destination} nih Sayang! ❤️`,
+        description: `Asik! Kita mau ke ${holiday.destination} nih Sayang! ❤️`,
       });
     },
     onError: () => {
@@ -55,12 +56,12 @@ export function useUpdateHoliday() {
       ...updates
     }: Partial<Holiday> & { id: number }) => {
       const { data } = await api.put(`/holidays/${id}`, updates);
-      return data;
+      return data.data as Holiday;
     },
-    onSuccess: (data) => {
+    onSuccess: (holiday) => {
       queryClient.invalidateQueries({ queryKey: ['holidays'] });
       toast.success('Berhasil Diupdate! ✨', {
-        description: `Rencana ke ${data.destination} sudah aku catat ya!`,
+        description: `Rencana ke ${holiday.destination} sudah aku catat ya Sayang! ❤️`,
       });
     },
     onError: () => {

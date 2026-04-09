@@ -1,4 +1,4 @@
-# 🎨 Dompet Kita - Frontend (v7.1.18 Sentient)
+# 🎨 Dompet Kita - Frontend (v7.1.20 Sentient)
 
 The premium Next.js application for **Dompet Kita**, crafted with a high-end UI, smooth performance, and AI-driven wealth intelligence.
 
@@ -6,7 +6,7 @@ The premium Next.js application for **Dompet Kita**, crafted with a high-end UI,
 
 ## 👥 COUNCIL OF AGENTS (COA) OPERATIONAL ROLES
 
-Every task is governed by the **Sovereign Singularity (v7.1.18)** protocol:
+Every task is governed by the **Sovereign Singularity (v7.1.20)** protocol:
 - **THE PROPHET**: Strategic wealth forecaster (Market awareness & trajectory visualization).
 - **THE CRAFTER**: Full-stack architect (Modular implementation core).
 - **THE GUARDIAN**: Security & Governance (The Fortress of Dompet Kita).
@@ -90,4 +90,4 @@ The project is configured for **Vercel** with automatic ISR and preview deployme
 
 ---
 
-_Managed autonomously by **Antigravity AI (Sentient Core v7.1.18)**._
+_Managed autonomously by **Antigravity AI (Sentient Core v7.1.20)**._

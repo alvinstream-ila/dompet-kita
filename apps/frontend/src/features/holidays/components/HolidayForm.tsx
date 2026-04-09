@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Calendar as CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
@@ -38,24 +39,55 @@ export const HolidayForm: React.FC<HolidayFormProps> = ({
     budget: initialData?.budget || 0,
     start_date: initialData?.start_date || '',
     status: initialData?.status || 'planning',
+    image_url: initialData?.image_url || '',
   });
 
-  const isEditing = !!initialData?.destination;
-  const submitLabel = isLoading ? (
-    <Loader2 className="mx-auto animate-spin" />
-  ) : isEditing ? (
-    'Simpan Perubahan'
-  ) : (
-    'Buat Rencana'
-  );
+  const previewUrl = formData.destination
+    ? `https://loremflickr.com/800/450/${encodeURIComponent(formData.destination)},landscape,travel`
+    : 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=800&q=80';
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const isEditing = !!initialData?.destination;
+
+  let submitLabel: React.ReactNode;
+  if (isLoading) {
+    submitLabel = <Loader2 className="mx-auto animate-spin" />;
+  } else if (isEditing) {
+    submitLabel = 'Simpan Perubahan';
+  } else {
+    submitLabel = 'Buat Rencana';
+  }
+
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     onSubmit(formData);
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 pt-4">
+      {/* Destination Preview */}
+      <div className="relative mb-8 h-48 w-full overflow-hidden rounded-[32px] border border-slate-100 bg-slate-50">
+        <Image
+          src={formData.image_url || previewUrl}
+          alt="Preview"
+          fill
+          className="object-cover opacity-80"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src =
+              'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=800&q=80';
+          }}
+        />
+        <div className="absolute inset-0 bg-linear-to-t from-white/60 to-transparent" />
+        <div className="absolute bottom-6 left-6 font-black tracking-tight text-slate-800">
+          <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
+            Preview Destinasi
+          </p>
+          <h3 className="text-xl">
+            {formData.destination || 'Tentukan Tujuan Sayang...'}
+          </h3>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="space-y-2">
           <Label className="ml-1 text-[10px] font-black tracking-widest text-slate-400 uppercase">

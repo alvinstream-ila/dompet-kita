@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
   Calendar as CalendarIcon,
@@ -55,11 +56,15 @@ export const HolidayTripCard: React.FC<HolidayTripCardProps> = ({
       <Card className="group h-full transform-gpu overflow-hidden rounded-[32px] border-none bg-white shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl">
         {/* Destination Image */}
         <div className="relative h-48 w-full overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={`https://source.unsplash.com/featured/800x450/?${encodeURIComponent(holiday.destination)},landscape,travel`}
+          <Image
+            src={
+              holiday.image_url ||
+              `https://loremflickr.com/800/450/${encodeURIComponent(holiday.destination)},landscape,travel`
+            }
             alt={holiday.destination}
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-110"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             onError={(e) => {
               (e.target as HTMLImageElement).src =
                 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=800&q=80';

@@ -2,20 +2,58 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { ArrowLeft, ArrowRight, Clock as ClockIcon, CheckCircle2 as CheckCircleIcon } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Clock as ClockIcon,
+  CheckCircle2 as CheckCircleIcon,
+} from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useLoans, useDeleteLoan } from '@/features/loans';
 import {
-  useLoans,
-  useDeleteLoan,
-  AddLoanModal,
-  LoanCard,
-  LoanStats,
-  LoanFilters,
-  LoanDeleteConfirm
-} from '@/features/loans';
-import { PageLoader } from '@/components/ui/PageLoader';
+  LoanStatSkeleton,
+  LoanCardSkeleton,
+} from '@/features/loans/components/LoanSkeletons';
+import dynamic from 'next/dynamic';
+
+const LoanStats = dynamic(
+  () => import('@/features/loans').then((m) => m.LoanStats),
+  {
+    loading: () => <LoanStatSkeleton />,
+    ssr: false,
+  }
+);
+
+const LoanCard = dynamic(
+  () => import('@/features/loans').then((m) => m.LoanCard),
+  {
+    ssr: false,
+  }
+);
+
+const LoanFilters = dynamic(
+  () => import('@/features/loans').then((m) => m.LoanFilters),
+  {
+    ssr: false,
+  }
+);
+
+const AddLoanModal = dynamic(
+  () => import('@/features/loans').then((m) => m.AddLoanModal),
+  {
+    ssr: false,
+  }
+);
+
+const LoanDeleteConfirm = dynamic(
+  () => import('@/features/loans').then((m) => m.LoanDeleteConfirm),
+  {
+    ssr: false,
+  }
+);
+
 import { UserNavDropdown } from '@/components/layout';
 import type { Loan } from '@/types';
 
@@ -69,14 +107,6 @@ export default function LoansPage() {
   React.useEffect(() => {
     setCurrentPage(1);
   }, [filterType, searchQuery, activeTab]);
-
-  if (isLoading)
-    return (
-      <PageLoader
-        isLoading={true}
-        message="Lagi ngitung titipan sayang kita... 🤝💰"
-      />
-    );
 
   const totalPiutang = loans
     .filter((l) => l.type === 'piutang')
@@ -153,11 +183,15 @@ export default function LoansPage() {
         </div>
       </header>
 
-      <LoanStats
-        totalPiutang={totalPiutang}
-        totalHutang={totalHutang}
-        netPosition={netPosition}
-      />
+      {isLoading ? (
+        <LoanStatSkeleton />
+      ) : (
+        <LoanStats
+          totalPiutang={totalPiutang}
+          totalHutang={totalHutang}
+          netPosition={netPosition}
+        />
+      )}
 
       <div className="mb-10 flex justify-center">
         <div className="flex w-full max-w-[420px] transform-gpu gap-2 rounded-full border border-slate-100 bg-white/80 p-2 shadow-xl backdrop-blur-3xl transition-all hover:shadow-2xl">
@@ -199,19 +233,25 @@ export default function LoansPage() {
         onOpenAddModal={() => setIsAddModalOpen(true)}
       />
 
-      <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        <AnimatePresence mode="popLayout">
-          {paginatedLoans.map((loan) => (
-            <LoanCard
-              key={loan.id}
-              loan={loan}
-              isEditMode={isEditMode}
-              onEdit={(l) => setLoanToEdit(l)}
-              onDelete={(l) => setLoanToDelete(l)}
-              formatCurrency={formatCurrency}
-            />
-          ))}
-        </AnimatePresence>
+      <div className="mt-12">
+        {isLoading ? (
+          <LoanCardSkeleton />
+        ) : (
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <AnimatePresence mode="popLayout">
+              {paginatedLoans.map((loan) => (
+                <LoanCard
+                  key={loan.id}
+                  loan={loan}
+                  isEditMode={isEditMode}
+                  onEdit={(l) => setLoanToEdit(l)}
+                  onDelete={(l) => setLoanToDelete(l)}
+                  formatCurrency={formatCurrency}
+                />
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
       </div>
 
       {totalPages > 1 && (

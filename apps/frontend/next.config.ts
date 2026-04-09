@@ -14,6 +14,18 @@ const nextConfig: NextConfig = {
     // ppr: 'incremental',
     taint: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'loremflickr.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+    ],
+  },
   outputFileTracingRoot: path.join(__dirname, "../../"),
 };
 

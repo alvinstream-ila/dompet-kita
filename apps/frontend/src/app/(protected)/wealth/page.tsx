@@ -14,14 +14,42 @@ import {
   useUpdateAsset,
   useDeleteAsset,
   useWealthSimulation,
-  AssetForm,
-  WealthAssetCard,
-  WealthChart,
-  WealthStats,
-  WealthSimulationChart,
 } from '@/features/wealth';
+import {
+  WealthStatSkeleton,
+  WealthChartSkeleton,
+  WealthAssetSkeleton,
+} from '@/features/wealth/components/WealthSkeletons';
+import dynamic from 'next/dynamic';
+
+const AssetForm = dynamic(
+  () => import('@/features/wealth').then((m) => m.AssetForm),
+  { ssr: false }
+);
+const WealthAssetCard = dynamic(
+  () => import('@/features/wealth').then((m) => m.WealthAssetCard),
+  { ssr: false }
+);
+const WealthChart = dynamic(
+  () => import('@/features/wealth').then((m) => m.WealthChart),
+  {
+    loading: () => <WealthChartSkeleton />,
+    ssr: false,
+  }
+);
+const WealthStats = dynamic(
+  () => import('@/features/wealth').then((m) => m.WealthStats),
+  {
+    loading: () => <WealthStatSkeleton />,
+    ssr: false,
+  }
+);
+const WealthSimulationChart = dynamic(
+  () => import('@/features/wealth').then((m) => m.WealthSimulationChart),
+  { ssr: false }
+);
 import { useGoals } from '@/features/goals';
-import { PageLoader } from '@/components/ui/PageLoader';
+
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import {
   Dialog,
@@ -114,15 +142,6 @@ export default function WealthPage() {
     }
   };
 
-  if (assetsLoading) {
-    return (
-      <PageLoader
-        isLoading={true}
-        message="Melihat pertumbuhan harta kita... 💰✨"
-      />
-    );
-  }
-
   return (
     <div className="container mx-auto px-4 py-6 pb-36 md:px-8 md:py-10 md:pb-40 lg:px-12 lg:py-12">
       {/* Mobile Header Greeting */}
@@ -212,23 +231,31 @@ export default function WealthPage() {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
         <div className="space-y-8 lg:col-span-8">
           {/* Line Chart */}
-          <WealthChart
-            data={wealthHistory}
-            totalWealth={totalWealth}
-            formatAmount={formatAmount}
-          />
+          {assetsLoading ? (
+            <WealthChartSkeleton />
+          ) : (
+            <WealthChart
+              data={wealthHistory}
+              totalWealth={totalWealth}
+              formatAmount={formatAmount}
+            />
+          )}
 
           {/* Monte Carlo Simulation Chart */}
           <WealthSimulationChart data={simulation} />
 
           {/* Stats Cards Section */}
-          <WealthStats
-            totalWealth={totalWealth}
-            growthPercentage={growthPercentage}
-            freedomProgress={freedomProgress}
-            freedomMessage={freedomMessage}
-            formatAmount={formatAmount}
-          />
+          {assetsLoading ? (
+            <WealthStatSkeleton />
+          ) : (
+            <WealthStats
+              totalWealth={totalWealth}
+              growthPercentage={growthPercentage}
+              freedomProgress={freedomProgress}
+              freedomMessage={freedomMessage}
+              formatAmount={formatAmount}
+            />
+          )}
         </div>
 
         {/* Sidebar: Asset List */}
@@ -243,21 +270,25 @@ export default function WealthPage() {
           </div>
 
           <div className="custom-scrollbar max-h-[1000px] space-y-4 overflow-y-auto py-1 pr-1">
-            <AnimatePresence mode="popLayout">
-              {assets.map((asset, index) => (
-                <WealthAssetCard
-                  key={asset.id}
-                  asset={asset}
-                  index={index}
-                  onEdit={(a) => {
-                    setEditingAsset(a);
-                    setIsAddDialogOpen(true);
-                  }}
-                  onDelete={handleDelete}
-                  formatAmount={formatAmount}
-                />
-              ))}
-            </AnimatePresence>
+            {assetsLoading ? (
+              <WealthAssetSkeleton />
+            ) : (
+              <AnimatePresence mode="popLayout">
+                {assets.map((asset, index) => (
+                  <WealthAssetCard
+                    key={asset.id}
+                    asset={asset}
+                    index={index}
+                    onEdit={(a) => {
+                      setEditingAsset(a);
+                      setIsAddDialogOpen(true);
+                    }}
+                    onDelete={handleDelete}
+                    formatAmount={formatAmount}
+                  />
+                ))}
+              </AnimatePresence>
+            )}
 
             <Button
               variant="outline"
@@ -291,8 +322,9 @@ export default function WealthPage() {
                 </div>
               </div>
               <p className="text-base leading-relaxed font-bold text-white/90 italic opacity-95">
-                &quot;Harta yang paling berharga adalah kamu. Tabungan ini cuma bonus
-                buat kita bisa bahagia lebih lama lagi. Semangat ya Sayang! ❤️&quot;
+                &quot;Harta yang paling berharga adalah kamu. Tabungan ini cuma
+                bonus buat kita bisa bahagia lebih lama lagi. Semangat ya
+                Sayang! ❤️&quot;
               </p>
             </div>
           </Card>

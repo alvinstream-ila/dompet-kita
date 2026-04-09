@@ -50,7 +50,7 @@ export const GoalForm: React.FC<GoalFormProps> = ({ onSuccess, goal }) => {
     buttonText = 'Perbarui Mimpi Kita ✨';
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!name || !targetAmount) return;
 
@@ -182,11 +182,7 @@ export const GoalForm: React.FC<GoalFormProps> = ({ onSuccess, goal }) => {
         disabled={loading}
         className="group h-16 w-full rounded-[24px] bg-linear-to-r from-blue-600 to-indigo-600 text-sm font-black tracking-widest text-white uppercase shadow-xl shadow-blue-200 transition-all hover:from-blue-700 hover:to-indigo-700"
       >
-        {loading ? (
-          <Loader2 className="h-6 w-6 animate-spin" />
-        ) : (
-          buttonText
-        )}
+        {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : buttonText}
       </Button>
     </form>
   );

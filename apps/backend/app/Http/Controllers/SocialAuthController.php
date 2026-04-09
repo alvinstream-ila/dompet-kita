@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\AbstractProvider;
 
@@ -48,6 +49,7 @@ class SocialAuthController extends Controller
         }
 
         try {
+            $isNewUser = false;
             if ($user) {
                 // Update User for existing account
                 $user->update([
@@ -57,9 +59,12 @@ class SocialAuthController extends Controller
                     'email_verified_at' => $user->email_verified_at ?? \now(),
                 ]);
             } else {
-                // Create New User
+                // Create New User with Unique Username
+                $isNewUser = true;
+                $username = $this->generateUniqueUsername($socialUser->getName() ?? $socialUser->getNickname());
+                
                 $user = User::create([
-                    'name' => $socialUser->getName() ?? $socialUser->getNickname(),
+                    'name' => $username,
                     'email' => $socialUser->getEmail(),
                     'social_id' => $socialUser->getId(),
                     'social_type' => $provider,
@@ -81,7 +86,7 @@ class SocialAuthController extends Controller
 
             // Redirect to Frontend callback route
             $frontendUrl = config('app.frontend_url', 'http://localhost:3000');
-            $callbackUrl = rtrim($frontendUrl, '/').'/auth/callback?token='.$token;
+            $callbackUrl = rtrim($frontendUrl, '/').'/auth/callback?token='.$token.($isNewUser ? '&is_new=1' : '');
 
             Log::info("SocialAuth: Login SUCCESS for {$user->email} via {$provider}");
 
@@ -96,5 +101,29 @@ class SocialAuthController extends Controller
                 'message' => 'Waduh, ada masalah teknis pas nyimpen data kamu nih sayang. 🥺 '.$e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * Generate a unique slugified username.
+     */
+    protected function generateUniqueUsername(string $name): string
+    {
+        $base = Str::slug($name, '-');
+        
+        // Handle empty slug (e.g. name is only non-latin characters)
+        if (empty($base)) {
+            $base = 'user';
+        }
+
+        $username = $base;
+        $counter = 1;
+
+        // Check for collisions
+        while (User::where('name', $username)->exists()) {
+            $username = $base . '-' . $counter;
+            $counter++;
+        }
+
+        return $username;
     }
 }

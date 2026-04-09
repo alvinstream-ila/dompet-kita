@@ -1,27 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '@/lib/axios';
 import Cookies from 'js-cookie';
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  email_verified_at: string | null;
-  currency_format?: string;
-  exchange_rate?: number;
-  budget_cycle_start?: number;
-  is_privacy_mode?: boolean;
-  full_name?: string;
-  avatar_url?: string;
-  partner_name?: string;
-  anniversary_date?: string;
-  timezone?: string;
-  monthly_budget_limit?: number;
-  two_factor_enabled?: boolean;
-  last_active_at?: string;
-  legacy_threshold_months?: number;
-  is_legacy_triggered?: boolean;
-}
+export type { User } from '@/types';
+import { User } from '@/types';
 
 interface AuthContextType {
   user: User | null;
@@ -47,8 +28,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         try {
           const { data } = await api.get('/user');
           setUser(data);
+          // 🛡️ Sync verification status for middleware
+          if (data.email_verified_at) {
+            Cookies.set('user_verified', 'true', {
+              expires: 7,
+              sameSite: 'lax',
+              secure: true,
+            });
+          } else {
+            Cookies.remove('user_verified');
+          }
         } catch {
           Cookies.remove('auth_token');
+          Cookies.remove('user_verified');
           setUser(null);
         }
       }
@@ -59,7 +51,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = (token: string, user: User) => {
-    Cookies.set('auth_token', token, { expires: 7, sameSite: 'lax', secure: true });
+    Cookies.set('auth_token', token, {
+      expires: 7,
+      sameSite: 'lax',
+      secure: true,
+    });
+
+    // 🛡️ Set verification status for middleware
+    if (user.email_verified_at) {
+      Cookies.set('user_verified', 'true', {
+        expires: 7,
+        sameSite: 'lax',
+        secure: true,
+      });
+    } else {
+      Cookies.remove('user_verified');
+    }
+
     setUser(user);
   };
 
@@ -70,6 +78,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error('Logout error', error);
     } finally {
       Cookies.remove('auth_token');
+      Cookies.remove('user_verified');
       setUser(null);
     }
   };

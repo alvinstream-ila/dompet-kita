@@ -1,0 +1,134 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\PartnerInvitation;
+use App\Models\User;
+use App\Notifications\PartnerInvitationNotification;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
+
+class PartnerController extends Controller
+{
+    /**
+     * Send an invitation to a partner.
+     */
+    public function invite(Request $request): JsonResponse
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $inviter = $request->user();
+        $inviteeEmail = $request->email;
+
+        // 1. Check if inviting self
+        if ($inviter->email === $inviteeEmail) {
+            return response()->json(['message' => 'Sayang, gak bisa undang diri sendiri... hehe 😁'], 422);
+        }
+
+        // 2. Check if already has a partner
+        if ($inviter->partner_id) {
+            return response()->json(['message' => 'Kamu sudah punya partner, Sayang. Unlink dulu ya if you want to change.'], 422);
+        }
+
+        // 3. Find user and ensure verified
+        $invitee = User::where('email', $inviteeEmail)->first();
+        if (!$invitee || !$invitee->email_verified_at) {
+            return response()->json(['message' => 'Ups! Pasangan kamu harus sudah terdaftar dan verifikasi email dulu ya, Sayang! ✨'], 422);
+        }
+
+        // 4. Create Invitation
+        $invitation = PartnerInvitation::updateOrCreate(
+            ['inviter_id' => $inviter->id, 'email' => $inviteeEmail, 'status' => 'pending'],
+            [
+                'token' => Str::random(40),
+                'expires_at' => Carbon::now()->addDays(7),
+            ]
+        );
+
+        // 5. Notify
+        $invitee->notify(new PartnerInvitationNotification($inviter, $invitation->token));
+
+        return response()->json([
+            'message' => 'Undangan berhasil dikirim! Kabari pasangan kamu ya! 💌✨',
+        ]);
+    }
+
+    /**
+     * Get invitation details by token.
+     */
+    public function getInvitation(string $token): JsonResponse
+    {
+        $invitation = PartnerInvitation::with('inviter')
+            ->where('token', $token)
+            ->where('status', 'pending')
+            ->where('expires_at', '>', Carbon::now())
+            ->first();
+
+        if (!$invitation) {
+            return response()->json(['message' => 'Undangan tidak ditemukan atau sudah kadaluarsa, Sayang. 🥺'], 404);
+        }
+
+        return response()->json([
+            'inviter_name' => $invitation->inviter->name,
+            'email' => $invitation->email,
+        ]);
+    }
+
+    /**
+     * Accept a partner invitation.
+     */
+    public function accept(Request $request): JsonResponse
+    {
+        $request->validate(['token' => 'required']);
+
+        $invitation = PartnerInvitation::where('token', $request->token)
+            ->where('status', 'pending')
+            ->where('expires_at', '>', Carbon::now())
+            ->first();
+
+        if (!$invitation) {
+            return response()->json(['message' => 'Gagal menerima undangan. Cek lagi ya Sayang!'], 404);
+        }
+
+        $user = $request->user();
+        $inviter = User::find($invitation->inviter_id);
+
+        if (!$inviter) {
+            return response()->json(['message' => 'Pengundang tidak ditemukan.'], 404);
+        }
+
+        // Cross-link
+        $user->update(['partner_id' => $inviter->id]);
+        $inviter->update(['partner_id' => $user->id]);
+
+        // Mark as accepted
+        $invitation->update(['status' => 'accepted']);
+
+        return response()->json([
+            'message' => 'Yay! Sekarang kamu dan ' . $inviter->name . ' resmi terhubung sebagai partner! 🥳❤️',
+        ]);
+    }
+
+    /**
+     * Unlink partner.
+     */
+    public function unlink(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $partner = $user->partner;
+
+        if ($partner) {
+            $partner->update(['partner_id' => null]);
+        }
+        
+        $user->update(['partner_id' => null]);
+
+        return response()->json([
+            'message' => 'Hubungan partner berhasil dilepas. Tetap semangat kumpulin aset ya! ✨',
+        ]);
+    }
+}

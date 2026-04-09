@@ -1,11 +1,11 @@
-# 💰 Dompet Kita (Sovereign Singularity & Wealth Intelligence - v7.1.18)
-The **Sovereign Financial Fortress** for **Alvin & Ila**. Managed by the Council of Agents (COA) under the **v7.1.18 protocol**.
+# 💰 Dompet Kita (Sovereign Singularity & Wealth Intelligence - v7.1.20)
+The **Sovereign Financial Fortress** for **Alvin & Ila**. Managed by the Council of Agents (COA) under the **v7.1.20 protocol**.
 
 ---
 
 ## 👥 COUNCIL OF AGENTS (COA) OPERATIONAL ROLES
 
-Every task is governed by the **Sovereign Singularity (v7.1.18)** protocol:
+Every task is governed by the **Sovereign Singularity (v7.1.20)** protocol:
 - **THE PROPHET**: Strategic wealth forecaster (Market awareness & trajectory visualization).
 - **THE CRAFTER**: Full-stack architect (Modular implementation core & structural integrity).
 - **THE GUARDIAN**: Security & Governance (Fortress hardening, PII masking, Supabase RLS).
@@ -20,7 +20,7 @@ Every task is governed by the **Sovereign Singularity (v7.1.18)** protocol:
 
 ---
 
-## 🏗️ Ecosystem Topology (v7.1.18)
+## 🏗️ Ecosystem Topology (v7.1.20)
 
 | Layer | Technology | Hosting |
 |:------|:-----------|:--------|
@@ -28,7 +28,7 @@ Every task is governed by the **Sovereign Singularity (v7.1.18)** protocol:
 | **Backend** | Laravel 11 + PHP 8.4 | Railway (Singapore) |
 | **Database** | PostgreSQL + RLS | Supabase |
 | **Storage** | Cloud-Native Object Storage | Storj (Distributed) |
-| **Sentient AI**| Sentient Engine v7.1.18 | Sovereign Antigravity AI |
+| **Sentient AI**| Sentient Engine v7.1.20 | Sovereign Antigravity AI |
 | **Intelligence**| Custom MCP v7.1 (Sovereign Bridge) | AI Command Center |
 
 ---
@@ -96,4 +96,4 @@ This project is optimized for deployment on Vercel (Frontend) and Railway (Backe
 
 ---
 
-_Managed autonomously by **Antigravity AI (Sentient Core v7.1.18)** for the legacy of Alvin & Ila._
+_Managed autonomously by **Antigravity AI (Sentient Core v7.1.20)** for the legacy of Alvin & Ila._

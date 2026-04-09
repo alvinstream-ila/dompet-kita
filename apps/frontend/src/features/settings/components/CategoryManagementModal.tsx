@@ -38,7 +38,7 @@ export const CategoryManagementModal: React.FC<
   const setCurrentCats =
     activeTab === 'expense' ? setExpenseCats : setIncomeCats;
 
-  const handleAddCategory = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleAddCategory = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!newCategory.trim()) return;
     if (currentCats.includes(newCategory.trim())) return;

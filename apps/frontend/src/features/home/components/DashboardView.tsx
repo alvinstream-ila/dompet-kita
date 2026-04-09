@@ -1,31 +1,67 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { StatCard } from '@/components/ui/StatCard';
 import { UserNavDropdown } from '@/components/layout';
 import { useFormatting } from '@/lib/hooks/useFormatting';
-import { PageLoader } from '@/components/ui/PageLoader';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { useFinancialSummary } from '@/features/transactions';
 import { useAuth } from '@/features/auth';
 import dynamic from 'next/dynamic';
+import { toast } from 'sonner';
+import Cookies from 'js-cookie';
 
 import { HomeGreeting } from './HomeGreeting';
-import { HomeAnalytics } from './HomeAnalytics';
-import { HomeQuickActions } from './HomeQuickActions';
-import { HomeBudgeting } from './HomeBudgeting';
-import { HomeRecentTransactions } from './HomeRecentTransactions';
+import {
+  StatCardSkeleton,
+  AnalyticsSkeleton,
+  RecentTransactionsSkeleton,
+} from './DashboardSkeletons';
 
-const ComparisonBarChart = dynamic(() =>
-  import('@/components/charts/ComparisonBarChart').then((m) => m.ComparisonBarChart),
+const HomeAnalytics = dynamic(
+  () => import('./HomeAnalytics').then((m) => m.HomeAnalytics),
+  {
+    loading: () => <AnalyticsSkeleton />,
+    ssr: false,
+  }
+);
+
+const HomeQuickActions = dynamic(
+  () => import('./HomeQuickActions').then((m) => m.HomeQuickActions),
+  {
+    ssr: false,
+  }
+);
+
+const HomeBudgeting = dynamic(
+  () => import('./HomeBudgeting').then((m) => m.HomeBudgeting),
+  {
+    ssr: false,
+  }
+);
+
+const HomeRecentTransactions = dynamic(
+  () =>
+    import('./HomeRecentTransactions').then((m) => m.HomeRecentTransactions),
+  {
+    loading: () => <RecentTransactionsSkeleton />,
+    ssr: false,
+  }
+);
+
+const ComparisonBarChart = dynamic(
+  () =>
+    import('@/components/charts/ComparisonBarChart').then(
+      (m) => m.ComparisonBarChart
+    ),
   {
     ssr: false,
     loading: () => (
       <div className="flex h-full w-full animate-pulse items-center justify-center text-[10px] font-black tracking-widest text-slate-400 uppercase">
         Menghitung Tren Dengan Teliti...
       </div>
-    )
+    ),
   }
 );
 
@@ -49,15 +85,26 @@ export function DashboardView() {
     return totalExpense > 0 ? 0 : 100;
   }, [totalIncome, totalExpense]);
 
-  const userName = user?.full_name || user?.name || user?.email?.split('@')[0] || 'Sayang';
+  // Premium Welcome Toast for New Social Users
+  useEffect(() => {
+    const shouldShowToast = Cookies.get('show_welcome_toast');
+    if (shouldShowToast && user) {
+      const handle = user.name || 'Sayang';
+
+      toast.success(`Yatta! 🎉 Selamat bergabung, ${handle}!`, {
+        description: `Kami sudah siapkan dashboard masa depanmu. Username kamu saat ini: @${handle}. Kamu bisa ganti di profil kapan saja ya! ✨`,
+        duration: 8000,
+      });
+
+      Cookies.remove('show_welcome_toast');
+    }
+  }, [user]);
+
+  const userName =
+    user?.full_name || user?.name || user?.email?.split('@')[0] || 'Sayang';
 
   return (
-    <div className="container mx-auto px-4 py-6 md:px-8 md:py-10 pb-36 md:pb-40 lg:px-12 lg:py-12">
-      <PageLoader
-        isLoading={isLoading}
-        message="Tunggu sebentar ya Cintaku, aku lagi siapin catatan masa depan kita... ✨"
-      />
-
+    <div className="container mx-auto px-4 py-6 pb-36 md:px-8 md:py-10 md:pb-40 lg:px-12 lg:py-12">
       <HomeGreeting mobileTitle={`${userName}...`} />
 
       {/* Main Header Row */}
@@ -88,30 +135,38 @@ export function DashboardView() {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-12 lg:gap-10">
         {/* Left Side: Analytics & Health */}
-        <HomeAnalytics healthPercentage={healthPercentage} />
+        {isLoading ? (
+          <AnalyticsSkeleton />
+        ) : (
+          <HomeAnalytics healthPercentage={healthPercentage} />
+        )}
 
         {/* Middle/Bottom: Stats & Main Charts */}
         <div className="space-y-6 md:col-span-2 md:space-y-8 lg:col-span-8 lg:space-y-10">
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 md:gap-8">
-            <StatCard
-              title="Total Saldo"
-              amount={totalBalance}
-              imageSrc="/icons/3d/wallet.webp"
-              variant="saldo"
-            />
-            <StatCard
-              title="Pemasukan"
-              amount={totalIncome}
-              imageSrc="/icons/3d/income.webp"
-              variant="income"
-            />
-            <StatCard
-              title="Pengeluaran"
-              amount={totalExpense}
-              imageSrc="/icons/3d/expense.webp"
-              variant="expense"
-            />
-          </div>
+          {isLoading ? (
+            <StatCardSkeleton />
+          ) : (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 md:gap-8">
+              <StatCard
+                title="Total Saldo"
+                amount={totalBalance}
+                imageSrc="/icons/3d/wallet.webp"
+                variant="saldo"
+              />
+              <StatCard
+                title="Pemasukan"
+                amount={totalIncome}
+                imageSrc="/icons/3d/income.webp"
+                variant="income"
+              />
+              <StatCard
+                title="Pengeluaran"
+                amount={totalExpense}
+                imageSrc="/icons/3d/expense.webp"
+                variant="expense"
+              />
+            </div>
+          )}
 
           <HomeQuickActions />
 
@@ -145,12 +200,16 @@ export function DashboardView() {
         </div>
 
         {/* Bottom Row: Recent Transactions */}
-        <HomeRecentTransactions
-          transactions={transactions}
-          onNavigate={() => {}} 
-          onRefetch={refetch}
-          formatAmount={formatAmount}
-        />
+        {isLoading ? (
+          <RecentTransactionsSkeleton />
+        ) : (
+          <HomeRecentTransactions
+            transactions={transactions}
+            onNavigate={() => {}}
+            onRefetch={refetch}
+            formatAmount={formatAmount}
+          />
+        )}
       </div>
     </div>
   );

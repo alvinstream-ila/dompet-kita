@@ -4,10 +4,10 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import api from '@/lib/axios';
-import { 
-  addTransactionAction, 
-  updateTransactionAction, 
-  deleteTransactionAction 
+import {
+  addTransactionAction,
+  updateTransactionAction,
+  deleteTransactionAction,
 } from '../actions/transactions';
 import type { Transaction } from '@/types';
 import { useSettings } from '@/features/settings';
@@ -46,7 +46,7 @@ export function useAddTransaction() {
     ) => {
       const result = await addTransactionAction(newTransaction);
       if (!result.success) throw new Error(result.error);
-      return result.data;
+      return result.data.data;
     },
     onMutate: async (newTransaction) => {
       await queryClient.cancelQueries({ queryKey: ['financial_summary'] });
@@ -84,16 +84,17 @@ export function useAddTransaction() {
         description: 'Tunggu sebentar dan coba lagi ya Sayang.',
       });
     },
-    onSuccess: (data) => {
+    onSuccess: (transaction) => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
       queryClient.invalidateQueries({ queryKey: ['ai_insights'] });
+      queryClient.invalidateQueries({ queryKey: ['assets'] });
 
-      const isIncome = data.type === 'income';
+      const isIncome = transaction.type === 'income';
       toast.success(isIncome ? 'Uang Masuk! 💰' : 'Pengeluaran Dicatat 💸', {
         description: isIncome
-          ? 'Alhamdulillah rezeki kita nambah lagi! ✨'
-          : 'Sudah aku catat ya Sayang, nanti kita evaluasi bareng. ❤️',
+          ? `Alhamdulillah rezeki kita nambah lagi Rp ${Number(transaction.amount).toLocaleString('id-ID')}! ✨`
+          : `Sudah aku bantu catat pengeluaran "${transaction.description}" sebesar Rp ${Number(transaction.amount).toLocaleString('id-ID')} ya Sayang! ❤️`,
       });
     },
   });
@@ -109,16 +110,19 @@ export function useUpdateTransaction() {
     }: Partial<Transaction> & { id: string }) => {
       const result = await updateTransactionAction({ id, ...updates });
       if (!result.success) throw new Error(result.error);
-      return result.data;
+      return result.data.data;
     },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['ai_insights'] });
     },
-    onSuccess: () => {
+    onSuccess: (transaction) => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
       queryClient.invalidateQueries({ queryKey: ['ai_insights'] });
-      toast.success('Berhasil Diupdate! ✨');
+      queryClient.invalidateQueries({ queryKey: ['assets'] });
+      toast.success('Berhasil Diupdate! ✨', {
+        description: `Transaksi "${transaction.description}" sudah aku perbarui ya Sayang! ❤️`,
+      });
     },
     onError: () => {
       toast.error('Gagal Update 🥺');

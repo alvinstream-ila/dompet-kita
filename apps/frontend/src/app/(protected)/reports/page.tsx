@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { FileSpreadsheet, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { PageLoader } from '@/components/ui/PageLoader';
 import { useTransactions } from '@/features/transactions';
 import type { CategorySummary, Transaction } from '@/types';
 import {
@@ -17,13 +16,35 @@ import {
   Legend,
 } from 'chart.js';
 
+import { ReportHeader, ReportPeriodPicker } from '@/features/reports';
 import {
-  ReportHeader,
-  ReportStats,
-  ReportCategoryBreakdown,
-  ReportCharts,
-  ReportPeriodPicker,
-} from '@/features/reports';
+  ReportStatSkeleton,
+  ReportTableSkeleton,
+  ReportChartSkeleton,
+} from '@/features/reports/components/ReportSkeletons';
+import dynamic from 'next/dynamic';
+
+const ReportStats = dynamic(
+  () => import('@/features/reports').then((m) => m.ReportStats),
+  {
+    loading: () => <ReportStatSkeleton />,
+    ssr: false,
+  }
+);
+const ReportCategoryBreakdown = dynamic(
+  () => import('@/features/reports').then((m) => m.ReportCategoryBreakdown),
+  {
+    loading: () => <ReportTableSkeleton />,
+    ssr: false,
+  }
+);
+const ReportCharts = dynamic(
+  () => import('@/features/reports').then((m) => m.ReportCharts),
+  {
+    loading: () => <ReportChartSkeleton />,
+    ssr: false,
+  }
+);
 
 ChartJS.register(
   CategoryScale,
@@ -54,8 +75,18 @@ export default function ReportsPage() {
   const transactions: Transaction[] = infiniteData?.pages.flat() || [];
 
   const months = [
-    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember',
   ];
 
   const currentYear = new Date().getFullYear();
@@ -135,8 +166,12 @@ export default function ReportsPage() {
       {
         data: Object.values(expenseByCat),
         backgroundColor: [
-          '#3b82f6', '#10b981', '#f43f5e',
-          '#f59e0b', '#8b5cf6', '#ec4899',
+          '#3b82f6',
+          '#10b981',
+          '#f43f5e',
+          '#f59e0b',
+          '#8b5cf6',
+          '#ec4899',
         ],
         borderWidth: 0,
       },
@@ -161,7 +196,10 @@ export default function ReportsPage() {
       ];
       summarySheet.addRows([
         { label: 'LAPORAN KEUANGAN KITA ✨', value: '' },
-        { label: 'Periode:', value: `${months[selectedMonth]} ${selectedYear}` },
+        {
+          label: 'Periode:',
+          value: `${months[selectedMonth]} ${selectedYear}`,
+        },
         { label: 'Tabungan:', value: `Rp ${balance.toLocaleString('id-ID')}` },
       ]);
       const transSheet = workbook.addWorksheet('Riwayat');
@@ -221,16 +259,7 @@ export default function ReportsPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 md:px-8 md:py-10 pb-36 md:pb-40 lg:px-12 lg:py-12">
-      <PageLoader
-        isLoading={isLoading}
-        message="Menghitung kepingan kebahagiaan kita, sebentar lagi siap ya Sayang... 📊💖"
-      />
-      <PageLoader
-        isLoading={isExporting}
-        message="Lagi menyiapkan laporan spesial buat kamu... ✨📄"
-      />
-
+    <div className="container mx-auto px-4 py-6 pb-36 md:px-8 md:py-10 md:pb-40 lg:px-12 lg:py-12">
       <ReportHeader />
 
       <div className="mb-10 flex flex-col items-center justify-between gap-6 md:flex-row">
@@ -255,33 +284,46 @@ export default function ReportsPage() {
           <Button
             onClick={exportToExcel}
             disabled={isExporting || transactions.length === 0}
-            className="flex h-14 flex-1 items-center justify-center gap-3 rounded-2xl border-none bg-emerald-50 px-8 text-[10px] font-black tracking-widest text-emerald-600 uppercase shadow-sm transition-all hover:-translate-y-0.5 hover:bg-emerald-100 active:scale-95 md:flex-none disabled:opacity-50"
+            className="flex h-14 flex-1 items-center justify-center gap-3 rounded-2xl border-none bg-emerald-50 px-8 text-[10px] font-black tracking-widest text-emerald-600 uppercase shadow-sm transition-all hover:-translate-y-0.5 hover:bg-emerald-100 active:scale-95 disabled:opacity-50 md:flex-none"
           >
             <FileSpreadsheet className="h-4 w-4" strokeWidth={3} /> Ekspor Excel
           </Button>
           <Button
             onClick={exportToPDF}
             disabled={isExporting || transactions.length === 0}
-            className="flex h-14 flex-1 items-center justify-center gap-3 rounded-2xl border-none bg-rose-50 px-8 text-[10px] font-black tracking-widest text-rose-600 uppercase shadow-sm transition-all hover:-translate-y-0.5 hover:bg-rose-100 active:scale-95 md:flex-none disabled:opacity-50"
+            className="flex h-14 flex-1 items-center justify-center gap-3 rounded-2xl border-none bg-rose-50 px-8 text-[10px] font-black tracking-widest text-rose-600 uppercase shadow-sm transition-all hover:-translate-y-0.5 hover:bg-rose-100 active:scale-95 disabled:opacity-50 md:flex-none"
           >
             <FileText className="h-4 w-4" strokeWidth={3} /> Ekspor PDF
           </Button>
         </div>
       </div>
 
-      <ReportStats
-        totalIncome={totalIncome}
-        totalExpense={totalExpense}
-        balance={balance}
-      />
+      {isLoading ? (
+        <>
+          <ReportStatSkeleton />
+          <ReportTableSkeleton />
+          <ReportChartSkeleton />
+        </>
+      ) : (
+        <>
+          <ReportStats
+            totalIncome={totalIncome}
+            totalExpense={totalExpense}
+            balance={balance}
+          />
 
-      <ReportCategoryBreakdown
-        sortedCategories={sortedCategories}
-        totalIncome={totalIncome}
-        totalExpense={totalExpense}
-      />
+          <ReportCategoryBreakdown
+            sortedCategories={sortedCategories}
+            totalIncome={totalIncome}
+            totalExpense={totalExpense}
+          />
 
-      <ReportCharts barChartData={barChartData} doughnutData={doughnutData} />
+          <ReportCharts
+            barChartData={barChartData}
+            doughnutData={doughnutData}
+          />
+        </>
+      )}
     </div>
   );
 }

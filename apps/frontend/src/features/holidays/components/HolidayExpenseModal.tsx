@@ -27,7 +27,7 @@ export const HolidayExpenseModal: React.FC<HolidayExpenseModalProps> = ({
 }) => {
   const [expenseAmount, setExpenseAmount] = useState('');
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!holiday) return;
 

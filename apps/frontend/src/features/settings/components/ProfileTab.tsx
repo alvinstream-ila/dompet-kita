@@ -16,7 +16,7 @@ interface ProfileTabProps {
   readonly timezone: string;
   readonly setTimezone: (val: string) => void;
   readonly loading: boolean;
-  readonly onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  readonly onSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
   readonly userEmail?: string;
 }
 

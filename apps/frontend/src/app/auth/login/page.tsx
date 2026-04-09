@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import api from '@/lib/axios';
 import { useAuth } from '@/features/auth';
@@ -53,6 +54,7 @@ const FacebookLogo = () => (
  * Login Page - Sovereign Entry Boundary 🔐
  */
 export default function LoginPage() {
+  const router = useRouter();
   const { login: setAuthData } = useAuth();
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
@@ -83,7 +85,7 @@ export default function LoginPage() {
       if (isForgotPassword) {
         const { data } = await api.post('/forgot-password', { email });
         setSuccessMessage(data.message);
-        setIsForgotPassword(false);
+        router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);
       } else if (isSignUp) {
         const { data } = await api.post('/register', { name, email, password });
         setSuccessMessage(data.message);

@@ -91,7 +91,7 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({
 
   if (!user && isOpen) return null;
 
-  const handleUpdateProfile = async (e: React.FormEvent) => {
+  const handleUpdateProfile = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     try {

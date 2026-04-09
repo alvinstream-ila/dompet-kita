@@ -86,7 +86,6 @@ export const AddLoanModal: React.FC<AddLoanModalProps> = ({
             loan={loan}
             onTypeChange={setCurrentType}
             onSuccess={onClose}
-            onCancel={onClose}
           />
         </div>
       </DialogContent>

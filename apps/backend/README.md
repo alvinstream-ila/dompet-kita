@@ -1,4 +1,4 @@
-# 🏦 Dompet Kita - Sentient Backend Core (v7.1.18)
+# 🏦 Dompet Kita - Sentient Backend Core (v7.1.20)
 
 The powerful engine behind **Dompet Kita**, built with **Laravel 12** and **PHP 8.4**.
 Hardened under the **Sovereign Singularity** architecture, this backend is fully integrated with decentralized storage, multi-provider AI, and resilient cloud databases.

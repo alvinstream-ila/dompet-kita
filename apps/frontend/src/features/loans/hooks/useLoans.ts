@@ -19,12 +19,12 @@ export function useAddLoan() {
   return useMutation({
     mutationFn: async (newLoan: Omit<Loan, 'id' | 'created_at'>) => {
       const { data } = await api.post('/loans', newLoan);
-      return data;
+      return data.data;
     },
-    onSuccess: (data) => {
+    onSuccess: (loan) => {
       queryClient.invalidateQueries({ queryKey: ['loans'] });
       toast.success('Pinjaman Dicatat! 📝', {
-        description: `Sudah aku bantu catat ya, pinjaman dari ${data.debtor}.`,
+        description: `Sudah aku bantu catat ya, pinjaman dari ${loan.debtor} kita simpan rapi. ❤️`,
       });
     },
     onError: () => toast.error('Gagal Menyimpan 🥺'),
@@ -37,16 +37,18 @@ export function useUpdateLoan() {
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Loan> & { id: string }) => {
       const { data } = await api.put(`/loans/${id}`, updates);
-      return data;
+      return data.data;
     },
-    onSuccess: (data) => {
+    onSuccess: (loan) => {
       queryClient.invalidateQueries({ queryKey: ['loans'] });
-      if (data.status === 'paid') {
+      if (loan.status === 'paid') {
         toast.success('ALHAMDULILLAH LUNAS! 🎉', {
-          description: `Pinjaman ${data.debtor} sudah diselesaikan! ✨`,
+          description: `Pinjaman dari ${loan.debtor} sudah diselesaikan! Lega ya Sayang! ✨❤️`,
         });
       } else {
-        toast.success('Berhasil Diupdate! ✨');
+        toast.success('Berhasil Diupdate! ✨', {
+          description: `Data pinjaman ${loan.debtor} sudah diperbarui ya Sayang! ❤️`,
+        });
       }
     },
     onError: () => toast.error('Gagal Update 🥺'),

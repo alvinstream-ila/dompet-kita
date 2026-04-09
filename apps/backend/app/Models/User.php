@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\ResetPasswordOTPNotification;
 use App\Notifications\VerifyEmailNotification;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
@@ -76,7 +77,11 @@ class User extends Authenticatable implements MustVerifyEmail
         'two_factor_enabled',
         'two_factor_code',
         'two_factor_expires_at',
+        'email_verification_code',
+        'email_verification_expires_at',
         'email_verified_at',
+        'otp_reset_code',
+        'otp_reset_expires_at',
         'last_active_at',
         'legacy_threshold_months',
         'is_legacy_triggered',
@@ -220,8 +225,14 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function sendPasswordResetNotification($token)
     {
-        $url = (\config('app.frontend_url') ?? 'http://localhost:5173').'/reset-password?token='.$token.'&email='.$this->email;
-        $this->notify(new ResetPassword($url));
+        $code = (string) random_int(100000, 999999);
+
+        $this->update([
+            'otp_reset_code' => $code,
+            'otp_reset_expires_at' => now()->addMinutes(30),
+        ]);
+
+        $this->notify(new ResetPasswordOTPNotification($code));
     }
 
     /**
@@ -231,17 +242,13 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function sendEmailVerificationNotification()
     {
-        $originalUrl = URL::temporarySignedRoute(
-            'verification.verify',
-            \now()->addMinutes(\config('auth.verification.expire', 60)),
-            [
-                'id' => $this->getKey(),
-                'hash' => sha1($this->getEmailForVerification()),
-            ]
-        );
+        $code = (string) random_int(100000, 999999);
 
-        $frontendUrl = (\config('app.frontend_url') ?? 'https://dompet-kita-six.vercel.app').'/verify-email?url='.urlencode($originalUrl);
+        $this->update([
+            'email_verification_code' => $code,
+            'email_verification_expires_at' => now()->addMinutes(60),
+        ]);
 
-        $this->notify(new VerifyEmailNotification($frontendUrl));
+        $this->notify(new VerifyEmailNotification($code));
     }
 }

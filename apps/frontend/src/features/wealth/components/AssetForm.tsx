@@ -27,16 +27,24 @@ export const AssetForm: React.FC<AssetFormProps> = ({
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     type: initialData?.type || 'Tabungan',
-    value: initialData?.value !== undefined ? initialData.value.toString() : '',
+    value: initialData?.value?.toString() ?? '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     onSubmit({
       ...formData,
       value: Number(formData.value),
     });
   };
+
+  const submitLabel = isLoading ? (
+    <Loader2 className="animate-spin" />
+  ) : initialData ? (
+    'Perbarui Aset ✨'
+  ) : (
+    'Simpan Aset ✨'
+  );
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 pt-4">
@@ -96,13 +104,7 @@ export const AssetForm: React.FC<AssetFormProps> = ({
         disabled={isLoading}
         className="h-14 w-full rounded-2xl bg-slate-900 font-black tracking-widest text-white uppercase shadow-xl transition-all hover:bg-slate-800 active:scale-[0.98]"
       >
-        {isLoading ? (
-          <Loader2 className="animate-spin" />
-        ) : initialData ? (
-          'Perbarui Aset ✨'
-        ) : (
-          'Simpan Aset ✨'
-        )}
+        {submitLabel}
       </Button>
     </form>
   );

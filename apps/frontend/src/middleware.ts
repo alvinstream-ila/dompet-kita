@@ -7,10 +7,12 @@ import type { NextRequest } from 'next/server';
  */
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('auth_token')?.value;
+  const isVerified = request.cookies.get('user_verified')?.value === 'true';
   const { pathname } = request.nextUrl;
 
-  // 1. Define Public and Auth paths
+  // 1. Define Paths
   const isAuthPage = pathname.startsWith('/auth');
+  const isVerifyPage = pathname === '/auth/verify-email';
   const isPublicAsset =
     pathname.startsWith('/_next') ||
     pathname.includes('/api/') ||
@@ -20,15 +22,23 @@ export function middleware(request: NextRequest) {
   if (isPublicAsset) return NextResponse.next();
 
   // 2. Logic: If no token and not on an auth page, redirect to login
-  if (!token && !isAuthPage) {
-    const loginUrl = new URL('/auth/login', request.url);
-    // Optional: save the intended destination to redirect back after login
-    // loginUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(loginUrl);
+  if (!token && !isAuthPage && !isVerifyPage) {
+    return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
-  // 3. Logic: If token exists and user tries to access login/register, redirect to dashboard
-  if (token && isAuthPage && !pathname.includes('/verify')) {
+  // 3. 🛡️ Verification Gatekeeper (The Most Important Logic)
+  // If logged in but NOT verified, force redirect to /auth/verify-email
+  if (token && !isVerified && !isVerifyPage && !isAuthPage) {
+    return NextResponse.redirect(new URL('/auth/verify-email', request.url));
+  }
+
+  // 4. Logic: If token exists and user tries to access login/register, redirect to dashboard
+  if (token && isAuthPage && !isVerifyPage) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
+
+  // 5. If verified and tries to access verify page, redirect to dashboard
+  if (token && isVerified && isVerifyPage) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 

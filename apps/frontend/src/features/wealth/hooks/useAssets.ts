@@ -45,7 +45,7 @@ export function useAddAsset() {
   return useMutation({
     mutationFn: async (newAsset: Omit<Asset, 'id' | 'last_updated'>) => {
       const { data } = await api.post('/assets', newAsset);
-      return data;
+      return data.data;
     },
     onMutate: async (newAsset) => {
       await queryClient.cancelQueries({ queryKey: ['assets'] });
@@ -66,11 +66,11 @@ export function useAddAsset() {
       }
       toast.error('Gagal Menambah Aset 🥺');
     },
-    onSuccess: (data) => {
+    onSuccess: (asset) => {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
       queryClient.invalidateQueries({ queryKey: ['wealth_history'] });
       toast.success('Horee, Aset Bertambah! 💎', {
-        description: `Sudah aku bantu catat aset ${data.name} kita ya!`,
+        description: `Sudah aku bantu catat aset "${asset.name}" kita ya Sayang! ❤️`,
       });
     },
   });
@@ -82,7 +82,7 @@ export function useUpdateAsset() {
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Asset> & { id: string }) => {
       const { data } = await api.put(`/assets/${id}`, updates);
-      return data;
+      return data.data;
     },
     onMutate: async (updatedAsset) => {
       await queryClient.cancelQueries({ queryKey: ['assets'] });
@@ -100,11 +100,11 @@ export function useUpdateAsset() {
       }
       toast.error('Gagal Update Aset 🥺');
     },
-    onSuccess: (data) => {
+    onSuccess: (asset) => {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
       queryClient.invalidateQueries({ queryKey: ['wealth_history'] });
       toast.success('Aset Berhasil Diupdate! ✨', {
-        description: `Sekarang nilai ${data.name} kita sudah terupdate.`,
+        description: `Sekarang nilai "${asset.name}" kita sudah terupdate ya Sayang! ❤️`,
       });
     },
   });
@@ -134,7 +134,10 @@ export function useDeleteAsset() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
       queryClient.invalidateQueries({ queryKey: ['wealth_history'] });
-      toast.info('Aset Dihapus 🗑️');
+      toast.info('Aset Dihapus 🗑️', {
+        description:
+          'Asetnya sudah aku hapus ya Sayang. Tenang, nanti kita cari aset lain! ❤️',
+      });
     },
   });
 }

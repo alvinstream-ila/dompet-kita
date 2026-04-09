@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.20] - 2026-04-09 (React 19 & Architecture Modernization)
+
+### Changed
+- **React 19 / Next.js 15 Full Alignment**: Successfully migrated all form submission handlers to `React.SubmitEvent` and resolved deprecation warnings across the entire frontend.
+- **Architectural Complexity Reduction**: Extracted core form sub-components (`LoanForm`, `AssetForm`) to drastically improve codebase maintainability and readability.
+- **Modern JS standards Elevation**: Standardized on `replaceAll` and `Number.parseInt` for bulletproof numeric and string handling.
+
+### Fixed
+- **Production Build Integrity**: Resolved hidden prop mismatches in `AddLoanModal.tsx` discovered during production-grade builds.
+- **Hook Lifecycle Verification**: Fixed missing `useEffect` dependencies in `AcceptPartnerModal.tsx` to ensure zero-warning lifecycle execution.
+
 ## [7.1.19] - 2026-04-08 (Railway Master Synchronization)
 
 ### Added

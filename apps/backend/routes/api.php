@@ -9,6 +9,7 @@ use App\Http\Controllers\InsightController;
 use App\Http\Controllers\LegacyController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ScheduledTransactionController;
 use App\Http\Controllers\SocialAuthController;
@@ -63,6 +64,8 @@ Route::any('/email/verify/{id}/{hash}', function (Request $request) {
     return response()->json(['message' => __('api.verification_success')]);
 })->name('verification.verify');
 
+Route::middleware('auth:sanctum')->post('/email/verify-code', [AuthController::class, 'verifyEmailCode']);
+
 Route::middleware('auth:sanctum')->post('/email/verification-notification', function (Request $request) {
     if ($request->user()->hasVerifiedEmail()) {
         return response()->json(['message' => __('api.already_verified')]);
@@ -107,6 +110,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::apiResource('goals', GoalController::class);
 
     // Scheduled Transactions (Phase 6)
+    Route::post('scheduled-transactions/{scheduledTransaction}/execute', [ScheduledTransactionController::class, 'execute']);
     Route::apiResource('scheduled-transactions', ScheduledTransactionController::class);
 
     // AI & Services (The Gatekeeper)
@@ -127,6 +131,12 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::delete('/ai/quantum-insights/{insight}', [InsightController::class, 'destroy']);
 
     Route::post('/media/upload', [MediaController::class, 'upload']);
+
+    // Partner Sync (Family Hub)
+    Route::post('/partner/invite', [PartnerController::class, 'invite']);
+    Route::get('/partner/invitation/{token}', [PartnerController::class, 'getInvitation']);
+    Route::post('/partner/accept', [PartnerController::class, 'accept']);
+    Route::post('/partner/unlink', [PartnerController::class, 'unlink']);
 
     // Holidays
     Route::apiResource('holidays', HolidayController::class);

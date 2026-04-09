@@ -47,11 +47,12 @@ yarn-debug.log*
 # AI Agents & IDE Metadata
 .agent/
 .agents/
+.gemini/
 .claude/
 .continue/
+.auth/
 .vercel
 .env*.local
-**/.turbo
 **/out
 
 # Project Specific Workspace & Logs

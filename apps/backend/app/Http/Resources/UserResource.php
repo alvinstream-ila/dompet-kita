@@ -40,7 +40,9 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'full_name' => $this->full_name,
             'avatar_url' => $this->avatar_url,
-            'partner_name' => $this->partner_name,
+            'partner_name' => $this->partner_name ?? $this->partner?->name,
+            'partner_email' => $this->partner?->email,
+            'large_expense_threshold' => (float) $this->large_expense_threshold,
             'anniversary_date' => $this->anniversary_date,
             'timezone' => $this->timezone ?? 'Asia/Jakarta',
             'budget_cycle_start' => $this->budget_cycle_start,
@@ -50,6 +52,7 @@ class UserResource extends JsonResource
             'exchange_rate' => (float) $this->exchange_rate,
             'monthly_budget_limit' => (float) $this->monthly_budget_limit,
             'is_social_login' => (bool) $this->social_id,
+            'last_active_at' => $this->last_active_at?->toIso8601String(),
             'created_at' => $this->created_at->toIso8601String(),
         ];
     }

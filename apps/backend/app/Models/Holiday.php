@@ -22,6 +22,7 @@ class Holiday extends Model
         'status',
         'spent',
         'itinerary',
+        'image_url',
     ];
 
     /**

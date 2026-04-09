@@ -72,7 +72,10 @@ export interface User {
   email: string;
   full_name?: string | null;
   avatar_url?: string | null;
+  partner_id?: string | null;
   partner_name?: string | null;
+  partner_email?: string | null;
+  large_expense_threshold?: number;
   anniversary_date?: string | null;
   timezone?: string;
   budget_cycle_start?: number;
@@ -85,6 +88,7 @@ export interface User {
   last_active_at?: string | null;
   legacy_threshold_months?: number;
   is_legacy_triggered?: boolean;
+  two_factor_enabled?: boolean;
 }
 
 export interface ApiError {

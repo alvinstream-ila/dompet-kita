@@ -10,14 +10,17 @@ export function useFinancialSummary(month?: number, year?: number) {
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['financial_summary', targetMonth, targetYear, budgetCycleStart],
-    queryFn: () => getFinancialSummaryAction(targetMonth, targetYear, budgetCycleStart),
+    queryFn: () =>
+      getFinancialSummaryAction(targetMonth, targetYear, budgetCycleStart),
   });
 
   return {
     income: data?.income || 0,
     expense: data?.expense || 0,
     balance: data?.balance || 0,
-    transactions: data?.transactions || [],
+    transactions: Array.isArray(data?.transactions)
+      ? data.transactions
+      : data?.transactions?.data || [],
     period: data?.period,
     isLoading,
     refetch,

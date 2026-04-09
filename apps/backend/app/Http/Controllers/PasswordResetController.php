@@ -16,41 +16,51 @@ class PasswordResetController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        // We'll use Laravel's built-in password broker
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $user = \App\Models\User::where('email', $request->email)->first();
 
-        Log::info('Password Reset Status: '.$status.' for email: '.$request->email);
+        if (!$user) {
+            // Secure approach: still return success to hide user existence
+            return response()->json(['message' => 'Link reset password sudah dikirim ke email kamu, Sayang! ❤️']);
+        }
 
-        return $status === Password::RESET_LINK_SENT
-            ? response()->json(['message' => 'Link reset password sudah dikirim ke email kamu, Sayang! ❤️'])
-            : response()->json(['message' => __($status).' (Status: '.$status.')'], 400);
+        // The sendPasswordResetNotification was already overridden in User model
+        // Just call the default Laravel way or trigger it directly
+        $user->sendPasswordResetNotification(Str::random(60)); // The token is irrelevant but standard
+
+        Log::info('Sent Premium OTP Reset to: '.$request->email);
+
+        return response()->json(['message' => 'Kode reset password sudah meluncur ke email kamu, Sayang! ❤️']);
     }
 
     public function reset(Request $request): JsonResponse
     {
         $request->validate([
-            'token' => 'required',
             'email' => 'required|email',
+            'code' => 'required|string|size:6',
             'password' => 'required|min:8|confirmed',
         ]);
 
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password),
-                ])->setRememberToken(Str::random(60));
+        $user = \App\Models\User::where('email', $request->email)
+            ->where('otp_reset_code', $request->code)
+            ->first();
 
-                $user->save();
+        if (!$user || now()->greaterThan($user->otp_reset_expires_at)) {
+            return response()->json([
+                'message' => 'Kode reset nggak pas atau sudah basi nih sayang, coba minta lagi ya? 🥺'
+            ], 400);
+        }
 
-                event(new PasswordReset($user));
-            }
-        );
+        // Update password and clear OTP
+        $user->forceFill([
+            'password' => Hash::make($request->password),
+            'otp_reset_code' => null,
+            'otp_reset_expires_at' => null,
+        ])->setRememberToken(Str::random(60));
 
-        return $status === Password::PASSWORD_RESET
-            ? response()->json(['message' => 'Password kamu sudah berhasil diganti! Sekarang coba login ya sayang! ✨'])
-            : response()->json(['message' => 'Token atau emailnya nggak pas nih sayang, coba minta link baru ya? 🥺'], 400);
+        $user->save();
+
+        event(new PasswordReset($user));
+
+        return response()->json(['message' => 'Password kamu sudah berhasil diganti! Sekarang coba login ya sayang! ✨']);
     }
 }

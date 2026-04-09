@@ -28,34 +28,20 @@ class ForecastWealthAction extends BaseAction
      */
     public function execute(User $user, int $months = 12): array
     {
-        $currentAssets = Asset::where('user_id', $user->id)->sum('value');
-        $currentLoans = Loan::where('user_id', $user->id)->where('status', '!=', 'paid')->sum('remaining_amount');
+        $currentAssets = Asset::where('user_id', $user->id)
+            ->where('type', \App\Enums\AssetType::INVESTMENT)
+            ->sum('value');
+        
+        // Zero loans for investment projection focus
+        $currentLoans = 0;
 
         // [ASP-v2] Market Intelligence: Get USD/IDR and Gold Rates dynamically
         $market = $this->marketService->getRates();
 
         $netWorth = $currentAssets - $currentLoans;
 
-        // Calculate average monthly savings (Last 3 months)
-        $threeMonthsAgo = Carbon::now()->subMonths(3)->startOfMonth();
-
-        $totalIncome = Transaction::where('user_id', $user->id)
-            ->where('type', TransactionType::INCOME)
-            ->where('date', '>=', $threeMonthsAgo)
-            ->sum('amount');
-
-        $totalExpense = Transaction::where('user_id', $user->id)
-            ->where('type', TransactionType::EXPENSE)
-            ->where('date', '>=', $threeMonthsAgo)
-            ->sum('amount');
-
-        // Prevent division by zero if 3 months is too far back
-        $monthCount = Transaction::where('user_id', $user->id)
-            ->whereBetween('date', [$threeMonthsAgo, Carbon::now()])
-            ->groupBy(DB::raw("TO_CHAR(date, 'YYYY-MM')"))
-            ->count() ?: 1;
-
-        $avgMonthlySavings = ($totalIncome - $totalExpense) / $monthCount;
+        // Fixed to 0 per user request: "Focus only on existing asset growth"
+        $avgMonthlySavings = 0;
 
         /** @var Collection<int, array<string, mixed>> $projection */
         $projection = collect([]);

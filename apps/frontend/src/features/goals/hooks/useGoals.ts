@@ -25,7 +25,7 @@ export function useAddGoal() {
         current_amount: 0,
         status: 'active',
       });
-      return data;
+      return data.data;
     },
     onMutate: async (newGoal) => {
       await queryClient.cancelQueries({ queryKey: ['goals'] });
@@ -48,10 +48,10 @@ export function useAddGoal() {
       }
       toast.error('Gagal Menambah Mimpi 🥺');
     },
-    onSuccess: (data) => {
+    onSuccess: (goal) => {
       queryClient.invalidateQueries({ queryKey: ['goals'] });
       toast.success('Mimpi Baru Dicatat! ✨', {
-        description: `Yey! Satu lagi langkah buat mewujudkan ${data.name} kita! ❤️`,
+        description: `Yey! Satu lagi langkah buat mewujudkan "${goal.name}" kita ya Sayang! ❤️`,
       });
     },
   });
@@ -63,7 +63,7 @@ export function useUpdateGoal() {
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Goal> & { id: string }) => {
       const { data } = await api.put(`/goals/${id}`, updates);
-      return data;
+      return data.data;
     },
     onMutate: async (updatedGoal) => {
       await queryClient.cancelQueries({ queryKey: ['goals'] });
@@ -81,14 +81,16 @@ export function useUpdateGoal() {
       }
       toast.error('Gagal Update Mimpi 🥺');
     },
-    onSuccess: (data) => {
+    onSuccess: (goal) => {
       queryClient.invalidateQueries({ queryKey: ['goals'] });
-      if (data.status === 'completed') {
+      if (goal.status === 'completed') {
         toast.success('BERHASIL TERWUJUD! 🏆🎉', {
-          description: `Mimpi "${data.name}" kita sudah jadi nyata, Sayang! So proud of us! ❤️`,
+          description: `Mimpi "${goal.name}" kita sudah jadi nyata, Sayang! Bangga banget sama kita! ❤️✨`,
         });
       } else {
-        toast.success('Kemajuan Dicatat! ✨');
+        toast.success('Kemajuan Dicatat! ✨', {
+          description: `Progress "${goal.name}" sudah aku perbarui ya Sayang! Terus semangat! ❤️`,
+        });
       }
     },
   });

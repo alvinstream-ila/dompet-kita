@@ -20,6 +20,7 @@ class CfoAssistantService
         $processedCount = 0;
         $dueTransactions = ScheduledTransaction::active()->due()->get();
 
+        /** @var \App\Models\ScheduledTransaction $scheduled */
         foreach ($dueTransactions as $scheduled) {
             DB::transaction(function () use ($scheduled, &$processedCount) {
                 // If auto-execute is enabled, create the actual transaction
@@ -42,7 +43,7 @@ class CfoAssistantService
     /**
      * Create a real transaction from a scheduled one.
      */
-    protected function executeTransaction(ScheduledTransaction $scheduled): void
+    public function executeTransaction(ScheduledTransaction $scheduled): void
     {
         Transaction::create([
             'user_id' => $scheduled->user_id,
@@ -57,6 +58,17 @@ class CfoAssistantService
         $scheduled->save();
 
         Log::info("CFO Auto-Execute: Successfully processed '{$scheduled->description}' for user ID {$scheduled->user_id}.");
+    }
+
+    /**
+     * Manually execute a transaction and advance the date.
+     */
+    public function executeTransactionManually(ScheduledTransaction $scheduled): void
+    {
+        DB::transaction(function () use ($scheduled) {
+            $this->executeTransaction($scheduled);
+            $this->updateNextDueDate($scheduled);
+        });
     }
 
     /**

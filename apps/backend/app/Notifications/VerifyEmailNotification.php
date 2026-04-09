@@ -8,25 +8,14 @@ use Illuminate\Support\Facades\Log;
 
 class VerifyEmailNotification extends VerifyEmail
 {
-    public string $verificationUrl;
+    public string $code;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(string $verificationUrl)
+    public function __construct(string $code)
     {
-        $this->verificationUrl = $verificationUrl;
-    }
-
-    /**
-     * Get the verification URL for the given notifiable.
-     *
-     * @param  mixed  $notifiable
-     * @return string
-     */
-    protected function verificationUrl($notifiable)
-    {
-        return $this->verificationUrl;
+        $this->code = $code;
     }
 
     /**
@@ -34,12 +23,12 @@ class VerifyEmailNotification extends VerifyEmail
      */
     public function toMail($notifiable)
     {
-        Log::info('Sending PREMIUM verification email to: '.$notifiable->email);
+        Log::info('Sending PREMIUM OTP verification email to: '.$notifiable->email);
 
         return (new MailMessage)
-            ->subject('Verifikasi Email Dompet Kita ✨')
+            ->subject('🛡️ Kode Verifikasi Dompet Kita ✨')
             ->view('emails.verify-email', [
-                'verificationUrl' => $this->verificationUrl($notifiable),
+                'code' => $this->code,
                 'notifiable' => $notifiable,
             ]);
     }

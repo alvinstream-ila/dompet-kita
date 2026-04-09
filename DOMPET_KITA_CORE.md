@@ -1,9 +1,9 @@
-# 🛡️ DOMPET KITA: THE SOVEREIGN FINANCIAL FORTRESS (v7.1.19 SINGULARITY)
+# 🛡️ DOMPET KITA: THE SOVEREIGN FINANCIAL FORTRESS (v7.1.20 SINGULARITY)
 Sistem Finansial Premium & Wealth Intelligence Otonom untuk **Alvin & Ila**.
 
 ---
 
-## 🏛️ ARCHITECTURAL LAWS (v7.1.18)
+## 🏛️ ARCHITECTURAL LAWS (v7.1.20)
 
 Every system-level action follows the **Global Constitution (`GEMINI.md`)** to ensure full-spectrum cognitive awareness and constitutional adherence.
 
@@ -38,7 +38,7 @@ Dompet Kita is structured as a **Modular Monolith Monorepo** for seamless integr
 | **Object Storage** | Storj (Cloud-Native) | Encrypted Files | Redundant |
 | **Monitoring** | Sentry v10 (Instrumentation) | Observability | End-to-End |
 | **Security Perimeter** | Cloudflare Tunnel / WAF | Gatekeeper | Fortress Level |
-| **AI Manager** | Sentient Engine v7.1.18 | Orchestration | Antigravity AI |
+| **AI Manager** | Sentient Engine v7.1.20 | Orchestration | Antigravity AI |
 
 ---
 
@@ -75,7 +75,7 @@ Autonomous PPh 21 income tax estimation engine according to the latest 2024–20
 
 ---
 
-_Amended by Antigravity v7.1.18 | Global System Hardening Active._
+_Amended by Antigravity v7.1.20 | Global System Hardening Active._
 - `/session-cleanup` : Protokol Pemurnian Sesi, Zero-Waste, & Auto-Git Sync (v6.3).
 - `npm run test:e2e` : Eksekusi Full-Spectrum Sentinel Suite.
 - `php artisan maintenance:verify` : Unified Deep Audit Suite.
@@ -112,4 +112,4 @@ _Amended by Antigravity v7.1.18 | Global System Hardening Active._
 
 ---
 
-_"Managed autonomously by **Antigravity AI (Sentient Core v7.1.18)** for the bright future of Alvin & Ila."_
+_"Managed autonomously by **Antigravity AI (Sentient Core v7.1.20)** for the bright future of Alvin & Ila."_

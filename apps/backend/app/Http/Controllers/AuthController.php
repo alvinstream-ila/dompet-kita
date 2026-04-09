@@ -50,8 +50,8 @@ class AuthController extends Controller
     public function register(Request $request): JsonResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'name' => 'required|string|max:255|unique:users,name',
+            'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8',
         ]);
 
@@ -72,8 +72,12 @@ class AuthController extends Controller
 
         \event(new Registered($user));
 
+        $token = $user->createToken('auth_token')->plainTextToken;
+
         return \response()->json([
-            'message' => 'Registrasi sukses! Silakan cek email kamu buat konfirmasi ya, Sayang! ❤️',
+            'message' => 'Registrasi sukses! Langsung kita verifikasi ya, Sayang! ❤️',
+            'access_token' => $token,
+            'token_type' => 'Bearer',
             'user' => $user,
         ]);
     }
@@ -177,6 +181,58 @@ class AuthController extends Controller
         return \response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'user' => $user,
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/email/verify-code",
+     *     summary="Verify email with 6-digit OTP code",
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *
+     *         @OA\JsonContent(
+     *
+     *             @OA\Property(property="code", type="string", example="123456")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(response=200, description="Successful verification"),
+     *     @OA\Response(response=401, description="Invalid or expired code")
+     * )
+     */
+    public function verifyEmailCode(Request $request): JsonResponse
+    {
+        $request->validate([
+            'code' => 'required|string|size:6',
+        ]);
+
+        $user = $request->user();
+
+        if (! $user) {
+            return \response()->json(['message' => 'Silakan login dulu ya, Sayang!'], 401);
+        }
+
+        if ($user->email_verification_code !== $request->code || 
+            now()->isAfter($user->email_verification_expires_at)) {
+            return \response()->json([
+                'message' => 'Kode salah atau sudah kedaluwarsa, Sayang. Cek email lagi ya! ❤️',
+            ], 422);
+        }
+
+        if (! $user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+            $user->update([
+                'email_verification_code' => null,
+                'email_verification_expires_at' => null,
+            ]);
+            \event(new \Illuminate\Auth\Events\Verified($user));
+        }
+
+        return \response()->json([
+            'message' => 'Email berhasil diverifikasi! Selamat datang di Dompet Kita, Sayang! ✨❤️',
             'user' => $user,
         ]);
     }
