@@ -11,6 +11,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Services\MarketService;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class ForecastWealthAction extends BaseAction
@@ -56,7 +57,7 @@ class ForecastWealthAction extends BaseAction
 
         $avgMonthlySavings = ($totalIncome - $totalExpense) / $monthCount;
 
-        /** @var \Illuminate\Support\Collection<int, array<string, mixed>> $projection */
+        /** @var Collection<int, array<string, mixed>> $projection */
         $projection = collect([]);
         $runningWealth = $netWorth > 0 ? $netWorth : 0;
         /** @var float $inflationRate */

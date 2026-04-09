@@ -2,7 +2,8 @@
 
 namespace App\Services\Cfo;
 
-use App\Enums\TransactionType;
+use App\Enums\RecurrenceFrequency;
+use App\Enums\ScheduleStatus;
 use App\Models\ScheduledTransaction;
 use App\Models\Transaction;
 use Carbon\Carbon;
@@ -66,20 +67,20 @@ class CfoAssistantService
         $nextDate = Carbon::parse($scheduled->next_due_date);
 
         switch ($scheduled->recurrence) {
-            case \App\Enums\RecurrenceFrequency::DAILY:
+            case RecurrenceFrequency::DAILY:
                 $nextDate->addDay();
                 break;
-            case \App\Enums\RecurrenceFrequency::WEEKLY:
+            case RecurrenceFrequency::WEEKLY:
                 $nextDate->addWeek();
                 break;
-            case \App\Enums\RecurrenceFrequency::MONTHLY:
+            case RecurrenceFrequency::MONTHLY:
                 $nextDate->addMonth();
                 break;
-            case \App\Enums\RecurrenceFrequency::YEARLY:
+            case RecurrenceFrequency::YEARLY:
                 $nextDate->addYear();
                 break;
             default:
-                $scheduled->status = \App\Enums\ScheduleStatus::FINISHED; // If no valid recurrence, finish it
+                $scheduled->status = ScheduleStatus::FINISHED; // If no valid recurrence, finish it
                 break;
         }
 

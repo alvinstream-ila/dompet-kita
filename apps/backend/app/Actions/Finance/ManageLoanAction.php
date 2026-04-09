@@ -14,7 +14,7 @@ class ManageLoanAction extends BaseAction
     /**
      * Record a new loan.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function record(User $user, array $data): Loan
     {

@@ -17,6 +17,18 @@ test.describe('Full Spectrum - Financial Flow', () => {
     // Check Quick Actions
     await expect(page.getByText('TAMBAH TRANSAKSI')).toBeVisible();
     await expect(page.getByText('SCAN STRUK')).toBeVisible();
+
+    // Visual Regression Check
+    // Calibrated for Native Windows Rendering (no Docker)
+    // Masking all dynamic currency values and charts to focus on layout integrity
+    await expect(page).toHaveScreenshot('dashboard-baseline.png', {
+        mask: [
+            page.locator('canvas'), // Charts
+            page.getByText(/Rp/i), // All currency amounts
+            page.locator('.animate-pulse'), // Loading states
+            page.locator('.dynamic-value') // Custom dynamic classes
+        ]
+    });
   });
 
   test('Transaction Management - CRUD Flow', async ({ page }) => {

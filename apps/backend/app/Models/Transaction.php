@@ -6,6 +6,8 @@ use App\Enums\TransactionType;
 use App\Services\BudgetService;
 use App\Traits\HasUserScope;
 use Carbon\Carbon;
+use Database\Factories\TransactionFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,7 +31,7 @@ use Spatie\Activitylog\Support\LogOptions;
  */
 class Transaction extends Model
 {
-    /** @use HasFactory<\Database\Factories\TransactionFactory> */
+    /** @use HasFactory<TransactionFactory> */
     use HasFactory, HasUserScope, LogsActivity;
 
     public function getActivitylogOptions(): LogOptions
@@ -92,8 +94,8 @@ class Transaction extends Model
     /**
      * Scope to filter transactions by month and year based on budget cycle.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<Transaction>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<Transaction>
+     * @param  Builder<Transaction>  $query
+     * @return Builder<Transaction>
      */
     public function scopeFilterByPeriod($query, ?int $month, ?int $year, int $startDay = 1)
     {

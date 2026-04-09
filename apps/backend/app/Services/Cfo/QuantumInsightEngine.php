@@ -103,7 +103,7 @@ class QuantumInsightEngine
     }
 
     /**
-     * @param array<string, mixed> $summary
+     * @param  array<string, mixed>  $summary
      */
     protected function buildAnalysisPrompt(string $userName, array $summary): string
     {
@@ -136,7 +136,7 @@ class QuantumInsightEngine
     }
 
     /**
-     * @param array<string, mixed> $finding
+     * @param  array<string, mixed>  $finding
      */
     protected function persistInsight(string $userId, array $finding): void
     {

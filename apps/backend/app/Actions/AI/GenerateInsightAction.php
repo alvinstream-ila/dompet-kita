@@ -5,7 +5,6 @@ namespace App\Actions\AI;
 use App\Actions\BaseAction;
 use App\Services\AI\AiProviderManager;
 use App\Services\Security\PrivacyFilter;
-use Exception;
 use Illuminate\Support\Facades\Log;
 
 class GenerateInsightAction extends BaseAction

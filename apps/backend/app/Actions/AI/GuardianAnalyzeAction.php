@@ -68,7 +68,7 @@ class GuardianAnalyzeAction extends BaseAction
                 // Check Rebalancing opportunities if safe
                 /** @var array<int, array{action: string, amount?: float, reason: string}> $rebalancing */
                 $rebalancing = $this->intel->generateRebalanceAdvice($user);
-                
+
                 /** @var array<int, array{action: string, reason: string}> $opportunities */
                 $opportunities = array_values(array_filter($rebalancing, fn ($adv) => $adv['action'] === 'INVEST'));
                 $result['opportunities'] = $opportunities;

@@ -8,7 +8,8 @@ export async function serverApi(endpoint: string, options: RequestInit = {}) {
   const cookieStore = await cookies();
   const token = cookieStore.get('auth_token')?.value;
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://dompet-kita-production.up.railway.app/api';
+  const baseUrl =
+    process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
   const url = `${baseUrl}${cleanEndpoint}`;
 
@@ -26,7 +27,9 @@ export async function serverApi(endpoint: string, options: RequestInit = {}) {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    throw new Error(
+      errorData.message || `HTTP error! status: ${response.status}`
+    );
   }
 
   return response.json();

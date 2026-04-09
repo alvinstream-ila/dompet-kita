@@ -16,7 +16,7 @@ class GetLegacyAdviceAction extends BaseAction
     ) {}
 
     /**
-     * @param array<string, mixed> $report
+     * @param  array<string, mixed>  $report
      */
     public function execute(User $user, array $report): string
     {

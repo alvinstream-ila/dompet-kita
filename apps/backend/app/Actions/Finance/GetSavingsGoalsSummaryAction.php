@@ -29,8 +29,8 @@ class GetSavingsGoalsSummaryAction extends BaseAction
 
         $goals = $query->get();
 
-        $totalTarget = $goals->sum(fn(Goal $g) => (float) $g->target_amount);
-        $totalCurrent = $goals->sum(fn(Goal $g) => (float) $g->current_amount);
+        $totalTarget = $goals->sum(fn (Goal $g) => (float) $g->target_amount);
+        $totalCurrent = $goals->sum(fn (Goal $g) => (float) $g->current_amount);
         $overallProgress = $totalTarget > 0 ? ($totalCurrent / $totalTarget) * 100 : 0;
 
         return [

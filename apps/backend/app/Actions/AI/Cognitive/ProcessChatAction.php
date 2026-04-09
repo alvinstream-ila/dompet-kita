@@ -94,7 +94,7 @@ class ProcessChatAction
     }
 
     /**
-     * @param array{simulated_cash: float, impact_on_liquidity_days: int|float, days_remaining_simulated: int|float, is_risky: bool} $sim
+     * @param  array{simulated_cash: float, impact_on_liquidity_days: int|float, days_remaining_simulated: int|float, is_risky: bool}  $sim
      */
     private function formatSimulationResult(array $sim): string
     {
@@ -146,7 +146,7 @@ class ProcessChatAction
     }
 
     /**
-     * @param array<string, mixed> $metadata
+     * @param  array<string, mixed>  $metadata
      */
     private function saveHistory(User $user, string $role, string $content, array $metadata = []): void
     {

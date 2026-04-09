@@ -51,7 +51,7 @@ class AiHealthCheckCommand extends Command
     }
 
     /**
-     * @param array{status: string, message: string} $status
+     * @param  array{status: string, message: string}  $status
      */
     private function getStatusLine(array $status): string
     {

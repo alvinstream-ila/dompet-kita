@@ -19,6 +19,8 @@
     "migrate": "php apps/backend/artisan migrate",
     "security-gate": "php apps/backend/artisan security:gate --min-score=100",
     "test:e2e": "npx playwright test",
+    "e2e:build": "npm run build -w @dompet-kita/frontend",
+    "e2e:serve": "npx concurrently \"npm run start -w @dompet-kita/frontend\" \"php -S localhost:8000 -t apps/backend/public\"",
     "test:e2e-ui": "npx playwright test --ui",
     "supabase": "supabase",
     "uplink": "infra\\bin\\uplink",

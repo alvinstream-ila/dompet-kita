@@ -2,9 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Services\AI\GroqProvider;
-use App\Services\AI\LangSmithTracer;
+use Illuminate\Console\Command;
 
 class TestLangSmithTrace extends Command
 {
@@ -28,19 +27,19 @@ class TestLangSmithTrace extends Command
     public function handle()
     {
         $this->info('🚀 Antigravity LangSmith Connectivity Test Starting...');
-        
+
         try {
-            $groq = new GroqProvider();
+            $groq = new GroqProvider;
             $this->info('📡 Sending request to Groq (Primary Provider)...');
-            
+
             $result = $groq->generateText('Balas dengan satu kata: OK.');
-            
-            $this->info('✅ Response: ' . $result['text']);
-            $this->info('📊 Usage: ' . ($result['usage']['total_tokens'] ?? 0) . ' tokens');
+
+            $this->info('✅ Response: '.$result['text']);
+            $this->info('📊 Usage: '.($result['usage']['total_tokens'] ?? 0).' tokens');
             $this->info('⭐ Trace sent to LangSmith. Check your dashboard at https://smith.langchain.com/');
-            
+
         } catch (\Exception $e) {
-            $this->error('❌ Test failed: ' . $e->getMessage());
+            $this->error('❌ Test failed: '.$e->getMessage());
             $this->error($e->getTraceAsString());
         }
     }

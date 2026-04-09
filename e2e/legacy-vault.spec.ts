@@ -1,37 +1,30 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('E2E Module - Legacy Vault & Security Sentinel', () => {
-  
+test.describe('Digital Inheritance - Legacy Vault Audit', () => {
+
   test.beforeEach(async ({ page }) => {
-    // Rely on global storage state
+    await page.goto('/');
+  });
+
+  test('Legacy Vault - Inheritance Setup Flow', async ({ page }) => {
     await page.goto('/legacy-vault');
-  });
-
-  test('Digital Legacy Readiness (Heartbeat)', async ({ page }) => {
-    await page.goto('/legacy'); // URL based on App.tsx
-    await expect(page.getByText('Digital Legacy Vault')).toBeVisible();
     
-    // Heartbeat Status Check
-    await expect(page.getByText('Digital Heartbeat Active')).toBeVisible();
-    await expect(page.getByText('Threshold Status')).toBeVisible();
-    await expect(page.getByText('Bulan')).toContainText(/3|6|12/); // Common values
-  });
+    await expect(page.getByText('Digital Inheritance Hub')).toBeVisible();
 
-  test('Access Heir Information', async ({ page }) => {
-    await page.goto('/legacy');
-    await expect(page.getByText('Designated Partner')).toBeVisible();
-    
-    // Check if heir/partner is defined
-    await expect(page.getByText('Partner / Heir')).toBeVisible();
-  });
+    // Setup Emergency Contact
+    await page.getByPlaceholder('Nama Pewaris (Ahli Waris)').fill('Ila (Soulmate)');
+    await page.getByPlaceholder('Email Kontak Darurat').fill('ila@soulmate.id');
+    await page.getByRole('button', { name: 'SIMPAN KONTAK DARURAT' }).click();
 
-  test('Vault Archive Access', async ({ page }) => {
-    await page.goto('/legacy');
-    await expect(page.getByText('Vault Archive')).toBeVisible();
+    // Verify Success Toast/Text
+    await expect(page.getByText('Konon, data ini aman bersama kita.')).toBeVisible();
+
+    // Trigger Wealth Snapshot
+    await page.getByRole('button', { name: 'GENERATE SNAPSHOT' }).click();
+    await expect(page.getByText('Snapshot Berhasil Dibuat')).toBeVisible();
     
-    // Verify Snapshots are present
-    const snapshots = page.locator('div:has-text("Snapshot Finansial")');
-    await expect(snapshots).toHaveCount(3);
+    // Check for "Dead Man Switch" status
+    await expect(page.getByText('AKTIF')).toBeVisible();
   });
 
 });

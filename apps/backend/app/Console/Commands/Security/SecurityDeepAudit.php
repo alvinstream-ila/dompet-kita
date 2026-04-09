@@ -74,7 +74,7 @@ class SecurityDeepAudit extends Command
     }
 
     /**
-     * @param array{success: bool, output: string} $result
+     * @param  array{success: bool, output: string}  $result
      */
     private function printScanResult(array $result): void
     {

@@ -1,4 +1,4 @@
-name: Dompet Kita Sentinel CI (v6.3)
+name: Dompet Kita Sentinel CI (v7.0 - Sovereign Sentinel)
 
 on:
   push:
@@ -7,7 +7,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  audit-and-test:
+  sentinel-gate:
+    name: "Sovereign Security & Quality Gate"
     runs-on: ubuntu-latest
     
     services:
@@ -25,38 +26,70 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Checkout Code
+      - name: 🛰️ Checkout Code
         uses: actions/checkout@v4
       
-      - name: Setup Node.js
+      - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
           
-      - name: Setup PHP
-        uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2
+      - name: 🐘 Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
           extensions: dom, curl, libxml, mbstring, zip, pdo, bcmath, json, pgsql, pdo_pgsql
           coverage: none
+          tools: phpstan, pint
           
-      - name: Install Monorepo Dependencies (Sentinel-Shield Mode)
-        # S6505 Hardening: Disallowing shell scripts during installation
+      - name: 📦 Install Monorepo Dependencies
         run: npm ci --ignore-scripts
         
-      - name: Install Backend Dependencies (Vulnerability Shield)
-        # PHP Hardening: Disallowing auto-scripts during composer install
+      - name: 📦 Install Backend Dependencies
         working-directory: ./apps/backend
         run: |
           composer install --prefer-dist --no-progress --no-interaction --no-scripts
           cp .env.example .env
           php artisan key:generate
         
-      - name: Setup Playwright Browsers
-        run: npx playwright install --with-deps
+      - name: 🧹 Linting Check (PHP Pint)
+        working-directory: ./apps/backend
+        run: ./vendor/bin/pint --test
 
-      - name: Run Backend Logic Tests
+      - name: 🧠 Static Analysis (PHPStan Level 9)
+        working-directory: ./apps/backend
+        run: ./vendor/bin/phpstan analyse --memory-limit=2G
+
+      - name: 🕵️ Dependency Audit (Composer)
+        working-directory: ./apps/backend
+        run: composer audit
+
+      - name: 🕵️ Dependency Audit (NPM)
+        run: npm audit --audit-level=high
+
+      - name: 🛡️ Vulnerability Scan (Trivy FS)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+          scanners: 'vuln,secret,misconfig'
+
+      - name: 🤺 Run Sentinel Security Gate
+        working-directory: ./apps/backend
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: dompet_kita_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: password
+        run: php artisan security:gate --min-score=100
+
+      - name: 🧪 Run Backend Logic Tests (Pest)
         working-directory: ./apps/backend
         env:
           DB_CONNECTION: pgsql
@@ -66,21 +99,20 @@ jobs:
           DB_USERNAME: postgres
           DB_PASSWORD: password
         run: php artisan test --env=testing
-        
-      - name: Run Full-Spectrum E2E Sentinel
+
+      - name: 🎭 Setup Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: 🧪 Run Full-Spectrum E2E Sentinel
         run: npm run test:e2e
         env:
           DATABASE_URL: postgres://postgres:password@localhost:5432/dompet_kita_test
 
-      - name: Run Sentinel Security Gate
-        working-directory: ./apps/backend
-        run: php artisan security:gate --min-score=90
-        
-      - name: Build Production Bundle
+      - name: 🏗️ Build Production Bundle
         working-directory: ./apps/frontend
         run: npm run build
 
-      - name: Upload Test Results Artifact
+      - name: 💾 Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:

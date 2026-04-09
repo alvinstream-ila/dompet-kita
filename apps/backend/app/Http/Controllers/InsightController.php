@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\TransactionInsight;
 use App\Services\Cfo\QuantumInsightEngine;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class InsightController extends Controller
 {
     /**
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function generate(Request $request, QuantumInsightEngine $engine)
     {
@@ -25,7 +27,7 @@ class InsightController extends Controller
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection<int, TransactionInsight>
+     * @return Collection<int, TransactionInsight>
      */
     public function index()
     {
@@ -36,9 +38,7 @@ class InsightController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\TransactionInsight $insight
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(Request $request, TransactionInsight $insight)
     {
@@ -52,8 +52,7 @@ class InsightController extends Controller
     }
 
     /**
-     * @param \App\Models\TransactionInsight $insight
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(TransactionInsight $insight)
     {

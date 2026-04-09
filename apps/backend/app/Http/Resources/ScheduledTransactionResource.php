@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Models\ScheduledTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Models\ScheduledTransaction
+ * @mixin ScheduledTransaction
  */
 class ScheduledTransactionResource extends JsonResource
 {

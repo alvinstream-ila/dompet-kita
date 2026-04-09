@@ -6,9 +6,7 @@ import Cookies from 'js-cookie';
  * Centralized instance for talking to the Laravel Backend.
  */
 const api = axios.create({
-  baseURL:
-    process.env.NEXT_PUBLIC_API_URL ||
-    'https://dompet-kita-production.up.railway.app/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',

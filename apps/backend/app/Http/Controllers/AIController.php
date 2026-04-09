@@ -94,8 +94,9 @@ class AIController extends Controller
             $savings = (float) $totalIncome - (float) $totalExpense;
 
             $summaryText = $transactions->take(20)->map(function ($t) {
-                $typeStr = $t->type instanceof \App\Enums\TransactionType ? $t->type->value : (string) $t->type;
-                return "{$t->date}: {$typeStr} Rp " . number_format((float) $t->amount) . " ({$t->category})";
+                $typeStr = $t->type instanceof TransactionType ? $t->type->value : (string) $t->type;
+
+                return "{$t->date}: {$typeStr} Rp ".number_format((float) $t->amount)." ({$t->category})";
             })->implode("\n");
 
             $cacheKey = "ai_insight_{$user->id}";
@@ -127,7 +128,7 @@ class AIController extends Controller
     /**
      * Chat with the AI about financial context (Cognitive Chat Genius).
      */
-    public function check(): \Illuminate\Http\JsonResponse
+    public function check(): JsonResponse
     {
         return response()->json(['status' => 'ok']);
     }

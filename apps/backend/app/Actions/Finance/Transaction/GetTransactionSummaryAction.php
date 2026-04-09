@@ -6,6 +6,7 @@ use App\Actions\BaseAction;
 use App\Enums\TransactionType;
 use App\Models\Transaction;
 use App\Services\BudgetService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -18,7 +19,7 @@ class GetTransactionSummaryAction extends BaseAction
      *     income: float,
      *     expense: float,
      *     balance: float,
-     *     recentTransactions: \Illuminate\Database\Eloquent\Collection<int, Transaction>,
+     *     recentTransactions: Collection<int, Transaction>,
      *     period: array{start: string, end: string}
      * }
      */

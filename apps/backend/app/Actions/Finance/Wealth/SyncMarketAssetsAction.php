@@ -3,6 +3,7 @@
 namespace App\Actions\Finance\Wealth;
 
 use App\Actions\BaseAction;
+use App\Enums\AssetType;
 use App\Models\Asset;
 use App\Services\MarketService;
 
@@ -33,11 +34,11 @@ class SyncMarketAssetsAction extends BaseAction
                 $unit = strtoupper($asset->unit);
 
                 // 1. Physical Gold Logic
-                if ($asset->type === \App\Enums\AssetType::INVESTMENT && $unit === 'GRAM') {
+                if ($asset->type === AssetType::INVESTMENT && $unit === 'GRAM') {
                     $newValue = $asset->quantity * $market['gold_antam_gram'];
                 }
                 // 2. Foreign Currency Logic (USD, SGD, etc.)
-                elseif ($asset->type === \App\Enums\AssetType::CASH && in_array($unit, ['USD', 'SGD', 'EUR', 'JPY', 'GBP'])) {
+                elseif ($asset->type === AssetType::CASH && in_array($unit, ['USD', 'SGD', 'EUR', 'JPY', 'GBP'])) {
                     $rate = $this->marketService->getRate($unit, 'IDR');
                     $newValue = $asset->quantity * $rate;
                 }

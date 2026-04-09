@@ -6,7 +6,6 @@ namespace App\Actions\System;
 
 use App\Actions\BaseAction;
 use App\Services\AI\AiProviderManager;
-use App\Enums\TransactionType;
 use Illuminate\Support\Facades\Log;
 
 class RepairSystemIssuesAction extends BaseAction

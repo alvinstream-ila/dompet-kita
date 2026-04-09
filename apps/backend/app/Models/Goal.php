@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasUserScope;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $name
  * @property float $target_amount
  * @property float $current_amount
- * @property \Carbon\Carbon|null $deadline
+ * @property Carbon|null $deadline
  * @property string $category
  * @property string $status
  * @property string|null $icon

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Enums\AssetType;
 use App\Traits\HasUserScope;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
@@ -18,8 +20,8 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property string|null $unit
  * @property bool $is_market_synced
  * @property float $value
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class Asset extends Model
 {
@@ -70,8 +72,8 @@ class Asset extends Model
     /**
      * Scope for assets that should be synced with market rates.
      *
-     * @param \Illuminate\Database\Eloquent\Builder<Asset> $query
-     * @return \Illuminate\Database\Eloquent\Builder<Asset>
+     * @param  Builder<Asset>  $query
+     * @return Builder<Asset>
      */
     public function scopeMarketSynced($query)
     {

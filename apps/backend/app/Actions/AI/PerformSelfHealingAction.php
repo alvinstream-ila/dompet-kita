@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Actions\AI;
 
 use App\Actions\BaseAction;
-use App\Services\GeminiService;
 use App\Services\SelfHealingService;
 
 class PerformSelfHealingAction extends BaseAction

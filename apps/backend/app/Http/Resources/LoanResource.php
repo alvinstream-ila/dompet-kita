@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Loan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -18,7 +19,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property Carbon $created_at
  */
 /**
- * @mixin \App\Models\Loan
+ * @mixin Loan
  */
 class LoanResource extends JsonResource
 {

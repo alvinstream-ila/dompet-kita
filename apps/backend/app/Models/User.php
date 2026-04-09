@@ -35,9 +35,9 @@ use Laravel\Sanctum\HasApiTokens;
  * @property int|null $partner_id
  * @property float|null $large_expense_threshold
  * @property User|null $partner
- * @property \Carbon\Carbon|null $last_active_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon|null $last_active_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  *
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()

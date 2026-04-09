@@ -7,6 +7,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mailer\Transport\AbstractTransport;
+use Symfony\Component\Mime\Message;
 use Symfony\Component\Mime\MessageConverter;
 
 /**
@@ -29,7 +30,7 @@ class GoogleMailTransport extends AbstractTransport
     protected function doSend(SentMessage $message): void
     {
         $original = $message->getOriginalMessage();
-        if (!$original instanceof \Symfony\Component\Mime\Message) {
+        if (! $original instanceof Message) {
             throw new MailTransportException('Expected Symfony Message, got '.get_debug_type($original));
         }
         $email = MessageConverter::toEmail($original);

@@ -14,7 +14,7 @@ class UpdateAssetAction extends BaseAction
     ) {}
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function execute(User $user, Asset $asset, array $data): Asset
     {

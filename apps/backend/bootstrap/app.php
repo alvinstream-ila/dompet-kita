@@ -10,6 +10,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Sentry\Laravel\Integration;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -33,7 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        \Sentry\Laravel\Integration::handles($exceptions);
+        Integration::handles($exceptions);
 
         $exceptions->report(function (Throwable $e) {
             Log::error('PRODUCTION_ERROR: '.$e->getMessage(), [

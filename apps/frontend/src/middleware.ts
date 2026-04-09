@@ -11,9 +11,9 @@ export function middleware(request: NextRequest) {
 
   // 1. Define Public and Auth paths
   const isAuthPage = pathname.startsWith('/auth');
-  const isPublicAsset = 
-    pathname.startsWith('/_next') || 
-    pathname.includes('/api/') || 
+  const isPublicAsset =
+    pathname.startsWith('/_next') ||
+    pathname.includes('/api/') ||
     pathname.includes('.') || // static files like favicon.ico
     pathname === '/manifest.json';
 
@@ -38,10 +38,10 @@ export function middleware(request: NextRequest) {
   // - CSP: Restrict resource loading to trusted domains
   const cspHeader = `
     default-src 'self';
-    connect-src 'self' http://localhost:8000 https://dompet-kita-production.up.railway.app https://dompet-kita-official.up.railway.app https://*.supabase.co https://*.sentry.io https://vercel.live wss://*.pusher.com https://*.pusher.com;
+    connect-src 'self' http://localhost:8000 https://*.railway.app https://*.supabase.co https://*.sentry.io https://vercel.live wss://*.pusher.com https://*.pusher.com;
     script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://*.sentry.io;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    img-src 'self' blob: data: https://dompet-kita-production.up.railway.app https://dompet-kita-official.up.railway.app https://*.supabase.co;
+    img-src 'self' blob: data: http://localhost:8000 https://*.railway.app https://*.supabase.co;
     font-src 'self' https://fonts.gstatic.com https://vercel.live;
     frame-src 'self' https://vercel.live;
     object-src 'none';
@@ -50,11 +50,16 @@ export function middleware(request: NextRequest) {
     frame-ancestors 'none';
     block-all-mixed-content;
     upgrade-insecure-requests;
-  `.replaceAll(/\s{2,}/g, ' ').trim();
+  `
+    .replaceAll(/\s{2,}/g, ' ')
+    .trim();
 
   response.headers.set('Content-Security-Policy', cspHeader);
   response.headers.set('X-DNS-Prefetch-Control', 'on');
-  response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+  response.headers.set(
+    'Strict-Transport-Security',
+    'max-age=63072000; includeSubDomains; preload'
+  );
   response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');

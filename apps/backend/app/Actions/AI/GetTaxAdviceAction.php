@@ -16,7 +16,7 @@ class GetTaxAdviceAction extends BaseAction
     ) {}
 
     /**
-     * @param array<string, mixed> $estimate
+     * @param  array<string, mixed>  $estimate
      */
     public function execute(User $user, array $estimate): string
     {

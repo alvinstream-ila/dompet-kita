@@ -89,7 +89,10 @@ export default function LoginPage() {
         setSuccessMessage(data.message);
         setIsSignUp(false);
       } else if (is2faMode) {
-        const { data } = await api.post('/verify-2fa', { email, code: twoFactorCode });
+        const { data } = await api.post('/verify-2fa', {
+          email,
+          code: twoFactorCode,
+        });
         setAuthData(data.access_token, data.user);
       } else {
         const { data } = await api.post('/login', { email, password });
@@ -111,7 +114,9 @@ export default function LoginPage() {
       let message = defaultErrors[mode];
 
       if (error && typeof error === 'object' && 'response' in error) {
-        const axiosError = error as { response?: { data?: { message?: string } } };
+        const axiosError = error as {
+          response?: { data?: { message?: string } };
+        };
         message = axiosError.response?.data?.message || message;
       }
 
@@ -122,7 +127,8 @@ export default function LoginPage() {
   };
 
   const handleSocialAuth = (provider: 'google' | 'facebook') => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://dompet-kita-production.up.railway.app/api';
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
     globalThis.location.href = `${apiUrl}/auth/${provider}`;
   };
 
@@ -249,24 +255,35 @@ const Branding = () => (
 );
 
 const AuthHeader = ({ mode }: { mode: AuthMode }) => {
-  const config: Record<AuthMode, { icon: React.ReactNode; title: string; sub: string }> = {
+  const config: Record<
+    AuthMode,
+    { icon: React.ReactNode; title: string; sub: string }
+  > = {
     forgot: {
-      icon: <Lock className="h-10 w-10 text-yellow-500 transition-transform group-hover:scale-110" />,
+      icon: (
+        <Lock className="h-10 w-10 text-yellow-500 transition-transform group-hover:scale-110" />
+      ),
       title: 'Reset Password',
       sub: 'Biar Kami Bantu Ingat Kembali',
     },
     signup: {
-      icon: <User className="h-10 w-10 text-pink-500 transition-transform group-hover:scale-110" />,
+      icon: (
+        <User className="h-10 w-10 text-pink-500 transition-transform group-hover:scale-110" />
+      ),
       title: 'Create New Account',
       sub: 'Join Us To Start Managing Better',
     },
     login: {
-      icon: <LogIn className="h-10 w-10 text-slate-900 transition-transform group-hover:scale-110" />,
+      icon: (
+        <LogIn className="h-10 w-10 text-slate-900 transition-transform group-hover:scale-110" />
+      ),
       title: 'Sign In With Email',
       sub: 'Make Your Dream Come True With Planning Your Finance',
     },
     '2fa': {
-      icon: <Lock className="h-10 w-10 text-pink-500 transition-transform group-hover:scale-110" />,
+      icon: (
+        <Lock className="h-10 w-10 text-pink-500 transition-transform group-hover:scale-110" />
+      ),
       title: 'Security Verification',
       sub: 'Cek Email Kamu Buat Kode Aman Ya Sayang! ❤️',
     },
@@ -307,13 +324,40 @@ const SuccessAlert = ({ message }: { message: string | null }) => {
   );
 };
 
-const AuthInput = ({ icon, placeholder, type = 'text', value, onChange, required, focusColor, disabled }: { icon: React.ReactNode; placeholder: string; type?: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; required?: boolean; focusColor: string; disabled?: boolean }) => {
-  const ringColor = focusColor === 'pink' ? 'focus:ring-pink-500/20' : 'focus:ring-blue-500/20';
-  const iconColor = focusColor === 'pink' ? 'group-focus-within:text-pink-500' : 'group-focus-within:text-blue-500';
+const AuthInput = ({
+  icon,
+  placeholder,
+  type = 'text',
+  value,
+  onChange,
+  required,
+  focusColor,
+  disabled,
+}: {
+  icon: React.ReactNode;
+  placeholder: string;
+  type?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+  focusColor: string;
+  disabled?: boolean;
+}) => {
+  const ringColor =
+    focusColor === 'pink' ? 'focus:ring-pink-500/20' : 'focus:ring-blue-500/20';
+  const iconColor =
+    focusColor === 'pink'
+      ? 'group-focus-within:text-pink-500'
+      : 'group-focus-within:text-blue-500';
 
   return (
     <div className="group relative">
-      <div className={cn('absolute top-1/2 left-5 -translate-y-1/2 text-slate-400 transition-colors', iconColor)}>
+      <div
+        className={cn(
+          'absolute top-1/2 left-5 -translate-y-1/2 text-slate-400 transition-colors',
+          iconColor
+        )}
+      >
         {icon}
       </div>
       <input
@@ -333,12 +377,30 @@ const AuthInput = ({ icon, placeholder, type = 'text', value, onChange, required
   );
 };
 
-const SubmitButton = ({ loading, mode }: { loading: boolean; mode: AuthMode }) => {
+const SubmitButton = ({
+  loading,
+  mode,
+}: {
+  loading: boolean;
+  mode: AuthMode;
+}) => {
   const config: Record<AuthMode, { bg: string; label: string }> = {
-    forgot: { bg: 'bg-yellow-500 hover:bg-yellow-600 shadow-yellow-500/30 text-slate-900', label: 'Send Reset Link' },
-    signup: { bg: 'bg-pink-500 hover:bg-pink-600 shadow-pink-500/30 text-white', label: 'Create Account' },
-    login: { bg: 'bg-blue-500 hover:bg-blue-600 shadow-blue-500/30 text-white', label: 'Log In' },
-    '2fa': { bg: 'bg-pink-500 hover:bg-pink-600 shadow-pink-500/30 text-white', label: 'Verify Code' },
+    forgot: {
+      bg: 'bg-yellow-500 hover:bg-yellow-600 shadow-yellow-500/30 text-slate-900',
+      label: 'Send Reset Link',
+    },
+    signup: {
+      bg: 'bg-pink-500 hover:bg-pink-600 shadow-pink-500/30 text-white',
+      label: 'Create Account',
+    },
+    login: {
+      bg: 'bg-blue-500 hover:bg-blue-600 shadow-blue-500/30 text-white',
+      label: 'Log In',
+    },
+    '2fa': {
+      bg: 'bg-pink-500 hover:bg-pink-600 shadow-pink-500/30 text-white',
+      label: 'Verify Code',
+    },
   };
 
   const { bg, label } = config[mode];
@@ -357,7 +419,23 @@ const SubmitButton = ({ loading, mode }: { loading: boolean; mode: AuthMode }) =
   );
 };
 
-const ModeSwitcher = ({ mode, is2faMode, setIs2faMode, setTwoFactorCode, setSuccessMessage, onSignUpToggle, onCancelForgot }: { mode: AuthMode; is2faMode: boolean; setIs2faMode: (val: boolean) => void; setTwoFactorCode: (val: string) => void; setSuccessMessage: (val: string | null) => void; onSignUpToggle: () => void; onCancelForgot: () => void }) => {
+const ModeSwitcher = ({
+  mode,
+  is2faMode,
+  setIs2faMode,
+  setTwoFactorCode,
+  setSuccessMessage,
+  onSignUpToggle,
+  onCancelForgot,
+}: {
+  mode: AuthMode;
+  is2faMode: boolean;
+  setIs2faMode: (val: boolean) => void;
+  setTwoFactorCode: (val: string) => void;
+  setSuccessMessage: (val: string | null) => void;
+  onSignUpToggle: () => void;
+  onCancelForgot: () => void;
+}) => {
   const labels: Record<AuthMode, string> = {
     forgot: 'Sudah Ingat? Masuk Lagi',
     signup: 'Sudah Punya Akun? Masuk Di Sini',
@@ -367,19 +445,29 @@ const ModeSwitcher = ({ mode, is2faMode, setIs2faMode, setTwoFactorCode, setSucc
 
   return (
     <div className="pt-2 pb-4 text-center">
-      <button onClick={onSignUpToggle} className="text-[11px] font-black tracking-widest text-slate-500 uppercase transition-all hover:text-slate-900">
+      <button
+        onClick={onSignUpToggle}
+        className="text-[11px] font-black tracking-widest text-slate-500 uppercase transition-all hover:text-slate-900"
+      >
         {labels[mode]}
       </button>
       {is2faMode && (
         <button
-          onClick={() => { setIs2faMode(false); setTwoFactorCode(''); setSuccessMessage(null); }}
+          onClick={() => {
+            setIs2faMode(false);
+            setTwoFactorCode('');
+            setSuccessMessage(null);
+          }}
           className="mx-auto mt-4 block text-[11px] font-black tracking-widest text-slate-400 uppercase transition-all hover:text-slate-800"
         >
           Batal & Reset Login
         </button>
       )}
       {mode === 'forgot' && (
-        <button onClick={onCancelForgot} className="mx-auto mt-4 block text-[11px] font-black tracking-widest text-slate-400 uppercase transition-all hover:text-slate-800">
+        <button
+          onClick={onCancelForgot}
+          className="mx-auto mt-4 block text-[11px] font-black tracking-widest text-slate-400 uppercase transition-all hover:text-slate-800"
+        >
           Batal
         </button>
       )}
@@ -387,21 +475,39 @@ const ModeSwitcher = ({ mode, is2faMode, setIs2faMode, setTwoFactorCode, setSucc
   );
 };
 
-const SocialAuth = ({ isSignUp, handleSocialAuth }: { isSignUp: boolean; handleSocialAuth: (p: 'google' | 'facebook') => void }) => (
+const SocialAuth = ({
+  isSignUp,
+  handleSocialAuth,
+}: {
+  isSignUp: boolean;
+  handleSocialAuth: (p: 'google' | 'facebook') => void;
+}) => (
   <div className="relative z-0 mt-4 border-t border-slate-200/50 pt-6">
     <div className="flex flex-col items-center gap-6">
       <p className="text-[11px] font-black tracking-widest text-slate-600 uppercase">
         Or {isSignUp ? 'sign up' : 'sign in'} with
       </p>
       <div className="flex items-center gap-4">
-        <SocialButton onClick={() => handleSocialAuth('google')} icon={<GoogleIcon />} />
-        <SocialButton onClick={() => handleSocialAuth('facebook')} icon={<FacebookLogo />} />
+        <SocialButton
+          onClick={() => handleSocialAuth('google')}
+          icon={<GoogleIcon />}
+        />
+        <SocialButton
+          onClick={() => handleSocialAuth('facebook')}
+          icon={<FacebookLogo />}
+        />
       </div>
     </div>
   </div>
 );
 
-const SocialButton = ({ onClick, icon }: { onClick: () => void; icon: React.ReactNode }) => (
+const SocialButton = ({
+  onClick,
+  icon,
+}: {
+  onClick: () => void;
+  icon: React.ReactNode;
+}) => (
   <button
     type="button"
     onClick={onClick}

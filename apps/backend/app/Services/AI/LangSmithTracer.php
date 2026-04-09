@@ -8,14 +8,16 @@ use Illuminate\Support\Str;
 
 /**
  * LangSmith Tracer Service
- * 
+ *
  * Provides transparent observability for AI models using the LangSmith REST API.
  * Follows the "Expert Standard" for AI tracing without a native SDK.
  */
 class LangSmithTracer
 {
     private ?string $apiKey;
+
     private string $project;
+
     private string $baseUrl = 'https://api.smith.langchain.com';
 
     public function __construct()
@@ -29,7 +31,7 @@ class LangSmithTracer
      */
     public function createRun(string $name, array $inputs, string $runType = 'llm'): ?string
     {
-        if (!$this->apiKey) {
+        if (! $this->apiKey) {
             return null;
         }
 
@@ -49,7 +51,8 @@ class LangSmithTracer
 
             return $id;
         } catch (\Exception $e) {
-            Log::warning("LangSmith Trace Start Failed: " . $e->getMessage());
+            Log::warning('LangSmith Trace Start Failed: '.$e->getMessage());
+
             return null;
         }
     }
@@ -59,7 +62,7 @@ class LangSmithTracer
      */
     public function updateRun(?string $runId, array $outputs, ?\Throwable $error = null): void
     {
-        if (!$this->apiKey || !$runId) {
+        if (! $this->apiKey || ! $runId) {
             return;
         }
 
@@ -77,7 +80,7 @@ class LangSmithTracer
             Http::withHeaders(['x-api-key' => $this->apiKey])
                 ->patch("{$this->baseUrl}/runs/{$runId}", $payload);
         } catch (\Exception $e) {
-            Log::warning("LangSmith Trace Update Failed: " . $e->getMessage());
+            Log::warning('LangSmith Trace Update Failed: '.$e->getMessage());
         }
     }
 }

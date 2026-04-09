@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.376.4",
+            "version": "3.378.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "fe7773b1e069a45aa74e09cdd65219af6039ff6b"
+                "reference": "7a95e0665ad13c2cb8999d64439cf969c86724dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/fe7773b1e069a45aa74e09cdd65219af6039ff6b",
-                "reference": "fe7773b1e069a45aa74e09cdd65219af6039ff6b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7a95e0665ad13c2cb8999d64439cf969c86724dd",
+                "reference": "7a95e0665ad13c2cb8999d64439cf969c86724dd",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.376.4"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.378.0"
             },
-            "time": "2026-04-06T18:18:41+00:00"
+            "time": "2026-04-08T18:13:19+00:00"
         },
         {
             "name": "brick/math",
@@ -12485,16 +12485,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "2.4.0",
+            "version": "2.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "a51dfddbf6a29ed9fbf6e8410fc90c1608df1b5d"
+                "reference": "000b7050b9e4fe98db2192971e56eb0b302b3feb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/a51dfddbf6a29ed9fbf6e8410fc90c1608df1b5d",
-                "reference": "a51dfddbf6a29ed9fbf6e8410fc90c1608df1b5d",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/000b7050b9e4fe98db2192971e56eb0b302b3feb",
+                "reference": "000b7050b9e4fe98db2192971e56eb0b302b3feb",
                 "shasum": ""
             },
             "require": {
@@ -12533,7 +12533,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/2.4.0"
+                "source": "https://github.com/rectorphp/rector/tree/2.4.1"
             },
             "funding": [
                 {
@@ -12541,7 +12541,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-04T07:37:45+00:00"
+            "time": "2026-04-08T08:43:56+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -12614,16 +12614,16 @@
         },
         {
             "name": "sebastian/comparator",
-            "version": "7.1.4",
+            "version": "7.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "6a7de5df2e094f9a80b40a522391a7e6022df5f6"
+                "reference": "c284f55811f43d555e51e8e5c166ac40d3e33c63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/6a7de5df2e094f9a80b40a522391a7e6022df5f6",
-                "reference": "6a7de5df2e094f9a80b40a522391a7e6022df5f6",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/c284f55811f43d555e51e8e5c166ac40d3e33c63",
+                "reference": "c284f55811f43d555e51e8e5c166ac40d3e33c63",
                 "shasum": ""
             },
             "require": {
@@ -12682,7 +12682,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/comparator/issues",
                 "security": "https://github.com/sebastianbergmann/comparator/security/policy",
-                "source": "https://github.com/sebastianbergmann/comparator/tree/7.1.4"
+                "source": "https://github.com/sebastianbergmann/comparator/tree/7.1.5"
             },
             "funding": [
                 {
@@ -12702,7 +12702,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-24T09:28:48+00:00"
+            "time": "2026-04-08T04:43:00+00:00"
         },
         {
             "name": "sebastian/complexity",

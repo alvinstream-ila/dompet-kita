@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Test;
 
 use App\Http\Controllers\Controller;
 use App\Services\AI\AiProviderManager;
+use Illuminate\Http\JsonResponse;
 
 class AiMaintenanceController extends Controller
 {
-    public function reset(AiProviderManager $manager): \Illuminate\Http\JsonResponse
+    public function reset(AiProviderManager $manager): JsonResponse
     {
         try {
             $manager->forceReset();

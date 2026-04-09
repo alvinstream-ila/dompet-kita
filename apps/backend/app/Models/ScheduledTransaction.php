@@ -6,8 +6,9 @@ use App\Enums\RecurrenceFrequency;
 use App\Enums\ScheduleStatus;
 use App\Enums\TransactionType;
 use App\Traits\HasUserScope;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -19,12 +20,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property TransactionType $type
  * @property string $category
  * @property RecurrenceFrequency $recurrence
- * @property \Carbon\Carbon $next_due_date
+ * @property Carbon $next_due_date
  * @property ScheduleStatus $status
  * @property bool $is_auto_execute
- * @property \Carbon\Carbon|null $last_executed_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon|null $last_executed_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class ScheduledTransaction extends Model
 {
@@ -73,8 +74,8 @@ class ScheduledTransaction extends Model
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<ScheduledTransaction> $query
-     * @return \Illuminate\Database\Eloquent\Builder<ScheduledTransaction>
+     * @param  Builder<ScheduledTransaction>  $query
+     * @return Builder<ScheduledTransaction>
      */
     public function scopeActive($query)
     {
@@ -82,8 +83,8 @@ class ScheduledTransaction extends Model
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<ScheduledTransaction> $query
-     * @return \Illuminate\Database\Eloquent\Builder<ScheduledTransaction>
+     * @param  Builder<ScheduledTransaction>  $query
+     * @return Builder<ScheduledTransaction>
      */
     public function scopeDue($query)
     {

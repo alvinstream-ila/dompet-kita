@@ -20,7 +20,7 @@ class AiProviderManager
     protected int $errorThreshold = 3;
 
     /**
-     * @param AiProviderInterface[] $providers
+     * @param  AiProviderInterface[]  $providers
      */
     public function __construct(array $providers = [])
     {
@@ -154,7 +154,7 @@ class AiProviderManager
     }
 
     /**
-     * @param array{prompt_tokens?: int, completion_tokens?: int, total_tokens?: int} $usage
+     * @param  array{prompt_tokens?: int, completion_tokens?: int, total_tokens?: int}  $usage
      */
     protected function onSuccess(AiProviderInterface $provider, float $latency, array $usage = []): void
     {

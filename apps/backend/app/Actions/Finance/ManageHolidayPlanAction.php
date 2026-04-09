@@ -14,7 +14,7 @@ class ManageHolidayPlanAction extends BaseAction
     /**
      * Create a new holiday plan.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function create(User $user, array $data): Holiday
     {

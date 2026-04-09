@@ -36,8 +36,7 @@ class PerformSecurityAuditAction extends BaseAction
     }
 
     /**
-     * @param int $score
-     * @param array<int, string> $findings
+     * @param  array<int, string>  $findings
      */
     private function auditLoginHistory(int &$score, array &$findings): void
     {
@@ -53,8 +52,7 @@ class PerformSecurityAuditAction extends BaseAction
     }
 
     /**
-     * @param int $score
-     * @param array<int, string> $findings
+     * @param  array<int, string>  $findings
      */
     private function auditSensitiveFileExposure(int &$score, array &$findings): void
     {
@@ -65,8 +63,7 @@ class PerformSecurityAuditAction extends BaseAction
     }
 
     /**
-     * @param int $score
-     * @param array<int, string> $findings
+     * @param  array<int, string>  $findings
      */
     private function auditRLS(int &$score, array &$findings): void
     {
@@ -81,8 +78,7 @@ class PerformSecurityAuditAction extends BaseAction
     }
 
     /**
-     * @param int $score
-     * @param array<int, string> $findings
+     * @param  array<int, string>  $findings
      */
     private function auditActivityLog(int &$score, array &$findings): void
     {
@@ -93,8 +89,7 @@ class PerformSecurityAuditAction extends BaseAction
     }
 
     /**
-     * @param int $score
-     * @param array<int, string> $findings
+     * @param  array<int, string>  $findings
      */
     private function audit2FA(int &$score, array &$findings): void
     {
@@ -106,8 +101,7 @@ class PerformSecurityAuditAction extends BaseAction
     }
 
     /**
-     * @param int $score
-     * @param array<int, string> $findings
+     * @param  array<int, string>  $findings
      */
     private function auditLogSanity(int &$score, array &$findings): void
     {
@@ -131,8 +125,7 @@ class PerformSecurityAuditAction extends BaseAction
     }
 
     /**
-     * @param int $score
-     * @param array<int, string> $findings
+     * @param  array<int, string>  $findings
      */
     private function auditTestCoverage(int &$score, array &$findings): void
     {
