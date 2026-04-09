@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, ShieldAlert, TrendingUp, Info } from 'lucide-react';
+import axios from 'axios';
 import { useAiGuardian } from '../hooks/useAiGuardian';
 import { cn } from '@/lib/utils';
 
@@ -14,10 +15,13 @@ export const AiGuardianCard: React.FC = () => {
   }
 
   if (isError) {
+    const isRateLimited =
+      axios.isAxiosError(error) && error.response?.status === 429;
+
     return (
       <div className="flex h-48 w-full items-center justify-center rounded-[40px] bg-slate-100 p-8 text-center">
         <p className="text-sm leading-loose font-bold tracking-widest text-slate-400 uppercase">
-          {(error as any)?.status === 429
+          {isRateLimited
             ? 'Oopss, AI Guardian lagi istirahat bentar ya Sayang.. ❤️'
             : 'Gagal terhubung ke Guardian Engine. Coba lagi nanti ya sayang.. 🥺'}
         </p>

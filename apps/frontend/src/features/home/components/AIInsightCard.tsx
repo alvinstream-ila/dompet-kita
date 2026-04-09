@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RefreshCcw, Heart, AlertTriangle } from 'lucide-react';
+import axios from 'axios';
 import { cn } from '@/lib/utils';
 import { useAIInsights } from '../hooks/useAIInsights';
 
@@ -31,6 +32,9 @@ export const AIInsightCard: React.FC = () => {
     }
 
     if (isError) {
+      const isRateLimited =
+        axios.isAxiosError(error) && error.response?.status === 429;
+
       return (
         <motion.div
           key="error"
@@ -41,7 +45,7 @@ export const AIInsightCard: React.FC = () => {
           <div className="flex items-center gap-3 rounded-2xl bg-amber-50 p-4 text-amber-600">
             <AlertTriangle className="h-5 w-5 shrink-0" />
             <p className="text-[12px] font-bold tracking-tight">
-              {(error as any)?.status === 429
+              {isRateLimited
                 ? 'Wah, asistennya lagi butuh istirahat sebentar nih Sayang.. ❤️'
                 : 'Yah, koneksi AI-nya lagi keganggu sebentar nih Sayang.. 🥺'}
             </p>
