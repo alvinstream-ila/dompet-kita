@@ -27,6 +27,9 @@ export function useAiGuardian() {
       const { data } = await api.get(`/ai/guardian?t=${Date.now()}`);
       return data;
     },
-    staleTime: 1000 * 60 * 15, // Cache for 15 minutes
+    staleTime: 1000 * 60 * 60 * 3, // Trust the cache for 3 hours
+    refetchOnWindowFocus: false, // Don't refresh when switching tabs
+    refetchOnMount: false, // Don't refresh when navigating back to this page
+    refetchOnReconnect: false,
   });
 }

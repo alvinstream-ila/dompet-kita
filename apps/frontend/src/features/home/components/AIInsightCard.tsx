@@ -9,6 +9,7 @@ export const AIInsightCard: React.FC = () => {
     data: insight,
     isLoading,
     isError,
+    error,
     refetch,
     isFetching,
   } = useAIInsights();
@@ -40,7 +41,9 @@ export const AIInsightCard: React.FC = () => {
           <div className="flex items-center gap-3 rounded-2xl bg-amber-50 p-4 text-amber-600">
             <AlertTriangle className="h-5 w-5 shrink-0" />
             <p className="text-[12px] font-bold tracking-tight">
-              Yah, koneksi AI-nya lagi keganggu sebentar nih Sayang.. 🥺
+              {(error as any)?.status === 429
+                ? 'Wah, asistennya lagi butuh istirahat sebentar nih Sayang.. ❤️'
+                : 'Yah, koneksi AI-nya lagi keganggu sebentar nih Sayang.. 🥺'}
             </p>
           </div>
           <button
@@ -72,13 +75,11 @@ export const AIInsightCard: React.FC = () => {
     );
   };
 
-
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="group relative h-full overflow-hidden rounded-[40px] border-none bg-white p-6 shadow-xl transition-all hover:-translate-y-1 md:p-8 transform-gpu"
+      className="group relative h-full transform-gpu overflow-hidden rounded-[40px] border-none bg-white p-6 shadow-xl transition-all hover:-translate-y-1 md:p-8"
     >
       {/* Decorative gradient background */}
       <div className="absolute inset-0 bg-linear-to-br from-pink-500/5 via-violet-500/5 to-transparent opacity-100" />
@@ -108,9 +109,7 @@ export const AIInsightCard: React.FC = () => {
         </div>
 
         <div className="flex flex-1 flex-col justify-center">
-          <AnimatePresence mode="wait">
-            {renderContent()}
-          </AnimatePresence>
+          <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
         </div>
 
         <div className="mt-4 flex items-center gap-2">

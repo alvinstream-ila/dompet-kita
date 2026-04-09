@@ -54,8 +54,8 @@ class AppServiceProvider extends ServiceProvider
         // AI Feature Limits
         RateLimiter::for('ai-insight', function (Request $request) {
             return [
-                Limit::perMinute(5)->by($request->user()?->id ?: $request->ip()),
-                Limit::perDay(20)->by($request->user()?->id ?: $request->ip()),
+                Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()),
+                Limit::perDay(100)->by($request->user()?->id ?: $request->ip()),
             ];
         });
 
