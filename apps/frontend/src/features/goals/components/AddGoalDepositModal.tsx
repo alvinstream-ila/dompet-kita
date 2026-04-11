@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/select';
 import { useAssets } from '@/features/wealth/hooks/useAssets';
 import { useAddGoalDeposit } from '../hooks/useGoalTransactions';
-import { cn, formatToRupiah } from '@/lib/utils';
+import { formatToRupiah } from '@/lib/utils';
 import type { Goal } from '@/types';
 
 interface AddGoalDepositModalProps {

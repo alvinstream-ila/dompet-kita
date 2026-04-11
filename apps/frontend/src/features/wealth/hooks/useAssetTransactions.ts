@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
+import { Asset, ApiError } from '@/types';
 
 export interface AssetTransaction {
   id: number;
   asset_id: number;
-  source_asset?: any;
+  source_asset?: Asset | null;
   amount: number;
   type: 'funding' | 'withdrawal' | 'adjustment';
   description?: string;
@@ -41,7 +42,7 @@ export const useAssetTransactions = (assetId?: number) => {
       });
       toast.success('Top up aset berhasil! 💰');
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || 'Gagal melakukan top up');
     },
   });
@@ -62,7 +63,7 @@ export const useAssetTransactions = (assetId?: number) => {
       });
       toast.success('Pencairan aset berhasil! 💸');
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || 'Gagal mencairkan aset');
     },
   });
