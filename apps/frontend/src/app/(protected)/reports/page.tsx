@@ -142,13 +142,17 @@ export default function ReportsPage() {
         label: 'Pemasukan',
         data: Object.values(monthlyData).map((m) => m.income),
         backgroundColor: '#10b981',
+        borderColor: '#10b981',
         borderRadius: 8,
+        tension: 0.4,
       },
       {
         label: 'Pengeluaran',
         data: Object.values(monthlyData).map((m) => m.expense),
-        backgroundColor: '#3b82f6',
+        backgroundColor: '#f43f5e',
+        borderColor: '#f43f5e',
         borderRadius: 8,
+        tension: 0.4,
       },
     ],
   };
@@ -166,9 +170,9 @@ export default function ReportsPage() {
       {
         data: Object.values(expenseByCat),
         backgroundColor: [
-          '#3b82f6',
-          '#10b981',
           '#f43f5e',
+          '#10b981',
+          '#3b82f6',
           '#f59e0b',
           '#8b5cf6',
           '#ec4899',

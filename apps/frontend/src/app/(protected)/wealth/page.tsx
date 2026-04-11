@@ -14,6 +14,12 @@ import {
   useUpdateAsset,
   useDeleteAsset,
   useWealthSimulation,
+  WealthStats,
+  WealthChart,
+  AssetForm,
+  WealthAssetCard,
+  AddAssetFundModal,
+  WithdrawAssetModal,
 } from '@/features/wealth';
 import {
   WealthStatSkeleton,
@@ -22,28 +28,6 @@ import {
 } from '@/features/wealth/components/WealthSkeletons';
 import dynamic from 'next/dynamic';
 
-const AssetForm = dynamic(
-  () => import('@/features/wealth').then((m) => m.AssetForm),
-  { ssr: false }
-);
-const WealthAssetCard = dynamic(
-  () => import('@/features/wealth').then((m) => m.WealthAssetCard),
-  { ssr: false }
-);
-const WealthChart = dynamic(
-  () => import('@/features/wealth').then((m) => m.WealthChart),
-  {
-    loading: () => <WealthChartSkeleton />,
-    ssr: false,
-  }
-);
-const WealthStats = dynamic(
-  () => import('@/features/wealth').then((m) => m.WealthStats),
-  {
-    loading: () => <WealthStatSkeleton />,
-    ssr: false,
-  }
-);
 const WealthSimulationChart = dynamic(
   () => import('@/features/wealth').then((m) => m.WealthSimulationChart),
   { ssr: false }
@@ -65,7 +49,7 @@ import type { Asset } from '@/types';
  * Ported to Next.js 15 (App Router)
  */
 export default function WealthPage() {
-  const { formatAmount } = useFormatting();
+  const { formatAmount: formatCurrency } = useFormatting();
   const { data: assets = [], isLoading: assetsLoading } = useAssets();
   const { data: wealthHistory = [] } = useWealthHistory();
   const { data: goals = [] } = useGoals();
@@ -73,12 +57,16 @@ export default function WealthPage() {
   const updateAssetMutation = useUpdateAsset();
   const deleteAssetMutation = useDeleteAsset();
 
-  const totalWealth = assets.reduce((sum, asset) => sum + asset.value, 0);
+  const operatingCapital = assets.reduce((sum, asset) => sum + asset.value, 0);
+  const goalReserves = goals.reduce((sum, g) => sum + g.current_amount, 0);
+  const totalWealth = operatingCapital + goalReserves;
 
   const { data: simulation = [] } = useWealthSimulation(12);
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingAsset, setEditingAsset] = useState<Asset | null>(null);
+  const [fundingAsset, setFundingAsset] = useState<Asset | null>(null);
+  const [withdrawingAsset, setWithdrawingAsset] = useState<Asset | null>(null);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [assetToDelete, setAssetToDelete] = useState<string | null>(null);
 
@@ -128,6 +116,11 @@ export default function WealthPage() {
         onSuccess: () => setIsAddDialogOpen(false),
       });
     }
+  };
+
+  const handleEdit = (asset: Asset) => {
+    setEditingAsset(asset);
+    setIsAddDialogOpen(true);
   };
 
   const handleDelete = async (id: string) => {
@@ -237,7 +230,7 @@ export default function WealthPage() {
             <WealthChart
               data={wealthHistory}
               totalWealth={totalWealth}
-              formatAmount={formatAmount}
+              formatAmount={formatCurrency}
             />
           )}
 
@@ -250,10 +243,12 @@ export default function WealthPage() {
           ) : (
             <WealthStats
               totalWealth={totalWealth}
+              operatingCapital={operatingCapital}
+              goalReserves={goalReserves}
               growthPercentage={growthPercentage}
               freedomProgress={freedomProgress}
               freedomMessage={freedomMessage}
-              formatAmount={formatAmount}
+              formatAmount={formatCurrency}
             />
           )}
         </div>
@@ -279,12 +274,11 @@ export default function WealthPage() {
                     key={asset.id}
                     asset={asset}
                     index={index}
-                    onEdit={(a) => {
-                      setEditingAsset(a);
-                      setIsAddDialogOpen(true);
-                    }}
+                    onEdit={handleEdit}
                     onDelete={handleDelete}
-                    formatAmount={formatAmount}
+                    onFund={(a) => setFundingAsset(a)}
+                    onWithdraw={(a) => setWithdrawingAsset(a)}
+                    formatAmount={formatCurrency}
                   />
                 ))}
               </AnimatePresence>
@@ -339,6 +333,26 @@ export default function WealthPage() {
         description="Beneran mau hapus aset ini sayang? Sayang lho pertumbuhannya..."
         loading={deleteAssetMutation.isPending}
       />
+
+      {fundingAsset && (
+        <AddAssetFundModal
+          isOpen={!!fundingAsset}
+          onClose={() => setFundingAsset(null)}
+          targetAsset={fundingAsset}
+          availableAssets={assets || []}
+          formatAmount={formatCurrency}
+        />
+      )}
+
+      {withdrawingAsset && (
+        <WithdrawAssetModal
+          isOpen={!!withdrawingAsset}
+          onClose={() => setWithdrawingAsset(null)}
+          asset={withdrawingAsset}
+          availableAssets={assets || []}
+          formatAmount={formatCurrency}
+        />
+      )}
     </div>
   );
 }

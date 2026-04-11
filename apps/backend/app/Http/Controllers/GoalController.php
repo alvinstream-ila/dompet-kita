@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\GoalResource;
+use App\Models\Asset;
 use App\Models\Goal;
+use App\Models\GoalTransaction;
 use App\Traits\HasApiResponses;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\DB;
 
 class GoalController extends Controller
 {
@@ -67,6 +69,61 @@ class GoalController extends Controller
         $goal->update($validated);
 
         return $this->success(new GoalResource($goal), 'Targetnya sudah aku update ya! ✨');
+    }
+
+    /**
+     * Deposit funds into a goal.
+     */
+    public function deposit(Request $request, Goal $goal): JsonResponse
+    {
+        $this->authorize('update', $goal);
+
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:0.01',
+            'asset_id' => 'nullable|exists:assets,id',
+            'description' => 'nullable|string',
+            'date' => 'required|date',
+        ]);
+
+        return DB::transaction(function () use ($validated, $goal, $request) {
+            // 1. Create the Goal Transaction
+            $goal->transactions()->create([
+                'user_id' => $request->user()->id,
+                'asset_id' => $validated['asset_id'] ?? null,
+                'amount' => $validated['amount'],
+                'type' => 'deposit',
+                'description' => $validated['description'] ?? null,
+                'date' => $validated['date'],
+            ]);
+
+            // 2. Update Goal Balance
+            $goal->increment('current_amount', $validated['amount']);
+
+            // 3. (Accounting Protocol) Deduct from Asset if specified
+            if (!empty($validated['asset_id'])) {
+                $asset = Asset::findOrFail($validated['asset_id']);
+                $asset->decrement('value', $validated['amount']);
+            }
+
+            return $this->success(
+                new GoalResource($goal->load('transactions')),
+                'Mimpi kita selangkah lebih dekat, Sayang! Semangat nabungnya ya! ❤️'
+            );
+        });
+    }
+
+    /**
+     * Get the transaction history for a goal.
+     */
+    public function history(Request $request, Goal $goal): AnonymousResourceCollection
+    {
+        $this->authorize('view', $goal);
+
+        $history = $goal->transactions()
+            ->orderBy('date', 'desc')
+            ->get();
+
+        return GoalResource::collection($history); // We might need a separate GoalTransactionResource, but GoalResource is fine for now if we customize it or use AnonymousResourceCollection
     }
 
     /**

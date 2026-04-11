@@ -6,6 +6,8 @@ import { cn } from '@/lib/utils';
 
 interface WealthStatsProps {
   totalWealth: number;
+  operatingCapital: number;
+  goalReserves: number;
   growthPercentage: number;
   freedomProgress: number;
   freedomMessage: string;
@@ -14,6 +16,8 @@ interface WealthStatsProps {
 
 export const WealthStats: React.FC<WealthStatsProps> = ({
   totalWealth,
+  operatingCapital,
+  goalReserves,
   growthPercentage,
   freedomProgress,
   freedomMessage,
@@ -30,6 +34,26 @@ export const WealthStats: React.FC<WealthStatsProps> = ({
           <h2 className="mb-5 text-4xl font-black tracking-tighter transition-transform group-hover:translate-x-1">
             {formatAmount(totalWealth)}
           </h2>
+
+          <div className="mb-6 grid grid-cols-2 gap-4 border-t border-white/10 pt-6">
+            <div>
+              <p className="mb-1 text-[8px] font-black tracking-widest text-slate-500 uppercase">
+                Operating Capital
+              </p>
+              <p className="text-sm font-bold text-slate-300">
+                {formatAmount(operatingCapital)}
+              </p>
+            </div>
+            <div>
+              <p className="mb-1 text-[8px] font-black tracking-widest text-slate-500 uppercase">
+                Goal Reserves
+              </p>
+              <p className="text-sm font-bold text-blue-400">
+                {formatAmount(goalReserves)}
+              </p>
+            </div>
+          </div>
+
           <div
             className={cn(
               'inline-flex items-center gap-2 rounded-xl border border-white/5 px-3.5 py-1.5 text-[10px] font-black backdrop-blur-md',

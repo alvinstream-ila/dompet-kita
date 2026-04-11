@@ -94,20 +94,20 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
 }) => {
   return (
     <div className="mt-8 pb-12 md:mt-12 lg:col-span-12">
-      <Card className="glass-premium group relative overflow-hidden rounded-[32px] border border-none border-white/60 bg-white p-6 shadow-2xl backdrop-blur-lg sm:p-8 md:rounded-[64px] md:p-12">
+      <Card className="glass-premium group relative overflow-hidden rounded-[32px] border border-slate-200/50 bg-slate-50/40 p-6 shadow-2xl backdrop-blur-xl sm:p-8 md:rounded-[64px] md:p-12 dark:border-slate-800/50 dark:bg-slate-900/40">
         {/* Decorative background gradients */}
-        <div className="absolute top-0 right-0 -z-10 h-96 w-96 rounded-full bg-blue-400/10 blur-[120px] transition-transform duration-1000 group-hover:scale-125" />
-        <div className="absolute bottom-0 left-0 -z-10 h-96 w-96 rounded-full bg-pink-400/10 blur-[120px] transition-transform duration-1000 group-hover:scale-125" />
+        <div className="absolute top-0 right-0 -z-10 h-[500px] w-[500px] rounded-full bg-blue-500/10 blur-[120px] transition-transform duration-1000 group-hover:scale-110" />
+        <div className="absolute bottom-0 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-pink-500/10 blur-[120px] transition-transform duration-1000 group-hover:scale-110" />
 
         <div className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-center md:mb-12 md:gap-6">
-          <div className="space-y-2">
+          <div className="space-y-1">
             <div className="flex items-center gap-3">
-              <div className="h-8 w-2 rounded-full bg-slate-900" />
-              <h3 className="text-2xl font-black tracking-tighter text-slate-800 uppercase md:text-3xl">
+              <div className="h-10 w-2.5 rounded-full bg-slate-900 dark:bg-slate-100" />
+              <h3 className="text-2xl font-black tracking-tighter text-slate-800 uppercase md:text-4xl dark:text-slate-100">
                 Jejak Cuan & Jajan
               </h3>
             </div>
-            <p className="ml-5 text-[11px] font-black tracking-[0.3em] text-slate-400 uppercase italic">
+            <p className="ml-5 text-[10px] font-black tracking-[0.4em] text-slate-400 uppercase italic">
               Semua catatan finansial kita ada di sini ❤️
             </p>
           </div>
@@ -118,15 +118,16 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => onNavigate('/transactions')}
-                className="flex h-12 items-center gap-2 rounded-2xl border-2 border-blue-100/50 bg-white/80 px-6 text-[12px] font-black tracking-[0.15em] text-blue-600 uppercase shadow-lg shadow-blue-50/50 backdrop-blur-md transition-all hover:bg-blue-50 hover:shadow-blue-100 active:scale-95"
+                className="flex h-12 items-center gap-2 rounded-2xl border border-blue-200/50 bg-white px-6 text-[11px] font-black tracking-widest text-blue-600 uppercase shadow-xl shadow-blue-500/10 transition-all hover:bg-blue-50 hover:shadow-blue-500/20 active:scale-95 dark:border-blue-900/50 dark:bg-slate-800 dark:text-blue-400"
               >
-                Lihat Semua Riwayat ✨
+                Riwayat Lengkap
+                <ArrowDownCircle className="h-3.5 w-3.5 rotate-225" />
               </Button>
             )}
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
-              className="h-12 w-12 rounded-2xl border border-slate-100 bg-white/80 shadow-md shadow-slate-100/50 backdrop-blur-md transition-all duration-500 hover:rotate-180 hover:bg-white/90 active:scale-90"
+              className="h-12 w-12 rounded-2xl border-slate-200 bg-white shadow-xl shadow-slate-200/30 transition-all duration-500 hover:rotate-180 hover:bg-slate-50 active:scale-90 dark:border-slate-700 dark:bg-slate-800 dark:shadow-none"
               onClick={onRefetch}
             >
               <RefreshCcw
@@ -137,87 +138,95 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
           </div>
         </div>
 
+        {/* Inner Content Area with Contrast */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {transactions.slice(0, 5).length > 0 ? (
             transactions.slice(0, 5).map((t: Transaction, idx: number) => (
               <motion.div
                 key={t.id}
-                initial={{ opacity: 0, scale: 0.95, y: 30 }}
+                initial={{ opacity: 0, scale: 0.9, y: 30 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{
-                  delay: idx * 0.08,
+                  delay: idx * 0.05,
                   type: 'spring',
-                  stiffness: 100,
-                  damping: 15,
+                  stiffness: 120,
+                  damping: 12,
                 }}
                 whileHover={{
-                  y: -8,
-                  scale: 1.02,
-                  transition: { duration: 0.3, ease: 'circOut' },
+                  y: -12,
+                  scale: 1.03,
+                  transition: { duration: 0.2 },
                 }}
                 onClick={() => onNavigate('/transactions')}
                 className={cn(
-                  'group hover:shadow-3xl relative flex transform-gpu cursor-pointer items-center gap-5 overflow-hidden rounded-[40px] border border-white/80 bg-white/90 p-6 shadow-xl shadow-slate-100/50 backdrop-blur-md transition-all hover:shadow-slate-200/60',
+                  'group relative flex cursor-pointer flex-col gap-5 overflow-hidden rounded-[40px] border border-slate-200/60 bg-white p-7 shadow-xl transition-all hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/80',
                   t.type === 'income'
-                    ? 'hover:border-emerald-200/50'
-                    : 'hover:border-pink-200/50'
+                    ? 'hover:border-emerald-300 dark:hover:border-emerald-800'
+                    : 'hover:border-rose-300 dark:hover:border-rose-800'
                 )}
               >
-                {/* Status Accent Circle */}
+                {/* Visual Accent Bar */}
                 <div
                   className={cn(
-                    'absolute top-4 right-4 h-2 w-2 rounded-full',
-                    t.type === 'income'
-                      ? 'bg-emerald-400 group-hover:scale-150'
-                      : 'bg-pink-400 group-hover:scale-150',
-                    'animate-pulse transition-transform'
+                    'absolute top-0 right-0 bottom-0 w-1 transition-all group-hover:w-2',
+                    t.type === 'income' ? 'bg-emerald-400' : 'bg-rose-400'
                   )}
                 />
 
-                <div
-                  className={cn(
-                    'relative flex h-16 w-16 shrink-0 items-center justify-center rounded-[24px] shadow-inner transition-all duration-500 group-hover:rotate-12',
-                    t.type === 'income'
-                      ? 'bg-emerald-50 text-emerald-600'
-                      : 'bg-pink-50 text-pink-600'
-                  )}
-                >
-                  {getCategoryIcon(t.category, t.type)}
-                  {t.type === 'income' && (
-                    <Sparkles className="absolute -top-1.5 -right-1.5 h-4.5 w-4.5 animate-bounce text-amber-400" />
-                  )}
+                <div className="flex items-center gap-5">
+                  <div
+                    className={cn(
+                      'relative flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl shadow-inner transition-transform duration-500 group-hover:-rotate-12',
+                      t.type === 'income'
+                        ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400'
+                        : 'bg-rose-50 text-rose-600 dark:bg-rose-950/30 dark:text-rose-400'
+                    )}
+                  >
+                    {getCategoryIcon(t.category, t.type)}
+                    {t.type === 'income' && (
+                      <Sparkles className="absolute -top-1 -right-1 h-5 w-5 animate-pulse text-amber-400" />
+                    )}
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <p className="mb-1 truncate text-[11px] font-black tracking-widest text-slate-400 uppercase">
+                      {t.category}
+                    </p>
+                    <h5 className="truncate text-lg font-black tracking-tight text-slate-800 transition-colors group-hover:text-blue-600 dark:text-slate-100">
+                      {t.description || t.category}
+                    </h5>
+                  </div>
                 </div>
 
-                <div className="min-w-0 flex-1">
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="truncate pr-2 text-[15px] font-black tracking-tight text-slate-800 uppercase transition-colors group-hover:text-blue-600">
-                      {t.description || t.category}
-                    </span>
-                  </div>
-                  <div className="mb-2 flex items-center justify-between">
+                <div className="flex items-end justify-between">
+                  <div className="space-y-1">
+                    <p className="text-[9px] font-black tracking-widest text-slate-400 uppercase">
+                      {new Date(t.date).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
+                    </p>
                     <span
                       className={cn(
-                        'text-xl font-black tracking-tighter tabular-nums drop-shadow-sm',
+                        'text-2xl font-black tracking-tighter tabular-nums',
                         t.type === 'income'
                           ? 'text-emerald-500'
-                          : 'text-pink-500'
+                          : 'text-rose-500'
                       )}
                     >
                       {t.type === 'income' ? '+' : '-'}
                       {formatAmount(t.amount)}
                     </span>
                   </div>
-                  <div className="flex items-center gap-3 text-[10px] font-black tracking-[0.25em] whitespace-nowrap text-slate-400 uppercase">
-                    <span className="rounded-full border border-slate-100/50 bg-slate-50/80 px-3 py-1 text-slate-500 transition-all group-hover:border-blue-100 group-hover:bg-white">
-                      {new Date(t.date).toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'short',
-                      })}
-                    </span>
-                    <span className="h-1.5 w-1.5 self-center rounded-full bg-slate-400 opacity-30 transition-colors group-hover:bg-blue-400" />
-                    <span className="max-w-[90px] truncate text-[10px] transition-colors group-hover:text-slate-600">
-                      {t.category}
-                    </span>
+
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-50 text-slate-300 transition-colors group-hover:bg-blue-50 group-hover:text-blue-500 dark:bg-slate-800">
+                    <ArrowDownCircle
+                      className={cn(
+                        'h-5 w-5',
+                        t.type === 'income' ? 'rotate-180' : ''
+                      )}
+                    />
                   </div>
                 </div>
               </motion.div>
@@ -231,7 +240,7 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
                   duration: 4,
                   ease: 'easeInOut',
                 }}
-                className="mx-auto mb-8 flex h-32 w-32 items-center justify-center rounded-full border-2 border-dashed border-slate-200 bg-slate-50/80 shadow-inner transition-all group-hover:border-blue-200 group-hover:bg-white"
+                className="mx-auto mb-8 flex h-32 w-32 items-center justify-center rounded-full border-2 border-dashed border-slate-200 bg-slate-50/80 shadow-inner transition-all group-hover:border-blue-200 group-hover:bg-white dark:border-slate-800 dark:bg-slate-900/50"
               >
                 <Wallet
                   className="h-14 w-14 text-slate-300 transition-colors group-hover:text-blue-300"

@@ -20,6 +20,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property string|null $unit
  * @property bool $is_market_synced
  * @property float $value
+ * @property float $invested_capital
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
@@ -30,7 +31,7 @@ class Asset extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name', 'type', 'value'])
+            ->logOnly(['name', 'type', 'value', 'invested_capital'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
     }
@@ -43,6 +44,7 @@ class Asset extends Model
         'unit',
         'is_market_synced',
         'value',
+        'invested_capital',
     ];
 
     /**
@@ -58,6 +60,7 @@ class Asset extends Model
             'value' => 'float',
             'quantity' => 'float',
             'is_market_synced' => 'boolean',
+            'invested_capital' => 'float',
         ];
     }
 
@@ -67,6 +70,16 @@ class Asset extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * The transactions associated with this asset.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<AssetTransaction>
+     */
+    public function transactions()
+    {
+        return $this->hasMany(AssetTransaction::class);
     }
 
     /**

@@ -44,7 +44,7 @@ export const ReportCategoryBreakdown: React.FC<
                 <span
                   className={cn(
                     'text-lg font-black tracking-tighter tabular-nums md:text-xl',
-                    cat.type === 'income' ? 'text-emerald-500' : 'text-blue-500'
+                    cat.type === 'income' ? 'text-emerald-500' : 'text-rose-500'
                   )}
                 >
                   Rp {cat.amount.toLocaleString('id-ID')}
@@ -52,7 +52,14 @@ export const ReportCategoryBreakdown: React.FC<
                 <div className="shrink-0 rounded-full bg-slate-100 px-3 py-1.5 text-[9px] font-black tracking-widest text-slate-500 uppercase shadow-inner transition-colors group-hover:bg-slate-200 md:px-4 md:text-[10px]">
                   {percentage}%
                 </div>
-                <ChevronRight className="h-5 w-5 transform text-slate-200 transition-all group-hover:translate-x-1 group-hover:text-blue-500" />
+                <ChevronRight
+                  className={cn(
+                    'h-5 w-5 transform text-slate-200 transition-all group-hover:translate-x-1',
+                    cat.type === 'income'
+                      ? 'group-hover:text-emerald-500'
+                      : 'group-hover:text-rose-500'
+                  )}
+                />
               </div>
             </div>
           );

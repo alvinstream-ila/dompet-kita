@@ -30,6 +30,7 @@ class HolidayResource extends JsonResource
             'id' => $this->id,
             'destination' => $this->destination,
             'budget' => (float) $this->budget,
+            'funded_amount' => (float) ($this->funded_amount ?? 0),
             'spent' => (float) ($this->spent ?? 0),
             'start_date' => $this->start_date?->toDateString(),
             'end_date' => $this->end_date?->toDateString(),

@@ -21,15 +21,21 @@ export interface GuardianData {
 }
 
 export function useAiGuardian() {
-  return useQuery<GuardianData>({
+  const query = useQuery<GuardianData>({
     queryKey: ['ai_guardian'],
     queryFn: async () => {
       const { data } = await api.get(`/ai/guardian?t=${Date.now()}`);
       return data;
     },
-    staleTime: 1000 * 60 * 60 * 3, // Trust the cache for 3 hours
-    refetchOnWindowFocus: false, // Don't refresh when switching tabs
-    refetchOnMount: false, // Don't refresh when navigating back to this page
+    staleTime: 1000 * 60 * 60 * 3, // Trust the cache for 3 hours (as requested)
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
     refetchOnReconnect: false,
   });
+
+  return {
+    ...query,
+    isRefetching: query.isRefetching,
+    refetch: query.refetch,
+  };
 }

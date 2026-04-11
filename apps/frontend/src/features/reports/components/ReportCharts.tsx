@@ -56,7 +56,7 @@ export const ReportCharts: React.FC<ReportChartsProps> = ({
         </div>
       </div>
 
-      <div className="group flex min-h-[400px] flex-col rounded-[40px] border border-white bg-white/90 p-8 shadow-xl backdrop-blur-2xl transition-all hover:border-emerald-50 hover:shadow-2xl">
+      <div className="group flex min-h-[400px] flex-col rounded-[40px] border border-white bg-white/90 p-8 shadow-xl backdrop-blur-2xl transition-all hover:border-rose-50 hover:shadow-2xl">
         <h3 className="mb-8 text-sm leading-none font-black tracking-tighter text-slate-800 uppercase opacity-60 transition-opacity group-hover:opacity-100">
           Komposisi Pengeluaran
         </h3>

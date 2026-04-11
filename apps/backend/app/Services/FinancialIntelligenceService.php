@@ -33,21 +33,43 @@ class FinancialIntelligenceService
             $userIds[] = $user->partner->id;
         }
 
-        // 2. Calculate Total Cash Currently (Asset type: cash)
-        $totalCash = Asset::whereIn('user_id', $userIds)
-            ->where('type', 'cash')
-            ->sum('value');
+        // 2. Determine Budget Cycle (Current Month)
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
 
-        // 3. Calculate Average Daily Expense (Last 30 days)
+        // 3. Calculate Total Income & Expense for this month
+        $monthlyIncome = Transaction::whereIn('user_id', $userIds)
+            ->where('type', TransactionType::INCOME)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->sum('amount');
+
+        $monthlyExpense = Transaction::whereIn('user_id', $userIds)
+            ->where('type', TransactionType::EXPENSE)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->sum('amount');
+
+        // Current Cash is the net flow for this month
+        $totalCash = max(0.0, (float) $monthlyIncome - (float) $monthlyExpense);
+
+        // 4. Calculate Average Daily Expense (Last 30 days) for Burn Rate
         $thirtyDaysAgo = Carbon::now()->subDays(self::CALCULATION_DAYS);
 
-        // Note: Expenses are calculated per user context, or combined if partner included
-        $totalExpense = Transaction::whereIn('user_id', $userIds)
+        // Calculate days since first transaction in the 30-day window to avoid 30-day dilution for new users
+        $firstTxDate = Transaction::whereIn('user_id', $userIds)
+            ->where('type', TransactionType::EXPENSE)
+            ->where('date', '>=', $thirtyDaysAgo)
+            ->min('date');
+
+        $usageDays = $firstTxDate
+            ? max(1, min(self::CALCULATION_DAYS, Carbon::parse($firstTxDate)->diffInDays(Carbon::now()) + 1))
+            : self::CALCULATION_DAYS;
+
+        $totalHistoryExpense = Transaction::whereIn('user_id', $userIds)
             ->where('type', TransactionType::EXPENSE)
             ->where('date', '>=', $thirtyDaysAgo)
             ->sum('amount');
 
-        $dailyBurnRate = $totalExpense / self::CALCULATION_DAYS;
+        $dailyBurnRate = $totalHistoryExpense / $usageDays;
 
         if ($dailyBurnRate <= 0) {
             return [
@@ -59,7 +81,7 @@ class FinancialIntelligenceService
             ];
         }
 
-        // 4. Calculate Remaining Days
+        // 5. Calculate Remaining Days
         $daysRemaining = $totalCash / $dailyBurnRate;
 
         $status = 'safe';
@@ -67,13 +89,13 @@ class FinancialIntelligenceService
 
         if ($daysRemaining <= self::CRITICAL_THRESHOLD_DAYS) {
             $status = 'CRITICAL';
-            $message = 'WASPADA SAYANG! 🚨 Dana tunai diprediksi habis dalam kurang dari '.self::CRITICAL_THRESHOLD_DAYS.' hari. Segera rem pengeluaran ya!';
+            $message = 'WASPADA SAYANG! 🚨 Dana tunai bulan ini diprediksi habis dalam kurang dari '.self::CRITICAL_THRESHOLD_DAYS.' hari. Segera rem pengeluaran ya!';
         } elseif ($daysRemaining <= self::WARNING_THRESHOLD_DAYS) {
             $status = 'WARNING';
-            $message = 'Hati-hati ya, dana tunai kita hanya cukup untuk sekitar '.self::WARNING_THRESHOLD_DAYS.' hari ke depan. Ayo lebih bijak belanja! ⚠️';
+            $message = 'Hati-hati ya, sisa uang bulan ini hanya cukup untuk sekitar '.self::WARNING_THRESHOLD_DAYS.' hari ke depan. Ayo lebih bijak belanja! ⚠️';
         } elseif ($daysRemaining < self::SAFETY_THRESHOLD_DAYS) {
             $status = 'CAUTION';
-            $message = 'Perhatian Sayang, saldo sudah di bawah batas aman kenyamanan ('.self::SAFETY_THRESHOLD_DAYS.' hari). Mulai prihatin dulu ya? 📉';
+            $message = 'Perhatian Sayang, sisa budget sudah di bawah batas aman kenyamanan ('.self::SAFETY_THRESHOLD_DAYS.' hari). Mulai prihatin dulu ya? 📉';
         }
 
         return [

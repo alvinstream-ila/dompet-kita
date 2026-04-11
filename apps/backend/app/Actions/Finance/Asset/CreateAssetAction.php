@@ -19,6 +19,11 @@ class CreateAssetAction extends BaseAction
     public function execute(User $user, array $data): Asset
     {
         $data['user_id'] = $user->id;
+        
+        if (!isset($data['invested_capital'])) {
+            $data['invested_capital'] = $data['value'];
+        }
+
         $asset = Asset::create($data);
 
         $this->updateWealthSnapshotAction->execute($user);

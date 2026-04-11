@@ -88,6 +88,7 @@ export function useAddTransaction() {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
       queryClient.invalidateQueries({ queryKey: ['ai_insights'] });
+      queryClient.invalidateQueries({ queryKey: ['ai_guardian'] });
       queryClient.invalidateQueries({ queryKey: ['assets'] });
 
       const isIncome = transaction.type === 'income';
@@ -119,6 +120,7 @@ export function useUpdateTransaction() {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
       queryClient.invalidateQueries({ queryKey: ['ai_insights'] });
+      queryClient.invalidateQueries({ queryKey: ['ai_guardian'] });
       queryClient.invalidateQueries({ queryKey: ['assets'] });
       toast.success('Berhasil Diupdate! ✨', {
         description: `Transaksi "${transaction.description}" sudah aku perbarui ya Sayang! ❤️`,
@@ -145,6 +147,7 @@ export function useDeleteTransaction() {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
       queryClient.invalidateQueries({ queryKey: ['ai_insights'] });
+      queryClient.invalidateQueries({ queryKey: ['ai_guardian'] });
       toast.info('Transaksi Dihapus 🗑️');
     },
     onError: () => {

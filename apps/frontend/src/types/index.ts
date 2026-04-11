@@ -13,7 +13,14 @@ export interface Asset {
   user_id?: string;
   name: string;
   type: AssetType;
+  unit: string | null;
+  is_market_synced: boolean;
   value: number;
+  invested_capital: number;
+  profit_amount: number;
+  profit_percent: number;
+  created_at: string;
+  updated_at: string;
   last_updated: string;
 }
 

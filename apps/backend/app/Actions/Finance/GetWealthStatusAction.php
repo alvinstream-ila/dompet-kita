@@ -7,6 +7,7 @@ namespace App\Actions\Finance;
 use App\Actions\BaseAction;
 use App\Models\Asset;
 use App\Models\Goal;
+use App\Models\Holiday;
 use App\Models\Loan;
 use App\Models\Transaction;
 use App\Models\User;
@@ -51,6 +52,12 @@ class GetWealthStatusAction extends BaseAction
 
         $totalAssets = (float) $assetQuery->sum('value');
         $totalGoals = (float) $goalQuery->sum('current_amount');
+        
+        $holidayQuery = Holiday::query();
+        if ($user) {
+            $holidayQuery->where('user_id', $user->id);
+        }
+        $totalHolidayFunds = (float) $holidayQuery->sum('funded_amount');
 
         // 3. Loans & Debts
         $loanQuery = Loan::query();
@@ -70,9 +77,9 @@ class GetWealthStatusAction extends BaseAction
                 'net' => $income - $expense,
             ],
             'assets_goals' => [
-                'net_assets' => $totalAssets,
-                'goals' => $totalGoals,
-                'total_wealth' => $totalAssets + $totalGoals,
+                'operating_capital' => $totalAssets,
+                'goal_reserves' => $totalGoals + $totalHolidayFunds,
+                'total_wealth' => $totalAssets + $totalGoals + $totalHolidayFunds,
             ],
             'obligations' => [
                 'debts' => $debts,

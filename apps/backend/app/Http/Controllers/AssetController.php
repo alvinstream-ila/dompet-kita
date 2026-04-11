@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Actions\Finance\Asset\CreateAssetAction;
 use App\Actions\Finance\Asset\DeleteAssetAction;
+use App\Actions\Finance\Asset\FundAssetAction;
 use App\Actions\Finance\Asset\UpdateAssetAction;
+use App\Actions\Finance\Asset\WithdrawAssetAction;
 use App\Http\Requests\StoreAssetRequest;
 use App\Http\Requests\UpdateAssetRequest;
 use App\Http\Resources\AssetResource;
+use App\Http\Resources\AssetTransactionResource;
 use App\Models\Asset;
 use App\Traits\HasApiResponses;
 use Illuminate\Http\JsonResponse;
@@ -66,5 +69,56 @@ class AssetController extends Controller
         $action->execute($request->user(), $asset);
 
         return $this->success(null, 'Aset sudah dihapus ya Sayang. 👋', 204);
+    }
+
+    /**
+     * Fund an asset (Top up).
+     */
+    public function fund(Request $request, Asset $asset, FundAssetAction $action): JsonResponse
+    {
+        $this->authorize('update', $asset);
+
+        $request->validate([
+            'amount' => 'required|numeric|min:0.01',
+            'source_asset_id' => 'sometimes|nullable|exists:assets,id',
+            'description' => 'sometimes|nullable|string|max:255',
+        ]);
+
+        $asset = $action->execute($request->user(), $asset, $request->all());
+
+        return $this->success(new AssetResource($asset), 'Top up aset berhasil! Saldo kamu sudah terupdate. 📈');
+    }
+
+    /**
+     * Withdraw from an asset (Cairkan).
+     */
+    public function withdraw(Request $request, Asset $asset, WithdrawAssetAction $action): JsonResponse
+    {
+        $this->authorize('update', $asset);
+
+        $request->validate([
+            'amount' => 'required|numeric|min:0.01',
+            'recipient_asset_id' => 'sometimes|nullable|exists:assets,id',
+            'description' => 'sometimes|nullable|string|max:255',
+        ]);
+
+        $asset = $action->execute($request->user(), $asset, $request->all());
+
+        return $this->success(new AssetResource($asset), 'Pencairan aset berhasil! Uangnya sudah berpindah posisi. 💸');
+    }
+
+    /**
+     * Get transaction history for an asset.
+     */
+    public function history(Request $request, Asset $asset): AnonymousResourceCollection
+    {
+        $this->authorize('view', $asset);
+
+        $transactions = $asset->transactions()
+            ->with(['sourceAsset'])
+            ->orderByDesc('transaction_date')
+            ->paginate();
+
+        return AssetTransactionResource::collection($transactions);
     }
 }

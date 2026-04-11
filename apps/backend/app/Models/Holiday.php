@@ -17,6 +17,7 @@ class Holiday extends Model
         'user_id',
         'destination',
         'budget',
+        'funded_amount',
         'start_date',
         'end_date',
         'status',
@@ -34,6 +35,7 @@ class Holiday extends Model
     {
         return [
             'budget' => 'decimal:2',
+            'funded_amount' => 'decimal:2',
             'spent' => 'decimal:2',
             'start_date' => 'date',
             'end_date' => 'date',
@@ -48,5 +50,15 @@ class Holiday extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the transactions for the holiday.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<HolidayTransaction, $this>
+     */
+    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(HolidayTransaction::class);
     }
 }

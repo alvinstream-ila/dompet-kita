@@ -59,4 +59,14 @@ class Goal extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get the transactions for this goal.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<GoalTransaction, $this>
+     */
+    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(GoalTransaction::class);
+    }
 }

@@ -15,6 +15,9 @@ import {
 } from 'lucide-react';
 import { cn, formatToRupiah } from '@/lib/utils';
 import type { Goal } from '@/types';
+import { AddGoalDepositModal } from './AddGoalDepositModal';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 
 const ICON_MAP: Record<string, React.ElementType> = {
   heart: Heart,
@@ -39,6 +42,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
   index,
   onDelete,
 }) => {
+  const [isDepositModalOpen, setIsDepositModalOpen] = React.useState(false);
   const Icon = (goal.icon && ICON_MAP[goal.icon]) || Target;
   const progress = (goal.current_amount / goal.target_amount) * 100;
   const isCompleted = goal.status === 'completed';
@@ -132,22 +136,40 @@ export const GoalCard: React.FC<GoalCardProps> = ({
         </div>
 
         <div className="mt-8 flex items-center justify-between border-t border-slate-50 pt-6">
-          <div className="flex items-center gap-2 text-[9px] font-black tracking-widest text-slate-400 uppercase">
-            <Calendar size={12} />
-            {goal.deadline
-              ? new Date(goal.deadline).toLocaleDateString()
-              : 'Cepat atau Lambat'}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-[9px] font-black tracking-widest text-slate-400 uppercase">
+              <Calendar size={12} />
+              {goal.deadline
+                ? new Date(goal.deadline).toLocaleDateString()
+                : 'Cepat atau Lambat'}
+            </div>
+            {!isCompleted && (
+              <button
+                onClick={() => onDelete(goal.id)}
+                className="p-2 text-slate-300 transition-colors hover:text-rose-500 active:scale-90"
+              >
+                <Trash2 size={16} />
+              </button>
+            )}
           </div>
+
           {!isCompleted && (
-            <button
-              onClick={() => onDelete(goal.id)}
-              className="p-2 text-slate-300 transition-colors hover:text-rose-500 active:scale-90"
+            <Button
+              onClick={() => setIsDepositModalOpen(true)}
+              className="h-10 rounded-2xl bg-blue-600 px-6 text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-blue-200 transition-all hover:scale-105 active:scale-95"
             >
-              <Trash2 size={16} />
-            </button>
+              <Plus className="mr-2 h-3 w-3" strokeWidth={4} />
+              Nabung ✨
+            </Button>
           )}
         </div>
       </div>
+
+      <AddGoalDepositModal
+        isOpen={isDepositModalOpen}
+        onClose={() => setIsDepositModalOpen(false)}
+        goal={goal}
+      />
     </motion.div>
   );
 };

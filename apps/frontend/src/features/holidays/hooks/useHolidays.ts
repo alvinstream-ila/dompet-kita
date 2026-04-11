@@ -11,6 +11,7 @@ export interface Holiday {
   status: 'planning' | 'booked' | 'completed' | 'cancelled';
   itinerary: string | null;
   image_url: string | null;
+  funded_amount?: number;
   spent?: number;
   is_favorite?: boolean;
 }

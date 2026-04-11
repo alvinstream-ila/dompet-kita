@@ -101,12 +101,18 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
     // Assets
     Route::get('/wealth-history', [WealthHistoryController::class, 'index']);
+    // Wealth & Asset Management
+    Route::post('/assets/{asset}/fund', [AssetController::class, 'fund']);
+    Route::post('/assets/{asset}/withdraw', [AssetController::class, 'withdraw']);
+    Route::get('/assets/{asset}/history', [AssetController::class, 'history']);
     Route::apiResource('assets', AssetController::class);
 
     // Loans
     Route::apiResource('loans', LoanController::class);
 
     // Goals
+    Route::post('goals/{goal}/deposit', [GoalController::class, 'deposit']);
+    Route::get('goals/{goal}/history', [GoalController::class, 'history']);
     Route::apiResource('goals', GoalController::class);
 
     // Scheduled Transactions (Phase 6)
@@ -140,4 +146,6 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
     // Holidays
     Route::apiResource('holidays', HolidayController::class);
+    Route::post('holidays/{holiday}/fund', [HolidayController::class, 'fund']);
+    Route::get('holidays/{holiday}/history', [HolidayController::class, 'history']);
 });

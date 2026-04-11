@@ -6,12 +6,14 @@ import {
   Heart,
   Pencil,
   Trash2,
-  Coins,
+  PiggyBank,
+  Wallet,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import type { Holiday } from '../hooks/useHolidays';
+import { AddHolidayFundModal } from './AddHolidayFundModal';
 
 interface HolidayTripCardProps {
   holiday: Holiday;
@@ -45,6 +47,7 @@ export const HolidayTripCard: React.FC<HolidayTripCardProps> = ({
   onStatusUpdate,
   formatAmount,
 }) => {
+  const [isFundModalOpen, setIsFundModalOpen] = React.useState(false);
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -145,7 +148,28 @@ export const HolidayTripCard: React.FC<HolidayTripCardProps> = ({
           <div className="mb-6 space-y-4">
             <div>
               <div className="mb-2 flex justify-between text-[10px] font-black tracking-widest text-slate-400 uppercase">
-                <span>Budget Progress</span>
+                <span>Funding Progress</span>
+                <span>
+                  {Math.round(
+                    ((holiday.funded_amount || 0) / holiday.budget) * 100
+                  ) || 0}
+                  %
+                </span>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-slate-50">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{
+                    width: `${Math.min(100, ((holiday.funded_amount || 0) / holiday.budget) * 100)}%`,
+                  }}
+                  className="h-full bg-linear-to-r from-emerald-500 to-teal-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <div className="mb-2 flex justify-between text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                <span>Expense Progress</span>
                 <span>
                   {Math.round(((holiday.spent || 0) / holiday.budget) * 100) ||
                     0}
@@ -174,15 +198,33 @@ export const HolidayTripCard: React.FC<HolidayTripCardProps> = ({
               {formatAmount(holiday.budget)}
             </p>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onExpense(holiday)}
-            className="transform rounded-2xl bg-white shadow-sm transition-all group-hover:rotate-12 hover:bg-pink-600 hover:text-white"
-          >
-            <Coins className="size-5" />
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsFundModalOpen(true)}
+              className="transform rounded-2xl bg-white shadow-sm transition-all hover:bg-emerald-600 hover:text-white"
+              title="Isi Dana Liburan"
+            >
+              <PiggyBank className="size-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onExpense(holiday)}
+              className="transform rounded-2xl bg-white shadow-sm transition-all group-hover:rotate-12 hover:bg-pink-600 hover:text-white"
+              title="Catat Pengeluaran"
+            >
+              <Wallet className="size-5" />
+            </Button>
+          </div>
         </div>
+
+        <AddHolidayFundModal
+          holiday={holiday}
+          isOpen={isFundModalOpen}
+          onClose={() => setIsFundModalOpen(false)}
+        />
       </Card>
     </motion.div>
   );

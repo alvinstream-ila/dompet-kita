@@ -22,8 +22,16 @@ class AssetResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'type' => $this->type,
+            'unit' => $this->unit,
+            'is_market_synced' => $this->is_market_synced,
             'value' => (float) $this->value,
-            'updated_at' => $this->updated_at->toIso8601String(),
+            'invested_capital' => (float) $this->invested_capital,
+            'profit_amount' => (float) ($this->value - $this->invested_capital),
+            'profit_percent' => $this->invested_capital > 0 
+                ? round((($this->value - $this->invested_capital) / $this->invested_capital) * 100, 2) 
+                : 0,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
         ];
     }
 }
