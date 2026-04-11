@@ -100,7 +100,7 @@ export default function WealthPage() {
     return 'Langkah awal masa depan kita. Semangat ya Sayang! 👣💎';
   })();
 
-  const handleAssetSubmit = async (formData: Omit<Asset, 'id'>) => {
+  const handleAssetSubmit = async (formData: any) => {
     if (editingAsset) {
       updateAssetMutation.mutate(
         { id: editingAsset.id, ...formData },
@@ -202,7 +202,7 @@ export default function WealthPage() {
           !open && (setIsAddDialogOpen(false), setEditingAsset(null))
         }
       >
-        <DialogContent className="max-w-md rounded-[40px] border-none bg-white p-8 shadow-2xl">
+        <DialogContent className="max-w-2xl overflow-hidden rounded-[40px] border-none bg-white p-8 shadow-2xl">
           <DialogHeader className="mb-4">
             <DialogTitle className="text-2xl font-black text-slate-800">
               {editingAsset ? 'Perbarui Aset ✨' : 'Tambah Aset ✨'}

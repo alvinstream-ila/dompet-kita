@@ -8,6 +8,7 @@ import {
   PiggyBank,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { SyntheticEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -46,7 +47,7 @@ export const AddGoalDepositModal: React.FC<AddGoalDepositModalProps> = ({
     setAmount(formatToRupiah(val.toString()));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!amount) return;
 
@@ -118,7 +119,10 @@ export const AddGoalDepositModal: React.FC<AddGoalDepositModalProps> = ({
           <form onSubmit={handleSubmit} className="space-y-8 p-8">
             {/* Amount Input */}
             <div className="space-y-3">
-              <label className="ml-2 text-[10px] font-black tracking-[0.2em] text-slate-400 uppercase">
+              <label
+                htmlFor="deposit-amount"
+                className="ml-2 text-[10px] font-black tracking-[0.2em] text-slate-400 uppercase"
+              >
                 Jumlah Tabungan (Rp)
               </label>
               <div className="relative">
@@ -126,6 +130,7 @@ export const AddGoalDepositModal: React.FC<AddGoalDepositModalProps> = ({
                   Rp
                 </div>
                 <Input
+                  id="deposit-amount"
                   autoFocus
                   value={amount}
                   onChange={(e) => setAmount(formatToRupiah(e.target.value))}
@@ -150,14 +155,20 @@ export const AddGoalDepositModal: React.FC<AddGoalDepositModalProps> = ({
 
             {/* Source Asset Selection */}
             <div className="space-y-3">
-              <label className="ml-2 text-[10px] font-black tracking-[0.2em] text-slate-400 uppercase">
+              <label
+                htmlFor="source-asset"
+                className="ml-2 text-[10px] font-black tracking-[0.2em] text-slate-400 uppercase"
+              >
                 Sumber Dana (Opsional)
               </label>
               <Select
                 value={selectedAssetId}
                 onValueChange={setSelectedAssetId}
               >
-                <SelectTrigger className="h-16 rounded-[24px] border-none bg-slate-50 px-6 font-bold text-slate-700 focus:ring-4 focus:ring-blue-100">
+                <SelectTrigger
+                  id="source-asset"
+                  className="h-16 rounded-[24px] border-none bg-slate-50 px-6 font-bold text-slate-700 focus:ring-4 focus:ring-blue-100"
+                >
                   <SelectValue placeholder="Pilih Sumber" />
                 </SelectTrigger>
                 <SelectContent className="rounded-[24px] border-none shadow-2xl">

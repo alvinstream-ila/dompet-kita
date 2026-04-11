@@ -1,18 +1,20 @@
 export type TransactionType = 'income' | 'expense';
 
 export type AssetType =
-  | 'Emas'
-  | 'Saham'
-  | 'Tabungan'
-  | 'Kripto'
-  | 'Properti'
-  | 'Lainnya';
+  | 'stock'
+  | 'crypto'
+  | 'mutual_fund'
+  | 'obligasi'
+  | 'commodity'
+  | 'cash'
+  | 'investment';
 
 export interface Asset {
   id: string;
   user_id?: string;
   name: string;
   type: AssetType;
+  quantity: number;
   unit: string | null;
   is_market_synced: boolean;
   value: number;

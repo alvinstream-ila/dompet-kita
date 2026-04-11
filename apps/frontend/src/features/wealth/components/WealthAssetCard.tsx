@@ -2,11 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import {
   TrendingUp,
-  Coins,
-  Landmark,
-  Gem,
-  Bitcoin,
-  Home,
   Edit2,
   Trash2,
   Plus,
@@ -27,20 +22,7 @@ interface WealthAssetCardProps {
   formatAmount: (amount: number) => string;
 }
 
-const getAssetIcon = (type: string) => {
-  const typeLower = type.toLowerCase();
-  if (typeLower.includes('emas'))
-    return <Gem className="size-5 text-amber-500" />;
-  if (typeLower.includes('saham'))
-    return <TrendingUp className="size-5 text-blue-500" />;
-  if (typeLower.includes('tabungan') || typeLower.includes('bank'))
-    return <Landmark className="size-5 text-emerald-500" />;
-  if (typeLower.includes('kripto') || typeLower.includes('crypto'))
-    return <Bitcoin className="size-5 text-orange-500" />;
-  if (typeLower.includes('properti'))
-    return <Home className="size-5 text-indigo-500" />;
-  return <Coins className="size-5 text-slate-500" />;
-};
+import { PremiumAssetIcon } from './PremiumAssetIcon';
 
 export const WealthAssetCard: React.FC<WealthAssetCardProps> = ({
   asset,
@@ -64,8 +46,11 @@ export const WealthAssetCard: React.FC<WealthAssetCardProps> = ({
         <CardContent className="p-6">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex size-14 items-center justify-center rounded-[20px] border border-slate-100 bg-slate-50 shadow-inner transition-all group-hover:scale-110 group-hover:border-blue-100 group-hover:bg-blue-50 group-hover:shadow-md">
-                {getAssetIcon(asset.type)}
+              <div className="flex size-14 items-center justify-center">
+                <PremiumAssetIcon
+                  type={asset.type}
+                  className="h-full w-full rounded-[20px]"
+                />
               </div>
               <div>
                 <h4 className="text-sm font-black tracking-tight text-slate-800 uppercase transition-colors group-hover:text-blue-600">

@@ -29,44 +29,108 @@ class SyncMarketAssetsAction extends BaseAction
                     return;
                 }
 
-                $oldValue = $asset->value;
-                $newValue = $oldValue;
-                $unit = strtoupper($asset->unit);
-
-                // 1. Physical Gold Logic
-                if ($asset->type === AssetType::INVESTMENT && $unit === 'GRAM') {
-                    $newValue = $asset->quantity * $market['gold_antam_gram'];
-                }
-                // 2. Foreign Currency Logic (USD, SGD, etc.)
-                elseif ($asset->type === AssetType::CASH && in_array($unit, ['USD', 'SGD', 'EUR', 'JPY', 'GBP'])) {
-                    $rate = $this->marketService->getRate($unit, 'IDR');
-                    $newValue = $asset->quantity * $rate;
-                }
-
-                if ($newValue != $oldValue) {
-                    $changePercent = $oldValue > 0 ? abs(($newValue - $oldValue) / $oldValue) * 100 : 0;
-
-                    $asset->update(['value' => $newValue]);
-                    $stats['updated']++;
-
-                    if ($changePercent > 3) {
-                        if (function_exists('activity')) {
-                            activity('sentinel')
-                                ->performedOn($asset)
-                                ->withProperties([
-                                    'old_value' => $oldValue,
-                                    'new_value' => $newValue,
-                                    'change_percent' => round($changePercent, 2),
-                                    'market_rate' => $newValue / $asset->quantity,
-                                ])
-                                ->log("Proactive Sentinel Alert: Significant {$unit} Value Shift ($changePercent%) detected.");
-                        }
-
-                        $stats['alerts']++;
-                    }
-                }
+                $this->syncAsset($asset, $market, $stats);
             });
 
         return $stats;
+    }
+
+    /**
+     * Synchronize a single asset and handle auditing.
+     * 
+     * @param array<string, int> $stats
+     */
+    private function syncAsset(Asset $asset, array $market, array &$stats): void
+    {
+        $oldValue = $asset->value;
+        $newValue = $this->resolvePrice($asset, $market);
+
+        if ($newValue != $oldValue) {
+            $asset->update(['value' => $newValue]);
+            $stats['updated']++;
+
+            $this->logSignificantChange($asset, $oldValue, $newValue, $stats);
+        }
+    }
+
+    /**
+     * Map Asset Class and Symbol to a Market Price.
+     * 
+     * @param array<string, mixed> $market
+     */
+    private function resolvePrice(Asset $asset, array $market): float
+    {
+        $symbol = strtoupper($asset->unit ?? '');
+        $quantity = $asset->quantity;
+
+        return match ($asset->type) {
+            AssetType::INVESTMENT, AssetType::COMMODITY => $symbol === 'GRAM' 
+                ? $quantity * ($market['gold_antam_gram'] ?? 0) 
+                : $asset->value,
+
+            AssetType::CASH => in_array($symbol, ['USD', 'SGD', 'EUR', 'JPY', 'GBP', 'AUD'])
+                ? $quantity * $this->marketService->getRate($symbol, 'IDR')
+                : $asset->value,
+
+            AssetType::STOCK => $this->resolveStockPrice($asset, $symbol),
+
+            AssetType::CRYPTO => $this->resolveCryptoPrice($asset, $symbol),
+
+            default => $asset->value,
+        };
+    }
+
+    private function resolveStockPrice(Asset $asset, string $symbol): float
+    {
+        if (empty($symbol)) return $asset->value;
+
+        $price = $this->marketService->getStockPrice($symbol);
+        if (! $price) return $asset->value;
+
+        // International Conversion
+        if (! str_ends_with($symbol, '.JK')) {
+            $price *= $this->marketService->getRate('USD', 'IDR');
+        }
+
+        return $asset->quantity * $price;
+    }
+
+    private function resolveCryptoPrice(Asset $asset, string $symbol): float
+    {
+        if (empty($symbol)) return $asset->value;
+
+        $price = $this->marketService->getCryptoPrice($symbol);
+        if (! $price) return $asset->value;
+
+        // USDT Conversion
+        if (str_ends_with($symbol, 'USDT')) {
+            $price *= $this->marketService->getRate('USD', 'IDR');
+        }
+
+        return $asset->quantity * $price;
+    }
+
+    /**
+     * Audit and alert if value shift is significant (> 3%).
+     * 
+     * @param array<string, int> $stats
+     */
+    private function logSignificantChange(Asset $asset, float $oldValue, float $newValue, array &$stats): void
+    {
+        $changePercent = $oldValue > 0 ? abs(($newValue - $oldValue) / $oldValue) * 100 : 0;
+
+        if ($changePercent > 3 && function_exists('activity')) {
+            activity('sentinel')
+                ->performedOn($asset)
+                ->withProperties([
+                    'old_value' => $oldValue,
+                    'new_value' => $newValue,
+                    'change_percent' => round($changePercent, 2),
+                    'market_rate' => $newValue / $asset->quantity,
+                ])
+                ->log("Supreme Sentinel Alert: Significant {$asset->unit} Value Shift (".round($changePercent, 2)."%) detected.");
+
+            $stats['alerts']++;
+        }
     }
 }

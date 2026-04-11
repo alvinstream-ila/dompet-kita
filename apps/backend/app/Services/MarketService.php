@@ -14,7 +14,7 @@ class MarketService
 {
     private const CACHE_KEY = 'market_rates';
 
-    private const CACHE_TTL = 3600; // 1 Hour
+    private const CACHE_TTL = 300; // 5 Minutes for Realtime Feel
 
     // 2026 Sovereign Failover Constants
     private const FAILOVER_USD_IDR = 16950.0;
@@ -24,24 +24,26 @@ class MarketService
     /**
      * Get current market rates with robust caching and failover.
      *
-     * @return array{currency_rates: array<string, float>, gold_antam_gram: float, inflation_rate: float, last_updated: string}
+     * @return array<string, mixed>
      */
     public function getRates(): array
     {
         return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function (): array {
             try {
-                // Mock Fetch (In production, replace with real API like CurrencyBeacon/GoldAPI)
-                $response = Http::timeout(5)->get('https://api.exchangerate-api.com/v4/latest/USD');
+                // 1. Forex: Frankfurter (Unlimited/Keyless)
+                $fxResponse = Http::timeout(5)->get('https://api.frankfurter.app/latest?from=USD');
+                $fxData = $fxResponse->successful() ? $fxResponse->json() : ['rates' => ['IDR' => self::FAILOVER_USD_IDR]];
 
-                if (! $response->successful()) {
-                    throw new MarketServiceException('Market API Unavailable');
-                }
+                // 2. Gold: Antam Scraper (Indonesia Retail)
+                $goldAntam = $this->scrapeAntam();
 
-                $data = $response->json();
+                // 3. Gold Pulse: Binance PAXG (Global Spot)
+                $goldPulse = $this->getCryptoPrice('PAXGUSDT');
 
                 return [
-                    'currency_rates' => array_map('floatval', $data['rates'] ?? ['IDR' => self::FAILOVER_USD_IDR]),
-                    'gold_antam_gram' => self::FAILOVER_GOLD_ANTAM, // Fallback for gold
+                    'currency_rates' => array_map('floatval', $fxData['rates'] ?? ['IDR' => self::FAILOVER_USD_IDR]),
+                    'gold_antam_gram' => $goldAntam ?: self::FAILOVER_GOLD_ANTAM,
+                    'gold_global_oz' => $goldPulse ?: 2400.0,
                     'inflation_rate' => 0.035, // Default 3.5%
                     'last_updated' => now()->toIso8601String(),
                 ];
@@ -55,6 +57,61 @@ class MarketService
                     'last_updated' => now()->toIso8601String(),
                 ];
             }
+        });
+    }
+
+    /**
+     * Scrape official Antam price from logammulia.com
+     */
+    public function scrapeAntam(): ?float
+    {
+        try {
+            $response = Http::timeout(10)->get('https://www.logammulia.com/id/harga-emas-hari-ini');
+            if ($response->successful() && preg_match('/idr">([0-9.]+)/', $response->body(), $matches)) {
+                return (float) str_replace('.', '', $matches[1]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Antam Scraping Failed: '.$e->getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Get Crypto Price from Binance Public API (Keyless)
+     */
+    public function getCryptoPrice(string $symbol): ?float
+    {
+        $cacheKey = "crypto_price_{$symbol}";
+        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($symbol) {
+            try {
+                $response = Http::timeout(5)->get("https://api.binance.com/api/v3/ticker/price?symbol={$symbol}");
+                if ($response->successful()) {
+                    return (float) $response->json('price');
+                }
+            } catch (\Exception $e) {
+                Log::error("Binance Fetch Failed for {$symbol}: ".$e->getMessage());
+            }
+            return null;
+        });
+    }
+
+    /**
+     * Get Stock Price from Yahoo Finance (Keyless Chart API)
+     */
+    public function getStockPrice(string $symbol): ?float
+    {
+        $cacheKey = "stock_price_{$symbol}";
+        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($symbol) {
+            try {
+                // Yahoo Finance Chart API is more stable than others for public use
+                $response = Http::timeout(5)->get("https://query1.finance.yahoo.com/v8/finance/chart/{$symbol}");
+                if ($response->successful()) {
+                    return (float) $response->json('chart.result.0.meta.regularMarketPrice');
+                }
+            } catch (\Exception $e) {
+                Log::error("Yahoo Finance Fetch Failed for {$symbol}: ".$e->getMessage());
+            }
+            return null;
         });
     }
 

@@ -15,6 +15,11 @@ enum AssetType: string
     case CASH = 'cash';
     case BANK = 'bank';
     case INVESTMENT = 'investment';
+    case STOCK = 'stock';
+    case CRYPTO = 'crypto';
+    case MUTUAL_FUND = 'mutual_fund';
+    case OBLIGASI = 'obligasi';
+    case COMMODITY = 'commodity';
     case OTHER = 'other';
 
     /**
@@ -25,7 +30,12 @@ enum AssetType: string
         return match ($this) {
             self::CASH => 'Tunai',
             self::BANK => 'Bank/e-Wallet',
-            self::INVESTMENT => 'Investasi',
+            self::INVESTMENT => 'Investasi Umum',
+            self::STOCK => 'Saham',
+            self::CRYPTO => 'Kripto',
+            self::MUTUAL_FUND => 'Reksadana',
+            self::OBLIGASI => 'Obligasi',
+            self::COMMODITY => 'Komoditas',
             self::OTHER => 'Lainnya',
         };
     }
@@ -39,6 +49,11 @@ enum AssetType: string
             self::CASH => 'amber',
             self::BANK => 'blue',
             self::INVESTMENT => 'indigo',
+            self::STOCK => 'emerald',
+            self::CRYPTO => 'violet',
+            self::MUTUAL_FUND => 'orange',
+            self::OBLIGASI => 'rose',
+            self::COMMODITY => 'yellow',
             self::OTHER => 'slate',
         };
     }
@@ -48,6 +63,12 @@ enum AssetType: string
      */
     public function canSyncMarket(): bool
     {
-        return $this === self::INVESTMENT;
+        return in_array($this, [
+            self::INVESTMENT,
+            self::STOCK,
+            self::CRYPTO,
+            self::MUTUAL_FUND,
+            self::COMMODITY,
+        ]);
     }
 }

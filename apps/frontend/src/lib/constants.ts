@@ -1,6 +1,7 @@
 /**
  * Global Constants for Dompet Kita Frontend
  */
+import type { AssetType } from '@/types';
 
 export const EXPENSE_CATEGORIES = [
   'Makanan & Minuman',
@@ -24,12 +25,14 @@ export const INCOME_CATEGORIES = [
   'Lainnya',
 ];
 
-export const ASSET_TYPES = [
-  'Tabungan',
-  'Emas',
-  'Investasi',
-  'Aset Fisik',
-  'Lainnya',
+export const ASSET_TYPES: AssetType[] = [
+  'stock',
+  'crypto',
+  'commodity',
+  'mutual_fund',
+  'obligasi',
+  'cash',
+  'investment',
 ];
 
 export const TIMEZONES = [

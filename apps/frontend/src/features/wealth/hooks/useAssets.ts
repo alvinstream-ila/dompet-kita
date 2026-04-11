@@ -10,6 +10,7 @@ export function useAssets() {
       const { data } = await api.get('/assets');
       return data.data as Asset[];
     },
+    refetchInterval: 1000 * 60 * 5, // 5 Minutes Realtime Heartbeat
   });
 }
 
