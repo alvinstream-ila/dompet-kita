@@ -100,7 +100,7 @@ export default function WealthPage() {
     return 'Langkah awal masa depan kita. Semangat ya Sayang! 👣💎';
   })();
 
-  const handleAssetSubmit = async (formData: any) => {
+  const handleAssetSubmit = async (formData: Partial<Asset>) => {
     if (editingAsset) {
       updateAssetMutation.mutate(
         { id: editingAsset.id, ...formData },

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Loader2, ArrowLeft, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -82,19 +82,17 @@ export const AssetForm: React.FC<AssetFormProps> = ({
       : '1'
   );
 
-  // Sync effect for specialized asset logic
-  useEffect(() => {
+  const handleStockLotChange = (val: string) => {
+    setStockLots(val);
     if (formData.type === 'stock') {
-      const qty = Number.parseFloat(stockLots) * 100;
+      const qty = (Number.parseFloat(val) || 0) * 100;
       setFormData((prev) => ({
         ...prev,
         quantity: qty.toString(),
         unit: 'SHARES',
       }));
-    } else if (formData.type === 'commodity') {
-      setFormData((prev) => ({ ...prev, unit: 'GRAM' }));
     }
-  }, [stockLots, formData.type]);
+  };
 
   const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -112,6 +110,8 @@ export const AssetForm: React.FC<AssetFormProps> = ({
       ...prev,
       type,
       is_market_synced: ['stock', 'crypto', 'commodity'].includes(type),
+      unit:
+        type === 'commodity' ? 'GRAM' : type === 'stock' ? 'SHARES' : prev.unit,
     }));
     setStep('INPUT_DETAILS');
   };
@@ -208,7 +208,7 @@ export const AssetForm: React.FC<AssetFormProps> = ({
                     }
                     onChange={(e) =>
                       formData.type === 'stock'
-                        ? setStockLots(e.target.value)
+                        ? handleStockLotChange(e.target.value)
                         : setFormData({ ...formData, quantity: e.target.value })
                     }
                     placeholder="0"
