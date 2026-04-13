@@ -82,7 +82,7 @@ class PerformSecurityAuditAction extends BaseAction
      */
     private function auditActivityLog(int &$score, array &$findings): void
     {
-        if (DB::table('activity_log')->count() === 0) {
+        if (DB::table('activity_log')->count() === 0 && DB::table('users')->count() > 0) {
             $findings[] = 'Audit Trail (ActivityLog) is empty. Ensure trail logging is active.';
             $score -= 5;
         }
