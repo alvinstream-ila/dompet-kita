@@ -15,16 +15,12 @@ return new class extends Migration
         }
 
         // 1. Fix Mutable Search Paths for Security Functions
-        try {
+        if (DB::selectOne("SELECT 1 FROM pg_proc WHERE proname = 'get_laravel_user_id'")) {
             DB::statement('ALTER FUNCTION public.get_laravel_user_id() SET search_path = public;');
-        } catch (Exception $e) {
-            // Ignore if function doesn't exist in testing environment
         }
 
-        try {
+        if (DB::selectOne("SELECT 1 FROM pg_proc WHERE proname = 'handle_new_user'")) {
             DB::statement('ALTER FUNCTION public.handle_new_user() SET search_path = public;');
-        } catch (Exception $e) {
-            // Ignore if function doesn't exist in testing environment
         }
 
         // 2. RLS for users Table (Self-Only Access)
@@ -72,16 +68,12 @@ return new class extends Migration
             return;
         }
 
-        try {
+        if (DB::selectOne("SELECT 1 FROM pg_proc WHERE proname = 'get_laravel_user_id'")) {
             DB::statement('ALTER FUNCTION public.get_laravel_user_id() RESET search_path;');
-        } catch (Exception $e) {
-            // Ignore
         }
 
-        try {
+        if (DB::selectOne("SELECT 1 FROM pg_proc WHERE proname = 'handle_new_user'")) {
             DB::statement('ALTER FUNCTION public.handle_new_user() RESET search_path;');
-        } catch (Exception $e) {
-            // Ignore
         }
 
         DB::statement('DROP POLICY IF EXISTS "users_self_access" ON users;');
