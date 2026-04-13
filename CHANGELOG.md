@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.22] - 2026-04-13 (Node Security Singularity)
+
+### Security
+- **NPM Vulnerability Remediation**: Patched `hono`, `@hono/node-server`, and `basic-ftp` to resolve moderate and high severity security advisories.
+- **Node Security Gate Pass**: Confirmed 100/100 security score after patching Node.js dependencies.
+
 ## [7.1.21] - 2026-04-13 (Security Patch Singularity)
 
 ### Security

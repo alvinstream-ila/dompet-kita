@@ -1,7 +1,7 @@
 {
   "name": "dompet-kita-monorepo",
   "private": true,
-  "version": "7.1.19",
+  "version": "7.1.22",
   "description": "Dompet Kita: Sentient Core v6.3 | Elite Guard (100/100) | Phase 6 Singularity",
   "workspaces": [
     "apps/*",
