@@ -17,14 +17,14 @@ return new class extends Migration
         // Mock auth schema and uid() function if it doesn't exist (e.g., for local testing / CI environments)
         $authSchemaExists = DB::select("SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'auth'");
         if (empty($authSchemaExists)) {
-            DB::statement("CREATE SCHEMA IF NOT EXISTS auth;");
-            DB::statement("
+            DB::statement('CREATE SCHEMA IF NOT EXISTS auth;');
+            DB::statement('
                 CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid AS $$
                 BEGIN
                     RETURN NULL;
                 END;
                 $$ LANGUAGE plpgsql;
-            ");
+            ');
         }
         $newTables = [
             'chat_histories' => 'user_id',
