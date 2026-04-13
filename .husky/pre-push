@@ -25,9 +25,19 @@ if ! npm run ci:frontend-check; then
 fi
 cd ../..
 
-if php -v >/dev/null 2>&1; then
+# Improved PHP detection for Windows/Herd compatibility
+PHP_EXE="php"
+if ! command -v php >/dev/null 2>&1; then
+  # Fallback for Windows/Herd: try to find the full path (often a .bat shim)
+  PHP_PATH=$(where.exe php | head -n 1)
+  if [ -n "$PHP_PATH" ]; then
+    PHP_EXE="$PHP_PATH"
+  fi
+fi
+
+if command -v "$PHP_EXE" >/dev/null 2>&1 || [ -f "$PHP_EXE" ]; then
   echo "4/4: Checking Backend Security Gate (Elite Threshold: 95)..."
-  if ! php apps/backend/artisan security:gate --min-score=95; then
+  if ! "$PHP_EXE" apps/backend/artisan security:gate --min-score=95; then
     echo "❌ Backend Security Gate Failed! Score below 95. Resolve all high/medium vulnerabilities before pushing."
     exit 1
   fi
