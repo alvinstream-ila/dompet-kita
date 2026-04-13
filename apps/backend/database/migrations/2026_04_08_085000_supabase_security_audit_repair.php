@@ -14,6 +14,20 @@ return new class extends Migration
             return;
         }
 
+        // Ensure Supabase roles exist in test environments to avoid Undefined Object errors
+        $sql = <<<'SQL'
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'authenticated') THEN
+        CREATE ROLE authenticated NOLOGIN NOINHERIT;
+    END IF;
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'anon') THEN
+        CREATE ROLE anon NOLOGIN NOINHERIT;
+    END IF;
+END $$;
+SQL;
+        DB::unprepared($sql);
+
         // 1. Fix Mutable Search Paths for Security Functions
         if (DB::selectOne("SELECT 1 FROM pg_proc WHERE proname = 'get_laravel_user_id'")) {
             DB::statement('ALTER FUNCTION public.get_laravel_user_id() SET search_path = public;');
