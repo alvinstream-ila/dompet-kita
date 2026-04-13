@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.21] - 2026-04-13 (Security Patch Singularity)
+
+### Security
+- **CVE-2026-40194 Remediation**: Resolved a variable-time HMAC comparison vulnerability in `phpseclib/phpseclib` by updating to v3.0.51+. This ensures cryptographic integrity for SSH/SFTP operations.
+
 ## [7.1.20] - 2026-04-09 (React 19 & Architecture Modernization)
 
 ### Changed
