@@ -17,6 +17,7 @@ interface AssetTheme {
   gradient: string;
   shadow: string;
   glow: string;
+  color: string;
 }
 
 const ASSET_THEMES: Record<string, AssetTheme> = {
@@ -25,42 +26,49 @@ const ASSET_THEMES: Record<string, AssetTheme> = {
     gradient: 'from-blue-600 to-indigo-600',
     shadow: 'shadow-blue-500/20',
     glow: 'bg-blue-400',
+    color: 'text-blue-600',
   },
   CRYPTO: {
     icon: Bitcoin,
     gradient: 'from-amber-500 to-orange-600',
     shadow: 'shadow-amber-500/20',
     glow: 'bg-amber-400',
+    color: 'text-amber-600',
   },
   COMMODITY: {
     icon: Gem,
     gradient: 'from-yellow-400 to-amber-500',
     shadow: 'shadow-yellow-500/20',
     glow: 'bg-yellow-300',
+    color: 'text-yellow-600',
   },
   MUTUAL_FUND: {
     icon: PieChart,
     gradient: 'from-violet-600 to-purple-600',
     shadow: 'shadow-violet-500/20',
     glow: 'bg-violet-400',
+    color: 'text-violet-600',
   },
   CASH: {
     icon: Wallet,
     gradient: 'from-emerald-500 to-teal-600',
     shadow: 'shadow-emerald-500/20',
     glow: 'bg-emerald-400',
+    color: 'text-emerald-600',
   },
   OBLIGASI: {
     icon: Landmark,
     gradient: 'from-slate-600 to-slate-800',
     shadow: 'shadow-slate-500/20',
     glow: 'bg-slate-400',
+    color: 'text-slate-700',
   },
   DEFAULT: {
     icon: Activity,
     gradient: 'from-slate-400 to-slate-600',
     shadow: 'shadow-slate-500/10',
     glow: 'bg-slate-300',
+    color: 'text-slate-600',
   },
 };
 
@@ -100,8 +108,8 @@ export const PremiumAssetIcon: React.FC<PremiumAssetIconProps> = ({
         {/* Layer 3: Tactile Icon with Inner Gradient */}
         <div
           className={cn(
-            'relative z-10 flex h-full w-full items-center justify-center bg-linear-to-br bg-clip-text text-transparent',
-            theme.gradient
+            'relative z-10 flex h-full w-full items-center justify-center',
+            theme.color
           )}
         >
           <Icon

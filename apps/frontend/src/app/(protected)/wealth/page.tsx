@@ -204,7 +204,7 @@ export default function WealthPage() {
           !open && (setIsAddDialogOpen(false), setEditingAsset(null))
         }
       >
-        <DialogContent className="max-w-2xl overflow-hidden rounded-[40px] border-none bg-white p-8 shadow-2xl">
+        <DialogContent className="max-w-[95vw] overflow-hidden rounded-[32px] border-none bg-white p-5 shadow-2xl sm:max-w-2xl sm:rounded-[40px] sm:p-8">
           <DialogHeader className="mb-4">
             <DialogTitle className="text-2xl font-black text-slate-800">
               {editingAsset ? 'Perbarui Aset ✨' : 'Tambah Aset ✨'}

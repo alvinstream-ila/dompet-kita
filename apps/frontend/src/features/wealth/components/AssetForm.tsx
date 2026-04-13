@@ -106,13 +106,18 @@ export const AssetForm: React.FC<AssetFormProps> = ({
   };
 
   const handleTypeSelect = (type: AssetType) => {
-    setFormData((prev) => ({
-      ...prev,
-      type,
-      is_market_synced: ['stock', 'crypto', 'commodity'].includes(type),
-      unit:
-        type === 'commodity' ? 'GRAM' : type === 'stock' ? 'SHARES' : prev.unit,
-    }));
+    setFormData((prev) => {
+      let unit = prev.unit;
+      if (type === 'commodity') unit = 'GRAM';
+      else if (type === 'stock') unit = 'SHARES';
+
+      return {
+        ...prev,
+        type,
+        is_market_synced: ['stock', 'crypto', 'commodity'].includes(type),
+        unit,
+      };
+    });
     setStep('INPUT_DETAILS');
   };
 
@@ -131,11 +136,11 @@ export const AssetForm: React.FC<AssetFormProps> = ({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
           >
-            <div className="mb-6">
-              <h3 className="text-lg font-black tracking-tight text-slate-800">
+            <div className="mb-4 sm:mb-6">
+              <h3 className="text-base font-black tracking-tight text-slate-800 sm:text-lg">
                 Pilih Kategori Aset
               </h3>
-              <p className="text-xs font-bold text-slate-400">
+              <p className="text-[10px] font-bold text-slate-400 sm:text-xs">
                 Apa yang ingin Anda tambahkan hari ini, Sayang?
               </p>
             </div>
@@ -181,11 +186,18 @@ export const AssetForm: React.FC<AssetFormProps> = ({
                       name: e.target.value.toUpperCase(),
                     })
                   }
-                  placeholder={
-                    formData.type === 'stock'
-                      ? 'BBCA.JK, TLKM.JK, dll'
-                      : 'Emas Antam, Tabungan, dll'
-                  }
+                  placeholder={(() => {
+                    if (formData.type === 'stock')
+                      return 'BBCA.JK, TLKM.JK, dll';
+                    if (formData.type === 'crypto') return 'BTC, ETH, SOL, dll';
+                    if (formData.type === 'mutual_fund')
+                      return 'Schroders, Mandiri Investa, dll';
+                    if (formData.type === 'obligasi')
+                      return 'SWR012, ORI025, dll';
+                    if (formData.type === 'commodity')
+                      return 'Emas Antam, Perak, dll';
+                    return 'Tabungan, Deposito, dll';
+                  })()}
                   className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 px-6 font-bold text-slate-700 focus-visible:ring-slate-300"
                   required
                 />
@@ -197,6 +209,9 @@ export const AssetForm: React.FC<AssetFormProps> = ({
                     {(() => {
                       if (formData.type === 'stock') return 'Jumlah (Lot)';
                       if (formData.type === 'commodity') return 'Berat (Gram)';
+                      if (formData.type === 'mutual_fund')
+                        return 'Unit Penyertaan';
+                      if (formData.type === 'obligasi') return 'Unit / Nominal';
                       return 'Kuantitas';
                     })()}
                   </Label>
@@ -211,14 +226,26 @@ export const AssetForm: React.FC<AssetFormProps> = ({
                         ? handleStockLotChange(e.target.value)
                         : setFormData({ ...formData, quantity: e.target.value })
                     }
-                    placeholder="0"
+                    placeholder={
+                      formData.type === 'mutual_fund' ? '0.0000' : '0'
+                    }
                     className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 px-6 font-bold text-slate-700"
                     required
                   />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
-                    Nilai Per Unit (IDR)
+                    {(() => {
+                      if (formData.type === 'mutual_fund')
+                        return 'NAB / Unit (IDR)';
+                      if (formData.type === 'obligasi') return 'Harga Per Unit';
+                      if (
+                        formData.type === 'stock' ||
+                        formData.type === 'crypto'
+                      )
+                        return 'Harga Beli Per Unit';
+                      return 'Nilai Per Unit (IDR)';
+                    })()}
                   </Label>
                   <Input
                     type="number"
@@ -231,7 +258,11 @@ export const AssetForm: React.FC<AssetFormProps> = ({
                       })
                     }
                     className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 px-6 font-bold text-slate-700"
-                    placeholder="Harga beli"
+                    placeholder={
+                      formData.type === 'mutual_fund'
+                        ? 'Harga NAB beli'
+                        : 'Harga beli'
+                    }
                     required
                   />
                 </div>
