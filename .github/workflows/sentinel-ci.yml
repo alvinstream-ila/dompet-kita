@@ -77,6 +77,8 @@ jobs:
           exit-code: '1'
           severity: 'CRITICAL,HIGH'
           scanners: 'vuln,secret,misconfig'
+          trivy-config: trivy.yaml
+          skip-dirs: 'apps/backend/vendor,node_modules'
 
       - name: 🤺 Run Sentinel Security Gate
         working-directory: ./apps/backend

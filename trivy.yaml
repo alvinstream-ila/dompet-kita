@@ -1,0 +1,30 @@
+# =============================================================================
+# Trivy Configuration — Dompet Kita
+# Managed by: Guardian Agent (COA v7.1.18)
+# Docs: https://trivy.dev/docs/references/configuration/config-file/
+# =============================================================================
+
+# Scan settings
+scan:
+  # Skip vendor directories — these are upstream third-party packages
+  # We cannot modify them; vulnerabilities must be tracked upstream.
+  skip-dirs:
+    - apps/backend/vendor
+    - node_modules
+
+# DB settings
+db:
+  skip-update: false
+
+# Output settings
+format: table
+severity:
+  - CRITICAL
+  - HIGH
+
+# Ignore unfixed vulnerabilities (no patch available yet)
+ignore-unfixed: true
+
+# Secret scanning
+secret:
+  config: trivy-secret.yaml

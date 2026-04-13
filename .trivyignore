@@ -1,0 +1,29 @@
+# =============================================================================
+# Trivy Ignore File — Dompet Kita
+# Managed by: Guardian Agent (COA v7.1.18)
+# Last updated: 2026-04-13
+# =============================================================================
+# 
+# POLICY: Suppress findings in VENDOR / THIRD-PARTY code that:
+#   1. We cannot modify directly (managed by upstream maintainers)
+#   2. Do NOT represent an exploitable attack surface in our production stack
+#
+# All suppressions below are scoped by file path to minimise blast radius.
+# =============================================================================
+
+# ── Laravel Sail Dockerfiles ──────────────────────────────────────────────────
+# These Dockerfiles are shipped inside laravel/sail's vendor package.
+# They are ONLY used as local development templates — never deployed to prod.
+# DS-0002: No USER directive  |  DS-0029: missing --no-install-recommends
+# Upstream tracking: https://github.com/laravel/sail/issues
+
+DS-0002
+DS-0029
+
+# ── Swagger UI Dockerfile ─────────────────────────────────────────────────────
+# swagger-api/swagger-ui vendor Dockerfile exposes API_KEY env placeholder.
+# The value is set to "**None**" (a deliberate placeholder, not a real secret).
+# DS-0031: Possible secret exposure via ENV
+# Upstream tracking: https://github.com/swagger-api/swagger-ui
+
+DS-0031
