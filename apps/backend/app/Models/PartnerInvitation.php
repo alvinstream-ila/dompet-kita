@@ -2,15 +2,11 @@
 
 namespace App\Models;
 
-use Database\Factories\PartnerInvitationFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PartnerInvitation extends Model
 {
-    /** @use HasFactory<PartnerInvitationFactory> */
-    use HasFactory;
-
     protected $fillable = [
         'inviter_id',
         'email',
@@ -35,7 +31,10 @@ class PartnerInvitation extends Model
     /**
      * Get the user who sent the invitation.
      */
-    public function inviter()
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function inviter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'inviter_id');
     }

@@ -9,6 +9,7 @@ use App\Models\Goal;
 use App\Models\Loan;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -21,7 +22,14 @@ class GenerateReportAction extends BaseAction
     /**
      * Generate a comprehensive financial snapshot (Legacy Report).
      *
-     * @return array<string, mixed>
+     * @return array{
+     *     report_date: string,
+     *     user: array{name: string, email: string},
+     *     financial_summary: array{total_assets: float|int, total_loans: float|int, total_goals: float|int},
+     *     asset_details: Collection<int, Asset>,
+     *     active_loans: Collection<int, Loan>,
+     *     recommendations: array<int, string>
+     * }
      */
     public function execute(User $user): array
     {

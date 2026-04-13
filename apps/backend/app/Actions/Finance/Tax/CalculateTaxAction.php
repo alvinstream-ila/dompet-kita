@@ -39,12 +39,21 @@ class CalculateTaxAction extends BaseAction
     /**
      * Calculate taxable income and estimated tax for a given year.
      *
-     * @return array<string, mixed>
+     * @return array{
+     *     year: int,
+     *     total_income: float,
+     *     ptkp: float,
+     *     taxable_income: float,
+     *     estimated_tax: float,
+     *     effective_rate: float,
+     *     ptkp_status: string,
+     *     ptkp_value: float
+     * }
      */
     public function execute(User $user, int $year): array
     {
-        $startOfYear = Carbon::create($year, 1, 1)->startOfDay();
-        $endOfYear = Carbon::create($year, 12, 31)->endOfDay();
+        $startOfYear = Carbon::create($year, 1, 1)?->startOfDay() ?? throw new \InvalidArgumentException("Invalid year: {$year}");
+        $endOfYear = Carbon::create($year, 12, 31)?->endOfDay() ?? throw new \InvalidArgumentException("Invalid year: {$year}");
 
         // Sum income (Income type transactions)
         $totalIncome = Transaction::where('user_id', $user->id)

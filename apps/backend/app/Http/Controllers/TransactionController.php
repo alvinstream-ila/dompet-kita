@@ -10,11 +10,12 @@ use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
 use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Services\BudgetService;
 use App\Traits\HasApiResponses;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -30,7 +31,7 @@ class TransactionController extends Controller
     /**
      * List all transactions with period filtering and pagination.
      */
-    public function index(Request $request): AnonymousResourceCollection|JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
             $query = Transaction::query()
@@ -61,10 +62,13 @@ class TransactionController extends Controller
     {
         try {
             $user = $request->user();
+            assert($user instanceof User);
+
             $month = $request->filled('month') ? (int) $request->month : null;
             $year = $request->filled('year') ? (int) $request->year : null;
             $budgetCycleStart = (int) ($request->budget_cycle_start ?? 1);
 
+            /** @var array{income: float|int, expense: float|int, balance: float|int, recentTransactions: Collection<int, Transaction>, period: string} $data */
             $data = $action->execute($user->id, $month, $year, $budgetCycleStart);
 
             return $this->success([
@@ -87,7 +91,10 @@ class TransactionController extends Controller
      */
     public function store(StoreTransactionRequest $request, StoreTransactionAction $action): JsonResponse
     {
-        $transaction = $action->execute($request->user(), $request->validated());
+        $user = $request->user();
+        assert($user instanceof User);
+
+        $transaction = $action->execute($user, $request->validated());
 
         return $this->success(new TransactionResource($transaction), 'Transaksi berhasil dicatat! ❤️', 201);
     }
@@ -99,7 +106,10 @@ class TransactionController extends Controller
     {
         $this->authorize('update', $transaction);
 
-        $transaction = $action->execute($request->user(), $transaction, $request->validated());
+        $user = $request->user();
+        assert($user instanceof User);
+
+        $transaction = $action->execute($user, $transaction, $request->validated());
 
         return $this->success(new TransactionResource($transaction), 'Catatan transaksinya sudah aku update ya! ✨');
     }
@@ -111,7 +121,10 @@ class TransactionController extends Controller
     {
         $this->authorize('delete', $transaction);
 
-        $action->execute($request->user(), $transaction);
+        $user = $request->user();
+        assert($user instanceof User);
+
+        $action->execute($user, $transaction);
 
         return $this->success(null, 'Oke, transaksinya sudah dihapus. 👌');
     }

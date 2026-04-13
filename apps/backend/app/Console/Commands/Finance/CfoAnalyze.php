@@ -33,11 +33,12 @@ class CfoAnalyze extends Command
             $this->info('💰 DOMPET KITA - CHIEF FINANCIAL OFFICER (AI)');
             $this->info('===========================================');
 
-            $month = $this->option('month') ?: now()->format('Y-m');
+            $monthOption = $this->option('month');
+            $month = is_string($monthOption) ? $monthOption : now()->format('Y-m');
             $this->comment("Analyzing data for: {$month}");
 
             $this->warn('Consulting with Gemini AI...');
-            $result = $action->execute((string) $month);
+            $result = $action->execute($month);
 
             $this->info('✨ STRATEGIC INSIGHTS:');
             $this->line($result['advice']);

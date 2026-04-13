@@ -34,6 +34,12 @@ class WealthStatus extends Command
             $this->info('### 💎 Dompet Kita - Financial Dashboard');
 
             $defaultUser = User::find(1);
+            if (! $defaultUser instanceof User) {
+                $this->error('Primary user (ID 1) not found.');
+
+                return 1;
+            }
+
             $data = $action->execute($defaultUser);
 
             $this->info("Date: {$data['month']}");
@@ -44,9 +50,9 @@ class WealthStatus extends Command
             $this->table(
                 ['Type', 'Amount (IDR)'],
                 [
-                    ['Total Income', number_format($data['monthly_summary']['income'])],
-                    ['Total Expense', number_format($data['monthly_summary']['expense'])],
-                    ['Net Savings', number_format($data['monthly_summary']['net'])],
+                    ['Total Income', number_format((float) $data['monthly_summary']['income'])],
+                    ['Total Expense', number_format((float) $data['monthly_summary']['expense'])],
+                    ['Net Savings', number_format((float) $data['monthly_summary']['net'])],
                 ]
             );
             $this->newLine();
@@ -56,9 +62,9 @@ class WealthStatus extends Command
             $this->table(
                 ['Category', 'Current Value'],
                 [
-                    ['Net Assets', number_format($data['assets_goals']['net_assets'])],
-                    ['Mimpi Kita (Goals)', number_format($data['assets_goals']['goals'])],
-                    ['Total Wealth', number_format($data['assets_goals']['total_wealth'])],
+                    ['Net Assets', number_format((float) $data['assets_goals']['net_assets'])],
+                    ['Mimpi Kita (Goals)', number_format((float) $data['assets_goals']['goals'])],
+                    ['Total Wealth', number_format((float) $data['assets_goals']['total_wealth'])],
                 ]
             );
             $this->newLine();
@@ -68,9 +74,9 @@ class WealthStatus extends Command
             $this->table(
                 ['Category', 'Total Amount'],
                 [
-                    ['Utang (Our Debt)', number_format($data['obligations']['debts'])],
-                    ['Piutang (Owed to Us)', number_format($data['obligations']['receivables'])],
-                    ['Net Obligations', number_format($data['obligations']['net_obligations'])],
+                    ['Utang (Our Debt)', number_format((float) $data['obligations']['debts'])],
+                    ['Piutang (Owed to Us)', number_format((float) $data['obligations']['receivables'])],
+                    ['Net Obligations', number_format((float) $data['obligations']['net_obligations'])],
                 ]
             );
 

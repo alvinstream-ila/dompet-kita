@@ -12,10 +12,12 @@ class FundAssetAction extends BaseAction
 {
     /**
      * Fund an asset, optionally deducting from a source asset.
+     *
+     * @param  array{amount: float|int, source_asset_id?: string|int|null, description?: string}  $data
      */
     public function execute(User $user, Asset $asset, array $data): Asset
     {
-        return DB::transaction(function () use ($user, $asset, $data) {
+        $result = DB::transaction(function () use ($user, $asset, $data): Asset {
             $amount = (float) $data['amount'];
             $sourceAssetId = $data['source_asset_id'] ?? null;
             $description = $data['description'] ?? 'Top up aset';
@@ -57,7 +59,9 @@ class FundAssetAction extends BaseAction
                 $sourceAsset->decrement('invested_capital', $amount);
             }
 
-            return $asset->fresh();
+            return $asset->fresh() ?? $asset;
         });
+
+        return $result;
     }
 }

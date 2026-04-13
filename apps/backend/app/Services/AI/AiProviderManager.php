@@ -174,7 +174,8 @@ class AiProviderManager
     protected function onFailure(AiProviderInterface $provider): void
     {
         $key = 'ai_provider_errors_'.$provider->getName();
-        $errors = (int) Cache::get($key, 0) + 1;
+        $cachedErrors = Cache::get($key, 0);
+        $errors = (is_int($cachedErrors) || is_string($cachedErrors) ? (int) $cachedErrors : 0) + 1;
         Cache::put($key, $errors, now()->addMinutes(60));
 
         Log::warning('AI Provider '.$provider->getName()." failed (Error count: $errors)");

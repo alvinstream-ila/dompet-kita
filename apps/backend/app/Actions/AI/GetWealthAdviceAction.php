@@ -16,7 +16,7 @@ class GetWealthAdviceAction extends BaseAction
     ) {}
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param  array{netWorth: float|int, savings: float|int, projected: float|int}  $data
      */
     public function execute(User $user, array $data): string
     {

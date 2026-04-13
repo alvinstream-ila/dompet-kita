@@ -15,14 +15,23 @@ class PrivacyFilter
         }
 
         // 1. Mask Email Addresses
-        $text = preg_replace('/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i', '[EMAIL_REDACTED]', $text);
+        $maskedText = preg_replace('/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i', '[EMAIL_REDACTED]', $text);
+        if (is_string($maskedText)) {
+            $text = $maskedText;
+        }
 
         // 2. Mask Potential Phone Numbers (ID/General format)
         // Matches sequences of 8+ digits, possibly with spaces/dashes
-        $text = preg_replace('/(\+?62|08)\d{8,11}/', '[PHONE_REDACTED]', $text);
+        $maskedText = preg_replace('/(\+?62|08)\d{8,11}/', '[PHONE_REDACTED]', $text);
+        if (is_string($maskedText)) {
+            $text = $maskedText;
+        }
 
         // 3. Mask Credit Card / Account Numbers (12-16 digits)
-        $text = preg_replace('/\b\d{12,16}\b/', '[ID_NUM_REDACTED]', $text);
+        $maskedText = preg_replace('/\b\d{12,16}\b/', '[ID_NUM_REDACTED]', $text);
+        if (is_string($maskedText)) {
+            $text = $maskedText;
+        }
 
         return $text;
     }

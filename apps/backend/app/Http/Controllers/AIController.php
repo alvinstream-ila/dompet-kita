@@ -12,6 +12,7 @@ use App\Actions\Finance\Wealth\SimulateMonteCarloAction;
 use App\Enums\TransactionType;
 use App\Http\Requests\AI\AnalyzeReceiptRequest;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Services\FinancialIntelligenceService;
 use App\Services\StorageService;
 use App\Traits\HasApiResponses;
@@ -56,10 +57,10 @@ class AIController extends Controller
             $result = $this->analyzeReceiptAction->execute($base64Data, $mimeType);
 
             return $this->success([
-                'amount' => (int) $result['amount'],
-                'merchant' => $result['merchant'],
-                'category' => $result['category'],
-                'message' => $result['message'],
+                'amount' => (int) ($result['amount'] ?? 0),
+                'merchant' => (string) ($result['merchant'] ?? 'Unknown'),
+                'category' => (string) ($result['category'] ?? 'Other'),
+                'message' => (string) ($result['message'] ?? ''),
             ], 'Struk berhasil diproses! ✨');
 
         } catch (\Throwable $e) {
@@ -75,6 +76,7 @@ class AIController extends Controller
     public function getDashboardInsight(Request $request): JsonResponse
     {
         $user = $request->user();
+        assert($user instanceof User);
 
         try {
             $transactions = Transaction::where('user_id', $user->id)
@@ -103,16 +105,16 @@ class AIController extends Controller
 
             $data = Cache::remember($cacheKey, 3600 * 4, function () use ($totalIncome, $totalExpense, $savings, $summaryText) {
                 return $this->generateInsightAction->execute(
-                    number_format($totalIncome),
-                    number_format($totalExpense),
-                    number_format($savings),
+                    (string) number_format((float) $totalIncome),
+                    (string) number_format((float) $totalExpense),
+                    (string) number_format((float) $savings),
                     $summaryText
                 );
             });
 
             return $this->success([
-                'title' => $data['title'],
-                'insight' => $data['insight'],
+                'title' => (string) ($data['title'] ?? 'Insight Keuangan'),
+                'insight' => (string) ($data['insight'] ?? ''),
             ]);
 
         } catch (\Throwable $e) {
@@ -136,9 +138,11 @@ class AIController extends Controller
     public function chat(Request $request): JsonResponse
     {
         $request->validate(['message' => 'required|string|max:1000']);
+        $user = $request->user();
+        assert($user instanceof User);
 
         try {
-            $response = $this->processChatAction->execute($request->user(), $request->message);
+            $response = $this->processChatAction->execute($user, (string) $request->message);
 
             return $this->success($response, 'Asisten AI menjawab pesanmu! 💬');
         } catch (\Throwable $e) {
@@ -153,9 +157,12 @@ class AIController extends Controller
      */
     public function getGuardianStatus(Request $request): JsonResponse
     {
+        $user = $request->user();
+        assert($user instanceof User);
+
         try {
-            $prediction = $this->intelService->predictLiquidityCrisis($request->user());
-            $rebalance = $this->intelService->generateRebalanceAdvice($request->user());
+            $prediction = $this->intelService->predictLiquidityCrisis($user);
+            $rebalance = $this->intelService->generateRebalanceAdvice($user);
 
             return $this->success([
                 'prediction' => $prediction,
@@ -175,6 +182,8 @@ class AIController extends Controller
     {
         try {
             $user = $request->user();
+            assert($user instanceof User);
+
             $wisdom = $this->getLatestWisdomAction->execute($user);
             $unread = $this->getUnreadWisdomsAction->execute($user);
 
@@ -194,8 +203,11 @@ class AIController extends Controller
      */
     public function generateWisdom(Request $request): JsonResponse
     {
+        $user = $request->user();
+        assert($user instanceof User);
+
         try {
-            $wisdom = $this->generateWisdomAction->execute($request->user());
+            $wisdom = $this->generateWisdomAction->execute($user);
 
             return $this->success($wisdom, 'Wisdom baru telah dibuat untukmu! 🧠');
         } catch (\Exception $e) {
@@ -211,9 +223,11 @@ class AIController extends Controller
     public function simulateWealth(Request $request): JsonResponse
     {
         $months = (int) $request->input('months', 12);
+        $user = $request->user();
+        assert($user instanceof User);
 
         try {
-            $trajectories = $this->simulateMonteCarloAction->execute($request->user(), $months);
+            $trajectories = $this->simulateMonteCarloAction->execute($user, $months);
 
             return $this->success($trajectories, "Monte Carlo 100-iteration wealth pulse for $months months.");
         } catch (\Exception $e) {

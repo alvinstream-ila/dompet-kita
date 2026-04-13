@@ -6,7 +6,7 @@ use App\Enums\RecurrenceFrequency;
 use App\Enums\ScheduleStatus;
 use App\Models\ScheduledTransaction;
 use App\Models\Transaction;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 

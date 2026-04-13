@@ -46,19 +46,20 @@ class AnalyzeReceiptAction extends BaseAction
 
         $result = json_decode(trim($jsonText), true);
 
-        if (! $result) {
+        if (! is_array($result)) {
             Log::error('AI_SCAN_PARSING_FAILED', ['raw' => $jsonText]);
             throw new RuntimeException('Maaf Sayang, AI gagal memproses data struk ini. Coba ketik manual ya! ❤️');
         }
 
+        /** @var mixed $rawAmount */
         $rawAmount = $result['amount'] ?? 0;
-        $cleanAmount = (int) preg_replace('/[^0-9]/', '', (string) $rawAmount);
+        $cleanAmount = (int) preg_replace('/[^0-9]/', '', is_scalar($rawAmount) ? (string) $rawAmount : '0');
 
         return [
             'amount' => $cleanAmount,
-            'merchant' => $result['merchant'] ?? 'Toko Tidak Terbaca',
-            'category' => $result['category'] ?? 'Belanja',
-            'message' => $result['message'] ?? 'AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️',
+            'merchant' => is_string($result['merchant'] ?? null) ? (string) $result['merchant'] : 'Toko Tidak Terbaca',
+            'category' => is_string($result['category'] ?? null) ? (string) $result['category'] : 'Belanja',
+            'message' => is_string($result['message'] ?? null) ? (string) $result['message'] : 'AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️',
         ];
     }
 }

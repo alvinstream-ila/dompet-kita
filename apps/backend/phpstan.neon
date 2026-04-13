@@ -1,6 +1,5 @@
 includes:
     - ./vendor/larastan/larastan/extension.neon
-    - phpstan-baseline.neon
 
 parameters:
 
@@ -8,6 +7,10 @@ parameters:
         - app/
         - database/
         - tests/
+
+    # scanFiles:
+    #     - _ide_helper.php
+    #     - _ide_helper_models.php
 
     # Level 9 - Zero-Tolerance Mode (Expert Absolute Standard)
     level: 9

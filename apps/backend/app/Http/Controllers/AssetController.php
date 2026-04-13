@@ -12,10 +12,13 @@ use App\Http\Requests\UpdateAssetRequest;
 use App\Http\Resources\AssetResource;
 use App\Http\Resources\AssetTransactionResource;
 use App\Models\Asset;
+use App\Models\AssetTransaction;
+use App\Models\User;
 use App\Traits\HasApiResponses;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Class AssetController
@@ -30,7 +33,10 @@ class AssetController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $assets = Asset::where('user_id', $request->user()->id)
+        $user = $request->user();
+        assert($user instanceof User);
+
+        $assets = Asset::where('user_id', $user->id)
             ->orderBy('type')
             ->get();
 
@@ -114,6 +120,7 @@ class AssetController extends Controller
     {
         $this->authorize('view', $asset);
 
+        /** @var LengthAwarePaginator<AssetTransaction> $transactions */
         $transactions = $asset->transactions()
             ->with(['sourceAsset'])
             ->orderByDesc('transaction_date')

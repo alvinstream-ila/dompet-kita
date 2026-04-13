@@ -61,8 +61,8 @@ PROMPT;
         }
 
         return [
-            'title' => $data['title'] ?? 'Sayang Terharu ✨',
-            'insight' => $data['insight'] ?? 'Aku lagi liat data belanja kita, semuanya aman kok Sayang! ❤️',
+            'title' => is_string($data['title'] ?? null) ? (string) $data['title'] : 'Sayang Terharu ✨',
+            'insight' => is_string($data['insight'] ?? null) ? (string) $data['insight'] : 'Aku lagi liat data belanja kita, semuanya aman kok Sayang! ❤️',
         ];
 
     }

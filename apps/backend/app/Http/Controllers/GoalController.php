@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GoalResource;
 use App\Models\Asset;
 use App\Models\Goal;
+use App\Models\User;
 use App\Traits\HasApiResponses;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,7 +21,10 @@ class GoalController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $goals = Goal::where('user_id', $request->user()->id)
+        $user = $request->user();
+        assert($user instanceof User);
+
+        $goals = Goal::where('user_id', $user->id)
             ->orderBy('deadline', 'asc')
             ->get();
 
@@ -41,7 +46,10 @@ class GoalController extends Controller
             'status' => 'required|in:active,completed,cancelled',
         ]);
 
-        $validated['user_id'] = $request->user()->id;
+        $user = $request->user();
+        assert($user instanceof User);
+
+        $validated['user_id'] = $user->id;
 
         $goal = Goal::create($validated);
 
@@ -85,9 +93,12 @@ class GoalController extends Controller
         ]);
 
         return DB::transaction(function () use ($validated, $goal, $request) {
+            $user = $request->user();
+            assert($user instanceof User);
+
             // 1. Create the Goal Transaction
             $goal->transactions()->create([
-                'user_id' => $request->user()->id,
+                'user_id' => $user->id,
                 'asset_id' => $validated['asset_id'] ?? null,
                 'amount' => $validated['amount'],
                 'type' => 'deposit',

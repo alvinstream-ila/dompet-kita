@@ -73,8 +73,8 @@ class ProcessChatAction
             ->orderBy('date', 'desc')
             ->get();
 
-        $totalIncome = $transactions->where('type', TransactionType::INCOME)->sum('amount');
-        $totalExpense = $transactions->where('type', TransactionType::EXPENSE)->sum('amount');
+        $totalIncome = (float) $transactions->where('type', TransactionType::INCOME)->sum('amount');
+        $totalExpense = (float) $transactions->where('type', TransactionType::EXPENSE)->sum('amount');
         $savings = $totalIncome - $totalExpense;
 
         $goals = Goal::where('user_id', $user->id)->get();
@@ -152,8 +152,8 @@ class ProcessChatAction
     {
         ChatHistory::create([
             'user_id' => $user->id,
-            'role' => $role,
-            'content' => $content,
+            'role' => (string) $role,
+            'content' => (string) $content,
             'metadata' => $metadata,
         ]);
     }

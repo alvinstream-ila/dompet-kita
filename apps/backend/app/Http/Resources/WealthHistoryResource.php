@@ -19,16 +19,19 @@ class WealthHistoryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // Check if $this is actually a WealthHistory model or a manually constructed array for the current month
+        // Check if $this->resource is an array
         if (is_array($this->resource)) {
-            return $this->resource;
+            /** @var array<string, mixed> $resource */
+            $resource = $this->resource;
+
+            return $resource;
         }
 
         return [
-            'month' => Carbon::create($this->year, $this->month, 1)->format('M'),
+            'month' => Carbon::create((int) $this->year, (int) $this->month, 1)->format('M'),
             'value' => (int) $this->total_value,
-            'year' => $this->year,
-            'raw_month' => $this->month,
+            'year' => (int) $this->year,
+            'raw_month' => (int) $this->month,
         ];
     }
 }

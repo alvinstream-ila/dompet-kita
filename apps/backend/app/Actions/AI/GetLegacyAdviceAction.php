@@ -16,7 +16,7 @@ class GetLegacyAdviceAction extends BaseAction
     ) {}
 
     /**
-     * @param  array<string, mixed>  $report
+     * @param  array{financial_summary: array{total_assets: float|int, total_loans: float|int, total_goals: float|int}}  $report
      */
     public function execute(User $user, array $report): string
     {

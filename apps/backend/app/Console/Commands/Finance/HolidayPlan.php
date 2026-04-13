@@ -85,7 +85,7 @@ class HolidayPlan extends Command
 
         $this->info('### 🏝️ Travel & Vacation Plans');
         foreach ($plans as $plan) {
-            $this->line("- {$plan->destination}: Rp ".number_format($plan->spent, 0).' / Rp '.number_format($plan->budget, 0)." ({$plan->status})");
+            $this->line("- {$plan->destination}: Rp ".number_format((float) $plan->spent, 0).' / Rp '.number_format((float) $plan->budget, 0)." ({$plan->status})");
         }
 
         return 0;

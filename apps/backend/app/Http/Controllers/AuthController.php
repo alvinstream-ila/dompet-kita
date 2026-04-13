@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -56,10 +57,11 @@ class AuthController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
+        /** @var User $user */
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make((string) $request->password),
         ]);
 
         // 🕵️ Log initial registration access
@@ -109,9 +111,9 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', (string) $request->email)->first();
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (! $user instanceof User || ! Hash::check((string) $request->password, $user->password)) {
             // 🚨 Audit Log: Track failed attempt for security alerts
             LoginHistory::create([
                 'user_id' => $user ? $user->id : null,
@@ -211,13 +213,12 @@ class AuthController extends Controller
         ]);
 
         $user = $request->user();
-
-        if (! $user) {
+        if (! $user instanceof User) {
             return \response()->json(['message' => 'Silakan login dulu ya, Sayang!'], 401);
         }
 
         if ($user->email_verification_code !== $request->code ||
-            now()->isAfter($user->email_verification_expires_at)) {
+            ($user->email_verification_expires_at !== null && now()->isAfter($user->email_verification_expires_at))) {
             return \response()->json([
                 'message' => 'Kode salah atau sudah kedaluwarsa, Sayang. Cek email lagi ya! ❤️',
             ], 422);
@@ -306,8 +307,14 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         $user = $request->user();
+        assert($user instanceof User);
+
         Cache::forget("sudo_mode_{$user->id}");
-        $user->currentAccessToken()->delete();
+
+        $token = $user->currentAccessToken();
+        if ($token instanceof PersonalAccessToken) {
+            $token->delete();
+        }
 
         return \response()->json([
             'message' => 'Sampai jumpa lagi, Sayang! ❤️',
@@ -323,7 +330,10 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (! Hash::check($request->password, $request->user()->password)) {
+        $user = $request->user();
+        assert($user instanceof User);
+
+        if (! Hash::check((string) $request->password, $user->password)) {
             $this->sentinel->notify(
                 "Gagal verifikasi Sudo Mode dari IP: `{$request->ip()}`",
                 'critical',
@@ -335,7 +345,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $userId = $request->user()->id;
+        $userId = $user->id;
         Cache::put("sudo_mode_{$userId}", now(), now()->addMinutes(15));
 
         $this->sentinel->notify(

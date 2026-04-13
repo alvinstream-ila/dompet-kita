@@ -54,7 +54,8 @@ class CfoForecast extends Command
             $this->newLine();
             $this->info("🔮 PROJECTION (Next {$months} months):");
 
-            $tableData = collect($data['projection'])->map(function ($item) {
+            $projectionData = $data['projection'];
+            $tableData = $projectionData->map(function ($item) {
                 return [
                     'month' => $item['month'],
                     'projected' => 'Rp '.number_format((float) $item['estimated_net_worth'], 0, ',', '.'),

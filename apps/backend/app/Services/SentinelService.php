@@ -38,11 +38,13 @@ class SentinelService
         try {
             $token = config('services.telegram.bot_token');
             $chatId = config('services.telegram.chat_id');
+            $tokenStr = is_string($token) ? $token : '';
+            $chatIdStr = is_string($chatId) ? $chatId : '';
 
             $response = Http::timeout(10)
                 ->retry(3, 100)
-                ->post("https://api.telegram.org/bot{$token}/sendMessage", [
-                    'chat_id' => $chatId,
+                ->post("https://api.telegram.org/bot{$tokenStr}/sendMessage", [
+                    'chat_id' => $chatIdStr,
                     'text' => $text,
                     'parse_mode' => 'HTML',
                 ]);

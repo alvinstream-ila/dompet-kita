@@ -76,9 +76,9 @@ class Asset extends Model
     /**
      * The transactions associated with this asset.
      *
-     * @return HasMany<AssetTransaction>
+     * @return HasMany<AssetTransaction, $this>
      */
-    public function transactions()
+    public function transactions(): HasMany
     {
         return $this->hasMany(AssetTransaction::class);
     }

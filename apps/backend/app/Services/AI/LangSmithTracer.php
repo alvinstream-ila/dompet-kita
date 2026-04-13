@@ -22,12 +22,17 @@ class LangSmithTracer
 
     public function __construct()
     {
-        $this->apiKey = env('LANGSMITH_API_KEY');
-        $this->project = env('LANGSMITH_PROJECT', 'dompet-kita-backend');
+        $apiKey = \config('services.ai.langsmith.key');
+        $this->apiKey = is_string($apiKey) ? $apiKey : null;
+
+        $project = \config('services.ai.langsmith.project', 'dompet-kita-backend');
+        $this->project = is_string($project) ? $project : 'dompet-kita-backend';
     }
 
     /**
      * Start a new trace run in LangSmith.
+     *
+     * @param  array<string, mixed>  $inputs
      */
     public function createRun(string $name, array $inputs, string $runType = 'llm'): ?string
     {
@@ -59,6 +64,8 @@ class LangSmithTracer
 
     /**
      * Finalize a run with outputs and end time.
+     *
+     * @param  array<string, mixed>  $outputs
      */
     public function updateRun(?string $runId, array $outputs, ?\Throwable $error = null): void
     {

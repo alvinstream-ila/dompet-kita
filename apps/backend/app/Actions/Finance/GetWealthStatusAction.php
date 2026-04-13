@@ -77,8 +77,8 @@ class GetWealthStatusAction extends BaseAction
                 'net' => $income - $expense,
             ],
             'assets_goals' => [
-                'operating_capital' => $totalAssets,
-                'goal_reserves' => $totalGoals + $totalHolidayFunds,
+                'net_assets' => $totalAssets,
+                'goals' => $totalGoals + $totalHolidayFunds,
                 'total_wealth' => $totalAssets + $totalGoals + $totalHolidayFunds,
             ],
             'obligations' => [

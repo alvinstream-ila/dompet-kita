@@ -35,7 +35,9 @@ class PerformCfoAnalysisAction extends BaseAction
             throw new Exception("No transaction data found for {$month}.");
         }
 
+        /** @var array<string, float> $summary */
         $summary = $transactions->groupBy('type')->map(fn ($group) => (float) $group->sum('amount'))->toArray();
+        /** @var array<string, float> $categories */
         $categories = $transactions->groupBy('category')->map(fn ($group) => (float) $group->sum('amount'))->toArray();
 
         $prompt = "Sebagai asisten keuangan premium keluarga 'Dompet Kita' (Alvin & Ila), ";
@@ -51,7 +53,7 @@ class PerformCfoAnalysisAction extends BaseAction
             'month' => $month,
             'summary' => $summary,
             'categories' => $categories,
-            'advice' => $advice,
+            'advice' => (string) $advice,
         ];
     }
 }

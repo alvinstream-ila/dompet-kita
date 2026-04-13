@@ -12,6 +12,7 @@ class AiWatchdog
 {
     public static function logPerformance(string $provider, float $latency, bool $success, int $inputTokens = 0, int $outputTokens = 0): void
     {
+        /** @var array<int, array{provider: string, latency: float, success: bool, input_tokens: int, output_tokens: int, total_tokens: int, time: string}> $history */
         $history = Cache::get('ai_perf_history', []);
         $history[] = [
             'provider' => $provider,
@@ -40,13 +41,15 @@ class AiWatchdog
             'groq' => self::checkQuarantine('groq'),
             'openrouter' => self::checkQuarantine('openrouter'),
             'gemini' => self::checkQuarantine('gemini'),
-        ])->map(function ($isQuarantined, $name) {
-            return [
+        ])->mapWithKeys(function ($isQuarantined, $name) {
+            /** @var string $name */
+            /** @var bool $isQuarantined */
+            return [$name => [
                 'name' => ucfirst($name),
                 'status' => $isQuarantined ? 'Quarantined (Down)' : 'Healthy',
                 'recent_latency' => self::getRecentLatency($name),
-            ];
-        })->toArray();
+            ]];
+        })->all();
     }
 
     /**
@@ -54,15 +57,16 @@ class AiWatchdog
      */
     public static function getTokenUsage(string $name): array
     {
+        /** @var array<int, array{provider: string, latency: float, success: bool, input_tokens: int, output_tokens: int, total_tokens: int, time: string}> $history */
         $history = Cache::get('ai_perf_history', []);
         $usage = collect($history)
             ->where('provider', $name)
             ->where('success', true);
 
         return [
-            'prompt' => $usage->sum('input_tokens'),
-            'completion' => $usage->sum('output_tokens'),
-            'total' => $usage->sum('total_tokens'),
+            'prompt' => is_numeric($p = $usage->sum('input_tokens')) ? (int) $p : 0,
+            'completion' => is_numeric($c = $usage->sum('output_tokens')) ? (int) $c : 0,
+            'total' => is_numeric($t = $usage->sum('total_tokens')) ? (int) $t : 0,
         ];
     }
 
@@ -73,6 +77,7 @@ class AiWatchdog
 
     protected static function getRecentLatency(string $name): float
     {
+        /** @var array<int, array{provider: string, latency: float, success: bool, input_tokens: int, output_tokens: int, total_tokens: int, time: string}> $history */
         $history = Cache::get('ai_perf_history', []);
         $latencies = collect($history)
             ->where('provider', $name)
@@ -80,6 +85,8 @@ class AiWatchdog
             ->take(-5)
             ->pluck('latency');
 
-        return $latencies->isEmpty() ? 0.0 : $latencies->average();
+        $avg = $latencies->average();
+
+        return is_numeric($avg) ? (float) $avg : 0.0;
     }
 }

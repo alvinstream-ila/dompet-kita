@@ -4,6 +4,7 @@ namespace App\Services\AI;
 
 use Exception;
 use Gemini;
+use Gemini\Data\UsageMetadata;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -15,7 +16,11 @@ class GeminiProvider implements AiProviderInterface
 
     public function __construct()
     {
-        $this->apiKey = \config('services.gemini.key');
+        $apiKey = \config('services.ai.gemini.key');
+        $this->apiKey = is_string($apiKey) ? $apiKey : '';
+
+        $model = \config('services.ai.gemini.model', 'gemini-1.5-flash');
+        $this->model = is_string($model) ? $model : 'gemini-1.5-flash';
     }
 
     public function getName(): string
@@ -44,12 +49,15 @@ class GeminiProvider implements AiProviderInterface
             $client = Gemini::client($this->apiKey);
             $response = $client->generativeModel($this->model)->generateContent($prompt);
 
+            /** @var UsageMetadata|null $usage */
+            $usage = $response->usageMetadata ?? null;
+
             return [
                 'text' => $response->text(),
                 'usage' => [
-                    'prompt_tokens' => $response->usageMetadata->promptTokenCount ?? 0,
-                    'completion_tokens' => $response->usageMetadata->candidatesTokenCount ?? 0,
-                    'total_tokens' => $response->usageMetadata->totalTokenCount ?? 0,
+                    'prompt_tokens' => (int) ($usage->promptTokenCount ?? 0),
+                    'completion_tokens' => (int) ($usage->candidatesTokenCount ?? 0),
+                    'total_tokens' => (int) ($usage->totalTokenCount ?? 0),
                 ],
             ];
         } catch (Exception $e) {
@@ -109,8 +117,14 @@ class GeminiProvider implements AiProviderInterface
                 throw new \RuntimeException('Gemini API Error: '.$response->body());
             }
 
+            /** @var array<string, mixed> $data */
             $data = $response->json();
-            $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
+
+            /** @var array<int, array{content: array{parts: array<int, array{text: string}>}}> $candidates */
+            $candidates = $data['candidates'] ?? [];
+            $text = $candidates[0]['content']['parts'][0]['text'] ?? '';
+
+            /** @var array{promptTokenCount?: int, candidatesTokenCount?: int, totalTokenCount?: int} $usage */
             $usage = $data['usageMetadata'] ?? [];
 
             return [

@@ -23,34 +23,45 @@ class StorageService
      */
     public function getFileDataFromRequest(Request $request): array
     {
-        $filePath = $request->receipt_path;
+        /** @var array<string, mixed> $requestData */
+        $requestData = (array) \Illuminate\Support\Facades\Request::input();
+        $filePath = is_string($requestData['receipt_path'] ?? null) ? (string) $requestData['receipt_path'] : null;
         $fileContents = null;
 
-        if (! $filePath && $request->filled('receipt_url')) {
-            $filePath = $this->tryExtractPathFromUrl($request->receipt_url);
+        if (! $filePath && ! empty($requestData['receipt_url'])) {
+            $receiptUrl = $requestData['receipt_url'];
+            if (is_string($receiptUrl)) {
+                $filePath = $this->tryExtractPathFromUrl($receiptUrl);
+            }
         }
 
         if ($filePath) {
             $fileContents = $this->tryReadFromDisk($filePath);
         }
 
-        if (! $fileContents && $request->filled('receipt_url')) {
-            $fileContents = $this->tryDownloadFromUrl($request->receipt_url);
+        if (! $fileContents && ! empty($requestData['receipt_url'])) {
+            $receiptUrl = $requestData['receipt_url'];
+            if (is_string($receiptUrl)) {
+                $fileContents = $this->tryDownloadFromUrl($receiptUrl);
+            }
         }
 
         if (! $fileContents) {
             throw new FileStorageException('Gagal membaca file dari server storage maupun URL eksternal.');
         }
 
-        return $this->formatFileData($fileContents, $filePath, $request->receipt_url);
+        $finalReceiptUrl = $requestData['receipt_url'] ?? null;
+
+        return $this->formatFileData($fileContents, $filePath, is_string($finalReceiptUrl) ? $finalReceiptUrl : null);
     }
 
     private function tryExtractPathFromUrl(string $url): ?string
     {
         if (str_contains($url, 'gateway.storjshare.io')) {
             $bucket = config('filesystems.disks.storj.bucket');
+            $bucketStr = is_string($bucket) ? $bucket : '';
 
-            return str_replace("https://gateway.storjshare.io/{$bucket}/", '', $url);
+            return str_replace("https://gateway.storjshare.io/{$bucketStr}/", '', $url);
         }
 
         return null;
@@ -58,7 +69,9 @@ class StorageService
 
     private function tryReadFromDisk(string $path): ?string
     {
-        $disk = config('filesystems.disks.storj.key') ? 'storj' : config('filesystems.default', 'public');
+        $defaultDisk = config('filesystems.default', 'public');
+        $defaultDiskStr = is_string($defaultDisk) ? $defaultDisk : 'public';
+        $disk = config('filesystems.disks.storj.key') ? 'storj' : $defaultDiskStr;
         try {
             return Storage::disk($disk)->get($path);
         } catch (\Exception $e) {
@@ -70,11 +83,15 @@ class StorageService
 
     private function tryDownloadFromUrl(string $url): ?string
     {
+        /** @var string|null $parsedHost */
         $parsedHost = parse_url($url, PHP_URL_HOST);
-        $safeHosts = ['localhost', '127.0.0.1', 'gateway.storjshare.io', parse_url(config('app.url'), PHP_URL_HOST)];
+        $appUrl = config('app.url');
+        $appUrlStr = is_string($appUrl) ? $appUrl : 'http://localhost';
+        $safeHosts = ['localhost', '127.0.0.1', 'gateway.storjshare.io', parse_url($appUrlStr, PHP_URL_HOST)];
 
-        if (! in_array($parsedHost, array_filter($safeHosts))) {
-            Log::warning("SSRF BLOCKED: Domain $parsedHost bukan whitelist.");
+        if (! in_array($parsedHost, array_filter($safeHosts), true)) {
+            $hostStr = is_string($parsedHost) ? $parsedHost : 'unknown';
+            Log::warning("SSRF BLOCKED: Domain {$hostStr} bukan whitelist.");
 
             return null;
         }

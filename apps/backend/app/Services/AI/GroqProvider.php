@@ -15,8 +15,11 @@ class GroqProvider implements AiProviderInterface
 
     public function __construct()
     {
-        $this->apiKey = \config('services.ai.groq.key');
-        $this->model = \config('services.ai.groq.model');
+        $apiKey = \config('services.ai.groq.key');
+        $model = \config('services.ai.groq.model');
+
+        $this->apiKey = is_string($apiKey) ? $apiKey : '';
+        $this->model = is_string($model) ? $model : 'llama3-8b-8192';
     }
 
     public function getName(): string
@@ -62,12 +65,17 @@ class GroqProvider implements AiProviderInterface
                 throw new \Exception('Groq API Error ('.$response->status().'): '.$response->body());
             }
 
+            $content = $response->json('choices.0.message.content');
+            $promptTokens = $response->json('usage.prompt_tokens');
+            $completionTokens = $response->json('usage.completion_tokens');
+            $totalTokens = $response->json('usage.total_tokens');
+
             $output = [
-                'text' => $response->json('choices.0.message.content') ?? '',
+                'text' => is_string($content) ? $content : '',
                 'usage' => [
-                    'prompt_tokens' => $response->json('usage.prompt_tokens', 0),
-                    'completion_tokens' => $response->json('usage.completion_tokens', 0),
-                    'total_tokens' => $response->json('usage.total_tokens', 0),
+                    'prompt_tokens' => is_int($promptTokens) ? $promptTokens : 0,
+                    'completion_tokens' => is_int($completionTokens) ? $completionTokens : 0,
+                    'total_tokens' => is_int($totalTokens) ? $totalTokens : 0,
                 ],
             ];
 

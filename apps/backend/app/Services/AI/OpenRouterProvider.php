@@ -17,9 +17,13 @@ class OpenRouterProvider implements AiProviderInterface
 
     public function __construct()
     {
-        $this->apiKey = \config('services.ai.openrouter.key');
-        $this->modelText = \config('services.ai.openrouter.model_text');
-        $this->modelVision = \config('services.ai.openrouter.model_vision');
+        $apiKey = \config('services.ai.openrouter.key');
+        $modelText = \config('services.ai.openrouter.model_text');
+        $modelVision = \config('services.ai.openrouter.model_vision');
+
+        $this->apiKey = is_string($apiKey) ? $apiKey : '';
+        $this->modelText = is_string($modelText) ? $modelText : 'openai/gpt-3.5-turbo';
+        $this->modelVision = is_string($modelVision) ? $modelVision : 'openai/gpt-4-vision-preview';
 
         // Override with the smart auto-router
         if (str_contains($this->modelVision, 'gemini') || str_contains($this->modelVision, 'llama-3.2-11b') || empty($this->modelVision)) {
@@ -68,12 +72,17 @@ class OpenRouterProvider implements AiProviderInterface
                 throw new \Exception('OpenRouter Text API Error ('.$response->status().'): '.$response->body());
             }
 
+            $content = $response->json('choices.0.message.content');
+            $promptTokens = $response->json('usage.prompt_tokens');
+            $completionTokens = $response->json('usage.completion_tokens');
+            $totalTokens = $response->json('usage.total_tokens');
+
             return [
-                'text' => $response->json('choices.0.message.content') ?? '',
+                'text' => is_string($content) ? $content : '',
                 'usage' => [
-                    'prompt_tokens' => $response->json('usage.prompt_tokens', 0),
-                    'completion_tokens' => $response->json('usage.completion_tokens', 0),
-                    'total_tokens' => $response->json('usage.total_tokens', 0),
+                    'prompt_tokens' => is_int($promptTokens) ? $promptTokens : 0,
+                    'completion_tokens' => is_int($completionTokens) ? $completionTokens : 0,
+                    'total_tokens' => is_int($totalTokens) ? $totalTokens : 0,
                 ],
             ];
         } catch (\Exception $e) {
@@ -114,12 +123,17 @@ class OpenRouterProvider implements AiProviderInterface
                 throw new \Exception('OpenRouter Vision API Error ('.$response->status().'): '.$response->body());
             }
 
+            $content = $response->json('choices.0.message.content');
+            $promptTokens = $response->json('usage.prompt_tokens');
+            $completionTokens = $response->json('usage.completion_tokens');
+            $totalTokens = $response->json('usage.total_tokens');
+
             return [
-                'text' => $response->json('choices.0.message.content') ?? '',
+                'text' => is_string($content) ? $content : '',
                 'usage' => [
-                    'prompt_tokens' => $response->json('usage.prompt_tokens', 0),
-                    'completion_tokens' => $response->json('usage.completion_tokens', 0),
-                    'total_tokens' => $response->json('usage.total_tokens', 0),
+                    'prompt_tokens' => is_int($promptTokens) ? $promptTokens : 0,
+                    'completion_tokens' => is_int($completionTokens) ? $completionTokens : 0,
+                    'total_tokens' => is_int($totalTokens) ? $totalTokens : 0,
                 ],
             ];
         } catch (\Exception $e) {

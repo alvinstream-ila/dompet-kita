@@ -12,10 +12,12 @@ class WithdrawAssetAction extends BaseAction
 {
     /**
      * Withdraw from an asset, optionally moving to a recipient asset.
+     *
+     * @param  array{amount: float|int, recipient_asset_id?: string|int|null, description?: string}  $data
      */
     public function execute(User $user, Asset $asset, array $data): Asset
     {
-        return DB::transaction(function () use ($user, $asset, $data) {
+        $result = DB::transaction(function () use ($user, $asset, $data): Asset {
             $amount = (float) $data['amount'];
             $recipientAssetId = $data['recipient_asset_id'] ?? null;
             $description = $data['description'] ?? 'Pencairan aset';
@@ -59,7 +61,9 @@ class WithdrawAssetAction extends BaseAction
                 $recipientAsset->increment('invested_capital', $amount);
             }
 
-            return $asset->fresh();
+            return $asset->fresh() ?? $asset;
         });
+
+        return $result;
     }
 }

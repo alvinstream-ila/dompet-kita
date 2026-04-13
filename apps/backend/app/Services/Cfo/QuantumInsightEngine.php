@@ -65,6 +65,7 @@ class QuantumInsightEngine
             Log::debug('Quantum Insight Engine: Raw AI Response: '.$aiResponse);
 
             $cleanJson = $this->cleanJsonResponse($aiResponse);
+            /** @var array{findings?: array<int, array<string, mixed>>}|null $insights */
             $insights = json_decode($cleanJson, true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
@@ -91,7 +92,6 @@ class QuantumInsightEngine
             if (isset($insights['findings'])) {
                 Log::info('Quantum Insight Engine: Found '.count($insights['findings']).' findings.');
                 foreach ($insights['findings'] as $finding) {
-                    /** @var array<string, mixed> $finding */
                     $this->persistInsight((string) $user->id, $finding);
                 }
             } else {

@@ -28,6 +28,7 @@ class AssetTransaction extends Model
     /**
      * The asset this transaction belongs to.
      */
+    /** @return BelongsTo<Asset, $this> */
     public function asset(): BelongsTo
     {
         return $this->belongsTo(Asset::class);
@@ -36,6 +37,7 @@ class AssetTransaction extends Model
     /**
      * The source asset (for transfers).
      */
+    /** @return BelongsTo<Asset, $this> */
     public function sourceAsset(): BelongsTo
     {
         return $this->belongsTo(Asset::class, 'source_asset_id');
@@ -44,6 +46,7 @@ class AssetTransaction extends Model
     /**
      * The user who owns this transaction.
      */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

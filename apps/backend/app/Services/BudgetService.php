@@ -66,26 +66,30 @@ class BudgetService
         $cycle = $this->getCurrentCycleDates();
         $budgets = Budget::where('user_id', $user->id)->get();
 
-        return $budgets->map(function (Budget $budget) use ($cycle) {
-            $used = Transaction::where('user_id', $budget->user_id)
+        /** @var array<int, array{id: string, category: string, limit: float, used: float, remaining: float, percentage: float, status: string}> $usage */
+        $usage = $budgets->map(function (Budget $budget) use ($cycle) {
+            $used = (float) Transaction::where('user_id', $budget->user_id)
                 ->where('category', $budget->category)
                 ->whereBetween('date', [$cycle['start'], $cycle['end']])
                 ->where('type', 'expense')
                 ->sum('amount');
 
-            $remaining = max(0, $budget->limit - $used);
-            $percentage = $budget->limit > 0 ? ($used / $budget->limit) * 100 : 0;
+            $limit = (float) $budget->limit;
+            $remaining = max(0, $limit - $used);
+            $percentage = $limit > 0 ? ($used / $limit) * 100 : 0;
 
             return [
                 'id' => (string) $budget->id,
-                'category' => $budget->category,
-                'limit' => (float) $budget->limit,
-                'used' => (float) $used,
-                'remaining' => (float) $remaining,
+                'category' => (string) $budget->category,
+                'limit' => $limit,
+                'used' => $used,
+                'remaining' => $remaining,
                 'percentage' => (float) round($percentage, 2),
-                'status' => $this->getUsageStatus($percentage),
+                'status' => $this->getUsageStatus((float) $percentage),
             ];
-        })->toArray();
+        })->all();
+
+        return $usage;
     }
 
     /**

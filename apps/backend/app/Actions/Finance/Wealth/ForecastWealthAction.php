@@ -21,7 +21,13 @@ class ForecastWealthAction extends BaseAction
     /**
      * Forecast wealth trajectory for the next 12 months.
      *
-     * @return array<string, mixed>
+     * @return array{
+     *     current_net_worth: float|int,
+     *     avg_monthly_savings: float|int,
+     *     market_context: array<string, mixed>,
+     *     projection: Collection<int, array{month: string, estimated_net_worth: float|int}>,
+     *     advice: string
+     * }
      */
     public function execute(User $user, int $months = 12): array
     {

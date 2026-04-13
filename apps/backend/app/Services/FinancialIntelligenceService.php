@@ -29,8 +29,9 @@ class FinancialIntelligenceService
     {
         // 1. Determine User IDs for calculation
         $userIds = [$user->id];
-        if ($includePartner && $user->partner) {
-            $userIds[] = $user->partner->id;
+        $partner = $user->partner;
+        if ($includePartner && $partner instanceof User) {
+            $userIds[] = $partner->id;
         }
 
         // 2. Determine Budget Cycle (Current Month)
@@ -60,8 +61,8 @@ class FinancialIntelligenceService
             ->where('date', '>=', $thirtyDaysAgo)
             ->min('date');
 
-        $usageDays = $firstTxDate
-            ? max(1, min(self::CALCULATION_DAYS, Carbon::parse($firstTxDate)->diffInDays(Carbon::now()) + 1))
+        $usageDays = is_string($firstTxDate)
+            ? max(1, min(self::CALCULATION_DAYS, (int) Carbon::parse($firstTxDate)->diffInDays(Carbon::now()) + 1))
             : self::CALCULATION_DAYS;
 
         $totalHistoryExpense = Transaction::whereIn('user_id', $userIds)

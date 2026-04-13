@@ -56,7 +56,7 @@ class AiLegacyReportCommand extends Command
             $this->line('');
             $this->info('💡 Rekomendasi Warisan Digital:');
             foreach ($report['recommendations'] as $rec) {
-                $this->bullet($rec);
+                $this->bullet((string) $rec);
             }
 
             return 0;

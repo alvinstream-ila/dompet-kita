@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -24,10 +25,14 @@ class LegacyService
             ->whereNotNull('last_active_at')
             ->whereNotNull('partner_id')
             ->each(function (User $user) {
-                $threshold = $user->legacy_threshold_months ?: 6; // Default 6 months
+                $threshold = (int) ($user->legacy_threshold_months ?: 6); // Default 6 months
 
-                if ($user->last_active_at->addMonths($threshold)->isPast()) {
-                    $this->triggerLegacy($user);
+                $lastActive = $user->last_active_at;
+                if ($lastActive instanceof Carbon) {
+                    /** @var Carbon $lastActive */
+                    if ($lastActive->copy()->addMonths($threshold)->isPast()) {
+                        $this->triggerLegacy($user);
+                    }
                 }
             });
     }
@@ -47,7 +52,7 @@ class LegacyService
             [
                 'user_id' => $user->id,
                 'partner_id' => $user->partner_id,
-                'last_active' => $user->last_active_at->toDateTimeString(),
+                'last_active' => $user->last_active_at instanceof Carbon ? $user->last_active_at->toDateTimeString() : 'Never',
             ]
         );
 

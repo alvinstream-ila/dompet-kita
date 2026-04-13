@@ -25,8 +25,8 @@ class GetAiSystemStatusAction extends BaseAction
     {
         $status = AiWatchdog::getStatus();
 
-        return collect($status)->map(function (array $s) {
-            $usage = AiWatchdog::getTokenUsage((string) ($s['name'] ?? ''));
+        return array_map(function (array $s): array {
+            $usage = AiWatchdog::getTokenUsage((string) $s['name']);
 
             return [
                 'name' => (string) $s['name'],
@@ -36,6 +36,6 @@ class GetAiSystemStatusAction extends BaseAction
                 'tokens_out' => number_format((float) $usage['completion']),
                 'tokens_total' => number_format((float) $usage['total']),
             ];
-        })->toArray();
+        }, array_values($status));
     }
 }
