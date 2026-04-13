@@ -38,6 +38,16 @@ use Laravel\Sanctum\HasApiTokens;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  *
+ * @property string $password
+ * @property string|null $email_verification_code
+ * @property Carbon|null $email_verification_expires_at
+ * @property bool $two_factor_enabled
+ * @property string|null $two_factor_code
+ * @property Carbon|null $two_factor_expires_at
+ *
+ * @property string|null $otp_reset_code
+ * @property Carbon|null $otp_reset_expires_at
+ *
  * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
@@ -120,6 +130,10 @@ class User extends Authenticatable implements MustVerifyEmail
             'last_active_at' => 'datetime',
             'legacy_threshold_months' => 'integer',
             'is_legacy_triggered' => 'boolean',
+            'two_factor_enabled' => 'boolean',
+            'two_factor_expires_at' => 'datetime',
+            'email_verification_expires_at' => 'datetime',
+            'otp_reset_expires_at' => 'datetime',
         ];
     }
 
@@ -128,9 +142,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the partner for the user.
      *
-     * @return BelongsTo<User, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
      */
-    public function partner(): BelongsTo
+    public function partner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'partner_id');
     }
@@ -138,9 +152,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the assets for the user.
      *
-     * @return HasMany<Asset, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Asset, $this>
      */
-    public function assets(): HasMany
+    public function assets(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Asset::class);
     }
@@ -148,9 +162,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the transactions for the user.
      *
-     * @return HasMany<Transaction, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Transaction, $this>
      */
-    public function transactions(): HasMany
+    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Transaction::class);
     }
@@ -158,9 +172,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the goals for the user.
      *
-     * @return HasMany<Goal, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Goal, $this>
      */
-    public function goals(): HasMany
+    public function goals(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Goal::class);
     }
@@ -168,9 +182,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the loans for the user.
      *
-     * @return HasMany<Loan, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Loan, $this>
      */
-    public function loans(): HasMany
+    public function loans(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Loan::class);
     }
@@ -178,9 +192,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the scheduled transactions for the user.
      *
-     * @return HasMany<ScheduledTransaction, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<ScheduledTransaction, $this>
      */
-    public function scheduledTransactions(): HasMany
+    public function scheduledTransactions(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(ScheduledTransaction::class);
     }
@@ -188,9 +202,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the chat history for the user.
      *
-     * @return HasMany<ChatHistory, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<ChatHistory, $this>
      */
-    public function chatHistories(): HasMany
+    public function chatHistories(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(ChatHistory::class);
     }
@@ -198,9 +212,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the financial wisdoms for the user.
      *
-     * @return HasMany<FinancialWisdom, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<FinancialWisdom, $this>
      */
-    public function financialWisdoms(): HasMany
+    public function financialWisdoms(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(FinancialWisdom::class);
     }
@@ -208,9 +222,9 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the wealth histories for the user.
      *
-     * @return HasMany<WealthHistory, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<WealthHistory, $this>
      */
-    public function wealthHistories(): HasMany
+    public function wealthHistories(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(WealthHistory::class);
     }

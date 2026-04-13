@@ -20,7 +20,10 @@ class SimulatePurchaseAction extends BaseAction
     public function execute(User $user, float $amount, string $reason): array
     {
         $forecast = $this->forecastWealthAction->execute($user, 12);
-        $originalFinalWealth = end($forecast['projection'])['estimated_net_worth'];
+        /** @var \Illuminate\Support\Collection<int, array{month: string, estimated_net_worth: float|int}> $projection */
+        $projection = $forecast['projection'];
+        $lastItem = $projection->last();
+        $originalFinalWealth = $lastItem ? (float) $lastItem['estimated_net_worth'] : 1.0;
 
         $goals = Goal::where('user_id', $user->id)->get();
 
@@ -28,8 +31,8 @@ class SimulatePurchaseAction extends BaseAction
             'purchase_amount' => $amount,
             'reason' => $reason,
             'wealth_delta' => -$amount,
-            'impact_summary' => 'Pembelian ini akan mengurangi total kekayaan akhir tahun kita sebesar '.number_format(($amount / $originalFinalWealth) * 100, 2).'%.',
-            'goal_delay_risk' => count($goals) > 0 ? 'Risiko tinggi delay pada target: '.$goals->first()->name : 'Aman, belum ada target kritis terdekat.',
+            'impact_summary' => 'Pembelian ini akan mengurangi total kekayaan akhir tahun kita sebesar '.number_format(($amount / max(1, $originalFinalWealth)) * 100, 2).'%.',
+            'goal_delay_risk' => count($goals) > 0 && $goals->first() ? 'Risiko tinggi delay pada target: '.$goals->first()->name : 'Aman, belum ada target kritis terdekat.',
         ];
     }
 }

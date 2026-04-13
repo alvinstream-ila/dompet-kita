@@ -56,10 +56,12 @@ class CalculateTaxAction extends BaseAction
         $endOfYear = Carbon::create($year, 12, 31)?->endOfDay() ?? throw new \InvalidArgumentException("Invalid year: {$year}");
 
         // Sum income (Income type transactions)
-        $totalIncome = Transaction::where('user_id', $user->id)
+        /** @var float|int $sumAmount */
+        $sumAmount = Transaction::where('user_id', $user->id)
             ->where('type', TransactionType::INCOME)
             ->whereBetween('date', [$startOfYear, $endOfYear])
             ->sum('amount');
+        $totalIncome = (float) $sumAmount;
 
         // Apply PTKP
         $ptkp = $this->ptkpBase;
@@ -95,6 +97,7 @@ class CalculateTaxAction extends BaseAction
         $previousLimit = 0;
 
         foreach ($this->brackets as $bracket) {
+            /** @var array{limit: float, rate: float} $bracket */
             $rangeAmount = $bracket['limit'] - $previousLimit;
             $amountInBracket = min($remainingIncome, $rangeAmount);
 

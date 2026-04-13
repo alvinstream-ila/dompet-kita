@@ -30,8 +30,8 @@ class AssetResource extends JsonResource
             'profit_percent' => $this->invested_capital > 0
                 ? round((($this->value - $this->invested_capital) / $this->invested_capital) * 100, 2)
                 : 0,
-            'created_at' => $this->created_at?->toIso8601String(),
-            'updated_at' => $this->updated_at?->toIso8601String(),
+            'created_at' => $this->created_at->toIso8601String(),
+            'updated_at' => $this->updated_at->toIso8601String(),
         ];
     }
 }

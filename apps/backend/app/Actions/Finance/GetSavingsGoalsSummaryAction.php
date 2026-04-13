@@ -23,19 +23,19 @@ class GetSavingsGoalsSummaryAction extends BaseAction
     {
         $query = Goal::query();
 
-        if ($user) {
+        if ($user instanceof User) {
             $query->where('user_id', $user->id);
         }
 
         $goals = $query->get();
 
-        $totalTarget = $goals->sum(fn (Goal $g) => (float) $g->target_amount);
-        $totalCurrent = $goals->sum(fn (Goal $g) => (float) $g->current_amount);
+        $totalTarget = (float) $goals->sum(fn (Goal $g) => (float) $g->target_amount);
+        $totalCurrent = (float) $goals->sum(fn (Goal $g) => (float) $g->current_amount);
         $overallProgress = $totalTarget > 0 ? ($totalCurrent / $totalTarget) * 100 : 0;
 
         return [
             'goals' => $goals,
-            'overall_progress' => $overallProgress,
+            'overall_progress' => (float) $overallProgress,
         ];
     }
 }

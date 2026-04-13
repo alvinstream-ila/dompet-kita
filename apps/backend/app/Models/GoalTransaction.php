@@ -43,20 +43,20 @@ class GoalTransaction extends Model
         ];
     }
 
-    /** @return BelongsTo<Goal, $this> */
-    public function goal(): BelongsTo
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Goal, $this> */
+    public function goal(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Goal::class);
     }
 
-    /** @return BelongsTo<Asset, $this> */
-    public function asset(): BelongsTo
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Asset, $this> */
+    public function asset(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Asset::class);
     }
 
-    /** @return BelongsTo<User, $this> */
-    public function user(): BelongsTo
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this> */
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }

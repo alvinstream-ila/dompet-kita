@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\WealthHistoryResource;
 use App\Models\Asset;
+use App\Models\User;
 use App\Models\WealthHistory;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -17,6 +18,10 @@ class WealthHistoryController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
+
         $now = Carbon::now();
 
         // Fetch historical data excluding current month

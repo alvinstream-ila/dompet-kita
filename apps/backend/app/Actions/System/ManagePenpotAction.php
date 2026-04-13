@@ -26,7 +26,10 @@ class ManagePenpotAction extends BaseAction
             throw new Exception("Failed to fetch Penpot projects: {$response->status()}");
         }
 
-        return $response->json();
+        /** @var array<int, array{id: string, name: string}> $data */
+        $data = $response->json();
+
+        return $data;
     }
 
     /**
@@ -43,7 +46,10 @@ class ManagePenpotAction extends BaseAction
             throw new Exception("Failed to fetch project detail: {$response->status()}");
         }
 
-        return $response->json();
+        /** @var array<string, mixed> $data */
+        $data = $response->json();
+
+        return $data;
     }
 
     private function getToken(): string

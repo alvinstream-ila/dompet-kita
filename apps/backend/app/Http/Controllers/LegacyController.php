@@ -20,6 +20,9 @@ class LegacyController extends Controller
     public function getReport(Request $request): JsonResponse
     {
         $user = $request->user();
+        if (!$user instanceof \App\Models\User) {
+            abort(401);
+        }
 
         $reportData = $this->generateReportAction->execute($user);
 
@@ -36,6 +39,9 @@ class LegacyController extends Controller
     public function prepareArchive(Request $request): JsonResponse
     {
         $user = $request->user();
+        if (!$user instanceof \App\Models\User) {
+            abort(401);
+        }
         $message = $this->prepareArchiveAction->execute($user);
 
         return response()->json([

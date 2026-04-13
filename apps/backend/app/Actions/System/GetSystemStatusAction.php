@@ -68,11 +68,12 @@ class GetSystemStatusAction extends BaseAction
             $goalsQuery->where('user_id', $user->id);
         }
 
+        /** @var array<int, array{name: string, percentage: float, status_icon: string}> $targets */
         $targets = $goalsQuery->get()->map(function ($goal) {
-            $percent = $goal->target_amount > 0 ? ($goal->current_amount / $goal->target_amount) * 100 : 0;
+            $percent = $goal->target_amount > 0 ? ((float) $goal->current_amount / (float) $goal->target_amount) * 100 : 0;
 
             return [
-                'name' => $goal->name,
+                'name' => (string) $goal->name,
                 'percentage' => (float) $percent,
                 'status_icon' => $percent >= 100 ? '✅' : ($percent >= 50 ? '🔥' : '⏳'),
             ];

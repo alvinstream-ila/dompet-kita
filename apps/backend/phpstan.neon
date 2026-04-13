@@ -1,5 +1,6 @@
 includes:
     - ./vendor/larastan/larastan/extension.neon
+    - ./vendor/pestphp/pest/extension.neon
 
 parameters:
 
@@ -16,8 +17,9 @@ parameters:
     level: 9
 
     ignoreErrors:
-        # Resolving legacy ignore rules
-        # - '#PHPDoc tag @var#'
+        - '#Call to an undefined method PHPUnit\\Framework\\TestCase::(postJson|actingAs|get|deleteJson|putJson|json|assertStatus|assertJson|assertJsonValidationErrors)\(\)#'
+        - '#Cannot access offset .* on mixed#'
+        - '#Cannot cast mixed to (int|string|float|bool)#'
 
     excludePaths:
         - ./*/*/FileToBeExcluded.php

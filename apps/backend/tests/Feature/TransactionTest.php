@@ -156,7 +156,12 @@ class TransactionTest extends TestCase
             ->getJson('/api/transactions?month=1&year=2024');
 
         $response->assertStatus(200);
-        $this->assertCount(1, $response->json('data'));
-        $this->assertEquals(50000, $response->json('data.0.amount'));
+        $data = $response->json('data');
+        if (!is_array($data)) {
+            $this->fail('Response data is not an array');
+        }
+        /** @var array<int, array<string, mixed>> $data */
+        $this->assertCount(1, $data);
+        $this->assertEquals(50000, $data[0]['amount'] ?? 0);
     }
 }

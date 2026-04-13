@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\LoanResource;
 use App\Models\Loan;
+use App\Models\User;
 use App\Traits\HasApiResponses;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,7 +19,12 @@ class LoanController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $loans = Loan::where('user_id', $request->user()->id)
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
+
+        $loans = Loan::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -40,7 +46,12 @@ class LoanController extends Controller
             'status' => 'required|in:active,paid',
         ]);
 
-        $validated['user_id'] = $request->user()->id;
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
+
+        $validated['user_id'] = $user->id;
 
         $loan = Loan::create($validated);
 

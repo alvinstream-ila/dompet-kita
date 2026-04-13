@@ -34,7 +34,9 @@ class AssetController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $user = $request->user();
-        assert($user instanceof User);
+        if (!$user instanceof User) {
+            abort(401);
+        }
 
         $assets = Asset::where('user_id', $user->id)
             ->orderBy('type')
@@ -48,7 +50,12 @@ class AssetController extends Controller
      */
     public function store(StoreAssetRequest $request, CreateAssetAction $action): JsonResponse
     {
-        $asset = $action->execute($request->user(), $request->validated());
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
+
+        $asset = $action->execute($user, $request->validated());
 
         return $this->success(new AssetResource($asset), 'Aset berhasil simpan ya Sayang! 💰', 201);
     }
@@ -59,8 +66,12 @@ class AssetController extends Controller
     public function update(UpdateAssetRequest $request, Asset $asset, UpdateAssetAction $action): JsonResponse
     {
         $this->authorize('update', $asset);
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
 
-        $asset = $action->execute($request->user(), $asset, $request->validated());
+        $asset = $action->execute($user, $asset, $request->validated());
 
         return $this->success(new AssetResource($asset), 'Aset berhasil diupdate! Makin rapi deh keuangannya. ✨');
     }
@@ -71,8 +82,12 @@ class AssetController extends Controller
     public function destroy(Request $request, Asset $asset, DeleteAssetAction $action): JsonResponse
     {
         $this->authorize('delete', $asset);
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
 
-        $action->execute($request->user(), $asset);
+        $action->execute($user, $asset);
 
         return $this->success(null, 'Aset sudah dihapus ya Sayang. 👋', 204);
     }
@@ -83,14 +98,21 @@ class AssetController extends Controller
     public function fund(Request $request, Asset $asset, FundAssetAction $action): JsonResponse
     {
         $this->authorize('update', $asset);
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
 
-        $request->validate([
+        $validated = $request->validate([
             'amount' => 'required|numeric|min:0.01',
             'source_asset_id' => 'sometimes|nullable|exists:assets,id',
             'description' => 'sometimes|nullable|string|max:255',
         ]);
 
-        $asset = $action->execute($request->user(), $asset, $request->all());
+        /** @var array{amount: float|int, source_asset_id?: int|string|null, description?: string} $data */
+        $data = (array) $validated;
+
+        $asset = $action->execute($user, $asset, $data);
 
         return $this->success(new AssetResource($asset), 'Top up aset berhasil! Saldo kamu sudah terupdate. 📈');
     }
@@ -101,14 +123,21 @@ class AssetController extends Controller
     public function withdraw(Request $request, Asset $asset, WithdrawAssetAction $action): JsonResponse
     {
         $this->authorize('update', $asset);
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
 
-        $request->validate([
+        $validated = $request->validate([
             'amount' => 'required|numeric|min:0.01',
             'recipient_asset_id' => 'sometimes|nullable|exists:assets,id',
             'description' => 'sometimes|nullable|string|max:255',
         ]);
 
-        $asset = $action->execute($request->user(), $asset, $request->all());
+        /** @var array{amount: float|int, recipient_asset_id?: int|string|null, description?: string} $data */
+        $data = (array) $validated;
+
+        $asset = $action->execute($user, $asset, $data);
 
         return $this->success(new AssetResource($asset), 'Pencairan aset berhasil! Uangnya sudah berpindah posisi. 💸');
     }
@@ -120,7 +149,7 @@ class AssetController extends Controller
     {
         $this->authorize('view', $asset);
 
-        /** @var LengthAwarePaginator<AssetTransaction> $transactions */
+        /** @var LengthAwarePaginator<int, AssetTransaction> $transactions */
         $transactions = $asset->transactions()
             ->with(['sourceAsset'])
             ->orderByDesc('transaction_date')

@@ -23,7 +23,8 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->user()->id;
+        $user = $this->user();
+        $userId = $user ? $user->getAuthIdentifier() : null;
 
         return [
             'name' => [

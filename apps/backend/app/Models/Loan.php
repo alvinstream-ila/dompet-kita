@@ -71,9 +71,9 @@ class Loan extends Model
     /**
      * Get the user that owns the loan.
      *
-     * @return BelongsTo<User, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
      */
-    public function user(): BelongsTo
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }

@@ -19,8 +19,11 @@ return new class extends Migration
             }
 
             // Final verify
-            $result = (array) DB::selectOne('SELECT version()');
-            $version = $result['version'] ?? '';
+            $result = DB::selectOne('SELECT version()');
+            if (!$result) {
+                return;
+            }
+            $version = is_object($result) ? ($result->version ?? '') : ($result['version'] ?? '');
             if (! str_contains(strtolower((string) $version), 'postgres')) {
                 return;
             }

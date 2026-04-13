@@ -33,19 +33,19 @@ class GetWealthStatusAction extends BaseAction
         $txQuery = Transaction::whereMonth('date', $now->month)
             ->whereYear('date', $now->year);
 
-        if ($user) {
+        if ($user instanceof User) {
             $txQuery->where('user_id', $user->id);
         }
 
         $txs = $txQuery->get();
-        $income = (float) $txs->where('type', 'income')->sum('amount');
-        $expense = (float) $txs->where('type', 'expense')->sum('amount');
+        $income = (float) ($txs->where('type', 'income')->sum('amount') ?: 0.0);
+        $expense = (float) ($txs->where('type', 'expense')->sum('amount') ?: 0.0);
 
         // 2. Asset & Goals
         $assetQuery = Asset::query();
         $goalQuery = Goal::query();
 
-        if ($user) {
+        if ($user instanceof User) {
             $assetQuery->where('user_id', $user->id);
             $goalQuery->where('user_id', $user->id);
         }
@@ -54,23 +54,23 @@ class GetWealthStatusAction extends BaseAction
         $totalGoals = (float) $goalQuery->sum('current_amount');
 
         $holidayQuery = Holiday::query();
-        if ($user) {
+        if ($user instanceof User) {
             $holidayQuery->where('user_id', $user->id);
         }
         $totalHolidayFunds = (float) $holidayQuery->sum('funded_amount');
 
         // 3. Loans & Debts
         $loanQuery = Loan::query();
-        if ($user) {
+        if ($user instanceof User) {
             $loanQuery->where('user_id', $user->id);
         }
 
         $loans = $loanQuery->get();
-        $debts = (float) $loans->where('type', 'utang')->sum('remaining_amount');
-        $receivables = (float) $loans->where('type', 'piutang')->sum('remaining_amount');
+        $debts = (float) ($loans->where('type', 'utang')->sum('remaining_amount') ?: 0.0);
+        $receivables = (float) ($loans->where('type', 'piutang')->sum('remaining_amount') ?: 0.0);
 
         return [
-            'month' => $now->toFormattedDateString(),
+            'month' => (string) $now->toFormattedDateString(),
             'monthly_summary' => [
                 'income' => $income,
                 'expense' => $expense,

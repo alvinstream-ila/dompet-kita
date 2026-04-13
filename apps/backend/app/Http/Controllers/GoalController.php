@@ -22,7 +22,9 @@ class GoalController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $user = $request->user();
-        assert($user instanceof User);
+        if (!$user instanceof User) {
+            abort(401);
+        }
 
         $goals = Goal::where('user_id', $user->id)
             ->orderBy('deadline', 'asc')
@@ -47,7 +49,9 @@ class GoalController extends Controller
         ]);
 
         $user = $request->user();
-        assert($user instanceof User);
+        if (!$user instanceof User) {
+            abort(401);
+        }
 
         $validated['user_id'] = $user->id;
 
@@ -94,7 +98,9 @@ class GoalController extends Controller
 
         return DB::transaction(function () use ($validated, $goal, $request) {
             $user = $request->user();
-            assert($user instanceof User);
+            if (!$user instanceof User) {
+                abort(401);
+            }
 
             // 1. Create the Goal Transaction
             $goal->transactions()->create([
@@ -112,6 +118,7 @@ class GoalController extends Controller
             // 3. (Accounting Protocol) Deduct from Asset if specified
             if (! empty($validated['asset_id'])) {
                 $asset = Asset::findOrFail($validated['asset_id']);
+                assert($asset instanceof Asset);
                 $asset->decrement('value', $validated['amount']);
             }
 
@@ -133,7 +140,7 @@ class GoalController extends Controller
             ->orderBy('date', 'desc')
             ->get();
 
-        return GoalResource::collection($history); // We might need a separate GoalTransactionResource, but GoalResource is fine for now if we customize it or use AnonymousResourceCollection
+        return GoalResource::collection($history);
     }
 
     /**

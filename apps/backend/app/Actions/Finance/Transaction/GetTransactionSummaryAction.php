@@ -38,10 +38,15 @@ class GetTransactionSummaryAction extends BaseAction
                 ->groupBy('type')
                 ->get();
 
-            $income = (float) ($summary->firstWhere('type', TransactionType::INCOME)?->total
-                      ?? $summary->firstWhere('type', TransactionType::INCOME->value)?->total ?? 0);
-            $expense = (float) ($summary->firstWhere('type', TransactionType::EXPENSE)?->total
-                       ?? $summary->firstWhere('type', TransactionType::EXPENSE->value)?->total ?? 0);
+            /** @var \App\Models\Transaction|null $incomeModel */
+            $incomeModel = $summary->firstWhere('type', TransactionType::INCOME) 
+                ?? $summary->firstWhere('type', TransactionType::INCOME->value);
+            $income = $incomeModel ? (float) $incomeModel->total : 0.0;
+
+            /** @var \App\Models\Transaction|null $expenseModel */
+            $expenseModel = $summary->firstWhere('type', TransactionType::EXPENSE)
+                ?? $summary->firstWhere('type', TransactionType::EXPENSE->value);
+            $expense = $expenseModel ? (float) $expenseModel->total : 0.0;
 
             $recentTransactions = Transaction::where('user_id', $userId)
                 ->whereBetween('date', [$startDate, $endDate])
@@ -50,9 +55,9 @@ class GetTransactionSummaryAction extends BaseAction
                 ->get();
 
             return [
-                'income' => (float) $income,
-                'expense' => (float) $expense,
-                'balance' => (float) ($income - $expense),
+                'income' => $income,
+                'expense' => $expense,
+                'balance' => $income - $expense,
                 'recentTransactions' => $recentTransactions,
                 'period' => [
                     'start' => $startDate->toIso8601String(),

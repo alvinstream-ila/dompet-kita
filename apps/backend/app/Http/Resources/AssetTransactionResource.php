@@ -26,7 +26,7 @@ class AssetTransactionResource extends JsonResource
             'type' => $this->type,
             'description' => $this->description,
             'transaction_date' => $this->transaction_date->toIso8601String(),
-            'created_at' => $this->created_at->toIso8601String(),
+            'created_at' => ($this->created_at ?? now())->toIso8601String(),
         ];
     }
 }

@@ -48,14 +48,15 @@ class AIController extends Controller
     {
         try {
             if ($request->filled('image')) {
-                $base64Data = $request->image;
-                $mimeType = $request->mime_type ?? 'image/jpeg';
+                $base64Data = (string) $request->string('image');
+                $mimeType = (string) $request->string('mime_type', 'image/jpeg');
             } else {
                 [$base64Data, $mimeType] = $this->storageService->getFileDataFromRequest($request);
             }
 
             $result = $this->analyzeReceiptAction->execute($base64Data, $mimeType);
 
+            /** @var array{amount?: mixed, merchant?: mixed, category?: mixed, message?: mixed} $result */
             return $this->success([
                 'amount' => (int) ($result['amount'] ?? 0),
                 'merchant' => (string) ($result['merchant'] ?? 'Unknown'),
@@ -76,7 +77,9 @@ class AIController extends Controller
     public function getDashboardInsight(Request $request): JsonResponse
     {
         $user = $request->user();
-        assert($user instanceof User);
+        if (!$user instanceof User) {
+            return $this->error('Unauthorized', 401);
+        }
 
         try {
             $transactions = Transaction::where('user_id', $user->id)
@@ -91,12 +94,13 @@ class AIController extends Controller
                 ]);
             }
 
-            $totalIncome = $transactions->filter(fn ($t) => $t->type === TransactionType::INCOME)->sum('amount');
-            $totalExpense = $transactions->filter(fn ($t) => $t->type === TransactionType::EXPENSE)->sum('amount');
-            $savings = (float) $totalIncome - (float) $totalExpense;
+            $totalIncome = (float) $transactions->filter(fn ($t) => $t->type === TransactionType::INCOME)->sum('amount');
+            $totalExpense = (float) $transactions->filter(fn ($t) => $t->type === TransactionType::EXPENSE)->sum('amount');
+            $savings = (float) ($totalIncome - $totalExpense);
 
             $summaryText = $transactions->take(20)->map(function ($t) {
-                $typeStr = $t->type instanceof TransactionType ? $t->type->value : (string) $t->type;
+                /** @var \App\Models\Transaction $t */
+                $typeStr = $t->type->value;
 
                 return "{$t->date}: {$typeStr} Rp ".number_format((float) $t->amount)." ({$t->category})";
             })->implode("\n");
@@ -113,8 +117,8 @@ class AIController extends Controller
             });
 
             return $this->success([
-                'title' => (string) ($data['title'] ?? 'Insight Keuangan'),
-                'insight' => (string) ($data['insight'] ?? ''),
+                'title' => $data['title'],
+                'insight' => $data['insight'],
             ]);
 
         } catch (\Throwable $e) {
@@ -139,10 +143,12 @@ class AIController extends Controller
     {
         $request->validate(['message' => 'required|string|max:1000']);
         $user = $request->user();
-        assert($user instanceof User);
+        if (!$user instanceof User) {
+            return $this->error('Unauthorized', 401);
+        }
 
         try {
-            $response = $this->processChatAction->execute($user, (string) $request->message);
+            $response = $this->processChatAction->execute($user, (string) $request->string('message'));
 
             return $this->success($response, 'Asisten AI menjawab pesanmu! 💬');
         } catch (\Throwable $e) {
@@ -158,7 +164,9 @@ class AIController extends Controller
     public function getGuardianStatus(Request $request): JsonResponse
     {
         $user = $request->user();
-        assert($user instanceof User);
+        if (!$user instanceof User) {
+            return $this->error('Unauthorized', 401);
+        }
 
         try {
             $prediction = $this->intelService->predictLiquidityCrisis($user);
@@ -182,7 +190,9 @@ class AIController extends Controller
     {
         try {
             $user = $request->user();
-            assert($user instanceof User);
+            if (!$user instanceof User) {
+                return $this->error('Unauthorized', 401);
+            }
 
             $wisdom = $this->getLatestWisdomAction->execute($user);
             $unread = $this->getUnreadWisdomsAction->execute($user);
@@ -204,7 +214,9 @@ class AIController extends Controller
     public function generateWisdom(Request $request): JsonResponse
     {
         $user = $request->user();
-        assert($user instanceof User);
+        if (!$user instanceof User) {
+            return $this->error('Unauthorized', 401);
+        }
 
         try {
             $wisdom = $this->generateWisdomAction->execute($user);
@@ -222,9 +234,11 @@ class AIController extends Controller
      */
     public function simulateWealth(Request $request): JsonResponse
     {
-        $months = (int) $request->input('months', 12);
+        $months = $request->integer('months', 12);
         $user = $request->user();
-        assert($user instanceof User);
+        if (!$user instanceof User) {
+            return $this->error('Unauthorized', 401);
+        }
 
         try {
             $trajectories = $this->simulateMonteCarloAction->execute($user, $months);

@@ -14,8 +14,8 @@ class DeleteTransactionAction extends BaseAction
 
     public function execute(User $user, Transaction $transaction): bool
     {
-        return DB::transaction(function () use ($user, $transaction) {
-            $date = Carbon::parse($transaction->date);
+        return (bool) DB::transaction(function () use ($user, $transaction) {
+            $date = Carbon::parse((string) $transaction->date);
 
             $deleted = $transaction->delete();
 

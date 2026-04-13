@@ -56,7 +56,7 @@ class MediaController extends Controller
             $filePath = "{$folder}/{$fileName}";
 
             // Default to 'storj' (high reliability) if available, otherwise fallback to local/public
-            $diskName = config('filesystems.disks.storj.key') ? 'storj' : config('filesystems.default', 'public');
+            $diskName = (string) (config('filesystems.disks.storj.key') ? 'storj' : config('filesystems.default', 'public'));
 
             // ⛔ SECURITY FIX: Set visibility to 'private' (default for secure apps)
             // We use putFileAs with 'private' to ensure the cloud bucket doesn't expose it

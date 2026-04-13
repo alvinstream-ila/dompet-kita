@@ -28,8 +28,8 @@ class AssetTransaction extends Model
     /**
      * The asset this transaction belongs to.
      */
-    /** @return BelongsTo<Asset, $this> */
-    public function asset(): BelongsTo
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Asset, $this> */
+    public function asset(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Asset::class);
     }
@@ -37,8 +37,8 @@ class AssetTransaction extends Model
     /**
      * The source asset (for transfers).
      */
-    /** @return BelongsTo<Asset, $this> */
-    public function sourceAsset(): BelongsTo
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Asset, $this> */
+    public function sourceAsset(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Asset::class, 'source_asset_id');
     }
@@ -46,8 +46,8 @@ class AssetTransaction extends Model
     /**
      * The user who owns this transaction.
      */
-    /** @return BelongsTo<User, $this> */
-    public function user(): BelongsTo
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this> */
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }

@@ -59,9 +59,9 @@ class AuthController extends Controller
 
         /** @var User $user */
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make((string) $request->password),
+            'name' => (string) $request->string('name'),
+            'email' => (string) $request->string('email'),
+            'password' => Hash::make((string) $request->string('password')),
         ]);
 
         // 🕵️ Log initial registration access
@@ -111,21 +111,21 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', (string) $request->email)->first();
+        $user = User::where('email', (string) $request->string('email'))->first();
 
-        if (! $user instanceof User || ! Hash::check((string) $request->password, $user->password)) {
+        if (! $user instanceof User || ! Hash::check((string) $request->string('password'), (string) $user->password)) {
             // 🚨 Audit Log: Track failed attempt for security alerts
             LoginHistory::create([
-                'user_id' => $user ? $user->id : null,
+                'user_id' => $user instanceof User ? $user->id : null,
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
                 'login_at' => now()->toDateTimeString(),
                 'status' => 'failed',
-                'metadata' => ['attempted_email' => $request->email],
+                'metadata' => ['attempted_email' => $request->string('email')],
             ]);
 
             $this->sentinel->notify(
-                "Gagal login buat: `{$request->email}`\nIP: `{$request->ip()}`\nDevice: `{$request->userAgent()}`",
+                "Gagal login buat: `{$request->string('email')}`\nIP: `{$request->ip()}`\nDevice: `{$request->userAgent()}`",
                 'warning',
                 ['title' => 'Curi Data? 🕵️']
             );
@@ -217,7 +217,7 @@ class AuthController extends Controller
             return \response()->json(['message' => 'Silakan login dulu ya, Sayang!'], 401);
         }
 
-        if ($user->email_verification_code !== $request->code ||
+        if ($user->email_verification_code !== (string) $request->string('code') ||
             ($user->email_verification_expires_at !== null && now()->isAfter($user->email_verification_expires_at))) {
             return \response()->json([
                 'message' => 'Kode salah atau sudah kedaluwarsa, Sayang. Cek email lagi ya! ❤️',
@@ -265,12 +265,12 @@ class AuthController extends Controller
             'code' => 'required|string',
         ]);
 
-        $user = User::where('email', $request->email)
-            ->where('two_factor_code', $request->code)
+        $user = User::where('email', (string) $request->string('email'))
+            ->where('two_factor_code', (string) $request->string('code'))
             ->where('two_factor_expires_at', '>', now())
             ->first();
 
-        if (! $user) {
+        if (! $user instanceof User) {
             return \response()->json([
                 'message' => 'Kode salah atau sudah kedaluwarsa, Sayang. Coba lagi ya! ❤️',
             ], 401);
@@ -307,14 +307,13 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         $user = $request->user();
-        assert($user instanceof User);
+        if (!$user instanceof User) {
+            return \response()->json(['message' => 'Unauthenticated'], 401);
+        }
 
         Cache::forget("sudo_mode_{$user->id}");
 
-        $token = $user->currentAccessToken();
-        if ($token instanceof PersonalAccessToken) {
-            $token->delete();
-        }
+        $user->currentAccessToken()->delete();
 
         return \response()->json([
             'message' => 'Sampai jumpa lagi, Sayang! ❤️',
@@ -331,9 +330,11 @@ class AuthController extends Controller
         ]);
 
         $user = $request->user();
-        assert($user instanceof User);
+        if (!$user instanceof User) {
+            return \response()->json(['message' => 'Unauthenticated'], 401);
+        }
 
-        if (! Hash::check((string) $request->password, $user->password)) {
+        if (! Hash::check((string) $request->string('password'), (string) $user->password)) {
             $this->sentinel->notify(
                 "Gagal verifikasi Sudo Mode dari IP: `{$request->ip()}`",
                 'critical',

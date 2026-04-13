@@ -20,7 +20,8 @@ class SyncMarketAssetsAction extends BaseAction
      */
     public function execute(): array
     {
-        $market = $this->marketService->getRates();
+        $market = (array) $this->marketService->getRates();
+        /** @var array{updated: int, alerts: int} $stats */
         $stats = ['updated' => 0, 'alerts' => 0];
 
         Asset::marketSynced()
@@ -38,7 +39,8 @@ class SyncMarketAssetsAction extends BaseAction
     /**
      * Synchronize a single asset and handle auditing.
      *
-     * @param  array<string, int>  $stats
+     * @param  array<string, mixed>  $market
+     * @param  array{updated: int, alerts: int}  $stats
      */
     private function syncAsset(Asset $asset, array $market, array &$stats): void
     {
@@ -60,83 +62,86 @@ class SyncMarketAssetsAction extends BaseAction
      */
     private function resolvePrice(Asset $asset, array $market): float
     {
-        $symbol = strtoupper($asset->unit ?? '');
-        $quantity = $asset->quantity;
+        $symbol = strtoupper((string) ($asset->unit ?? ''));
+        $quantity = (float) $asset->quantity;
 
         return match ($asset->type) {
             AssetType::INVESTMENT, AssetType::COMMODITY => $symbol === 'GRAM'
-                ? $quantity * ($market['gold_antam_gram'] ?? 0)
-                : $asset->value,
+                ? $quantity * (float) ($market['gold_antam_gram'] ?? 0.0)
+                : (float) $asset->value,
 
             AssetType::CASH => in_array($symbol, ['USD', 'SGD', 'EUR', 'JPY', 'GBP', 'AUD'])
-                ? $quantity * $this->marketService->getRate($symbol, 'IDR')
-                : $asset->value,
+                ? $quantity * (float) $this->marketService->getRate($symbol, 'IDR')
+                : (float) $asset->value,
 
             AssetType::STOCK => $this->resolveStockPrice($asset, $symbol),
 
             AssetType::CRYPTO => $this->resolveCryptoPrice($asset, $symbol),
 
-            default => $asset->value,
+            default => (float) $asset->value,
         };
     }
 
     private function resolveStockPrice(Asset $asset, string $symbol): float
     {
         if (empty($symbol)) {
-            return $asset->value;
+            return (float) $asset->value;
         }
 
-        $price = $this->marketService->getStockPrice($symbol);
-        if (! $price) {
-            return $asset->value;
+        $price = (float) $this->marketService->getStockPrice($symbol);
+        if ($price <= 0) {
+            return (float) $asset->value;
         }
 
         // International Conversion
         if (! str_ends_with($symbol, '.JK')) {
-            $price *= $this->marketService->getRate('USD', 'IDR');
+            $price *= (float) $this->marketService->getRate('USD', 'IDR');
         }
 
-        return $asset->quantity * $price;
+        return (float) $asset->quantity * $price;
     }
 
     private function resolveCryptoPrice(Asset $asset, string $symbol): float
     {
         if (empty($symbol)) {
-            return $asset->value;
+            return (float) $asset->value;
         }
 
-        $price = $this->marketService->getCryptoPrice($symbol);
-        if (! $price) {
-            return $asset->value;
+        $price = (float) $this->marketService->getCryptoPrice($symbol);
+        if ($price <= 0) {
+            return (float) $asset->value;
         }
 
         // USDT Conversion
         if (str_ends_with($symbol, 'USDT')) {
-            $price *= $this->marketService->getRate('USD', 'IDR');
+            $price *= (float) $this->marketService->getRate('USD', 'IDR');
         }
 
-        return $asset->quantity * $price;
+        return (float) $asset->quantity * $price;
     }
 
     /**
      * Audit and alert if value shift is significant (> 3%).
      *
-     * @param  array<string, int>  $stats
+     * @param  array{updated: int, alerts: int}  $stats
      */
     private function logSignificantChange(Asset $asset, float $oldValue, float $newValue, array &$stats): void
     {
         $changePercent = $oldValue > 0 ? abs(($newValue - $oldValue) / $oldValue) * 100 : 0;
 
         if ($changePercent > 3 && function_exists('activity')) {
+            $quantity = (float) $asset->quantity;
+            $unit = (string) ($asset->unit ?? 'Asset');
+
             activity('sentinel')
                 ->performedOn($asset)
                 ->withProperties([
                     'old_value' => $oldValue,
                     'new_value' => $newValue,
                     'change_percent' => round($changePercent, 2),
-                    'market_rate' => $newValue / $asset->quantity,
+                    'market_rate' => $quantity > 0 ? $newValue / $quantity : 0,
                 ])
-                ->log("Supreme Sentinel Alert: Significant {$asset->unit} Value Shift (".round($changePercent, 2).'%) detected.');
+                ->log("Supreme Sentinel Alert: Significant {$unit} Value Shift (".round($changePercent, 2).'%) detected.');
 
             $stats['alerts']++;
         }

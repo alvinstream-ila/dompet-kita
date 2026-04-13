@@ -22,11 +22,16 @@ class SimulateMonteCarloAction extends BaseAction
     {
         $iterations = 100;
         $forecastBase = $this->forecastWealthAction->execute($user, $months);
-        $netWorth = $forecastBase['current_net_worth'];
-        $avgSavings = $forecastBase['avg_monthly_savings'];
-        $inflationMonthly = ($forecastBase['market_context']['inflation_rate'] ?? 0.003) / 12;
+        
+        $netWorth = (float) $forecastBase['current_net_worth'];
+        $avgSavings = (float) $forecastBase['avg_monthly_savings'];
+        
+        $marketContext = (array) $forecastBase['market_context'];
+        $inflationRate = (float) $marketContext['inflation_rate'];
+        $inflationMonthly = $inflationRate / 12;
 
-        $results = []; // [month_index][iteration_index]
+        /** @var array<int, array<int, float>> $results -- [month_index][iteration_index] */
+        $results = [];
 
         for ($i = 0; $i < $iterations; $i++) {
             $runningWealth = $netWorth;
@@ -43,20 +48,23 @@ class SimulateMonteCarloAction extends BaseAction
                 // 3. Regular Savings & Inflation
                 $runningWealth = ($runningWealth + $actualSavings) * (1 - $inflationMonthly);
 
-                $results[$m][] = max(0, $runningWealth);
+                $results[$m][] = (float) max(0, $runningWealth);
             }
         }
 
         $trajectories = [];
         for ($m = 1; $m <= $months; $m++) {
-            $monthData = $results[$m];
+            $monthData = $results[$m] ?? [];
+            if (empty($monthData)) {
+                continue;
+            }
             sort($monthData);
 
             $trajectories[] = [
-                'month' => Carbon::now()->addMonths($m)->format('M Y'),
-                'pessimistic' => $monthData[(int) round($iterations * 0.10) - 1],
-                'expected' => $monthData[(int) round($iterations * 0.50) - 1],
-                'optimistic' => $monthData[(int) round($iterations * 0.90) - 1],
+                'month' => (string) Carbon::now()->addMonths($m)->format('M Y'),
+                'pessimistic' => (float) $monthData[(int) round($iterations * 0.10) - 1],
+                'expected' => (float) $monthData[(int) round($iterations * 0.50) - 1],
+                'optimistic' => (float) $monthData[(int) round($iterations * 0.90) - 1],
             ];
         }
 

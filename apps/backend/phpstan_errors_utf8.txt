@@ -1,0 +1,621 @@
+﻿ ------ ------------------------------------------------ 
+  Line   app\Actions\AI\Cognitive\ProcessChatAction.php  
+ ------ ------------------------------------------------ 
+  76     Cannot cast mixed to float.                     
+         🪪  cast.double                                 
+  77     Cannot cast mixed to float.                     
+         🪪  cast.double                                 
+ ------ ------------------------------------------------ 
+
+ ------ ----------------------------------------------- 
+  Line   app\Actions\Finance\GetWealthStatusAction.php  
+ ------ ----------------------------------------------- 
+  41     Cannot cast mixed to float.                    
+         🪪  cast.double                                
+  42     Cannot cast mixed to float.                    
+         🪪  cast.double                                
+  69     Cannot cast mixed to float.                    
+         🪪  cast.double                                
+  70     Cannot cast mixed to float.                    
+         🪪  cast.double                                
+ ------ ----------------------------------------------- 
+
+ ------ -------------------------------------------------- 
+  Line   app\Actions\Finance\PerformCfoAnalysisAction.php  
+ ------ -------------------------------------------------- 
+  39     Cannot cast mixed to float.                       
+         🪪  cast.double                                   
+  41     Cannot cast mixed to float.                       
+         🪪  cast.double                                   
+ ------ -------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------------------------------------- 
+  Line   app\Actions\Finance\Tax\CalculateTaxAction.php                                                                
+ ------ -------------------------------------------------------------------------------------------------------------- 
+  75     Method App\Actions\Finance\Tax\CalculateTaxAction::execute() should return array{year: int, total_income:     
+         float, ptkp: float, taxable_income: float, estimated_tax: float, effective_rate: float, ptkp_status: string,  
+         ptkp_value: float} but returns array{year: int, total_income: float|int|numeric-string, ptkp: float,          
+         taxable_income: 0|float, estimated_tax: float, effective_rate: float, ptkp_status: 'Status K/1                
+         (Menikah…'|'Status TK/0 (Lajang…', ptkp_value: float}.                                                        
+         🪪  return.type                                                                                               
+         💡  Offset 'total_income' (float) does not accept type float|int|string.                                      
+ ------ -------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------- 
+  Line   app\Actions\Finance\Transaction\DeleteTransactionAction.php                                               
+ ------ ---------------------------------------------------------------------------------------------------------- 
+  17     Method App\Actions\Finance\Transaction\DeleteTransactionAction::execute() should return bool but returns  
+         bool|null.                                                                                                
+         🪪  return.type                                                                                           
+ ------ ---------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------- 
+  Line   app\Actions\Finance\Transaction\GetTransactionSummaryAction.php                               
+ ------ ---------------------------------------------------------------------------------------------- 
+  41     Using nullsafe property access "?->total" on left side of ?? is unnecessary. Use -> instead.  
+         🪪  nullsafe.neverNull                                                                        
+  42     Using nullsafe property access "?->total" on left side of ?? is unnecessary. Use -> instead.  
+         🪪  nullsafe.neverNull                                                                        
+  45     Using nullsafe property access "?->total" on left side of ?? is unnecessary. Use -> instead.  
+         🪪  nullsafe.neverNull                                                                        
+  46     Using nullsafe property access "?->total" on left side of ?? is unnecessary. Use -> instead.  
+         🪪  nullsafe.neverNull                                                                        
+ ------ ---------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------------------- 
+  Line   app\Actions\Finance\Transaction\UpdateTransactionAction.php                        
+ ------ ----------------------------------------------------------------------------------- 
+  21     Parameter #1 $time of static method Carbon\Carbon::parse() expects                 
+         Carbon\Month|Carbon\WeekDay|DateTimeInterface|float|int|string|null, mixed given.  
+         🪪  argument.type                                                                  
+ ------ ----------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   app\Actions\Finance\Wealth\ForecastWealthAction.php                                                            
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  54     Offset 'inflation_rate' on array{currency_rates: array<string, float>, gold_antam_gram: float, gold_global_oz  
+         : float, inflation_rate: float, last_updated: string} on left side of ?? always exists and is not nullable.    
+         🪪  nullCoalesce.offset                                                                                        
+ ------ --------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------- 
+  Line   app\Actions\Finance\Wealth\SimulateMonteCarloAction.php         
+ ------ ---------------------------------------------------------------- 
+  30     Binary operation "/" between mixed and 12 results in an error.  
+         🪪  binaryOp.invalid                                            
+ ------ ---------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------------------------------------------- 
+  Line   app\Actions\Finance\Wealth\SimulatePurchaseAction.php                                                      
+ ------ ----------------------------------------------------------------------------------------------------------- 
+  23     Cannot access offset 'estimated_net_worth' on array{month: string, estimated_net_worth: float|int}|false.  
+         🪪  offsetAccess.nonOffsetAccessible                                                                       
+  32     Cannot access property $name on App\Models\Goal|null.                                                      
+         🪪  property.nonObject                                                                                     
+ ------ ----------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   app\Actions\Finance\Wealth\SyncMarketAssetsAction.php                                                          
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  35     Method App\Actions\Finance\Wealth\SyncMarketAssetsAction::execute() should return array{updated: int, alerts:  
+         int} but returns array<string, int>.                                                                           
+         🪪  return.type                                                                                                
+  43     Method App\Actions\Finance\Wealth\SyncMarketAssetsAction::syncAsset() has parameter $market with no value      
+         type specified in iterable type array.                                                                         
+         🪪  missingType.iterableValue                                                                                  
+         💡  See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                     
+  52     Parameter #4 $stats of method App\Actions\Finance\Wealth\SyncMarketAssetsAction::logSignificantChange()        
+         expects array{updated: int, alerts: int}, non-empty-array<string, int> given.                                  
+         🪪  argument.type                                                                                              
+  68     Cannot cast mixed to float.                                                                                    
+         🪪  cast.double                                                                                                
+  135    No error to ignore is reported on line 135.                                                                    
+         🪪  ignore.unmatchedLine (non-ignorable)                                                                       
+ ------ --------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   app\Actions\Security\DeadMansSwitch\GenerateReportAction.php                                                   
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  54     Parameter #2 $report of method App\Actions\AI\GetLegacyAdviceAction::execute() expects                         
+         array{financial_summary: array{total_assets: float|int, total_loans: float|int, total_goals: float|int}},      
+         array{report_date: string, user: array{name: string, email: string}, financial_summary: array{total_assets:    
+         float|int|numeric-string, total_loans: float|int|numeric-string, total_goals: float|int|numeric-string},       
+         asset_details: Illuminate\Database\Eloquent\Collection<int, App\Models\Asset>, active_loans: Illuminate\Datab  
+         ase\Eloquent\Collection<int, App\Models\Loan>} given.                                                          
+         🪪  argument.type                                                                                              
+         💡  Offset 'financial_summary' (array{total_assets: float|int, total_loans: float|int, total_goals:            
+         float|int}) does not accept type array{total_assets: float|int|numeric-string, total_loans:                    
+         float|int|numeric-string, total_goals: float|int|numeric-string}: Offset 'total_assets' (float|int) does not   
+         accept type float|int|string.                                                                                  
+         💡  Offset 'financial_summary' (array{total_assets: float|int, total_loans: float|int, total_goals:            
+         float|int}) does not accept type array{total_assets: float|int|numeric-string, total_loans:                    
+         float|int|numeric-string, total_goals: float|int|numeric-string}: Offset 'total_loans' (float|int) does not    
+         accept type float|int|string.                                                                                  
+         💡  Offset 'financial_summary' (array{total_assets: float|int, total_loans: float|int, total_goals:            
+         float|int}) does not accept type array{total_assets: float|int|numeric-string, total_loans:                    
+         float|int|numeric-string, total_goals: float|int|numeric-string}: Offset 'total_goals' (float|int) does not    
+         accept type float|int|string.                                                                                  
+  65     Method App\Actions\Security\DeadMansSwitch\GenerateReportAction::execute() should return array{report_date:    
+         string, user: array{name: string, email: string}, financial_summary: array{total_assets: float|int,            
+         total_loans: float|int, total_goals: float|int}, asset_details: Illuminate\Database\Eloquent\Collection<int,   
+         App\Models\Asset>, active_loans: Illuminate\Database\Eloquent\Collection<int, App\Models\Loan>, recommendatio  
+         ns: array<int, string>} but returns array{report_date: string, user: array{name: string, email: string}, fina  
+         ncial_summary: array{total_assets: float|int|numeric-string, total_loans: float|int|numeric-string,            
+         total_goals: float|int|numeric-string}, asset_details: Illuminate\Database\Eloquent\Collection<int, App\Model  
+         s\Asset>, active_loans: Illuminate\Database\Eloquent\Collection<int, App\Models\Loan>, recommendations: array  
+         {string, 'Ini adalah snapshot…', 'Simpan dokumen ini…', non-falsy-string}}.                                    
+         🪪  return.type                                                                                                
+         💡  Offset 'financial_summary' (array{total_assets: float|int, total_loans: float|int, total_goals:            
+         float|int}) does not accept type array{total_assets: float|int|numeric-string, total_loans:                    
+         float|int|numeric-string, total_goals: float|int|numeric-string}: Offset 'total_assets' (float|int) does not   
+         accept type float|int|string.                                                                                  
+         💡  Offset 'financial_summary' (array{total_assets: float|int, total_loans: float|int, total_goals:            
+         float|int}) does not accept type array{total_assets: float|int|numeric-string, total_loans:                    
+         float|int|numeric-string, total_goals: float|int|numeric-string}: Offset 'total_loans' (float|int) does not    
+         accept type float|int|string.                                                                                  
+         💡  Offset 'financial_summary' (array{total_assets: float|int, total_loans: float|int, total_goals:            
+         float|int}) does not accept type array{total_assets: float|int|numeric-string, total_loans:                    
+         float|int|numeric-string, total_goals: float|int|numeric-string}: Offset 'total_goals' (float|int) does not    
+         accept type float|int|string.                                                                                  
+ ------ --------------------------------------------------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------------------------------------- 
+  Line   app\Actions\System\BackupDatabaseAction.php                                                                   
+ ------ -------------------------------------------------------------------------------------------------------------- 
+  34     Parameter #1 $dbUrl of method App\Actions\System\BackupDatabaseAction::export() expects string, mixed given.  
+         🪪  argument.type                                                                                             
+  37     Cannot cast mixed to string.                                                                                  
+         🪪  cast.string                                                                                               
+ ------ -------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   app\Actions\System\GetSystemStatusAction.php                                                                   
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  81     Method App\Actions\System\GetSystemStatusAction::execute() should return array{active_balance: float,          
+         total_assets: float, active_loans: float, net_worth: float, security_alerts: int, market: array{usd_idr:       
+         float, gold_gram: float}, top_targets: array<int, array{name: string, percentage: float, status_icon: string}  
+         >} but returns array{active_balance: float, total_assets: float, active_loans: float, net_worth: float, secur  
+         ity_alerts: int<0, max>, market: array{usd_idr: float, gold_gram: float}, top_targets: array<mixed>}.          
+         🪪  return.type                                                                                                
+         💡  Offset 'top_targets' (array<int, array{name: string, percentage: float, status_icon: string}>) does not ac  
+         cept type array<mixed>.                                                                                        
+ ------ --------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   app\Actions\System\ManagePenpotAction.php                                                                      
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  29     Method App\Actions\System\ManagePenpotAction::listProjects() should return array<int, array{id: string, name:  
+          string}> but returns mixed.                                                                                   
+         🪪  return.type                                                                                                
+  46     Method App\Actions\System\ManagePenpotAction::getProject() should return array<string, mixed> but returns mix  
+         ed.                                                                                                            
+         🪪  return.type                                                                                                
+  56     Cannot cast mixed to string.                                                                                   
+         🪪  cast.string                                                                                                
+ ------ --------------------------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------- 
+  Line   app\Actions\System\OptimizeDatabaseAction.php  
+ ------ ----------------------------------------------- 
+  30     Cannot cast mixed to int.                      
+         🪪  cast.int                                   
+ ------ ----------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   app\Console\Commands\TestLangSmithTrace.php                                                                    
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  27     Method App\Console\Commands\TestLangSmithTrace::handle() has no return type specified.                         
+         🪪  missingType.return                                                                                         
+  38     Offset 'total_tokens' on array{prompt_tokens: int, completion_tokens: int, total_tokens: int} on left side of  
+         ?? always exists and is not nullable.                                                                          
+         🪪  nullCoalesce.offset                                                                                        
+ ------ --------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   app\Http\Controllers\AIController.php                                                                          
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  60     Cannot cast mixed to int.                                                                                      
+         🪪  cast.int                                                                                                   
+  61     Cannot cast mixed to string.                                                                                   
+         🪪  cast.string                                                                                                
+  62     Cannot cast mixed to string.                                                                                   
+         🪪  cast.string                                                                                                
+  63     Cannot cast mixed to string.                                                                                   
+         🪪  cast.string                                                                                                
+  98     Cannot cast mixed to float.                                                                                    
+         🪪  cast.double                                                                                                
+  98     Cannot cast mixed to float.                                                                                    
+         🪪  cast.double                                                                                                
+  101    Instanceof between App\Enums\TransactionType and App\Enums\TransactionType will always evaluate to true.       
+         🪪  instanceof.alwaysTrue                                                                                      
+         💡  Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain  
+         : false in your phpstan.neon.                                                                                  
+  110    Cannot cast mixed to float.                                                                                    
+         🪪  cast.double                                                                                                
+  111    Cannot cast mixed to float.                                                                                    
+         🪪  cast.double                                                                                                
+  118    Offset 'title' on array{title: string, insight: string} on left side of ?? always exists and is not nullable.  
+         🪪  nullCoalesce.offset                                                                                        
+  119    Offset 'insight' on array{title: string, insight: string} on left side of ?? always exists and is not          
+         nullable.                                                                                                      
+         🪪  nullCoalesce.offset                                                                                        
+ ------ --------------------------------------------------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------------------------------------- 
+  Line   app\Http\Controllers\AssetController.php                                                                      
+ ------ -------------------------------------------------------------------------------------------------------------- 
+  112    Parameter #3 $data of method App\Actions\Finance\Asset\FundAssetAction::execute() expects array{amount:       
+         float|int, source_asset_id?: int|string|null, description?: string}, array given.                             
+         🪪  argument.type                                                                                             
+  134    Parameter #3 $data of method App\Actions\Finance\Asset\WithdrawAssetAction::execute() expects array{amount:   
+         float|int, recipient_asset_id?: int|string|null, description?: string}, array given.                          
+         🪪  argument.type                                                                                             
+  147    PHPDoc tag @var for variable $transactions contains generic class Illuminate\Pagination\LengthAwarePaginator  
+         but does not specify its types: TKey, TValue                                                                  
+         🪪  missingType.generics                                                                                      
+ ------ -------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   app\Http\Controllers\AuthController.php                                                                        
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  116    Parameter #2 $hashedValue of static method Illuminate\Support\Facades\Hash::check() expects string,            
+         string|null given.                                                                                             
+         🪪  argument.type                                                                                              
+  317    Instanceof between Laravel\Sanctum\PersonalAccessToken and Laravel\Sanctum\PersonalAccessToken will always     
+         evaluate to true.                                                                                              
+         🪪  instanceof.alwaysTrue                                                                                      
+         💡  Because the type is coming from a PHPDoc, you can turn off this check by setting treatPhpDocTypesAsCertain  
+         : false in your phpstan.neon.                                                                                  
+  340    Parameter #2 $hashedValue of static method Illuminate\Support\Facades\Hash::check() expects string,            
+         string|null given.                                                                                             
+         🪪  argument.type                                                                                              
+ ------ --------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   app\Http\Controllers\GoalController.php                                                                        
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  121    Call to an undefined method App\Models\Asset|Illuminate\Database\Eloquent\Collection<int, App\Models\Asset>::  
+         decrement().                                                                                                   
+         🪪  method.notFound                                                                                            
+ ------ --------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   app\Http\Controllers\HolidayController.php                                                                     
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  20     Class App\Http\Controllers\User not found.                                                                     
+         🪪  class.notFound                                                                                             
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                           
+  24     Access to property $id on an unknown class App\Http\Controllers\User.                                          
+         🪪  class.notFound                                                                                             
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                           
+  44     Class App\Http\Controllers\User not found.                                                                     
+         🪪  class.notFound                                                                                             
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                           
+  48     Access to property $id on an unknown class App\Http\Controllers\User.                                          
+         🪪  class.notFound                                                                                             
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                           
+  63     Access to property $id on an unknown class App\Http\Controllers\User.                                          
+         🪪  class.notFound                                                                                             
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                           
+  63     Class App\Http\Controllers\User not found.                                                                     
+         🪪  class.notFound                                                                                             
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                           
+  73     Access to property $id on an unknown class App\Http\Controllers\User.                                          
+         🪪  class.notFound                                                                                             
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                           
+  73     Class App\Http\Controllers\User not found.                                                                     
+         🪪  class.notFound                                                                                             
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                           
+  100    Access to property $id on an unknown class App\Http\Controllers\User.                                          
+         🪪  class.notFound                                                                                             
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                           
+  100    Class App\Http\Controllers\User not found.                                                                     
+         🪪  class.notFound                                                                                             
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                           
+  122    Access to property $id on an unknown class App\Http\Controllers\User.                                          
+         🪪  class.notFound                                                                                             
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                           
+  122    Class App\Http\Controllers\User not found.                                                                     
+         🪪  class.notFound                                                                                             
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                           
+  136    Access to property $id on an unknown class App\Http\Controllers\User.                                          
+         🪪  class.notFound                                                                                             
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                           
+  150    Call to an undefined method App\Models\Asset|Illuminate\Database\Eloquent\Collection<int, App\Models\Asset>::  
+         decrement().                                                                                                   
+         🪪  method.notFound                                                                                            
+  166    Access to property $id on an unknown class App\Http\Controllers\User.                                          
+         🪪  class.notFound                                                                                             
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                           
+  166    Class App\Http\Controllers\User not found.                                                                     
+         🪪  class.notFound                                                                                             
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                           
+ ------ --------------------------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   app\Http\Controllers\InsightController.php                             
+ ------ ----------------------------------------------------------------------- 
+  20     Class App\Http\Controllers\User not found.                             
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  38     Class App\Http\Controllers\User not found.                             
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  43     Access to property $id on an unknown class App\Http\Controllers\User.  
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  55     Access to property $id on an unknown class App\Http\Controllers\User.  
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  55     Class App\Http\Controllers\User not found.                             
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  74     Access to property $id on an unknown class App\Http\Controllers\User.  
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  74     Class App\Http\Controllers\User not found.                             
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------- 
+  Line   app\Http\Controllers\LegacyController.php                                                                 
+ ------ ---------------------------------------------------------------------------------------------------------- 
+  24     Parameter #1 $user of method App\Actions\Security\DeadMansSwitch\GenerateReportAction::execute() expects  
+         App\Models\User, App\Models\User|null given.                                                              
+         🪪  argument.type                                                                                         
+  39     Parameter #1 $user of method App\Actions\Security\DeadMansSwitch\PrepareArchiveAction::execute() expects  
+         App\Models\User, App\Models\User|null given.                                                              
+         🪪  argument.type                                                                                         
+ ------ ---------------------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   app\Http\Controllers\LoanController.php                                
+ ------ ----------------------------------------------------------------------- 
+  22     Class App\Http\Controllers\User not found.                             
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  26     Access to property $id on an unknown class App\Http\Controllers\User.  
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  49     Class App\Http\Controllers\User not found.                             
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  53     Access to property $id on an unknown class App\Http\Controllers\User.  
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+ ------ ----------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------- 
+  Line   app\Http\Controllers\MediaController.php                                                     
+ ------ --------------------------------------------------------------------------------------------- 
+  63     Parameter #1 $name of static method Illuminate\Filesystem\FilesystemManager::disk() expects  
+         string|UnitEnum|null, mixed given.                                                           
+         🪪  argument.type                                                                            
+  67     Parameter #1 $name of static method Illuminate\Filesystem\FilesystemManager::disk() expects  
+         string|UnitEnum|null, mixed given.                                                           
+         🪪  argument.type                                                                            
+  70     Parameter #1 $name of static method Illuminate\Filesystem\FilesystemManager::disk() expects  
+         string|UnitEnum|null, mixed given.                                                           
+         🪪  argument.type                                                                            
+ ------ --------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------------------------------------------- 
+  Line   app\Http\Controllers\PasswordResetController.php                                                           
+ ------ ----------------------------------------------------------------------------------------------------------- 
+  31     Binary operation "." between 'Sent Premium OTP…' and mixed results in an error.                            
+         🪪  binaryOp.invalid                                                                                       
+  48     Parameter #1 $date of method Carbon\Carbon::greaterThan() expects DateTimeInterface|string, string|null    
+         given.                                                                                                     
+         🪪  argument.type                                                                                          
+  56     Parameter #1 $value of static method Illuminate\Support\Facades\Hash::make() expects string, mixed given.  
+         🪪  argument.type                                                                                          
+ ------ ----------------------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   app\Http\Controllers\ScheduledTransactionController.php                
+ ------ ----------------------------------------------------------------------- 
+  23     Class App\Http\Controllers\User not found.                             
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  27     Access to property $id on an unknown class App\Http\Controllers\User.  
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  50     Class App\Http\Controllers\User not found.                             
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  54     Access to property $id on an unknown class App\Http\Controllers\User.  
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------- 
+  Line   app\Http\Controllers\SocialAuthController.php                                                             
+ ------ ---------------------------------------------------------------------------------------------------------- 
+  25     Binary operation "." between mixed and '/auth/login?error…' results in an error.                          
+         🪪  binaryOp.invalid                                                                                      
+  64     Parameter #1 $name of method App\Http\Controllers\SocialAuthController::generateUniqueUsername() expects  
+         string, string|null given.                                                                                
+         🪪  argument.type                                                                                         
+  89     Parameter #1 $string of function rtrim expects string, mixed given.                                       
+         🪪  argument.type                                                                                         
+ ------ ---------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------- 
+  Line   app\Http\Controllers\TaxController.php                                                                       
+ ------ ------------------------------------------------------------------------------------------------------------- 
+  25     Parameter #1 $user of method App\Actions\Finance\Tax\CalculateTaxAction::execute() expects App\Models\User,  
+         App\Models\User|null given.                                                                                  
+         🪪  argument.type                                                                                            
+  26     Parameter #1 $user of method App\Actions\AI\GetTaxAdviceAction::execute() expects App\Models\User,           
+         App\Models\User|null given.                                                                                  
+         🪪  argument.type                                                                                            
+ ------ ------------------------------------------------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------------------- 
+  Line   app\Http\Controllers\Test\AiHealthController.php                                            
+ ------ -------------------------------------------------------------------------------------------- 
+  13     Method App\Http\Controllers\Test\AiHealthController::check() has no return type specified.  
+         🪪  missingType.return                                                                      
+ ------ -------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------ 
+  Line   app\Http\Controllers\UserController.php                                                                     
+ ------ ------------------------------------------------------------------------------------------------------------ 
+  42     Cannot call method update() on App\Models\User|null.                                                        
+         🪪  method.nonObject                                                                                        
+  81     Cannot access property $password on App\Models\User|null.                                                   
+         🪪  property.nonObject                                                                                      
+  81     Cannot access property $password on App\Models\User|null.                                                   
+         🪪  property.nonObject                                                                                      
+  81     Parameter #1 $value of static method Illuminate\Support\Facades\Hash::check() expects string, mixed given.  
+         🪪  argument.type                                                                                           
+  87     Cannot call method update() on App\Models\User|null.                                                        
+         🪪  method.nonObject                                                                                        
+  88     Parameter #1 $value of static method Illuminate\Support\Facades\Hash::make() expects string, mixed given.   
+         🪪  argument.type                                                                                           
+ ------ ------------------------------------------------------------------------------------------------------------ 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   app\Http\Controllers\WealthHistoryController.php                       
+ ------ ----------------------------------------------------------------------- 
+  20     Class App\Http\Controllers\User not found.                             
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  27     Access to property $id on an unknown class App\Http\Controllers\User.  
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  44     Access to property $id on an unknown class App\Http\Controllers\User.  
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------- 
+  Line   app\Http\Middleware\SudoMode.php                                                                          
+ ------ ---------------------------------------------------------------------------------------------------------- 
+  23     Parameter #1 $date of method Carbon\Carbon::diffInMinutes() expects DateTimeInterface|string|null, mixed  
+         given.                                                                                                    
+         🪪  argument.type                                                                                         
+ ------ ---------------------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------- 
+  Line   app\Http\Requests\UpdateUserRequest.php              
+ ------ ----------------------------------------------------- 
+  26     Cannot access property $id on App\Models\User|null.  
+         🪪  property.nonObject                               
+ ------ ----------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------- 
+  Line   app\Http\Resources\AssetResource.php                                            
+ ------ -------------------------------------------------------------------------------- 
+  33     Using nullsafe method call on non-nullable type Carbon\Carbon. Use -> instead.  
+         🪪  nullsafe.neverNull                                                          
+  34     Using nullsafe method call on non-nullable type Carbon\Carbon. Use -> instead.  
+         🪪  nullsafe.neverNull                                                          
+ ------ -------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------- 
+  Line   app\Http\Resources\AssetTransactionResource.php              
+ ------ ------------------------------------------------------------- 
+  29     Cannot call method toIso8601String() on Carbon\Carbon|null.  
+         🪪  method.nonObject                                         
+ ------ ------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------- 
+  Line   app\Http\Resources\LoanResource.php                       
+ ------ ---------------------------------------------------------- 
+  38     Cannot call method toDateString() on Carbon\Carbon|null.  
+         🪪  method.nonObject                                      
+ ------ ---------------------------------------------------------- 
+
+ ------ ------------------------------------------------- 
+  Line   app\Notifications\LegacyTriggerNotification.php  
+ ------ ------------------------------------------------- 
+  43     Cannot cast mixed to float.                      
+         🪪  cast.double                                  
+  44     Cannot cast mixed to float.                      
+         🪪  cast.double                                  
+ ------ ------------------------------------------------- 
+
+ ------ ----------------------------------------------------- 
+  Line   app\Notifications\PartnerInvitationNotification.php  
+ ------ ----------------------------------------------------- 
+  37     Cannot cast mixed to string.                         
+         🪪  cast.string                                      
+ ------ ----------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   app\Notifications\ResetPasswordOTPNotification.php                     
+ ------ ----------------------------------------------------------------------- 
+  39     Class App\Notifications\User not found.                                
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  40     Access to property $email on an unknown class App\Notifications\User.  
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   app\Notifications\VerifyEmailNotification.php                          
+ ------ ----------------------------------------------------------------------- 
+  26     Class App\Notifications\User not found.                                
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+  27     Access to property $email on an unknown class App\Notifications\User.  
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+ ------ ----------------------------------------------------------------------- 
+
+ ------ -------------------------------------- 
+  Line   app\Providers\AppServiceProvider.php  
+ ------ -------------------------------------- 
+  82     Cannot cast mixed to string.          
+         🪪  cast.string                       
+ ------ -------------------------------------- 
+
+ ------ ----------------------------------------------------------------------------- 
+  Line   database\migrations\2026_04_01_103451_enable_rls_on_core_finance_tables.php  
+ ------ ----------------------------------------------------------------------------- 
+  26     Cannot access offset 'version' on mixed.                                     
+         🪪  offsetAccess.nonOffsetAccessible                                         
+ ------ ----------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------- 
+  Line   tests\Feature\AuthTest.php                                           
+ ------ --------------------------------------------------------------------- 
+  14     Call to an undefined method PHPUnit\Framework\TestCase::postJson().  
+         🪪  method.notFound                                                  
+  26     Call to an undefined method PHPUnit\Framework\TestCase::actingAs().  
+         🪪  method.notFound                                                  
+ ------ --------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------- 
+  Line   tests\Feature\ExampleTest.php                                   
+ ------ ---------------------------------------------------------------- 
+  4      Call to an undefined method PHPUnit\Framework\TestCase::get().  
+         🪪  method.notFound                                             
+ ------ ---------------------------------------------------------------- 
+
+ ------ ------------------------------------- 
+  Line   tests\Feature\SecurityAuditTest.php  
+ ------ ------------------------------------- 
+  77     Cannot cast mixed to int.            
+         🪪  cast.int                         
+ ------ ------------------------------------- 
+
+ ------ --------------------------------------------------------------------- 
+  Line   tests\Feature\SummaryTest.php                                        
+ ------ --------------------------------------------------------------------- 
+  24     Call to an undefined method PHPUnit\Framework\TestCase::actingAs().  
+         🪪  method.notFound                                                  
+ ------ --------------------------------------------------------------------- 
+
+ ------ ----------------------------------------- 
+  Line   tests\Feature\TransactionTest.php        
+ ------ ----------------------------------------- 
+  164    Cannot access offset 'amount' on mixed.  
+         🪪  offsetAccess.nonOffsetAccessible     
+ ------ ----------------------------------------- 
+
+ [ERROR] Found 128 errors                                                                                              
+

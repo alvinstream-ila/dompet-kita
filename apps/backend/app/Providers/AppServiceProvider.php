@@ -79,10 +79,11 @@ class AppServiceProvider extends ServiceProvider
      */
     private function bootSecurityGuards(): void
     {
-        if ($this->app->environment('production') || str_starts_with(config('app.url'), 'https://')) {
+        $appUrl = (string) config('app.url', '');
+        if ($this->app->environment('production') || str_starts_with($appUrl, 'https://')) {
             config(['logging.channels.stack.level' => 'info']);
             URL::forceScheme('https');
-            URL::forceRootUrl(config('app.url'));
+            URL::forceRootUrl($appUrl ?: null);
         }
     }
 }

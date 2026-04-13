@@ -37,6 +37,9 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request): JsonResponse
     {
         $user = $request->user();
+        if (!$user instanceof \App\Models\User) {
+            return \response()->json(['message' => 'Unauthenticated'], 401);
+        }
         $validated = $request->validated();
 
         $user->update($validated);
@@ -77,15 +80,18 @@ class UserController extends Controller
         ]);
 
         $user = $request->user();
+        if (!$user instanceof \App\Models\User) {
+            return \response()->json(['message' => 'Unauthenticated'], 401);
+        }
 
-        if ($user->password && ! Hash::check($request->current_password, $user->password)) {
+        if (! Hash::check((string) $request->string('current_password'), (string) $user->password)) {
             return \response()->json([
                 'message' => 'Password lama kamu salah, Sayang. Cek lagi ya! 🥺',
             ], 422);
         }
 
         $user->update([
-            'password' => Hash::make($request->new_password),
+            'password' => Hash::make((string) $request->string('new_password')),
         ]);
 
         return \response()->json([

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\HolidayResource;
 use App\Models\Asset;
 use App\Models\Holiday;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -16,7 +17,12 @@ class HolidayController extends Controller
 
     public function index(Request $request): AnonymousResourceCollection
     {
-        $holidays = Holiday::where('user_id', $request->user()->id)
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
+
+        $holidays = Holiday::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -35,11 +41,16 @@ class HolidayController extends Controller
             'itinerary' => 'nullable|string',
         ]);
 
-        $validated['user_id'] = $request->user()->id;
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
+
+        $validated['user_id'] = $user->id;
 
         // Auto-generate image if not provided
         if (empty($validated['image_url'])) {
-            $validated['image_url'] = $this->generateImageUrl($validated['destination']);
+            $validated['image_url'] = $this->generateImageUrl((string) $request->string('destination'));
         }
 
         $holiday = Holiday::create($validated);
@@ -49,8 +60,9 @@ class HolidayController extends Controller
 
     public function show(Request $request, Holiday $holiday): HolidayResource
     {
-        if ($holiday->user_id !== $request->user()->id) {
-            \abort(403);
+        $user = $request->user();
+        if (!$user instanceof User || $holiday->user_id !== $user->id) {
+            abort(403);
         }
 
         return new HolidayResource($holiday);
@@ -58,8 +70,9 @@ class HolidayController extends Controller
 
     public function update(Request $request, Holiday $holiday): HolidayResource
     {
-        if ($holiday->user_id !== $request->user()->id) {
-            \abort(403);
+        $user = $request->user();
+        if (!$user instanceof User || $holiday->user_id !== $user->id) {
+            abort(403);
         }
 
         $validated = $request->validate([
@@ -74,7 +87,7 @@ class HolidayController extends Controller
 
         // Update image if destination changes and image_url wasn't manually updated
         if (isset($validated['destination']) && $validated['destination'] !== $holiday->destination) {
-            $validated['image_url'] = $this->generateImageUrl($validated['destination']);
+            $validated['image_url'] = $this->generateImageUrl((string) $request->string('destination'));
         }
 
         $holiday->update($validated);
@@ -84,8 +97,9 @@ class HolidayController extends Controller
 
     public function destroy(Request $request, Holiday $holiday): JsonResponse
     {
-        if ($holiday->user_id !== $request->user()->id) {
-            \abort(403);
+        $user = $request->user();
+        if (!$user instanceof User || $holiday->user_id !== $user->id) {
+            abort(403);
         }
         $holiday->delete();
 
@@ -105,8 +119,9 @@ class HolidayController extends Controller
      */
     public function fund(Request $request, Holiday $holiday): JsonResponse
     {
-        if ($holiday->user_id !== $request->user()->id) {
-            \abort(403);
+        $user = $request->user();
+        if (!$user instanceof User || $holiday->user_id !== $user->id) {
+            abort(403);
         }
 
         $validated = $request->validate([
@@ -116,10 +131,10 @@ class HolidayController extends Controller
             'date' => 'required|date',
         ]);
 
-        return DB::transaction(function () use ($validated, $holiday, $request) {
+        return DB::transaction(function () use ($validated, $holiday, $user) {
             // 1. Create the Holiday Transaction
             $holiday->transactions()->create([
-                'user_id' => $request->user()->id,
+                'user_id' => $user->id,
                 'asset_id' => $validated['asset_id'] ?? null,
                 'amount' => $validated['amount'],
                 'type' => 'funding',
@@ -132,8 +147,9 @@ class HolidayController extends Controller
 
             // 3. (Accounting Protocol) Deduct from Asset if specified
             if (! empty($validated['asset_id'])) {
+                /** @var Asset $asset */
                 $asset = Asset::findOrFail($validated['asset_id']);
-                $asset->decrement('value', $validated['amount']);
+                $asset->decrement('value', (float) $validated['amount']);
             }
 
             return \response()->json([
@@ -148,8 +164,9 @@ class HolidayController extends Controller
      */
     public function history(Request $request, Holiday $holiday): AnonymousResourceCollection
     {
-        if ($holiday->user_id !== $request->user()->id) {
-            \abort(403);
+        $user = $request->user();
+        if (!$user instanceof User || $holiday->user_id !== $user->id) {
+            abort(403);
         }
 
         $history = $holiday->transactions()

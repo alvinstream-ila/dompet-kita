@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ScheduledTransactionResource;
 use App\Models\ScheduledTransaction;
+use App\Models\User;
 use App\Services\Cfo\CfoAssistantService;
 use App\Traits\HasApiResponses;
 use Illuminate\Http\JsonResponse;
@@ -17,9 +18,16 @@ class ScheduledTransactionController extends Controller
     /**
      * List all scheduled transactions for the authenticated user.
      */
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $scheduled = ScheduledTransaction::latest()->get();
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
+
+        $scheduled = ScheduledTransaction::where('user_id', $user->id)
+            ->latest()
+            ->get();
 
         return ScheduledTransactionResource::collection($scheduled);
     }
@@ -39,7 +47,12 @@ class ScheduledTransactionController extends Controller
             'is_auto_execute' => 'boolean',
         ]);
 
-        $validated['user_id'] = $request->user()->id;
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
+
+        $validated['user_id'] = $user->id;
         $validated['status'] = 'active';
 
         $scheduled = ScheduledTransaction::create($validated);
@@ -102,13 +115,6 @@ class ScheduledTransactionController extends Controller
     public function execute(ScheduledTransaction $scheduledTransaction, CfoAssistantService $cfo): JsonResponse
     {
         $this->authorize('update', $scheduledTransaction);
-
-        // Manually execute the transaction
-        // We use a reflection or make the method public in service if needed.
-        // For now, I'll just check if it's already public. It was protected in CfoAssistantService.
-
-        // I will make it public in CfoAssistantService or just call it here.
-        // Actually, I'll update CfoAssistantService to make executeTransaction public.
 
         $cfo->executeTransactionManually($scheduledTransaction);
 

@@ -15,6 +15,9 @@ class PartnerController extends Controller
     /**
      * Send an invitation to a partner.
      */
+    /**
+     * Send an invitation to a partner.
+     */
     public function invite(Request $request): JsonResponse
     {
         $request->validate([
@@ -22,7 +25,11 @@ class PartnerController extends Controller
         ]);
 
         $inviter = $request->user();
-        $inviteeEmail = $request->email;
+        if (!$inviter instanceof User) {
+            abort(401);
+        }
+
+        $inviteeEmail = (string) $request->string('email');
 
         // 1. Check if inviting self
         if ($inviter->email === $inviteeEmail) {
@@ -36,11 +43,12 @@ class PartnerController extends Controller
 
         // 3. Find user and ensure verified
         $invitee = User::where('email', $inviteeEmail)->first();
-        if (! $invitee || ! $invitee->email_verified_at) {
+        if (! $invitee instanceof User || ! $invitee->email_verified_at) {
             return response()->json(['message' => 'Ups! Pasangan kamu harus sudah terdaftar dan verifikasi email dulu ya, Sayang! ✨'], 422);
         }
 
         // 4. Create Invitation
+        /** @var PartnerInvitation $invitation */
         $invitation = PartnerInvitation::updateOrCreate(
             ['inviter_id' => $inviter->id, 'email' => $inviteeEmail, 'status' => 'pending'],
             [
@@ -50,7 +58,7 @@ class PartnerController extends Controller
         );
 
         // 5. Notify
-        $invitee->notify(new PartnerInvitationNotification($inviter, $invitation->token));
+        $invitee->notify(new PartnerInvitationNotification($inviter, (string) $invitation->token));
 
         return response()->json([
             'message' => 'Undangan berhasil dikirim! Kabari pasangan kamu ya! 💌✨',
@@ -68,12 +76,17 @@ class PartnerController extends Controller
             ->where('expires_at', '>', Carbon::now())
             ->first();
 
-        if (! $invitation) {
+        if (! $invitation instanceof PartnerInvitation) {
             return response()->json(['message' => 'Undangan tidak ditemukan atau sudah kadaluarsa, Sayang. 🥺'], 404);
         }
 
+        $inviter = $invitation->inviter;
+        if (!$inviter instanceof User) {
+            return response()->json(['message' => 'Pengundang tidak ditemukan.'], 404);
+        }
+
         return response()->json([
-            'inviter_name' => $invitation->inviter->name,
+            'inviter_name' => $inviter->name,
             'email' => $invitation->email,
         ]);
     }
@@ -85,19 +98,25 @@ class PartnerController extends Controller
     {
         $request->validate(['token' => 'required']);
 
-        $invitation = PartnerInvitation::where('token', $request->token)
+        $token = (string) $request->string('token');
+
+        $invitation = PartnerInvitation::where('token', $token)
             ->where('status', 'pending')
             ->where('expires_at', '>', Carbon::now())
             ->first();
 
-        if (! $invitation) {
+        if (! $invitation instanceof PartnerInvitation) {
             return response()->json(['message' => 'Gagal menerima undangan. Cek lagi ya Sayang!'], 404);
         }
 
         $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
+
         $inviter = User::find($invitation->inviter_id);
 
-        if (! $inviter) {
+        if (! $inviter instanceof User) {
             return response()->json(['message' => 'Pengundang tidak ditemukan.'], 404);
         }
 
@@ -119,9 +138,13 @@ class PartnerController extends Controller
     public function unlink(Request $request): JsonResponse
     {
         $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
+
         $partner = $user->partner;
 
-        if ($partner) {
+        if ($partner instanceof User) {
             $partner->update(['partner_id' => null]);
         }
 

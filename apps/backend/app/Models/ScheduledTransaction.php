@@ -70,9 +70,9 @@ class ScheduledTransaction extends Model
     }
 
     /**
-     * @return BelongsTo<User, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
      */
-    public function user(): BelongsTo
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }

@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class AiHealthController extends Controller
 {
-    public function check(Request $request)
+    public function check(Request $request): \Illuminate\Http\JsonResponse
     {
         $results = [];
 

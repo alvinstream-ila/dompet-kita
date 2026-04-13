@@ -20,7 +20,7 @@ class SudoMode
         if ($user) {
             $lastSudoAt = Cache::get("sudo_mode_{$user->id}");
 
-            if (! $lastSudoAt || now()->diffInMinutes($lastSudoAt) > 15) {
+            if (! $lastSudoAt || now()->diffInMinutes((string) $lastSudoAt) > 15) {
                 return $request->expectsJson()
                     ? response()->json([
                         'message' => 'Aduh Sayang, butuh konfirmasi ulang nih buat aksi penting ini. Re-auth dulu ya! 🔐',

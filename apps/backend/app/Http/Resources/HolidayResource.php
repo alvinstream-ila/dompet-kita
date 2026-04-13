@@ -10,12 +10,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property int $id
  * @property string $destination
  * @property float $budget
+ * @property float $funded_amount
  * @property float $spent
  * @property Carbon|null $start_date
  * @property Carbon|null $end_date
  * @property string $status
  * @property string|null $itinerary
  * @property Carbon $created_at
+ *
+ * @mixin \App\Models\Holiday
  */
 class HolidayResource extends JsonResource
 {
@@ -32,10 +35,10 @@ class HolidayResource extends JsonResource
             'budget' => (float) $this->budget,
             'funded_amount' => (float) ($this->funded_amount ?? 0),
             'spent' => (float) ($this->spent ?? 0),
-            'start_date' => $this->start_date?->toDateString(),
-            'end_date' => $this->end_date?->toDateString(),
-            'status' => $this->status,
-            'itinerary' => $this->itinerary,
+            'start_date' => $this->start_date instanceof Carbon ? $this->start_date->toDateString() : null,
+            'end_date' => $this->end_date instanceof Carbon ? $this->end_date->toDateString() : null,
+            'status' => (string) ($this->status ?? 'planning'),
+            'itinerary' => (string) ($this->itinerary ?? ''),
             'created_at' => $this->created_at->toIso8601String(),
         ];
     }

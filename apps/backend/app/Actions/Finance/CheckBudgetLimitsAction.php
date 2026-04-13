@@ -23,10 +23,17 @@ class CheckBudgetLimitsAction extends BaseAction
      */
     public function execute(string $userName, float $limit): array
     {
+        // Search for user by name to scope the spending
+        $user = User::where('name', 'like', "%{$userName}%")->first();
+
         // For now, based on command logic, we sum all expenses
-        // In a real scenario, this would be scoped to moon/year and user
-        $spending = (float) Transaction::where('type', TransactionType::EXPENSE)
-            ->sum('amount');
+        $query = Transaction::where('type', TransactionType::EXPENSE);
+        
+        if ($user instanceof User) {
+            $query->where('user_id', $user->id);
+        }
+
+        $spending = (float) $query->sum('amount');
 
         $percentage = $limit > 0 ? ($spending / $limit) * 100 : 0;
 
@@ -38,10 +45,10 @@ class CheckBudgetLimitsAction extends BaseAction
         }
 
         return [
-            'spending' => $spending,
-            'limit' => $limit,
-            'percentage' => $percentage,
-            'status' => $status,
+            'spending' => (float) $spending,
+            'limit' => (float) $limit,
+            'percentage' => (float) $percentage,
+            'status' => (string) $status,
         ];
     }
 }

@@ -28,7 +28,7 @@ class PasswordResetController extends Controller
         // Just call the default Laravel way or trigger it directly
         $user->sendPasswordResetNotification(Str::random(60)); // The token is irrelevant but standard
 
-        Log::info('Sent Premium OTP Reset to: '.$request->email);
+        Log::info('Sent Premium OTP Reset to: '.(string) $request->string('email'));
 
         return response()->json(['message' => 'Kode reset password sudah meluncur ke email kamu, Sayang! ❤️']);
     }
@@ -45,7 +45,8 @@ class PasswordResetController extends Controller
             ->where('otp_reset_code', $request->code)
             ->first();
 
-        if (! $user || now()->greaterThan($user->otp_reset_expires_at)) {
+        $expiresAt = $user?->otp_reset_expires_at;
+        if (! $user || ! $expiresAt || now()->greaterThan($expiresAt)) {
             return response()->json([
                 'message' => 'Kode reset nggak pas atau sudah basi nih sayang, coba minta lagi ya? 🥺',
             ], 400);
@@ -53,7 +54,7 @@ class PasswordResetController extends Controller
 
         // Update password and clear OTP
         $user->forceFill([
-            'password' => Hash::make($request->password),
+            'password' => Hash::make((string) $request->string('password')),
             'otp_reset_code' => null,
             'otp_reset_expires_at' => null,
         ])->setRememberToken(Str::random(60));

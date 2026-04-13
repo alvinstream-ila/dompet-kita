@@ -32,7 +32,7 @@ class ManageLoanAction extends BaseAction
     public function list(?User $user = null): Collection
     {
         $query = Loan::orderBy('created_at', 'desc');
-        if ($user) {
+        if ($user instanceof User) {
             $query->where('user_id', $user->id);
         }
 

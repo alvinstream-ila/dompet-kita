@@ -7,6 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property string $destination
+ * @property float $budget
+ * @property float $funded_amount
+ * @property \Carbon\Carbon|null $start_date
+ * @property \Carbon\Carbon|null $end_date
+ * @property string $status
+ * @property float $spent
+ * @property string|null $itinerary
+ * @property string|null $image_url
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ */
 class Holiday extends Model
 {
     use HasUserScope;
@@ -46,9 +61,9 @@ class Holiday extends Model
     /**
      * Get the user that owns the holiday.
      *
-     * @return BelongsTo<User, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
      */
-    public function user(): BelongsTo
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -56,9 +71,9 @@ class Holiday extends Model
     /**
      * Get the transactions for the holiday.
      *
-     * @return HasMany<HolidayTransaction, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<HolidayTransaction, $this>
      */
-    public function transactions(): HasMany
+    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(HolidayTransaction::class);
     }

@@ -27,8 +27,9 @@ class WealthHistoryResource extends JsonResource
             return $resource;
         }
 
+        $date = Carbon::create((int) $this->year, (int) $this->month, 1);
         return [
-            'month' => Carbon::create((int) $this->year, (int) $this->month, 1)->format('M'),
+            'month' => $date instanceof Carbon ? $date->format('M') : 'N/A',
             'value' => (int) $this->total_value,
             'year' => (int) $this->year,
             'raw_month' => (int) $this->month,

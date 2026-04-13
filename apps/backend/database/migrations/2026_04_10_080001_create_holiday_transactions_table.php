@@ -30,7 +30,12 @@ return new class extends Migration
             DB::statement('ALTER TABLE holiday_transactions FORCE ROW LEVEL SECURITY');
 
             // Define RLS Policy (with text casting for UUID vs BIGINT comparison)
-            $hasAuthFunc = DB::selectOne("SELECT EXISTS (SELECT 1 FROM pg_proc JOIN pg_namespace ON pg_proc.pronamespace = pg_namespace.oid WHERE proname = 'uid' AND nspname = 'auth') as exists")->exists;
+            $authCheck = DB::selectOne("SELECT EXISTS (SELECT 1 FROM pg_proc JOIN pg_namespace ON pg_proc.pronamespace = pg_namespace.oid WHERE proname = 'uid' AND nspname = 'auth') as exists");
+            $hasAuthFunc = false;
+            if ($authCheck) {
+                // @phpstan-ignore-next-line
+                $hasAuthFunc = (bool) (is_object($authCheck) ? ($authCheck->exists ?? false) : ($authCheck['exists'] ?? false));
+            }
 
             if ($hasAuthFunc) {
                 DB::statement('

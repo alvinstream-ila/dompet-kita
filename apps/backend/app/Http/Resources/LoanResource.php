@@ -35,7 +35,7 @@ class LoanResource extends JsonResource
             'contact_name' => $this->contact_name,
             'amount' => (float) $this->amount,
             'remaining_amount' => (float) $this->remaining_amount,
-            'due_date' => $this->due_date->toDateString(),
+            'due_date' => $this->due_date?->toDateString(),
             'status' => $this->status,
             'type' => $this->type,
             'description' => $this->description,

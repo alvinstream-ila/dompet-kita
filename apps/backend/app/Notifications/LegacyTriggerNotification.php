@@ -35,9 +35,13 @@ class LegacyTriggerNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        /** @var User $notifiable */
-        $totalAssets = number_format($this->reportData['financial_summary']['total_assets'] ?? 0, 0, ',', '.');
-        $totalLoans = number_format($this->reportData['financial_summary']['total_loans'] ?? 0, 0, ',', '.');
+        if (!$notifiable instanceof User) {
+            return (new MailMessage)->subject('Premium Notification');
+        }
+
+        $financialSummary = (array) ($this->reportData['financial_summary'] ?? []);
+        $totalAssets = number_format((float) ($financialSummary['total_assets'] ?? 0), 0, ',', '.');
+        $totalLoans = number_format((float) ($financialSummary['total_loans'] ?? 0), 0, ',', '.');
 
         return (new MailMessage)
             ->subject('Dompet Kita: Laporan Warisan Digital & Snapshot Keuangan')

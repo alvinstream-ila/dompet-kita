@@ -22,7 +22,7 @@ class SocialAuthController extends Controller
         if (empty(config("services.$provider.client_id"))) {
             Log::error("SocialAuth: Missing configuration for $provider. Check GOOGLE_CLIENT_ID in .env");
 
-            return redirect()->away(config('app.frontend_url').'/auth/login?error=missing_config');
+            return redirect()->away(((string) config('app.frontend_url')).'/auth/login?error=missing_config');
         }
 
         /** @var AbstractProvider $driver */
@@ -61,7 +61,8 @@ class SocialAuthController extends Controller
             } else {
                 // Create New User with Unique Username
                 $isNewUser = true;
-                $username = $this->generateUniqueUsername($socialUser->getName() ?? $socialUser->getNickname());
+                $sourceName = $socialUser->getName() ?? $socialUser->getNickname() ?? 'user';
+                $username = $this->generateUniqueUsername((string) $sourceName);
 
                 $user = User::create([
                     'name' => $username,
@@ -85,7 +86,7 @@ class SocialAuthController extends Controller
             $token = $user->createToken('auth_token')->plainTextToken;
 
             // Redirect to Frontend callback route
-            $frontendUrl = config('app.frontend_url', 'http://localhost:3000');
+            $frontendUrl = (string) config('app.frontend_url', 'http://localhost:3000');
             $callbackUrl = rtrim($frontendUrl, '/').'/auth/callback?token='.$token.($isNewUser ? '&is_new=1' : '');
 
             Log::info("SocialAuth: Login SUCCESS for {$user->email} via {$provider}");

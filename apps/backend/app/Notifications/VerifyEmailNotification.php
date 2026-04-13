@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Log;
@@ -21,9 +22,11 @@ class VerifyEmailNotification extends VerifyEmail
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail($notifiable)
+    public function toMail(mixed $notifiable): MailMessage
     {
-        Log::info('Sending PREMIUM OTP verification email to: '.$notifiable->email);
+        if ($notifiable instanceof User) {
+            Log::info('Sending PREMIUM OTP verification email to: '.(string) $notifiable->email);
+        }
 
         return (new MailMessage)
             ->subject('🛡️ Kode Verifikasi Dompet Kita ✨')

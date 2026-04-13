@@ -40,18 +40,24 @@ class GenerateReportAction extends BaseAction
                 'email' => $user->email,
             ],
             'financial_summary' => [
-                'total_assets' => Asset::where('user_id', $user->id)->sum('value'),
-                'total_loans' => Loan::where('user_id', $user->id)->where('is_paid', false)->sum('amount'),
-                'total_goals' => Goal::where('user_id', $user->id)->where('is_completed', false)->sum('target_amount'),
+                'total_assets' => (float) Asset::where('user_id', $user->id)->sum('value'),
+                'total_loans' => (float) Loan::where('user_id', $user->id)->where('is_paid', false)->sum('amount'),
+                'total_goals' => (float) Goal::where('user_id', $user->id)->where('is_completed', false)->sum('target_amount'),
             ],
             'asset_details' => Asset::where('user_id', $user->id)->get(['name', 'value']),
             'active_loans' => Loan::where('user_id', $user->id)->where('is_paid', false)->get(['debtor', 'amount', 'due_date']),
         ];
 
         // AI Advice
-        $partnerName = $user->partner()->first()->name ?? 'belum dihubungkan';
+        $partner = $user->partner()->first();
+        $partnerName = $partner instanceof User ? (string) $partner->name : 'belum dihubungkan';
+        
+        /** @var array{report_date: string, user: array{name: string, email: string}, financial_summary: array{total_assets: float|int, total_loans: float|int, total_goals: float|int}, asset_details: Collection<int, Asset>, active_loans: Collection<int, Loan>} $adviceData */
+        $adviceData = $data;
+        $aiAdvice = $this->getLegacyAdviceAction->execute($user, $adviceData);
+
         $data['recommendations'] = [
-            $this->getLegacyAdviceAction->execute($user, $data),
+            (string) $aiAdvice,
             "Ini adalah snapshot kekayaan digital 'Dompet Kita' per hari ini.",
             'Simpan dokumen ini di tempat yang aman (misial: Vault digital atau cetak fisik).',
             "Pastikan pasangan Anda ({$partnerName}) mengetahui lokasi penyimpanan ini.",

@@ -36,9 +36,20 @@ class PerformCfoAnalysisAction extends BaseAction
         }
 
         /** @var array<string, float> $summary */
-        $summary = $transactions->groupBy('type')->map(fn ($group) => (float) $group->sum('amount'))->toArray();
+        $summary = $transactions->groupBy('type')->map(function ($group) {
+            /** @var float|int $sum */
+            $sum = $group->sum('amount');
+
+            return (float) $sum;
+        })->toArray();
+
         /** @var array<string, float> $categories */
-        $categories = $transactions->groupBy('category')->map(fn ($group) => (float) $group->sum('amount'))->toArray();
+        $categories = $transactions->groupBy('category')->map(function ($group) {
+            /** @var float|int $sum */
+            $sum = $group->sum('amount');
+
+            return (float) $sum;
+        })->toArray();
 
         $prompt = "Sebagai asisten keuangan premium keluarga 'Dompet Kita' (Alvin & Ila), ";
         $prompt .= "analisislah ringkasan transaksi bulan {$month} berikut:\n\n";
@@ -47,13 +58,13 @@ class PerformCfoAnalysisAction extends BaseAction
         $prompt .= 'Detail Kategori: '.json_encode($categories)."\n\n";
         $prompt .= 'Berikan 3 poin strategi finansial yang kritis, nada bicara elegan dan cerdas.';
 
-        $advice = $this->gemini->analyzeFinancials($prompt);
+        $advice = (string) $this->gemini->analyzeFinancials($prompt);
 
         return [
             'month' => $month,
             'summary' => $summary,
             'categories' => $categories,
-            'advice' => (string) $advice,
+            'advice' => $advice,
         ];
     }
 }

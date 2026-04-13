@@ -34,7 +34,7 @@ class PartnerInvitationNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $frontendUrl = config('app.frontend_url') ?? 'http://localhost:3000';
+        $frontendUrl = (string) (config('app.frontend_url') ?? 'http://localhost:3000');
         $acceptUrl = $frontendUrl.'/accept-invite?token='.$this->token;
 
         return (new MailMessage)

@@ -1,0 +1,190 @@
+﻿ ------ --------------------------- 
+  Line   AI\AiProviderManager.php   
+ ------ --------------------------- 
+  177    Cannot cast mixed to int.  
+         🪪  cast.int               
+ ------ --------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   AI\AiWatchdog.php                                                                                              
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  40     Method App\Services\AI\AiWatchdog::getStatus() should return array<string, array{name: string, status: string  
+         , recent_latency: float}> but returns array<mixed>.                                                            
+         🪪  return.type                                                                                                
+  64     Method App\Services\AI\AiWatchdog::getTokenUsage() should return array{prompt: int, completion: int, total:    
+         int} but returns array{prompt: mixed, completion: mixed, total: mixed}.                                        
+         🪪  return.type                                                                                                
+         💡  Offset 'prompt' (int) does not accept type mixed.                                                          
+         💡  Offset 'completion' (int) does not accept type mixed.                                                      
+         💡  Offset 'total' (int) does not accept type mixed.                                                           
+  86     Method App\Services\AI\AiWatchdog::getRecentLatency() should return float but returns float|int|null.          
+         🪪  return.type                                                                                                
+ ------ --------------------------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------------------------------- 
+  Line   AI\GeminiProvider.php                                                                          
+ ------ ----------------------------------------------------------------------------------------------- 
+  18     Cannot cast mixed to string.                                                                   
+         🪪  cast.string                                                                                
+  48     PHPDoc tag @var with type mixed is not subtype of native type Gemini\Data\UsageMetadata|null.  
+         🪪  varTag.nativeType                                                                          
+  53     Cannot access property $promptTokenCount on mixed.                                             
+         🪪  property.nonObject                                                                         
+  54     Cannot access property $candidatesTokenCount on mixed.                                         
+         🪪  property.nonObject                                                                         
+  55     Cannot access property $totalTokenCount on mixed.                                              
+         🪪  property.nonObject                                                                         
+ ------ ----------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   AI\GroqProvider.php                                                                                            
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  18     Property App\Services\AI\GroqProvider::$apiKey (string) does not accept mixed.                                 
+         🪪  assign.propertyType                                                                                        
+  19     Property App\Services\AI\GroqProvider::$model (string) does not accept mixed.                                  
+         🪪  assign.propertyType                                                                                        
+  76     Method App\Services\AI\GroqProvider::generateText() should return array{text: string, usage:                   
+         array{prompt_tokens: int, completion_tokens: int, total_tokens: int}} but returns array{text: mixed, usage:    
+         array{prompt_tokens: mixed, completion_tokens: mixed, total_tokens: mixed}}.                                   
+         🪪  return.type                                                                                                
+         💡  Offset 'text' (string) does not accept type mixed.                                                         
+         💡  Offset 'usage' (array{prompt_tokens: int, completion_tokens: int, total_tokens: int}) does not accept type  
+         array{prompt_tokens: mixed, completion_tokens: mixed, total_tokens: mixed}: Offset 'prompt_tokens' (int) does  
+         not accept type mixed.                                                                                         
+         💡  Offset 'usage' (array{prompt_tokens: int, completion_tokens: int, total_tokens: int}) does not accept type  
+         array{prompt_tokens: mixed, completion_tokens: mixed, total_tokens: mixed}: Offset 'completion_tokens' (int)   
+         does not accept type mixed.                                                                                    
+         💡  Offset 'usage' (array{prompt_tokens: int, completion_tokens: int, total_tokens: int}) does not accept type  
+         array{prompt_tokens: mixed, completion_tokens: mixed, total_tokens: mixed}: Offset 'total_tokens' (int) does   
+         not accept type mixed.                                                                                         
+ ------ --------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------ 
+  Line   AI\LangSmithTracer.php                                                                                      
+ ------ ------------------------------------------------------------------------------------------------------------ 
+  25     Called 'env' outside of the config directory which returns null when the config is cached, use 'config'.    
+         🪪  larastan.noEnvCallsOutsideOfConfig                                                                      
+  28     Called 'env' outside of the config directory which returns null when the config is cached, use 'config'.    
+         🪪  larastan.noEnvCallsOutsideOfConfig                                                                      
+  35     Method App\Services\AI\LangSmithTracer::createRun() has parameter $inputs with no value type specified in   
+         iterable type array.                                                                                        
+         🪪  missingType.iterableValue                                                                               
+         💡  See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                  
+  66     Method App\Services\AI\LangSmithTracer::updateRun() has parameter $outputs with no value type specified in  
+         iterable type array.                                                                                        
+         🪪  missingType.iterableValue                                                                               
+         💡  See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                  
+ ------ ------------------------------------------------------------------------------------------------------------ 
+
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   AI\OpenRouterProvider.php                                                                                      
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  20     Property App\Services\AI\OpenRouterProvider::$apiKey (string) does not accept mixed.                           
+         🪪  assign.propertyType                                                                                        
+  21     Property App\Services\AI\OpenRouterProvider::$modelText (string) does not accept mixed.                        
+         🪪  assign.propertyType                                                                                        
+  22     Property App\Services\AI\OpenRouterProvider::$modelVision (string) does not accept mixed.                      
+         🪪  assign.propertyType                                                                                        
+  71     Method App\Services\AI\OpenRouterProvider::generateText() should return array{text: string, usage:             
+         array{prompt_tokens: int, completion_tokens: int, total_tokens: int}} but returns array{text: mixed, usage:    
+         array{prompt_tokens: mixed, completion_tokens: mixed, total_tokens: mixed}}.                                   
+         🪪  return.type                                                                                                
+         💡  Offset 'text' (string) does not accept type mixed.                                                         
+         💡  Offset 'usage' (array{prompt_tokens: int, completion_tokens: int, total_tokens: int}) does not accept type  
+         array{prompt_tokens: mixed, completion_tokens: mixed, total_tokens: mixed}: Offset 'prompt_tokens' (int) does  
+         not accept type mixed.                                                                                         
+         💡  Offset 'usage' (array{prompt_tokens: int, completion_tokens: int, total_tokens: int}) does not accept type  
+         array{prompt_tokens: mixed, completion_tokens: mixed, total_tokens: mixed}: Offset 'completion_tokens' (int)   
+         does not accept type mixed.                                                                                    
+         💡  Offset 'usage' (array{prompt_tokens: int, completion_tokens: int, total_tokens: int}) does not accept type  
+         array{prompt_tokens: mixed, completion_tokens: mixed, total_tokens: mixed}: Offset 'total_tokens' (int) does   
+         not accept type mixed.                                                                                         
+  117    Method App\Services\AI\OpenRouterProvider::generateFromImage() should return array{text: string, usage:        
+         array{prompt_tokens: int, completion_tokens: int, total_tokens: int}} but returns array{text: mixed, usage:    
+         array{prompt_tokens: mixed, completion_tokens: mixed, total_tokens: mixed}}.                                   
+         🪪  return.type                                                                                                
+         💡  Offset 'text' (string) does not accept type mixed.                                                         
+         💡  Offset 'usage' (array{prompt_tokens: int, completion_tokens: int, total_tokens: int}) does not accept type  
+         array{prompt_tokens: mixed, completion_tokens: mixed, total_tokens: mixed}: Offset 'prompt_tokens' (int) does  
+         not accept type mixed.                                                                                         
+         💡  Offset 'usage' (array{prompt_tokens: int, completion_tokens: int, total_tokens: int}) does not accept type  
+         array{prompt_tokens: mixed, completion_tokens: mixed, total_tokens: mixed}: Offset 'completion_tokens' (int)   
+         does not accept type mixed.                                                                                    
+         💡  Offset 'usage' (array{prompt_tokens: int, completion_tokens: int, total_tokens: int}) does not accept type  
+         array{prompt_tokens: mixed, completion_tokens: mixed, total_tokens: mixed}: Offset 'total_tokens' (int) does   
+         not accept type mixed.                                                                                         
+ ------ --------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   Cfo\CfoAssistantService.php                                                                                    
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  21     Call to an undefined method App\Models\ScheduledTransaction|Illuminate\Database\Eloquent\Builder<App\Models\S  
+         cheduledTransaction>::due().                                                                                   
+         🪪  method.notFound                                                                                            
+  57     Property App\Models\ScheduledTransaction::$last_executed_at (App\Models\Carbon|null) does not accept           
+         Illuminate\Support\Carbon.                                                                                     
+         🪪  assign.propertyType                                                                                        
+  95     Property App\Models\ScheduledTransaction::$status (App\Models\ScheduleStatus) does not accept                  
+         App\Enums\ScheduleStatus::FINISHED.                                                                            
+         🪪  assign.propertyType                                                                                        
+  99     Property App\Models\ScheduledTransaction::$next_due_date (Illuminate\Support\Carbon) does not accept           
+         Carbon\Carbon.                                                                                                 
+         🪪  assign.propertyType                                                                                        
+ ------ --------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------- 
+  Line   Cfo\QuantumInsightEngine.php                                                           
+ ------ --------------------------------------------------------------------------------------- 
+  91     Cannot access offset 'findings' on mixed.                                              
+         🪪  offsetAccess.nonOffsetAccessible                                                   
+  92     Parameter #1 $value of function count expects array|Countable, mixed given.            
+         🪪  argument.type                                                                      
+  93     Argument of an invalid type mixed supplied for foreach, only iterables are supported.  
+         🪪  foreach.nonIterable                                                                
+ ------ --------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------- 
+  Line   LegacyService.php                                                     
+ ------ ---------------------------------------------------------------------- 
+  30     Call to method addMonths() on an unknown class App\Models\Carbon.     
+         🪪  class.notFound                                                    
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols  
+  30     Call to method copy() on an unknown class App\Models\Carbon.          
+         🪪  class.notFound                                                    
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols  
+  30     Call to method isPast() on an unknown class App\Models\Carbon.        
+         🪪  class.notFound                                                    
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols  
+  51     Cannot call method toDateTimeString() on App\Models\Carbon|null.      
+         🪪  method.nonObject                                                  
+ ------ ---------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------ 
+  Line   MarketService.php                                                             
+ ------ ------------------------------------------------------------------------------ 
+  52     Parameter #1 $value of function floatval expects                              
+         array|bool|float|GMP|int|resource|SimpleXMLElement|string|null, mixed given.  
+         🪪  argument.type                                                             
+ ------ ------------------------------------------------------------------------------ 
+
+ ------ ----------------------------------------------------------------------------------------------------------- 
+  Line   Security\PrivacyFilter.php                                                                                 
+ ------ ----------------------------------------------------------------------------------------------------------- 
+  22     Parameter #3 $subject of function preg_replace expects array<float|int|string>|string, string|null given.  
+         🪪  argument.type                                                                                          
+  25     Parameter #3 $subject of function preg_replace expects array<float|int|string>|string, string|null given.  
+         🪪  argument.type                                                                                          
+  27     Method App\Services\Security\PrivacyFilter::mask() should return string but returns string|null.           
+         🪪  return.type                                                                                            
+ ------ ----------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------- 
+  Line   StorageService.php                                           
+ ------ ------------------------------------------------------------- 
+  26     Call to an undefined method Illuminate\Http\Request::all().  
+         🪪  method.notFound                                          
+ ------ ------------------------------------------------------------- 
+
+ [ERROR] Found 37 errors                                                                                               
+
+

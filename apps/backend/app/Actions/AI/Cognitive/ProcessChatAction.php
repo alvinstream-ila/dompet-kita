@@ -73,8 +73,8 @@ class ProcessChatAction
             ->orderBy('date', 'desc')
             ->get();
 
-        $totalIncome = (float) $transactions->where('type', TransactionType::INCOME)->sum('amount');
-        $totalExpense = (float) $transactions->where('type', TransactionType::EXPENSE)->sum('amount');
+        $totalIncome = (float) $transactions->filter(fn ($t) => $t->type === TransactionType::INCOME)->sum('amount');
+        $totalExpense = (float) $transactions->filter(fn ($t) => $t->type === TransactionType::EXPENSE)->sum('amount');
         $savings = $totalIncome - $totalExpense;
 
         $goals = Goal::where('user_id', $user->id)->get();

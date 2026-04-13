@@ -33,7 +33,7 @@ class ManageHolidayPlanAction extends BaseAction
     public function list(?User $user = null): Collection
     {
         $query = Holiday::query();
-        if ($user) {
+        if ($user instanceof User) {
             $query->where('user_id', $user->id);
         }
 

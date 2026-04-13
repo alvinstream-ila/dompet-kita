@@ -24,14 +24,20 @@ class ForecastWealthAction extends BaseAction
      * @return array{
      *     current_net_worth: float|int,
      *     avg_monthly_savings: float|int,
-     *     market_context: array<string, mixed>,
+     *     market_context: array{
+     *         inflation_rate: float,
+     *         gold_antam_gram: float,
+     *         gold_global_oz: float,
+     *         currency_rates: array<string, float>,
+     *         last_updated: string
+     *     },
      *     projection: Collection<int, array{month: string, estimated_net_worth: float|int}>,
      *     advice: string
      * }
      */
     public function execute(User $user, int $months = 12): array
     {
-        $currentAssets = Asset::where('user_id', $user->id)
+        $currentAssets = (float) Asset::where('user_id', $user->id)
             ->where('type', AssetType::INVESTMENT)
             ->sum('value');
 
@@ -39,34 +45,35 @@ class ForecastWealthAction extends BaseAction
         $currentLoans = 0;
 
         // [ASP-v2] Market Intelligence: Get USD/IDR and Gold Rates dynamically
-        $market = $this->marketService->getRates();
+        $market = (array) $this->marketService->getRates();
 
-        $netWorth = $currentAssets - $currentLoans;
+        $netWorth = (float) ($currentAssets - $currentLoans);
 
         // Fixed to 0 per user request: "Focus only on existing asset growth"
-        $avgMonthlySavings = 0;
+        $avgMonthlySavings = 0.0;
 
-        /** @var Collection<int, array<string, mixed>> $projection */
+        /** @var Collection<int, array{month: string, estimated_net_worth: float|int}> $projection */
         $projection = collect([]);
-        $runningWealth = $netWorth > 0 ? $netWorth : 0;
+        $runningWealth = $netWorth > 0 ? $netWorth : 0.0;
+
         /** @var float $inflationRate */
-        $inflationRate = $market['inflation_rate'];
+        $inflationRate = (float) $market['inflation_rate'];
         $inflationMonthly = $inflationRate / 12;
 
         for ($i = 1; $i <= $months; $i++) {
             // [ASP-v2] Adjusted for Inflation (Using real-time inflation proxy)
             $runningWealth = ($runningWealth + $avgMonthlySavings) * (1 - $inflationMonthly);
             $projection->push([
-                'month' => Carbon::now()->addMonths($i)->format('M Y'),
-                'estimated_net_worth' => max(0, $runningWealth),
+                'month' => (string) Carbon::now()->addMonths($i)->format('M Y'),
+                'estimated_net_worth' => (float) max(0, $runningWealth),
             ]);
         }
 
         $lastItem = $projection->last();
-        $lastWealth = $lastItem ? $lastItem['estimated_net_worth'] : 0;
+        $lastWealth = $lastItem ? (float) $lastItem['estimated_net_worth'] : 0.0;
 
         try {
-            $advice = $this->getWealthAdviceAction->execute($user, [
+            $advice = (string) $this->getWealthAdviceAction->execute($user, [
                 'netWorth' => $netWorth,
                 'savings' => $avgMonthlySavings,
                 'projected' => $lastWealth,

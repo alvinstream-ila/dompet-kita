@@ -20,6 +20,9 @@ class TaxController extends Controller
     public function getEstimate(Request $request): JsonResponse
     {
         $user = $request->user();
+        if (!$user instanceof \App\Models\User) {
+            abort(401);
+        }
         $year = (int) $request->query('year', (int) date('Y'));
 
         $taxData = $this->calculateTaxAction->execute($user, $year);

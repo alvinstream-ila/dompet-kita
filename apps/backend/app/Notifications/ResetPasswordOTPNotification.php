@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -36,7 +37,9 @@ class ResetPasswordOTPNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        Log::info('Sending PREMIUM OTP reset password email to: '.$notifiable->email);
+        if ($notifiable instanceof User) {
+            Log::info('Sending PREMIUM OTP reset password email to: '.(string) $notifiable->email);
+        }
 
         return (new MailMessage)
             ->subject('🔐 Reset Password Dompet Kita ✨')

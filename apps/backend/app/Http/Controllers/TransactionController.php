@@ -31,17 +31,26 @@ class TransactionController extends Controller
     /**
      * List all transactions with period filtering and pagination.
      */
+    /**
+     * List all transactions with period filtering and pagination.
+     */
     public function index(Request $request): JsonResponse
     {
         try {
+            $user = $request->user();
+            if (!$user instanceof User) {
+                abort(401);
+            }
+
             $query = Transaction::query()
+                ->where('user_id', $user->id)
                 ->filterByPeriod(
-                    $request->filled('month') ? (int) $request->month : null,
-                    $request->filled('year') ? (int) $request->year : null,
-                    (int) ($request->budget_cycle_start ?? 1)
+                    $request->filled('month') ? (int) $request->integer('month') : null,
+                    $request->filled('year') ? (int) $request->integer('year') : null,
+                    (int) ($request->integer('budget_cycle_start') ?: 1)
                 );
 
-            $limit = min((int) $request->input('limit', 20), 100);
+            $limit = min((int) $request->integer('limit', 20), 100);
             $transactions = $query->orderBy('date', 'desc')->paginate($limit);
 
             return $this->success(TransactionResource::collection($transactions));
@@ -62,11 +71,13 @@ class TransactionController extends Controller
     {
         try {
             $user = $request->user();
-            assert($user instanceof User);
+            if (!$user instanceof User) {
+                abort(401);
+            }
 
-            $month = $request->filled('month') ? (int) $request->month : null;
-            $year = $request->filled('year') ? (int) $request->year : null;
-            $budgetCycleStart = (int) ($request->budget_cycle_start ?? 1);
+            $month = $request->filled('month') ? (int) $request->integer('month') : null;
+            $year = $request->filled('year') ? (int) $request->integer('year') : null;
+            $budgetCycleStart = (int) ($request->integer('budget_cycle_start') ?: 1);
 
             /** @var array{income: float|int, expense: float|int, balance: float|int, recentTransactions: Collection<int, Transaction>, period: string} $data */
             $data = $action->execute($user->id, $month, $year, $budgetCycleStart);
@@ -92,7 +103,9 @@ class TransactionController extends Controller
     public function store(StoreTransactionRequest $request, StoreTransactionAction $action): JsonResponse
     {
         $user = $request->user();
-        assert($user instanceof User);
+        if (!$user instanceof User) {
+            abort(401);
+        }
 
         $transaction = $action->execute($user, $request->validated());
 
@@ -107,7 +120,9 @@ class TransactionController extends Controller
         $this->authorize('update', $transaction);
 
         $user = $request->user();
-        assert($user instanceof User);
+        if (!$user instanceof User) {
+            abort(401);
+        }
 
         $transaction = $action->execute($user, $transaction, $request->validated());
 
@@ -122,7 +137,9 @@ class TransactionController extends Controller
         $this->authorize('delete', $transaction);
 
         $user = $request->user();
-        assert($user instanceof User);
+        if (!$user instanceof User) {
+            abort(401);
+        }
 
         $action->execute($user, $transaction);
 

@@ -24,7 +24,7 @@ class TestLangSmithTrace extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
         $this->info('🚀 Antigravity LangSmith Connectivity Test Starting...');
 
@@ -35,12 +35,14 @@ class TestLangSmithTrace extends Command
             $result = $groq->generateText('Balas dengan satu kata: OK.');
 
             $this->info('✅ Response: '.$result['text']);
-            $this->info('📊 Usage: '.($result['usage']['total_tokens'] ?? 0).' tokens');
+            $this->info('📊 Usage: '.((int) $result['usage']['total_tokens']).' tokens');
             $this->info('⭐ Trace sent to LangSmith. Check your dashboard at https://smith.langchain.com/');
 
         } catch (\Exception $e) {
             $this->error('❌ Test failed: '.$e->getMessage());
             $this->error($e->getTraceAsString());
         }
+
+        return 0;
     }
 }
