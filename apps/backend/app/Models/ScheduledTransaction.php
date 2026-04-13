@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property string $id
@@ -19,12 +20,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property TransactionType $type
  * @property string $category
  * @property RecurrenceFrequency $recurrence
- * @property \Illuminate\Support\Carbon $next_due_date
+ * @property Carbon $next_due_date
  * @property ScheduleStatus $status
  * @property bool $is_auto_execute
- * @property \Illuminate\Support\Carbon|null $last_executed_at
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
+ * @property Carbon|null $last_executed_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  *
  * @method static \Illuminate\Database\Eloquent\Builder|ScheduledTransaction active()
  * @method static \Illuminate\Database\Eloquent\Builder|ScheduledTransaction due()
