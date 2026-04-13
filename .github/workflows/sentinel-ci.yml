@@ -80,6 +80,17 @@ jobs:
           trivy-config: trivy.yaml
           skip-dirs: 'apps/backend/vendor,node_modules'
 
+      - name: 🗄️ Run Database Migrations
+        working-directory: ./apps/backend
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: dompet_kita_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: password
+        run: php artisan migrate --force
+
       - name: 🤺 Run Sentinel Security Gate
         working-directory: ./apps/backend
         env:
