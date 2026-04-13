@@ -43,20 +43,20 @@ class HolidayTransaction extends Model
         ];
     }
 
-    /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Holiday, $this> */
-    public function holiday(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    /** @return BelongsTo<Holiday, $this> */
+    public function holiday(): BelongsTo
     {
         return $this->belongsTo(Holiday::class);
     }
 
-    /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Asset, $this> */
-    public function asset(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    /** @return BelongsTo<Asset, $this> */
+    public function asset(): BelongsTo
     {
         return $this->belongsTo(Asset::class);
     }
 
-    /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this> */
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    /** @return BelongsTo<User, $this> */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

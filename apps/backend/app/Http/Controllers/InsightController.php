@@ -18,7 +18,7 @@ class InsightController extends Controller
     public function generate(Request $request, QuantumInsightEngine $engine)
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -36,7 +36,7 @@ class InsightController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -53,7 +53,7 @@ class InsightController extends Controller
     public function update(Request $request, TransactionInsight $insight)
     {
         $user = $request->user();
-        if (!$user instanceof User || $insight->user_id !== $user->id) {
+        if (! $user instanceof User || $insight->user_id !== $user->id) {
             abort(403);
         }
 
@@ -72,7 +72,7 @@ class InsightController extends Controller
     public function destroy(Request $request, TransactionInsight $insight)
     {
         $user = $request->user();
-        if (!$user instanceof User || $insight->user_id !== $user->id) {
+        if (! $user instanceof User || $insight->user_id !== $user->id) {
             abort(403);
         }
 

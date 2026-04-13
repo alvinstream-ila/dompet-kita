@@ -38,7 +38,7 @@ class TransactionController extends Controller
     {
         try {
             $user = $request->user();
-            if (!$user instanceof User) {
+            if (! $user instanceof User) {
                 abort(401);
             }
 
@@ -71,7 +71,7 @@ class TransactionController extends Controller
     {
         try {
             $user = $request->user();
-            if (!$user instanceof User) {
+            if (! $user instanceof User) {
                 abort(401);
             }
 
@@ -103,7 +103,7 @@ class TransactionController extends Controller
     public function store(StoreTransactionRequest $request, StoreTransactionAction $action): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -120,7 +120,7 @@ class TransactionController extends Controller
         $this->authorize('update', $transaction);
 
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -137,7 +137,7 @@ class TransactionController extends Controller
         $this->authorize('delete', $transaction);
 
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 

@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
-use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -307,7 +306,7 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             return \response()->json(['message' => 'Unauthenticated'], 401);
         }
 
@@ -330,7 +329,7 @@ class AuthController extends Controller
         ]);
 
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             return \response()->json(['message' => 'Unauthenticated'], 401);
         }
 

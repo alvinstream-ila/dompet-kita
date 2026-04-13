@@ -25,7 +25,7 @@ class PartnerController extends Controller
         ]);
 
         $inviter = $request->user();
-        if (!$inviter instanceof User) {
+        if (! $inviter instanceof User) {
             abort(401);
         }
 
@@ -81,7 +81,7 @@ class PartnerController extends Controller
         }
 
         $inviter = $invitation->inviter;
-        if (!$inviter instanceof User) {
+        if (! $inviter instanceof User) {
             return response()->json(['message' => 'Pengundang tidak ditemukan.'], 404);
         }
 
@@ -110,7 +110,7 @@ class PartnerController extends Controller
         }
 
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -138,7 +138,7 @@ class PartnerController extends Controller
     public function unlink(Request $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 

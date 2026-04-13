@@ -35,7 +35,7 @@ class LegacyTriggerNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        if (!$notifiable instanceof User) {
+        if (! $notifiable instanceof User) {
             return (new MailMessage)->subject('Premium Notification');
         }
 

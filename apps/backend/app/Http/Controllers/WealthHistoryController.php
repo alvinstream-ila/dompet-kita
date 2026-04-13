@@ -18,7 +18,7 @@ class WealthHistoryController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 

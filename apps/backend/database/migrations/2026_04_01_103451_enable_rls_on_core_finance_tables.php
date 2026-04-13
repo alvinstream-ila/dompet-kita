@@ -20,7 +20,7 @@ return new class extends Migration
 
             // Final verify
             $result = DB::selectOne('SELECT version()');
-            if (!$result) {
+            if (! $result) {
                 return;
             }
             $version = is_object($result) ? ($result->version ?? '') : ($result['version'] ?? '');

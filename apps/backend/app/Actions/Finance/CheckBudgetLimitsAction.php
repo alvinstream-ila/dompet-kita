@@ -28,7 +28,7 @@ class CheckBudgetLimitsAction extends BaseAction
 
         // For now, based on command logic, we sum all expenses
         $query = Transaction::where('type', TransactionType::EXPENSE);
-        
+
         if ($user instanceof User) {
             $query->where('user_id', $user->id);
         }

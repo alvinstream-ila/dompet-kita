@@ -54,9 +54,9 @@ class Goal extends Model
     /**
      * Get the user that owns the goal.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
+     * @return BelongsTo<User, $this>
      */
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -64,9 +64,9 @@ class Goal extends Model
     /**
      * Get the transactions for this goal.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<GoalTransaction, $this>
+     * @return HasMany<GoalTransaction, $this>
      */
-    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function transactions(): HasMany
     {
         return $this->hasMany(GoalTransaction::class);
     }

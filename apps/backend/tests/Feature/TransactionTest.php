@@ -157,7 +157,7 @@ class TransactionTest extends TestCase
 
         $response->assertStatus(200);
         $data = $response->json('data');
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             $this->fail('Response data is not an array');
         }
         /** @var array<int, array<string, mixed>> $data */

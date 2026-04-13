@@ -18,7 +18,7 @@ class HolidayController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -42,7 +42,7 @@ class HolidayController extends Controller
         ]);
 
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -61,7 +61,7 @@ class HolidayController extends Controller
     public function show(Request $request, Holiday $holiday): HolidayResource
     {
         $user = $request->user();
-        if (!$user instanceof User || $holiday->user_id !== $user->id) {
+        if (! $user instanceof User || $holiday->user_id !== $user->id) {
             abort(403);
         }
 
@@ -71,7 +71,7 @@ class HolidayController extends Controller
     public function update(Request $request, Holiday $holiday): HolidayResource
     {
         $user = $request->user();
-        if (!$user instanceof User || $holiday->user_id !== $user->id) {
+        if (! $user instanceof User || $holiday->user_id !== $user->id) {
             abort(403);
         }
 
@@ -98,7 +98,7 @@ class HolidayController extends Controller
     public function destroy(Request $request, Holiday $holiday): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof User || $holiday->user_id !== $user->id) {
+        if (! $user instanceof User || $holiday->user_id !== $user->id) {
             abort(403);
         }
         $holiday->delete();
@@ -120,7 +120,7 @@ class HolidayController extends Controller
     public function fund(Request $request, Holiday $holiday): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof User || $holiday->user_id !== $user->id) {
+        if (! $user instanceof User || $holiday->user_id !== $user->id) {
             abort(403);
         }
 
@@ -165,7 +165,7 @@ class HolidayController extends Controller
     public function history(Request $request, Holiday $holiday): AnonymousResourceCollection
     {
         $user = $request->user();
-        if (!$user instanceof User || $holiday->user_id !== $user->id) {
+        if (! $user instanceof User || $holiday->user_id !== $user->id) {
             abort(403);
         }
 

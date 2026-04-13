@@ -38,12 +38,12 @@ class GetTransactionSummaryAction extends BaseAction
                 ->groupBy('type')
                 ->get();
 
-            /** @var \App\Models\Transaction|null $incomeModel */
-            $incomeModel = $summary->firstWhere('type', TransactionType::INCOME) 
+            /** @var Transaction|null $incomeModel */
+            $incomeModel = $summary->firstWhere('type', TransactionType::INCOME)
                 ?? $summary->firstWhere('type', TransactionType::INCOME->value);
             $income = $incomeModel ? (float) $incomeModel->total : 0.0;
 
-            /** @var \App\Models\Transaction|null $expenseModel */
+            /** @var Transaction|null $expenseModel */
             $expenseModel = $summary->firstWhere('type', TransactionType::EXPENSE)
                 ?? $summary->firstWhere('type', TransactionType::EXPENSE->value);
             $expense = $expenseModel ? (float) $expenseModel->total : 0.0;

@@ -34,7 +34,7 @@ class AssetController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -51,7 +51,7 @@ class AssetController extends Controller
     public function store(StoreAssetRequest $request, CreateAssetAction $action): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -67,7 +67,7 @@ class AssetController extends Controller
     {
         $this->authorize('update', $asset);
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -83,7 +83,7 @@ class AssetController extends Controller
     {
         $this->authorize('delete', $asset);
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -99,7 +99,7 @@ class AssetController extends Controller
     {
         $this->authorize('update', $asset);
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -124,7 +124,7 @@ class AssetController extends Controller
     {
         $this->authorize('update', $asset);
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 

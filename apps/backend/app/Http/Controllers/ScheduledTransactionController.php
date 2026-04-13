@@ -21,7 +21,7 @@ class ScheduledTransactionController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -48,7 +48,7 @@ class ScheduledTransactionController extends Controller
         ]);
 
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 

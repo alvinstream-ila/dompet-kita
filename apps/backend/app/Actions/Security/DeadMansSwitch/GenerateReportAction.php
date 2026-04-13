@@ -51,7 +51,7 @@ class GenerateReportAction extends BaseAction
         // AI Advice
         $partner = $user->partner()->first();
         $partnerName = $partner instanceof User ? (string) $partner->name : 'belum dihubungkan';
-        
+
         /** @var array{report_date: string, user: array{name: string, email: string}, financial_summary: array{total_assets: float|int, total_loans: float|int, total_goals: float|int}, asset_details: Collection<int, Asset>, active_loans: Collection<int, Loan>} $adviceData */
         $adviceData = $data;
         $aiAdvice = $this->getLegacyAdviceAction->execute($user, $adviceData);

@@ -5,6 +5,7 @@ namespace App\Actions\Finance\Wealth;
 use App\Actions\BaseAction;
 use App\Models\Goal;
 use App\Models\User;
+use Illuminate\Support\Collection;
 
 class SimulatePurchaseAction extends BaseAction
 {
@@ -20,7 +21,7 @@ class SimulatePurchaseAction extends BaseAction
     public function execute(User $user, float $amount, string $reason): array
     {
         $forecast = $this->forecastWealthAction->execute($user, 12);
-        /** @var \Illuminate\Support\Collection<int, array{month: string, estimated_net_worth: float|int}> $projection */
+        /** @var Collection<int, array{month: string, estimated_net_worth: float|int}> $projection */
         $projection = $forecast['projection'];
         $lastItem = $projection->last();
         $originalFinalWealth = $lastItem ? (float) $lastItem['estimated_net_worth'] : 1.0;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\AI\GetTaxAdviceAction;
 use App\Actions\Finance\Tax\CalculateTaxAction;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -20,7 +21,7 @@ class TaxController extends Controller
     public function getEstimate(Request $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof \App\Models\User) {
+        if (! $user instanceof User) {
             abort(401);
         }
         $year = (int) $request->query('year', (int) date('Y'));

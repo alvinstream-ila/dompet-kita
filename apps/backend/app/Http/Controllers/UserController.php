@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -37,7 +38,7 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof \App\Models\User) {
+        if (! $user instanceof User) {
             return \response()->json(['message' => 'Unauthenticated'], 401);
         }
         $validated = $request->validated();
@@ -80,7 +81,7 @@ class UserController extends Controller
         ]);
 
         $user = $request->user();
-        if (!$user instanceof \App\Models\User) {
+        if (! $user instanceof User) {
             return \response()->json(['message' => 'Unauthenticated'], 401);
         }
 

@@ -22,10 +22,10 @@ class SimulateMonteCarloAction extends BaseAction
     {
         $iterations = 100;
         $forecastBase = $this->forecastWealthAction->execute($user, $months);
-        
+
         $netWorth = (float) $forecastBase['current_net_worth'];
         $avgSavings = (float) $forecastBase['avg_monthly_savings'];
-        
+
         $marketContext = (array) $forecastBase['market_context'];
         $inflationRate = (float) $marketContext['inflation_rate'];
         $inflationMonthly = $inflationRate / 12;

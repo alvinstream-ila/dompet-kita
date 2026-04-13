@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Holiday;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -18,7 +19,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property string|null $itinerary
  * @property Carbon $created_at
  *
- * @mixin \App\Models\Holiday
+ * @mixin Holiday
  */
 class HolidayResource extends JsonResource
 {

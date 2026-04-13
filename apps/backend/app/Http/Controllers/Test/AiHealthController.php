@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Services\AI\GeminiProvider;
 use App\Services\AI\GroqProvider;
 use App\Services\AI\OpenRouterProvider;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AiHealthController extends Controller
 {
-    public function check(Request $request): \Illuminate\Http\JsonResponse
+    public function check(Request $request): JsonResponse
     {
         $results = [];
 

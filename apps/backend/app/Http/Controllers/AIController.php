@@ -77,7 +77,7 @@ class AIController extends Controller
     public function getDashboardInsight(Request $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             return $this->error('Unauthorized', 401);
         }
 
@@ -99,7 +99,7 @@ class AIController extends Controller
             $savings = (float) ($totalIncome - $totalExpense);
 
             $summaryText = $transactions->take(20)->map(function ($t) {
-                /** @var \App\Models\Transaction $t */
+                /** @var Transaction $t */
                 $typeStr = $t->type->value;
 
                 return "{$t->date}: {$typeStr} Rp ".number_format((float) $t->amount)." ({$t->category})";
@@ -143,7 +143,7 @@ class AIController extends Controller
     {
         $request->validate(['message' => 'required|string|max:1000']);
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             return $this->error('Unauthorized', 401);
         }
 
@@ -164,7 +164,7 @@ class AIController extends Controller
     public function getGuardianStatus(Request $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             return $this->error('Unauthorized', 401);
         }
 
@@ -190,7 +190,7 @@ class AIController extends Controller
     {
         try {
             $user = $request->user();
-            if (!$user instanceof User) {
+            if (! $user instanceof User) {
                 return $this->error('Unauthorized', 401);
             }
 
@@ -214,7 +214,7 @@ class AIController extends Controller
     public function generateWisdom(Request $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             return $this->error('Unauthorized', 401);
         }
 
@@ -236,7 +236,7 @@ class AIController extends Controller
     {
         $months = $request->integer('months', 12);
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             return $this->error('Unauthorized', 401);
         }
 
