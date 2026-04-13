@@ -38,7 +38,7 @@ class FundAssetAction extends BaseAction
             // 3. Deduct from Source Asset (if provided)
             if ($sourceAssetId) {
                 $sourceAsset = Asset::where('user_id', $user->id)->findOrFail($sourceAssetId);
-                
+
                 // We record a withdrawal for the source asset
                 AssetTransaction::create([
                     'user_id' => $user->id,
@@ -50,8 +50,8 @@ class FundAssetAction extends BaseAction
                 ]);
 
                 $sourceAsset->decrement('value', $amount);
-                
-                // For source asset, if it was a bank/cash being "invested", 
+
+                // For source asset, if it was a bank/cash being "invested",
                 // we treat the deduction as reducing its "value" but usually bank/cash capital is same as value.
                 // To keep it simple: we decrement invested_capital too to keep it synced for basic assets.
                 $sourceAsset->decrement('invested_capital', $amount);

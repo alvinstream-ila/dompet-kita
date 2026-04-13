@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->timestamp('transaction_date')->useCurrent();
             $table->timestamps();
-            
+
             $table->index(['user_id', 'asset_id']);
         });
 
@@ -32,33 +32,33 @@ return new class extends Migration
             DB::statement('ALTER TABLE asset_transactions FORCE ROW LEVEL SECURITY;');
 
             // Add RLS Policies
-            DB::statement("
-                CREATE POLICY \"Users can view their own asset transactions\"
+            DB::statement('
+                CREATE POLICY "Users can view their own asset transactions"
                 ON public.asset_transactions
                 FOR SELECT
                 USING (user_id::text = auth.uid()::text);
-            ");
+            ');
 
-            DB::statement("
-                CREATE POLICY \"Users can insert their own asset transactions\"
+            DB::statement('
+                CREATE POLICY "Users can insert their own asset transactions"
                 ON public.asset_transactions
                 FOR INSERT
                 WITH CHECK (user_id::text = auth.uid()::text);
-            ");
+            ');
 
-            DB::statement("
-                CREATE POLICY \"Users can update their own asset transactions\"
+            DB::statement('
+                CREATE POLICY "Users can update their own asset transactions"
                 ON public.asset_transactions
                 FOR UPDATE
                 USING (user_id::text = auth.uid()::text);
-            ");
+            ');
 
-            DB::statement("
-                CREATE POLICY \"Users can delete their own asset transactions\"
+            DB::statement('
+                CREATE POLICY "Users can delete their own asset transactions"
                 ON public.asset_transactions
                 FOR DELETE
                 USING (user_id::text = auth.uid()::text);
-            ");
+            ');
         }
     }
 

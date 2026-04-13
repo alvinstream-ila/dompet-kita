@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\PartnerInvitation;
 use App\Models\User;
 use App\Notifications\PartnerInvitationNotification;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class PartnerController extends Controller
 {
@@ -36,7 +36,7 @@ class PartnerController extends Controller
 
         // 3. Find user and ensure verified
         $invitee = User::where('email', $inviteeEmail)->first();
-        if (!$invitee || !$invitee->email_verified_at) {
+        if (! $invitee || ! $invitee->email_verified_at) {
             return response()->json(['message' => 'Ups! Pasangan kamu harus sudah terdaftar dan verifikasi email dulu ya, Sayang! ✨'], 422);
         }
 
@@ -68,7 +68,7 @@ class PartnerController extends Controller
             ->where('expires_at', '>', Carbon::now())
             ->first();
 
-        if (!$invitation) {
+        if (! $invitation) {
             return response()->json(['message' => 'Undangan tidak ditemukan atau sudah kadaluarsa, Sayang. 🥺'], 404);
         }
 
@@ -90,14 +90,14 @@ class PartnerController extends Controller
             ->where('expires_at', '>', Carbon::now())
             ->first();
 
-        if (!$invitation) {
+        if (! $invitation) {
             return response()->json(['message' => 'Gagal menerima undangan. Cek lagi ya Sayang!'], 404);
         }
 
         $user = $request->user();
         $inviter = User::find($invitation->inviter_id);
 
-        if (!$inviter) {
+        if (! $inviter) {
             return response()->json(['message' => 'Pengundang tidak ditemukan.'], 404);
         }
 
@@ -109,7 +109,7 @@ class PartnerController extends Controller
         $invitation->update(['status' => 'accepted']);
 
         return response()->json([
-            'message' => 'Yay! Sekarang kamu dan ' . $inviter->name . ' resmi terhubung sebagai partner! 🥳❤️',
+            'message' => 'Yay! Sekarang kamu dan '.$inviter->name.' resmi terhubung sebagai partner! 🥳❤️',
         ]);
     }
 
@@ -124,7 +124,7 @@ class PartnerController extends Controller
         if ($partner) {
             $partner->update(['partner_id' => null]);
         }
-        
+
         $user->update(['partner_id' => null]);
 
         return response()->json([

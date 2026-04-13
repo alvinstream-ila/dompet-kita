@@ -35,12 +35,12 @@ class PartnerInvitationNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $frontendUrl = config('app.frontend_url') ?? 'http://localhost:3000';
-        $acceptUrl = $frontendUrl . '/accept-invite?token=' . $this->token;
+        $acceptUrl = $frontendUrl.'/accept-invite?token='.$this->token;
 
         return (new MailMessage)
-            ->subject('💌 Ssst! Ada Undangan Spesial dari ' . $this->inviter->name)
+            ->subject('💌 Ssst! Ada Undangan Spesial dari '.$this->inviter->name)
             ->greeting('Halo Sayang! ❤️')
-            ->line($this->inviter->name . ' baru saja mengundang kamu untuk menghubungkan akun di Dompet Kita.')
+            ->line($this->inviter->name.' baru saja mengundang kamu untuk menghubungkan akun di Dompet Kita.')
             ->line('Dengan sinkronisasi ini, kalian bisa saling memantau pengeluaran besar dan mengatur masa depan bersama jadi lebih terencana.')
             ->line('Gak perlu khawatir, data harianmu tetap pribadi kok! Ini cuma buat kita tetap kompak.')
             ->action('Terima Undangan ✨', $acceptUrl)
@@ -58,7 +58,7 @@ class PartnerInvitationNotification extends Notification
             'type' => 'partner_invitation',
             'inviter_name' => $this->inviter->name,
             'token' => $this->token,
-            'message' => $this->inviter->name . ' mengundang kamu jadi partner keuangan! 💖',
+            'message' => $this->inviter->name.' mengundang kamu jadi partner keuangan! 💖',
         ];
     }
 }

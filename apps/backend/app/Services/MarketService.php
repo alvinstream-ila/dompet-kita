@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Exceptions\MarketServiceException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -73,6 +72,7 @@ class MarketService
         } catch (\Exception $e) {
             Log::error('Antam Scraping Failed: '.$e->getMessage());
         }
+
         return null;
     }
 
@@ -82,6 +82,7 @@ class MarketService
     public function getCryptoPrice(string $symbol): ?float
     {
         $cacheKey = "crypto_price_{$symbol}";
+
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($symbol) {
             try {
                 $response = Http::timeout(5)->get("https://api.binance.com/api/v3/ticker/price?symbol={$symbol}");
@@ -91,6 +92,7 @@ class MarketService
             } catch (\Exception $e) {
                 Log::error("Binance Fetch Failed for {$symbol}: ".$e->getMessage());
             }
+
             return null;
         });
     }
@@ -101,6 +103,7 @@ class MarketService
     public function getStockPrice(string $symbol): ?float
     {
         $cacheKey = "stock_price_{$symbol}";
+
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($symbol) {
             try {
                 // Yahoo Finance Chart API is more stable than others for public use
@@ -111,6 +114,7 @@ class MarketService
             } catch (\Exception $e) {
                 Log::error("Yahoo Finance Fetch Failed for {$symbol}: ".$e->getMessage());
             }
+
             return null;
         });
     }

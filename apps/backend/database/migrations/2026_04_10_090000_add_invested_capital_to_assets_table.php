@@ -18,7 +18,7 @@ return new class extends Migration
         // Initialize invested_capital with current value for existing assets
         // so that the first report isn't a 100% "profit" spike
         DB::table('assets')->update([
-            'invested_capital' => DB::raw('value')
+            'invested_capital' => DB::raw('value'),
         ]);
     }
 

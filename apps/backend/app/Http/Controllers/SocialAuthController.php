@@ -62,7 +62,7 @@ class SocialAuthController extends Controller
                 // Create New User with Unique Username
                 $isNewUser = true;
                 $username = $this->generateUniqueUsername($socialUser->getName() ?? $socialUser->getNickname());
-                
+
                 $user = User::create([
                     'name' => $username,
                     'email' => $socialUser->getEmail(),
@@ -109,7 +109,7 @@ class SocialAuthController extends Controller
     protected function generateUniqueUsername(string $name): string
     {
         $base = Str::slug($name, '-');
-        
+
         // Handle empty slug (e.g. name is only non-latin characters)
         if (empty($base)) {
             $base = 'user';
@@ -120,7 +120,7 @@ class SocialAuthController extends Controller
 
         // Check for collisions
         while (User::where('name', $username)->exists()) {
-            $username = $base . '-' . $counter;
+            $username = $base.'-'.$counter;
             $counter++;
         }
 

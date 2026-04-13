@@ -6,6 +6,7 @@ use App\Traits\HasUserScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $user_id
@@ -63,9 +64,9 @@ class Goal extends Model
     /**
      * Get the transactions for this goal.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<GoalTransaction, $this>
+     * @return HasMany<GoalTransaction, $this>
      */
-    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function transactions(): HasMany
     {
         return $this->hasMany(GoalTransaction::class);
     }

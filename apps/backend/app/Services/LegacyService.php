@@ -25,7 +25,7 @@ class LegacyService
             ->whereNotNull('partner_id')
             ->each(function (User $user) {
                 $threshold = $user->legacy_threshold_months ?: 6; // Default 6 months
-                
+
                 if ($user->last_active_at->addMonths($threshold)->isPast()) {
                     $this->triggerLegacy($user);
                 }

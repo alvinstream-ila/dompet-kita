@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Asset;
 use App\Models\Goal;
-use App\Models\GoalTransaction;
 use App\Traits\HasApiResponses;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -100,7 +99,7 @@ class GoalController extends Controller
             $goal->increment('current_amount', $validated['amount']);
 
             // 3. (Accounting Protocol) Deduct from Asset if specified
-            if (!empty($validated['asset_id'])) {
+            if (! empty($validated['asset_id'])) {
                 $asset = Asset::findOrFail($validated['asset_id']);
                 $asset->decrement('value', $validated['amount']);
             }

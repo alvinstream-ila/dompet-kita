@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\PartnerInvitationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PartnerInvitation extends Model
 {
-    /** @use HasFactory<\Database\Factories\PartnerInvitationFactory> */
+    /** @use HasFactory<PartnerInvitationFactory> */
     use HasFactory;
 
     protected $fillable = [

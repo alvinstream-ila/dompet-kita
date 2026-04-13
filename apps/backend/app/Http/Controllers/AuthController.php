@@ -7,6 +7,7 @@ use App\Models\LoginHistory;
 use App\Models\User;
 use App\Services\SentinelService;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -215,7 +216,7 @@ class AuthController extends Controller
             return \response()->json(['message' => 'Silakan login dulu ya, Sayang!'], 401);
         }
 
-        if ($user->email_verification_code !== $request->code || 
+        if ($user->email_verification_code !== $request->code ||
             now()->isAfter($user->email_verification_expires_at)) {
             return \response()->json([
                 'message' => 'Kode salah atau sudah kedaluwarsa, Sayang. Cek email lagi ya! ❤️',
@@ -228,7 +229,7 @@ class AuthController extends Controller
                 'email_verification_code' => null,
                 'email_verification_expires_at' => null,
             ]);
-            \event(new \Illuminate\Auth\Events\Verified($user));
+            \event(new Verified($user));
         }
 
         return \response()->json([

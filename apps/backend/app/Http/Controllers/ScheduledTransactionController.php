@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ScheduledTransactionResource;
 use App\Models\ScheduledTransaction;
+use App\Services\Cfo\CfoAssistantService;
 use App\Traits\HasApiResponses;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -98,17 +99,17 @@ class ScheduledTransactionController extends Controller
     /**
      * Execute a scheduled transaction manually.
      */
-    public function execute(ScheduledTransaction $scheduledTransaction, \App\Services\Cfo\CfoAssistantService $cfo): JsonResponse
+    public function execute(ScheduledTransaction $scheduledTransaction, CfoAssistantService $cfo): JsonResponse
     {
         $this->authorize('update', $scheduledTransaction);
 
         // Manually execute the transaction
         // We use a reflection or make the method public in service if needed.
         // For now, I'll just check if it's already public. It was protected in CfoAssistantService.
-        
+
         // I will make it public in CfoAssistantService or just call it here.
         // Actually, I'll update CfoAssistantService to make executeTransaction public.
-        
+
         $cfo->executeTransactionManually($scheduledTransaction);
 
         return $this->success(

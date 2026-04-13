@@ -34,7 +34,7 @@ class WithdrawAssetAction extends BaseAction
             // IMPORTANT: For Capital calculation, we reduce invested_capital proportionally or via Cost Recovery.
             // Simplest: invested_capital = max(0, invested_capital - amount)
             $asset->decrement('value', $amount);
-            
+
             // Adjust capital. If withdrawing more than capital (profit), capital goes to 0 safely.
             $currentCapital = $asset->invested_capital;
             $capitalReduction = min($currentCapital, $amount);
@@ -43,7 +43,7 @@ class WithdrawAssetAction extends BaseAction
             // 3. Increment Recipient Asset (if provided)
             if ($recipientAssetId) {
                 $recipientAsset = Asset::where('user_id', $user->id)->findOrFail($recipientAssetId);
-                
+
                 // Record a funding for the recipient
                 AssetTransaction::create([
                     'user_id' => $user->id,

@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\HolidayResource;
-use App\Models\Holiday;
 use App\Models\Asset;
-use App\Models\HolidayTransaction;
+use App\Models\Holiday;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -14,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 class HolidayController extends Controller
 {
     private const IMAGE_PROVIDER = 'https://loremflickr.com/1200/800/%s,landscape,travel';
+
     public function index(Request $request): AnonymousResourceCollection
     {
         $holidays = Holiday::where('user_id', $request->user()->id)
@@ -131,14 +131,14 @@ class HolidayController extends Controller
             $holiday->increment('funded_amount', $validated['amount']);
 
             // 3. (Accounting Protocol) Deduct from Asset if specified
-            if (!empty($validated['asset_id'])) {
+            if (! empty($validated['asset_id'])) {
                 $asset = Asset::findOrFail($validated['asset_id']);
                 $asset->decrement('value', $validated['amount']);
             }
 
             return \response()->json([
                 'message' => 'Dana liburan berhasil ditambahkan! Semoga liburannya berkesan ya, Sayang! ✈️',
-                'data' => new HolidayResource($holiday->load('transactions'))
+                'data' => new HolidayResource($holiday->load('transactions')),
             ]);
         });
     }

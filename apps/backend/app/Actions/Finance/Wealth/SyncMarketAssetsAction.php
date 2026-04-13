@@ -37,8 +37,8 @@ class SyncMarketAssetsAction extends BaseAction
 
     /**
      * Synchronize a single asset and handle auditing.
-     * 
-     * @param array<string, int> $stats
+     *
+     * @param  array<string, int>  $stats
      */
     private function syncAsset(Asset $asset, array $market, array &$stats): void
     {
@@ -55,8 +55,8 @@ class SyncMarketAssetsAction extends BaseAction
 
     /**
      * Map Asset Class and Symbol to a Market Price.
-     * 
-     * @param array<string, mixed> $market
+     *
+     * @param  array<string, mixed>  $market
      */
     private function resolvePrice(Asset $asset, array $market): float
     {
@@ -64,8 +64,8 @@ class SyncMarketAssetsAction extends BaseAction
         $quantity = $asset->quantity;
 
         return match ($asset->type) {
-            AssetType::INVESTMENT, AssetType::COMMODITY => $symbol === 'GRAM' 
-                ? $quantity * ($market['gold_antam_gram'] ?? 0) 
+            AssetType::INVESTMENT, AssetType::COMMODITY => $symbol === 'GRAM'
+                ? $quantity * ($market['gold_antam_gram'] ?? 0)
                 : $asset->value,
 
             AssetType::CASH => in_array($symbol, ['USD', 'SGD', 'EUR', 'JPY', 'GBP', 'AUD'])
@@ -82,10 +82,14 @@ class SyncMarketAssetsAction extends BaseAction
 
     private function resolveStockPrice(Asset $asset, string $symbol): float
     {
-        if (empty($symbol)) return $asset->value;
+        if (empty($symbol)) {
+            return $asset->value;
+        }
 
         $price = $this->marketService->getStockPrice($symbol);
-        if (! $price) return $asset->value;
+        if (! $price) {
+            return $asset->value;
+        }
 
         // International Conversion
         if (! str_ends_with($symbol, '.JK')) {
@@ -97,10 +101,14 @@ class SyncMarketAssetsAction extends BaseAction
 
     private function resolveCryptoPrice(Asset $asset, string $symbol): float
     {
-        if (empty($symbol)) return $asset->value;
+        if (empty($symbol)) {
+            return $asset->value;
+        }
 
         $price = $this->marketService->getCryptoPrice($symbol);
-        if (! $price) return $asset->value;
+        if (! $price) {
+            return $asset->value;
+        }
 
         // USDT Conversion
         if (str_ends_with($symbol, 'USDT')) {
@@ -112,8 +120,8 @@ class SyncMarketAssetsAction extends BaseAction
 
     /**
      * Audit and alert if value shift is significant (> 3%).
-     * 
-     * @param array<string, int> $stats
+     *
+     * @param  array<string, int>  $stats
      */
     private function logSignificantChange(Asset $asset, float $oldValue, float $newValue, array &$stats): void
     {
@@ -128,7 +136,7 @@ class SyncMarketAssetsAction extends BaseAction
                     'change_percent' => round($changePercent, 2),
                     'market_rate' => $newValue / $asset->quantity,
                 ])
-                ->log("Supreme Sentinel Alert: Significant {$asset->unit} Value Shift (".round($changePercent, 2)."%) detected.");
+                ->log("Supreme Sentinel Alert: Significant {$asset->unit} Value Shift (".round($changePercent, 2).'%) detected.');
 
             $stats['alerts']++;
         }

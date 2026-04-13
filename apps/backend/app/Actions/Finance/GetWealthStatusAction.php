@@ -52,7 +52,7 @@ class GetWealthStatusAction extends BaseAction
 
         $totalAssets = (float) $assetQuery->sum('value');
         $totalGoals = (float) $goalQuery->sum('current_amount');
-        
+
         $holidayQuery = Holiday::query();
         if ($user) {
             $holidayQuery->where('user_id', $user->id);

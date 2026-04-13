@@ -6,14 +6,12 @@ use App\Notifications\ResetPasswordOTPNotification;
 use App\Notifications\VerifyEmailNotification;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\URL;
 use Laravel\Sanctum\HasApiTokens;
 
 /**

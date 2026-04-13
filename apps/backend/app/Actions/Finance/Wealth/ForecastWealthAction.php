@@ -4,15 +4,12 @@ namespace App\Actions\Finance\Wealth;
 
 use App\Actions\AI\GetWealthAdviceAction;
 use App\Actions\BaseAction;
-use App\Enums\TransactionType;
+use App\Enums\AssetType;
 use App\Models\Asset;
-use App\Models\Loan;
-use App\Models\Transaction;
 use App\Models\User;
 use App\Services\MarketService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class ForecastWealthAction extends BaseAction
 {
@@ -29,9 +26,9 @@ class ForecastWealthAction extends BaseAction
     public function execute(User $user, int $months = 12): array
     {
         $currentAssets = Asset::where('user_id', $user->id)
-            ->where('type', \App\Enums\AssetType::INVESTMENT)
+            ->where('type', AssetType::INVESTMENT)
             ->sum('value');
-        
+
         // Zero loans for investment projection focus
         $currentLoans = 0;
 

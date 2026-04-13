@@ -20,7 +20,7 @@ class CfoAssistantService
         $processedCount = 0;
         $dueTransactions = ScheduledTransaction::active()->due()->get();
 
-        /** @var \App\Models\ScheduledTransaction $scheduled */
+        /** @var ScheduledTransaction $scheduled */
         foreach ($dueTransactions as $scheduled) {
             DB::transaction(function () use ($scheduled, &$processedCount) {
                 // If auto-execute is enabled, create the actual transaction

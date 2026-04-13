@@ -12,7 +12,9 @@ class AssetFundingTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected Asset $bank;
+
     protected Asset $investment;
 
     protected function setUp(): void
@@ -44,11 +46,11 @@ class AssetFundingTest extends TestCase
             ]);
 
         $response->assertStatus(200);
-        
+
         $this->investment->refresh();
         $this->assertEquals(1500000, $this->investment->value);
         $this->assertEquals(1500000, $this->investment->invested_capital);
-        
+
         $this->assertDatabaseHas('asset_transactions', [
             'asset_id' => $this->investment->id,
             'amount' => 500000,
@@ -65,13 +67,13 @@ class AssetFundingTest extends TestCase
             ]);
 
         $response->assertStatus(200);
-        
+
         $this->investment->refresh();
         $this->bank->refresh();
 
         $this->assertEquals(2000000, $this->investment->value);
         $this->assertEquals(4000000, $this->bank->value);
-        
+
         // Check capital tracking
         $this->assertEquals(2000000, $this->investment->invested_capital);
         $this->assertEquals(4000000, $this->bank->invested_capital);
@@ -88,10 +90,10 @@ class AssetFundingTest extends TestCase
             ]);
 
         $response->assertStatus(200);
-        
+
         $this->investment->refresh();
         $this->assertEquals(900000, $this->investment->value);
-        
+
         // Capital logic: 1.5jt value, 1jt capital. Withdraw 600k.
         // My logic: decrement capital by min(capital, amount).
         // 1jt - 600k = 400k capital remaining.
@@ -107,7 +109,7 @@ class AssetFundingTest extends TestCase
             ]);
 
         $response->assertStatus(200);
-        
+
         $this->investment->refresh();
         $this->bank->refresh();
 

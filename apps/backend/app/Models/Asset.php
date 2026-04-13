@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -75,7 +76,7 @@ class Asset extends Model
     /**
      * The transactions associated with this asset.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<AssetTransaction>
+     * @return HasMany<AssetTransaction>
      */
     public function transactions()
     {
