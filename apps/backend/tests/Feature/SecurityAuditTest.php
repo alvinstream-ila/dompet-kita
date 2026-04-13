@@ -14,6 +14,10 @@ uses(RefreshDatabase::class);
 test('it rejects malicious file uploads in media controller', function () {
     /** @var TestCase $this */
     $user = User::factory()->create();
+    config([
+        'filesystems.disks.storj.key' => 'fake-key',
+        'filesystems.disks.storj.url' => 'http://localhost/storage',
+    ]);
     Storage::fake('storj');
 
     // Create a fake PHP file that should be rejected
@@ -32,6 +36,10 @@ test('it rejects malicious file uploads in media controller', function () {
 test('it accepts valid image file uploads', function () {
     /** @var TestCase $this */
     $user = User::factory()->create();
+    config([
+        'filesystems.disks.storj.key' => 'fake-key',
+        'filesystems.disks.storj.url' => 'http://localhost/storage',
+    ]);
     Storage::fake('storj');
 
     $validImage = UploadedFile::fake()->image('receipt.jpg');
