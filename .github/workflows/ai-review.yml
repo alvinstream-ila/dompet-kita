@@ -1,27 +1,41 @@
-name: AI Code Reviewer (Qodo Merge)
+name: AI Code Reviewer (Qodo Merge / PR-Agent)
 
 on:
   pull_request:
     types: [opened, reopened, ready_for_review, synchronize]
   issue_comment:
-    types: [created, edited]
+    types: [created]
 
 jobs:
   pr_agent_job:
-    # Do not run if the event is a bot comment
-    if: ${{ github.event.sender.type != 'Bot' }}
+    name: "🤖 AI Code Review"
     runs-on: ubuntu-latest
+
+    # Only run on:
+    # 1. Pull request events (not from bots)
+    # 2. Issue comments that are ON a pull request (not from bots)
+    if: >
+      github.event.sender.type != 'Bot' && (
+        github.event_name == 'pull_request' ||
+        (github.event_name == 'issue_comment' && github.event.issue.pull_request != null)
+      )
+
     permissions:
       issues: write
       pull-requests: write
-      contents: write
+      contents: read
+
     steps:
-      - name: 🤖 Run PR Agent
+      - name: 🤖 Run PR Agent (Qodo Merge)
         uses: qodo-ai/pr-agent@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Map your GitHub Secret to the PR Agent environment variable
+          # Gemini API Key — must use this exact env var name for PR-Agent
           GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          # Use Gemini 3 Flash as discussed for free-tier sustainability
-          github_action_config.model: "gemini/gemini-1.5-flash"
-          # Other configurations can be set here or in .pr_agent.toml
+          # Model selection — correct key is "config.model" (NOT "github_action_config.model")
+          config.model: "gemini/gemini-1.5-flash"
+          config.fallback_models: '["gemini/gemini-1.5-flash"]'
+          # Auto-trigger a review when a PR is opened/synchronized
+          github_action_config.auto_review: "true"
+          github_action_config.auto_describe: "true"
+          github_action_config.auto_improve: "false"
