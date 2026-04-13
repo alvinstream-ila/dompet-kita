@@ -17,13 +17,13 @@ return new class extends Migration
         // 1. Fix Mutable Search Paths for Security Functions
         try {
             DB::statement('ALTER FUNCTION public.get_laravel_user_id() SET search_path = public;');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Ignore if function doesn't exist in testing environment
         }
 
         try {
             DB::statement('ALTER FUNCTION public.handle_new_user() SET search_path = public;');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Ignore if function doesn't exist in testing environment
         }
 
@@ -74,13 +74,13 @@ return new class extends Migration
 
         try {
             DB::statement('ALTER FUNCTION public.get_laravel_user_id() RESET search_path;');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Ignore
         }
 
         try {
             DB::statement('ALTER FUNCTION public.handle_new_user() RESET search_path;');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Ignore
         }
 
