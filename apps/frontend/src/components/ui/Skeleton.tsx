@@ -10,18 +10,22 @@ interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
  * Optimized for Glassmorphism and dark/light modes.
  * Uses a subtle hardware-accelerated animation.
  */
-function Skeleton({ className, variant = 'default', ...props }: SkeletonProps) {
+function Skeleton({
+  className,
+  variant = 'default',
+  ...props
+}: Readonly<SkeletonProps>) {
   return (
     <div
       className={cn(
         'relative overflow-hidden rounded-md',
         // Base Color
-        variant === 'default' && 'bg-slate-200/60 dark:bg-slate-800/60',
+        variant === 'default' && 'bg-slate-200/50 dark:bg-slate-800/50',
         variant === 'glass' &&
-          'border border-white/20 bg-white/20 shadow-inner backdrop-blur-sm',
+          'border border-white/30 bg-white/10 shadow-inner backdrop-blur-md',
 
-        // The Shimmer Effect
-        'after:absolute after:inset-0 after:-translate-x-full after:animate-[shimmer_2s_infinite] after:bg-gradient-to-r after:from-transparent after:via-white/30 after:to-transparent',
+        // Enhanced Premium Shimmer Effect
+        'after:absolute after:inset-0 after:-translate-x-full after:animate-[shimmer_1.5s_infinite_linear] after:bg-linear-to-r after:from-transparent after:via-white/20 after:to-transparent',
 
         className
       )}

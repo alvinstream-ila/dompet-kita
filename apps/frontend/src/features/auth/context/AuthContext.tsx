@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     checkAuth();
   }, []);
 
-  const login = (token: string, user: User) => {
+  const login = React.useCallback((token: string, user: User) => {
     Cookies.set('auth_token', token, {
       expires: 7,
       sameSite: 'lax',
@@ -71,9 +71,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     setUser(user);
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = React.useCallback(async () => {
     try {
       await api.post('/logout');
     } catch (error) {
@@ -83,7 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       Cookies.remove('user_verified');
       setUser(null);
     }
-  };
+  }, []);
 
   const authValue = React.useMemo(
     () => ({

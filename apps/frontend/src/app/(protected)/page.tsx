@@ -31,28 +31,30 @@ export default async function HomePage() {
 async function HomeContent() {
   const queryClient = getQueryClient();
 
-  // Prefetch critical data on the server
-  // This avoids waterfalls and makes the page feel instant
+  // Prefetch critical data on the server in parallel to eliminate waterfalls
   const prefetchData = async () => {
-    // 1. Get user profile for settings (budget cycle, etc.)
+    // We launch the user check first as it's critical for the budget cycle logic
     const user = await getUserProfileAction();
 
-    // 2. Prefetch financial summary
-    // We use the same query keys as the client-side hooks
-    await queryClient.prefetchQuery({
-      queryKey: [
-        'financial_summary',
-        undefined,
-        undefined,
-        user?.budget_cycle_start || 1,
-      ],
-      queryFn: () =>
-        getFinancialSummaryAction(
+    // Now prefetch everything else that doesn't strictly depend on waiting for others
+    // although financial_summary needs the user's budget cycle, we have it now
+    await Promise.all([
+      queryClient.prefetchQuery({
+        queryKey: [
+          'financial_summary',
           undefined,
           undefined,
-          user?.budget_cycle_start || 1
-        ),
-    });
+          user?.budget_cycle_start || 1,
+        ],
+        queryFn: () =>
+          getFinancialSummaryAction(
+            undefined,
+            undefined,
+            user?.budget_cycle_start || 1
+          ),
+      }),
+      // Add other critical dashboard queries here if needed in parallel
+    ]);
 
     return user;
   };

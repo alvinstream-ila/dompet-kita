@@ -1,85 +1,56 @@
-'use client';
-
-import Cookies from 'js-cookie';
-import { Loader2 } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useEffect } from 'react';
-import { useAuth } from '@/features/auth';
-import api from '@/lib/axios';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { serverApi } from '@/lib/server-api';
 
 /**
- * AuthCallbackContent - Inner component to use useSearchParams() safely within Suspense.
+ * Auth Callback Page - Server Side Handler 🚀
+ *
+ * This version performs all token validation and session initialization
+ * on the server, eliminating the client-side loading waterfall.
  */
-function AuthCallbackContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const { login } = useAuth();
+export default async function AuthCallbackPage(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const searchParams = await props.searchParams;
+  const token =
+    typeof searchParams.token === 'string' ? searchParams.token : null;
+  const isNew = searchParams.is_new === '1';
 
-  useEffect(() => {
-    const handleCallback = async () => {
-      const token = searchParams?.get('token');
+  if (!token) {
+    redirect('/auth/login');
+  }
 
-      if (token) {
-        try {
-          // Temporarily set token to fetch user data
-          Cookies.set('auth_token', token, {
-            expires: 7,
-            sameSite: 'lax',
-            secure: true,
-          });
-          const { data: user } = await api.get('/user');
+  try {
+    // 1. Initialize session in cookies immediately for subsequent server-side calls
+    const cookieStore = await cookies();
+    cookieStore.set('auth_token', token, {
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    });
 
-          // Properly authorize via context
-          login(token, user);
+    // 2. Validate token and fetch user profile on the server
+    const user = await serverApi('/user');
 
-          // Check if this is a new signup to show premium onboarding toast
-          if (searchParams?.get('is_new') === '1') {
-            Cookies.set('show_welcome_toast', '1', { expires: 1 / 1440 }); // Lives for 1 minute
-          }
-
-          // Redirect to home/dashboard
-          router.push('/');
-        } catch (error) {
-          console.error('Callback error', error);
-          Cookies.remove('auth_token');
-          router.push('/auth/login?error=callback_failed');
-        }
-      } else {
-        router.push('/auth/login');
-      }
-    };
-
-    if (searchParams) {
-      handleCallback();
+    if (!user) {
+      throw new Error('User not found');
     }
-  }, [searchParams, router, login]);
 
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50">
-      <div className="relative">
-        <div className="bg-blue-royal/10 absolute inset-0 animate-pulse rounded-full blur-2xl" />
-        <Loader2 className="text-blue-royal relative h-16 w-16 animate-spin" />
-      </div>
-      <p className="animate-pulse text-[12px] font-black tracking-[0.2em] text-slate-600 uppercase">
-        Lagi menyambungkan diri sayang...
-      </p>
-    </div>
-  );
-}
+    // 3. Handle special onboarding flags
+    if (isNew) {
+      cookieStore.set('show_welcome_toast', '1', {
+        expires: new Date(Date.now() + 60 * 1000), // 1 minute
+        path: '/',
+      });
+    }
 
-/**
- * Auth Callback Page - Main Entry
- */
-export default function AuthCallbackPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-screen items-center justify-center bg-slate-50">
-          <Loader2 className="text-blue-royal h-10 w-10 animate-spin" />
-        </div>
-      }
-    >
-      <AuthCallbackContent />
-    </Suspense>
-  );
+    // 4. Instant redirect to dashboard
+    redirect('/');
+  } catch (error) {
+    console.error('Server-side callback error:', error);
+    const cookieStore = await cookies();
+    cookieStore.delete('auth_token');
+    redirect('/auth/login?error=callback_failed');
+  }
 }

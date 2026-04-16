@@ -1,12 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import {
-  Dancing_Script,
-  Great_Vibes,
-  Inter,
-  Outfit,
-  Plus_Jakarta_Sans,
-  Sacramento,
-} from 'next/font/google';
+import { Dancing_Script, Inter, Outfit } from 'next/font/google';
 import './globals.css';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Providers } from '@/components/providers/Providers';
@@ -23,29 +16,9 @@ const outfit = Outfit({
   display: 'swap',
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  variable: '--font-display',
-  display: 'swap',
-});
-
 const dancingScript = Dancing_Script({
   subsets: ['latin'],
   variable: '--font-script',
-  display: 'swap',
-});
-
-const greatVibes = Great_Vibes({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-vibes',
-  display: 'swap',
-});
-
-const sacramento = Sacramento({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-sacramento',
   display: 'swap',
 });
 
@@ -93,8 +66,17 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${outfit.variable} ${plusJakarta.variable} ${dancingScript.variable} ${greatVibes.variable} ${sacramento.variable} antialiased`}
+      className={`${inter.variable} ${outfit.variable} ${dancingScript.variable} antialiased`}
     >
+      <head>
+        {/* Preload critical background assets to avoid white flashes */}
+        <link
+          rel="preload"
+          href="/app-bg.svg"
+          as="image"
+          type="image/svg+xml"
+        />
+      </head>
       <body className="bg-[#e5f1fa] text-slate-900 selection:bg-blue-200 selection:text-blue-900">
         <Providers>{children}</Providers>
         <SpeedInsights />
