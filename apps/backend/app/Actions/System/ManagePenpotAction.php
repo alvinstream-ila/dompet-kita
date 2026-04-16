@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Actions\System;
 
 use App\Actions\BaseAction;
-use Exception;
 use App\Exceptions\PenpotException;
 use Illuminate\Support\Facades\Http;
 
