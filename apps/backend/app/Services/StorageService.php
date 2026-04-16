@@ -113,7 +113,7 @@ class StorageService
     private function formatFileData(string $content, ?string $path, ?string $url): array
     {
         $base64Data = base64_encode($content);
-        $reference = $path ?: $url;
+        $reference = $path ? $path : $url;
         $urlPath = parse_url((string) $reference, PHP_URL_PATH);
         $ext = strtolower(pathinfo((string) $urlPath, PATHINFO_EXTENSION));
 

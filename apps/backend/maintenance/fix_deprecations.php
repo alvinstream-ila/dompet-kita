@@ -50,10 +50,10 @@ foreach ($dirs as $dir) {
             if ($newContent !== $content) {
                 file_put_contents($path, $newContent);
                 $fixedCount++;
-                echo "Fixed: $path\n";
+                echo "Fixed: {$path}\n";
             }
         }
     }
 }
 
-echo "\nDone. Total files fixed: $fixedCount\n";
+echo "\nDone. Total files fixed: {$fixedCount}\n";

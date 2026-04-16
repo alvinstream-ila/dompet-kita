@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import api from '@/lib/axios';
 import type { Asset } from '@/types';
-import { toast } from 'sonner';
 
 export function useAssets() {
   return useQuery({
@@ -54,7 +54,7 @@ export function useAddAsset() {
       queryClient.setQueryData(['assets'], (old: Asset[] | undefined) => {
         const optimisticAsset = {
           ...newAsset,
-          id: 'temp-' + Date.now(),
+          id: `temp-${Date.now()}`,
           last_updated: new Date().toISOString(),
         } as Asset;
         return old ? [...old, optimisticAsset] : [optimisticAsset];

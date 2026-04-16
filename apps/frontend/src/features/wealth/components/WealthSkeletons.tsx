@@ -1,6 +1,5 @@
-import React from 'react';
-import { Skeleton } from '@/components/ui/Skeleton';
 import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 /**
  * WealthStatSkeleton - Loading state for wealth metrics 📈

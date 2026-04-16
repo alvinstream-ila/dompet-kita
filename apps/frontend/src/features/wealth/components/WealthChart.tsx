@@ -1,17 +1,17 @@
-import React from 'react';
 import {
-  Chart as ChartJS,
   CategoryScale,
+  Chart as ChartJS,
+  type ChartOptions,
+  Filler,
+  Legend,
   LinearScale,
-  PointElement,
   LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend,
-  Filler,
-  type ChartOptions,
   type TooltipItem,
 } from 'chart.js';
+import type React from 'react';
 import { Line } from 'react-chartjs-2';
 import { Card } from '@/components/ui/card';
 
@@ -52,14 +52,14 @@ export const WealthChart: React.FC<WealthChartProps> = ({
         fill: true,
         label: 'Kekayaan Kita',
         data: chartValues,
-        borderColor: '#3b82f6',
-        backgroundColor: 'rgba(59, 130, 246, 0.05)',
+        borderColor: '#0250ff',
+        backgroundColor: 'rgba(2, 80, 255, 0.05)',
         tension: 0.45,
         borderWidth: 4,
         pointRadius: 0,
         pointHitRadius: 20,
         pointHoverRadius: 8,
-        pointHoverBackgroundColor: '#3b82f6',
+        pointHoverBackgroundColor: '#0250ff',
         pointHoverBorderColor: 'white',
         pointHoverBorderWidth: 4,
       },
@@ -110,7 +110,7 @@ export const WealthChart: React.FC<WealthChartProps> = ({
 
   return (
     <Card className="group relative overflow-hidden rounded-[40px] border-none bg-white p-8 shadow-2xl">
-      <div className="absolute top-0 right-0 -mt-32 -mr-32 h-64 w-64 rounded-full bg-blue-500/5 blur-3xl transition-transform group-hover:scale-110" />
+      <div className="bg-blue-royal/5 absolute top-0 right-0 -mt-32 -mr-32 h-64 w-64 rounded-full blur-3xl transition-transform group-hover:scale-110" />
       <div className="relative z-10">
         <div className="mb-10">
           <h3 className="text-xl font-black tracking-tight text-slate-800">

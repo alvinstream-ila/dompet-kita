@@ -1,11 +1,20 @@
 'use client';
 
-import React from 'react';
 import { motion } from 'framer-motion';
+import {
+  Calendar,
+  FileText,
+  Plane,
+  PlusCircle,
+  ShieldAlert,
+  Sparkles,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Sparkles, Plane, TrendingUp, FileText, ShieldAlert, PlusCircle, Users, Calendar } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import type React from 'react';
 import { useUiStore } from '@/lib/store/useUiStore';
+import { cn } from '@/lib/utils';
 
 const QUICK_ACTIONS = [
   {
@@ -13,8 +22,8 @@ const QUICK_ACTIONS = [
     icon: PlusCircle,
     label: 'Catat Jajan',
     isModal: true,
-    gradient: 'bg-linear-to-br from-pink-400 via-pink-500 to-rose-500',
-    shadow: 'shadow-pink-200',
+    gradient: 'bg-linear-to-br from-[var(--color-pink-primary)] to-[#ff4d80]',
+    shadow: 'shadow-[var(--color-pink-primary)]/20',
     description: 'Catat pengeluaran kita hari ini ✨',
   },
   {
@@ -22,8 +31,8 @@ const QUICK_ACTIONS = [
     icon: Sparkles,
     label: 'Scan Struk',
     path: '/scanner',
-    gradient: 'bg-linear-to-br from-amber-400 to-orange-500',
-    shadow: 'shadow-amber-100',
+    gradient: 'bg-linear-to-br from-[var(--color-yellow-outlook)] to-[#e6b800]',
+    shadow: 'shadow-[var(--color-yellow-outlook)]/20',
     description: 'Biar cepet, foto aja struknya!',
   },
   {
@@ -31,8 +40,8 @@ const QUICK_ACTIONS = [
     icon: Plane,
     label: 'Liburan Kita',
     path: '/holiday',
-    gradient: 'bg-linear-to-br from-blue-400 to-indigo-500',
-    shadow: 'shadow-blue-100',
+    gradient: 'bg-linear-to-br from-[var(--color-blue-royal)] to-[#2a52be]',
+    shadow: 'shadow-[var(--color-blue-royal)]/20',
     description: 'Rencana jalan-jalan bareng ✈️',
   },
   {
@@ -40,8 +49,8 @@ const QUICK_ACTIONS = [
     icon: TrendingUp,
     label: 'Pertumbuhan',
     path: '/wealth',
-    gradient: 'bg-linear-to-br from-emerald-400 to-teal-500',
-    shadow: 'shadow-emerald-100',
+    gradient: 'bg-linear-to-br from-[var(--color-green-stat)] to-[#27ae60]',
+    shadow: 'shadow-[var(--color-green-stat)]/20',
     description: 'Cek harta kolektif kita ❤️',
   },
   {
@@ -49,8 +58,8 @@ const QUICK_ACTIONS = [
     icon: FileText,
     label: 'Laporan Detail',
     path: '/reports',
-    gradient: 'bg-linear-to-br from-violet-400 to-purple-500',
-    shadow: 'shadow-violet-100',
+    gradient: 'bg-linear-to-br from-[#8b5cf6] to-[#7c3aed]',
+    shadow: 'shadow-violet-200/20',
     description: 'Analisis jajan bulanan',
   },
   {
@@ -58,8 +67,8 @@ const QUICK_ACTIONS = [
     icon: Users,
     label: 'Keluarga Kita',
     path: '/family-hub',
-    gradient: 'bg-linear-to-br from-pink-400 to-rose-500',
-    shadow: 'shadow-pink-100',
+    gradient: 'bg-linear-to-br from-[var(--color-pink-primary)] to-[#ff4d80]',
+    shadow: 'shadow-[var(--color-pink-primary)]/20',
     description: 'Eksosistem cinta Alvin & Ila ✨',
   },
   {
@@ -67,8 +76,8 @@ const QUICK_ACTIONS = [
     icon: ShieldAlert,
     label: 'Legacy Vault',
     path: '/legacy-vault',
-    gradient: 'bg-linear-to-br from-rose-400 to-red-500',
-    shadow: 'shadow-rose-100',
+    gradient: 'bg-linear-to-br from-[var(--color-red-stat)] to-[#c0392b]',
+    shadow: 'shadow-[var(--color-red-stat)]/20',
     description: 'Warisan digital kita aman 🛡️',
   },
   {
@@ -76,8 +85,8 @@ const QUICK_ACTIONS = [
     icon: Calendar,
     label: 'Tagihan Kita',
     path: '/scheduled',
-    gradient: 'bg-linear-to-br from-cyan-400 to-blue-500',
-    shadow: 'shadow-cyan-100',
+    gradient: 'bg-linear-to-br from-[var(--color-blue-royal)] to-[#2a52be]',
+    shadow: 'shadow-[var(--color-blue-royal)]/20',
     description: 'Biar nggak lupa bayar-bayar ✨',
   },
   {
@@ -85,8 +94,8 @@ const QUICK_ACTIONS = [
     icon: Sparkles,
     label: 'Mimpi Kita',
     path: '/mimpi-kita',
-    gradient: 'bg-linear-to-br from-yellow-400 to-amber-500',
-    shadow: 'shadow-yellow-100',
+    gradient: 'bg-linear-to-br from-[var(--color-yellow-outlook)] to-[#e6b800]',
+    shadow: 'shadow-[var(--color-yellow-outlook)]/20',
     description: 'Wujudkan impian bersama 💍',
   },
 ];
@@ -118,20 +127,30 @@ export const HomeQuickActions: React.FC = () => {
             btn.shadow
           )}
         >
-          <div className={cn('absolute inset-0 opacity-10 transition-opacity group-hover:opacity-20', btn.gradient)} />
-          
-          <div className={cn(
-            'flex h-12 w-12 shrink-0 items-center justify-center rounded-[22px] border border-white/20 shadow-lg backdrop-blur-xl transition-transform group-hover:scale-110 md:h-14 md:w-14',
-            btn.gradient
-          )}>
-            <btn.icon className="size-6 text-white md:size-7" strokeWidth={2.5} />
+          <div
+            className={cn(
+              'absolute inset-0 opacity-10 transition-opacity group-hover:opacity-20',
+              btn.gradient
+            )}
+          />
+
+          <div
+            className={cn(
+              'flex h-12 w-12 shrink-0 items-center justify-center rounded-[22px] border border-white/20 shadow-lg backdrop-blur-xl transition-transform group-hover:scale-110 md:h-14 md:w-14',
+              btn.gradient
+            )}
+          >
+            <btn.icon
+              className="size-6 text-white md:size-7"
+              strokeWidth={2.5}
+            />
           </div>
 
           <div className="flex flex-col items-center text-center">
             <span className="text-[10px] leading-tight font-black tracking-widest text-slate-800 uppercase md:text-[11px]">
               {btn.label}
             </span>
-            <span className="mt-1 hidden text-[8px] font-medium text-slate-400 lg:block line-clamp-1">
+            <span className="mt-1 line-clamp-1 hidden text-[8px] font-medium text-slate-400 lg:block">
               {btn.description}
             </span>
           </div>

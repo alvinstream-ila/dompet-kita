@@ -1,0 +1,56 @@
+
+  ✓✓.....✓.✓✓✓✓.✓✓.✓✓..✓...✓....✓✓...✓..✓✓✓✓..✓✓.....✓.✓...........................................✓......✓✓✓✓✓......✓
+  ......✓..✓....................✓...........✓✓.✓.✓✓✓✓✓......✓.✓..........✓✓✓...✓......................................
+  ...............................................................
+
+  ──────────────────────────────────────────────────────────────────────────────────────────────────────────── Laravel  
+    FIXED   ......................................................................... 295 files, 48 style issues fixed  
+  ✓ app\Actions\AI\AnalyzeReceiptAction.php unary_operator_spaces, not_operator_with_successor_space, single_line_emp…  
+  ✓ app\Actions\AI\ChatWithAiAction.php                                                         single_line_empty_body  
+  ✓ app\Actions\AI\GenerateInsightAction.php unary_operator_spaces, not_operator_with_successor_space, single_line_em…  
+  ✓ app\Actions\AI\GetLegacyAdviceAction.php                                                    single_line_empty_body  
+  ✓ app\Actions\AI\GetTaxAdviceAction.php                                                       single_line_empty_body  
+  ✓ app\Actions\AI\GetWealthAdviceAction.php                                                    single_line_empty_body  
+  ✓ app\Actions\AI\GuardianAnalyzeAction.php                                                    single_line_empty_body  
+  ✓ app\Actions\AI\PerformSelfHealingAction.php                                                 single_line_empty_body  
+  ✓ app\Actions\AI\SystemHealthCheckAction.php                                                  single_line_empty_body  
+  ✓ app\Actions\Finance\Asset\CreateAssetAction.php unary_operator_spaces, not_operator_with_successor_space, single_…  
+  ✓ app\Actions\Finance\Asset\DeleteAssetAction.php                                             single_line_empty_body  
+  ✓ app\Actions\Finance\Asset\UpdateAssetAction.php                                             single_line_empty_body  
+  ✓ app\Actions\Finance\GetQuantumInsightsAction.php                                            single_line_empty_body  
+  ✓ app\Actions\Finance\PerformCfoAnalysisAction.php                                            single_line_empty_body  
+  ✓ app\Actions\Finance\ProcessScheduledTransactionsAction.php                                  single_line_empty_body  
+  ✓ app\Actions\Finance\Transaction\GetTransactionSummaryAction.php                             single_line_empty_body  
+  ✓ app\Actions\Finance\Wealth\ForecastWealthAction.php                                         single_line_empty_body  
+  ✓ app\Actions\Finance\Wealth\SimulateMonteCarloAction.php                                     single_line_empty_body  
+  ✓ app\Actions\Finance\Wealth\SimulatePurchaseAction.php                                       single_line_empty_body  
+  ✓ app\Actions\Finance\Wealth\SyncMarketAssetsAction.php unary_operator_spaces, not_operator_with_successor_space, s…  
+  ✓ app\Actions\Security\DeadMansSwitch\CheckTriggerAction.php                                  single_line_empty_body  
+  ✓ app\Actions\Security\DeadMansSwitch\GenerateReportAction.php                                single_line_empty_body  
+  ✓ app\Actions\System\BackupDatabaseAction.php unary_operator_spaces, not_operator_with_successor_space, single_line…  
+  ✓ app\Actions\System\GetSystemStatusAction.php                                                single_line_empty_body  
+  ✓ app\Console\Commands\TestLangSmithTrace.php                                                   new_with_parentheses  
+  ✓ app\Exceptions\AiServiceException.php                                                       single_line_empty_body  
+  ✓ app\Exceptions\FileStorageException.php                                                     single_line_empty_body  
+  ✓ app\Exceptions\MailTransportException.php                                                   single_line_empty_body  
+  ✓ app\Exceptions\MarketServiceException.php                                                   single_line_empty_body  
+  ✓ app\Http\Controllers\AIController.php unary_operator_spaces, not_operator_with_successor_space, single_line_empty…  
+  ✓ app\Http\Controllers\LegacyController.php unary_operator_spaces, not_operator_with_successor_space, single_line_e…  
+  ✓ app\Http\Controllers\TaxController.php unary_operator_spaces, not_operator_with_successor_space, single_line_empt…  
+  ✓ app\Http\Controllers\TransactionController.php unary_operator_spaces, not_operator_with_successor_space, single_l…  
+  ✓ app\Models\Asset.php                                                                             phpdoc_separation  
+  ✓ app\Models\ScheduledTransaction.php                                                              phpdoc_separation  
+  ✓ app\Models\Transaction.php             unary_operator_spaces, phpdoc_separation, not_operator_with_successor_space  
+  ✓ app\Models\User.php                                                                              phpdoc_separation  
+  ✓ app\Notifications\LargeExpenseNotification.php                        new_with_parentheses, single_line_empty_body  
+  ✓ app\Notifications\LegacyTriggerNotification.php new_with_parentheses, unary_operator_spaces, not_operator_with_su…  
+  ✓ app\Notifications\PartnerInvitationNotification.php                   new_with_parentheses, single_line_empty_body  
+  ✓ app\Notifications\ResetPasswordOTPNotification.php                                            new_with_parentheses  
+  ✓ app\Notifications\VerifyEmailNotification.php                                                 new_with_parentheses  
+  ✓ app\Providers\AiServiceProvider.php                                   new_with_parentheses, single_line_empty_body  
+  ✓ app\Providers\MailServiceProvider.php                                 new_with_parentheses, single_line_empty_body  
+  ✓ app\Services\FinancialIntelligenceService.php                                                    phpdoc_separation  
+  ✓ app\Services\GeminiService.php                                                              single_line_empty_body  
+  ✓ app\Services\LegacyService.php                                                              single_line_empty_body  
+  ✓ app\Services\SelfHealingService.php                                                         single_line_empty_body  
+

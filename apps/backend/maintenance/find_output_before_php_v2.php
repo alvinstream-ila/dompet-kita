@@ -15,7 +15,7 @@ foreach ($iterator as $file) {
             if ($posPhp !== false) {
                 $beforePhp = substr($content, 0, $posPhp);
                 if (trim($beforePhp) !== '' && ! preg_match('/^#!/', $beforePhp)) {
-                    fwrite($results, "ERROR: Namespace in file with output before <?php: $path\n");
+                    fwrite($results, "ERROR: Namespace in file with output before <?php: {$path}\n");
                     fwrite($results, 'Before PHP (hex): '.bin2hex($beforePhp)."\n\n");
                 }
             }

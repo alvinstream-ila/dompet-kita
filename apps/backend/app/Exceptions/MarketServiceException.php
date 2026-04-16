@@ -7,7 +7,4 @@ use Exception;
 /**
  * Exception thrown when market data fetching or failover fails in the MarketService.
  */
-class MarketServiceException extends Exception
-{
-    //
-}
+class MarketServiceException extends Exception {}

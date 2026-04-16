@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Minus, ArrowRight } from 'lucide-react';
-import { useAssetTransactions } from '../hooks/useAssetTransactions';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight, Minus, X } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 import type { Asset } from '@/types';
+import { useAssetTransactions } from '../hooks/useAssetTransactions';
 
 interface WithdrawAssetModalProps {
   isOpen: boolean;
@@ -67,6 +68,7 @@ export const WithdrawAssetModal: React.FC<WithdrawAssetModalProps> = ({
           >
             <div className="relative bg-linear-to-br from-rose-600 to-pink-700 p-6 text-center text-white">
               <button
+                type="button"
                 onClick={onClose}
                 className="absolute top-4 right-4 rounded-full bg-white/10 p-2 transition-all hover:bg-white/20"
               >

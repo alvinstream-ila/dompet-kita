@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { X, Wallet, ArrowRight, Loader2, Sparkles, Plane } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight, Loader2, Plane, Sparkles, Wallet, X } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -11,9 +12,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAssets } from '@/features/wealth/hooks/useAssets';
-import { useAddHolidayFund } from '../hooks/useHolidayTransactions';
 import { formatToRupiah } from '@/lib/utils';
 import type { Holiday } from '../hooks/useHolidays';
+import { useAddHolidayFund } from '../hooks/useHolidayTransactions';
 
 interface AddHolidayFundModalProps {
   isOpen: boolean;

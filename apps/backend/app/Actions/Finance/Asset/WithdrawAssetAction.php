@@ -17,7 +17,7 @@ class WithdrawAssetAction extends BaseAction
      */
     public function execute(User $user, Asset $asset, array $data): Asset
     {
-        $result = DB::transaction(function () use ($user, $asset, $data): Asset {
+        return DB::transaction(function () use ($user, $asset, $data): Asset {
             $amount = (float) $data['amount'];
             $recipientAssetId = $data['recipient_asset_id'] ?? null;
             $description = $data['description'] ?? 'Pencairan aset';
@@ -63,7 +63,5 @@ class WithdrawAssetAction extends BaseAction
 
             return $asset->fresh() ?? $asset;
         });
-
-        return $result;
     }
 }

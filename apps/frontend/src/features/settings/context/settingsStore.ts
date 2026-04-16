@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import api from '@/lib/axios';
-import { type User, type ApiError } from '@/types';
+import type { ApiError, User } from '@/types';
 
 export interface SettingsState {
   budgetCycleStart: number;

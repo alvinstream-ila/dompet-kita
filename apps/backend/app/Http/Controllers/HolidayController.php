@@ -107,14 +107,6 @@ class HolidayController extends Controller
     }
 
     /**
-     * Generate a thematic image URL based on destination.
-     */
-    private function generateImageUrl(string $destination): string
-    {
-        return sprintf(self::IMAGE_PROVIDER, urlencode($destination));
-    }
-
-    /**
      * Fund a holiday (Accounting Protocol).
      */
     public function fund(Request $request, Holiday $holiday): JsonResponse
@@ -174,5 +166,13 @@ class HolidayController extends Controller
             ->get();
 
         return HolidayResource::collection($history);
+    }
+
+    /**
+     * Generate a thematic image URL based on destination.
+     */
+    private function generateImageUrl(string $destination): string
+    {
+        return sprintf(self::IMAGE_PROVIDER, urlencode($destination));
     }
 }

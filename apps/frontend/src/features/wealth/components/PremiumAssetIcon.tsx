@@ -1,16 +1,16 @@
-import React from 'react';
 import {
+  Activity,
   BarChart3,
   Bitcoin,
   Gem,
-  Wallet,
-  PieChart,
-  Activity,
   Landmark,
   type LucideIcon,
+  PieChart,
+  Wallet,
 } from 'lucide-react';
+import type React from 'react';
 import { cn } from '@/lib/utils';
-import { AssetType } from '@/types';
+import type { AssetType } from '@/types';
 
 interface AssetTheme {
   icon: LucideIcon;
@@ -23,24 +23,24 @@ interface AssetTheme {
 const ASSET_THEMES: Record<string, AssetTheme> = {
   STOCK: {
     icon: BarChart3,
-    gradient: 'from-blue-600 to-indigo-600',
-    shadow: 'shadow-blue-500/20',
-    glow: 'bg-blue-400',
-    color: 'text-blue-600',
+    gradient: 'from-blue-royal to-blue-royal/80',
+    shadow: 'shadow-blue-royal/20',
+    glow: 'bg-blue-royal/40',
+    color: 'text-blue-royal',
   },
   CRYPTO: {
     icon: Bitcoin,
-    gradient: 'from-amber-500 to-orange-600',
-    shadow: 'shadow-amber-500/20',
-    glow: 'bg-amber-400',
-    color: 'text-amber-600',
+    gradient: 'from-yellow-outlook/80 to-yellow-outlook',
+    shadow: 'shadow-yellow-outlook/20',
+    glow: 'bg-yellow-outlook/40',
+    color: 'text-yellow-outlook',
   },
   COMMODITY: {
     icon: Gem,
-    gradient: 'from-yellow-400 to-amber-500',
-    shadow: 'shadow-yellow-500/20',
-    glow: 'bg-yellow-300',
-    color: 'text-yellow-600',
+    gradient: 'from-amber-400 to-yellow-outlook',
+    shadow: 'shadow-yellow-outlook/20',
+    glow: 'bg-yellow-outlook/30',
+    color: 'text-yellow-outlook',
   },
   MUTUAL_FUND: {
     icon: PieChart,
@@ -51,10 +51,10 @@ const ASSET_THEMES: Record<string, AssetTheme> = {
   },
   CASH: {
     icon: Wallet,
-    gradient: 'from-emerald-500 to-teal-600',
-    shadow: 'shadow-emerald-500/20',
-    glow: 'bg-emerald-400',
-    color: 'text-emerald-600',
+    gradient: 'from-green-stat to-green-stat/80',
+    shadow: 'shadow-green-stat/20',
+    glow: 'bg-green-stat/40',
+    color: 'text-green-stat',
   },
   OBLIGASI: {
     icon: Landmark,

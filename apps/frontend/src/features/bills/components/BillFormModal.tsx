@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Info, Plus } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -12,9 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Plus, Info } from 'lucide-react';
-import { useBills } from '../hooks/useBills';
 import { cn } from '@/lib/utils';
+import { useBills } from '../hooks/useBills';
 
 interface BillFormModalProps {
   readonly isOpen: boolean;
@@ -78,7 +79,7 @@ export function BillFormModal({ isOpen, onClose }: BillFormModalProps) {
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-md overflow-hidden rounded-[32px] border-none bg-white p-0 shadow-2xl">
         {/* Header - Premium Gradient */}
-        <div className="relative h-28 w-full overflow-hidden bg-linear-to-br from-cyan-400 via-blue-500 to-indigo-600 p-6">
+        <div className="from-blue-royal/80 via-blue-royal relative h-28 w-full overflow-hidden bg-linear-to-br to-indigo-600 p-6">
           <div className="absolute top-0 right-0 h-full w-40 translate-x-10 -skew-x-12 bg-white/10 blur-xl" />
           <div className="relative z-10 flex flex-col items-center justify-center gap-1 text-center">
             <div className="mb-1 rounded-2xl bg-white/20 p-2 backdrop-blur-md">
@@ -92,7 +93,7 @@ export function BillFormModal({ isOpen, onClose }: BillFormModalProps) {
 
         <form onSubmit={handleSubmit} className="space-y-5 p-6 md:p-8">
           {/* Info Banner */}
-          <div className="flex items-center gap-3 rounded-2xl bg-cyan-50 p-3 text-[10px] font-bold text-cyan-600">
+          <div className="bg-blue-royal/5 text-blue-royal flex items-center gap-3 rounded-2xl p-3 text-[10px] font-bold">
             <Info className="size-4 shrink-0" />
             <span>
               Tagihan ini bakal otomatis nongol tiap bulan biar nggak telat
@@ -115,7 +116,7 @@ export function BillFormModal({ isOpen, onClose }: BillFormModalProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                className="h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold placeholder:text-slate-300 focus:ring-cyan-500/10"
+                className="focus:ring-blue-royal/10 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold placeholder:text-slate-300"
                 required
               />
             </div>
@@ -135,7 +136,7 @@ export function BillFormModal({ isOpen, onClose }: BillFormModalProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, amount: e.target.value })
                 }
-                className="h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold placeholder:text-slate-300 focus:ring-cyan-500/10"
+                className="focus:ring-blue-royal/10 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold placeholder:text-slate-300"
                 required
               />
             </div>
@@ -181,7 +182,7 @@ export function BillFormModal({ isOpen, onClose }: BillFormModalProps) {
                   onChange={(e) =>
                     setFormData({ ...formData, dueDate: e.target.value })
                   }
-                  className="h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold focus:ring-cyan-500/10"
+                  className="focus:ring-blue-royal/10 h-12 rounded-2xl border-slate-100 bg-slate-50/50 font-bold"
                   required
                 />
               </div>
@@ -208,7 +209,7 @@ export function BillFormModal({ isOpen, onClose }: BillFormModalProps) {
                       className={cn(
                         'flex-1 rounded-2xl py-3 text-[10px] font-black tracking-widest uppercase transition-all',
                         formData.frequency === freq
-                          ? 'scale-105 bg-cyan-500 text-white shadow-lg shadow-cyan-100'
+                          ? 'bg-blue-royal shadow-blue-royal/20 scale-105 text-white shadow-lg'
                           : 'border border-slate-100 bg-slate-50 text-slate-400 hover:bg-slate-100'
                       )}
                     >
@@ -231,7 +232,7 @@ export function BillFormModal({ isOpen, onClose }: BillFormModalProps) {
             </Button>
             <Button
               type="submit"
-              className="h-14 flex-2 rounded-2xl border-b-4 border-cyan-700 bg-cyan-500 text-xs font-black text-white uppercase shadow-xl shadow-cyan-100 transition-all hover:bg-cyan-600 active:translate-y-1 active:border-b-0"
+              className="border-blue-royal/20 bg-blue-royal shadow-blue-royal/10 h-14 flex-2 rounded-2xl border-b-4 text-xs font-black text-white uppercase shadow-xl transition-all hover:brightness-110 active:translate-y-1 active:border-b-0"
             >
               Simpan Jadwalkan! ✨
             </Button>

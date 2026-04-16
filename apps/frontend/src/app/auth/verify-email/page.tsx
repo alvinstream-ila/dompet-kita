@@ -1,21 +1,22 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import api from '@/lib/axios';
-import { useAuth } from '@/features/auth';
-import {
-  ShieldCheck,
-  Mail,
-  Loader2,
-  Heart,
-  ArrowLeft,
-  RefreshCw,
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { AnimatePresence, motion } from 'framer-motion';
 import Cookies from 'js-cookie';
+import {
+  ArrowLeft,
+  Heart,
+  Loader2,
+  Mail,
+  RefreshCw,
+  ShieldCheck,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/features/auth';
+import api from '@/lib/axios';
+import { cn } from '@/lib/utils';
 
 /**
  * OTP Verification Page - The Gatekeeper 🛡️
@@ -122,15 +123,15 @@ export default function VerifyEmailPage() {
   };
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-[#f0f7ff] p-4 text-slate-900">
+    <div className="flex min-h-screen w-full items-center justify-center bg-slate-50 p-4 text-slate-900">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         className="relative w-full max-w-lg"
       >
         {/* Decorative elements */}
-        <div className="absolute -top-20 -left-20 h-40 w-40 rounded-full bg-blue-200/50 blur-3xl" />
-        <div className="absolute -right-20 -bottom-20 h-40 w-40 rounded-full bg-pink-200/50 blur-3xl" />
+        <div className="bg-blue-royal/10 absolute -top-20 -left-20 h-40 w-40 rounded-full blur-3xl" />
+        <div className="bg-pink-primary/10 absolute -right-20 -bottom-20 h-40 w-40 rounded-full blur-3xl" />
 
         <div className="relative z-10 overflow-hidden rounded-[48px] border border-white/60 bg-white/40 p-10 shadow-2xl backdrop-blur-2xl md:p-14">
           <AnimatePresence mode="wait">
@@ -145,9 +146,9 @@ export default function VerifyEmailPage() {
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1.2 }}
-                    className="absolute -inset-4 rounded-full bg-emerald-100/50 blur-xl"
+                    className="bg-green-stat/20 absolute -inset-4 rounded-full blur-xl"
                   />
-                  <div className="relative flex h-32 w-32 items-center justify-center rounded-[40px] bg-emerald-500 shadow-2xl shadow-emerald-500/40">
+                  <div className="bg-green-stat shadow-green-stat/40 relative flex h-32 w-32 items-center justify-center rounded-[40px] shadow-2xl">
                     <Heart className="h-16 w-16 fill-white text-white" />
                   </div>
                 </div>
@@ -156,7 +157,7 @@ export default function VerifyEmailPage() {
                   <h2 className="text-4xl font-black tracking-tighter text-slate-800 uppercase">
                     Yatta! 🎉
                   </h2>
-                  <p className="mt-3 text-lg font-bold text-emerald-600">
+                  <p className="text-green-stat mt-3 text-lg font-bold">
                     Email Berhasil Diverifikasi!
                   </p>
                   <p className="mt-1 text-xs font-black tracking-widest text-slate-500 uppercase">
@@ -164,7 +165,7 @@ export default function VerifyEmailPage() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2 font-black text-blue-500 italic">
+                <div className="text-blue-royal flex items-center gap-2 font-black italic">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <span>Entering Dashboard...</span>
                 </div>
@@ -179,7 +180,7 @@ export default function VerifyEmailPage() {
               >
                 <div className="flex flex-col items-center">
                   <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-[32px] bg-white shadow-xl">
-                    <ShieldCheck className="h-12 w-12 text-blue-500" />
+                    <ShieldCheck className="text-blue-royal h-12 w-12" />
                   </div>
                   <h1 className="text-center text-3xl font-black tracking-tighter text-slate-800 uppercase">
                     Verify Your Identity
@@ -189,9 +190,9 @@ export default function VerifyEmailPage() {
                   </p>
                 </div>
 
-                <div className="rounded-3xl bg-blue-500/5 p-6 text-center">
+                <div className="bg-blue-royal/5 rounded-3xl p-6 text-center">
                   <p className="flex items-center justify-center gap-2 text-sm font-bold text-slate-600">
-                    <Mail className="h-4 w-4 text-blue-500" />
+                    <Mail className="text-blue-royal h-4 w-4" />
                     Kodenya dikirim ke:
                   </p>
                   <p className="mt-1 text-lg font-black text-slate-800">
@@ -215,9 +216,9 @@ export default function VerifyEmailPage() {
                           onChange={(e) => handleChange(index, e.target.value)}
                           onKeyDown={(e) => handleKeyDown(index, e)}
                           className={cn(
-                            'h-14 w-full rounded-2xl border-none bg-white text-center text-2xl font-black text-slate-800 shadow-inner transition-all outline-none focus:ring-4 focus:ring-blue-500/20',
+                            'focus:ring-blue-royal/20 h-14 w-full rounded-2xl border-none bg-white text-center text-2xl font-black text-slate-800 shadow-inner transition-all outline-none focus:ring-4',
                             error
-                              ? 'ring-2 ring-rose-500/50'
+                              ? 'ring-red-stat/50 ring-2'
                               : 'ring-1 ring-slate-100'
                           )}
                           required
@@ -230,7 +231,7 @@ export default function VerifyEmailPage() {
                     <motion.p
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="text-center text-xs font-bold tracking-wider text-rose-500 uppercase"
+                      className="text-red-stat text-center text-xs font-bold tracking-wider uppercase"
                     >
                       {error}
                     </motion.p>
@@ -253,7 +254,7 @@ export default function VerifyEmailPage() {
                       type="button"
                       onClick={handleResend}
                       disabled={resending}
-                      className="flex w-full items-center justify-center gap-2 text-xs font-black tracking-widest text-slate-500 uppercase transition-colors hover:text-blue-500"
+                      className="hover:text-blue-royal flex w-full items-center justify-center gap-2 text-xs font-black tracking-widest text-slate-500 uppercase transition-colors"
                     >
                       {resending ? (
                         <Loader2 className="h-3 w-3 animate-spin" />
@@ -266,6 +267,7 @@ export default function VerifyEmailPage() {
                 </form>
 
                 <button
+                  type="button"
                   onClick={() => logout()}
                   className="mx-auto flex items-center gap-2 text-[10px] font-black tracking-[0.2em] text-slate-400 uppercase transition-colors hover:text-slate-600"
                 >

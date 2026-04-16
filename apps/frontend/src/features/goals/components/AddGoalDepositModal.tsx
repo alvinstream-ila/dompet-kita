@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  X,
-  Wallet,
   ArrowRight,
   Loader2,
-  Sparkles,
   PiggyBank,
+  Sparkles,
+  Wallet,
+  X,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import type React from 'react';
 import type { SyntheticEvent } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -19,9 +20,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAssets } from '@/features/wealth/hooks/useAssets';
-import { useAddGoalDeposit } from '../hooks/useGoalTransactions';
 import { formatToRupiah } from '@/lib/utils';
 import type { Goal } from '@/types';
+import { useAddGoalDeposit } from '../hooks/useGoalTransactions';
 
 interface AddGoalDepositModalProps {
   isOpen: boolean;
@@ -89,7 +90,7 @@ export const AddGoalDepositModal: React.FC<AddGoalDepositModalProps> = ({
           className="relative w-full max-w-lg overflow-hidden rounded-[48px] border border-white/20 bg-white shadow-2xl"
         >
           {/* Decorative Header */}
-          <div className="relative h-40 bg-linear-to-br from-blue-600 to-indigo-700 p-8">
+          <div className="from-blue-royal relative h-40 bg-linear-to-br to-indigo-700 p-8">
             <div className="absolute top-0 right-0 p-8 opacity-20">
               <Sparkles size={120} className="text-white" />
             </div>
@@ -110,7 +111,7 @@ export const AddGoalDepositModal: React.FC<AddGoalDepositModalProps> = ({
               <h2 className="text-2xl font-black tracking-tight text-white">
                 Tambah Tabungan ✨
               </h2>
-              <p className="text-sm font-bold tracking-widest text-blue-100 uppercase opacity-80">
+              <p className="text-blue-royal/30 text-sm font-bold tracking-widest uppercase opacity-80 brightness-200">
                 Untuk: {goal.name}
               </p>
             </div>
@@ -135,7 +136,7 @@ export const AddGoalDepositModal: React.FC<AddGoalDepositModalProps> = ({
                   value={amount}
                   onChange={(e) => setAmount(formatToRupiah(e.target.value))}
                   placeholder="0"
-                  className="h-20 rounded-[28px] border-none bg-slate-50 pl-16 text-3xl font-black text-slate-800 placeholder:text-slate-200 focus:ring-4 focus:ring-blue-100"
+                  className="focus:ring-blue-royal/10 h-20 rounded-[28px] border-none bg-slate-50 pl-16 text-3xl font-black text-slate-800 placeholder:text-slate-200 focus:ring-4"
                   required
                 />
               </div>
@@ -145,7 +146,7 @@ export const AddGoalDepositModal: React.FC<AddGoalDepositModalProps> = ({
                     key={val}
                     type="button"
                     onClick={() => handlePresetClick(val)}
-                    className="rounded-xl border border-slate-100 bg-white px-4 py-2 text-[11px] font-black text-slate-500 transition-all hover:border-blue-200 hover:text-blue-600 active:scale-95"
+                    className="hover:border-blue-royal/30 hover:text-blue-royal rounded-xl border border-slate-100 bg-white px-4 py-2 text-[11px] font-black text-slate-500 transition-all active:scale-95"
                   >
                     +{formatToRupiah(val.toString())}
                   </button>
@@ -167,7 +168,7 @@ export const AddGoalDepositModal: React.FC<AddGoalDepositModalProps> = ({
               >
                 <SelectTrigger
                   id="source-asset"
-                  className="h-16 rounded-[24px] border-none bg-slate-50 px-6 font-bold text-slate-700 focus:ring-4 focus:ring-blue-100"
+                  className="focus:ring-blue-royal/10 h-16 rounded-[24px] border-none bg-slate-50 px-6 font-bold text-slate-700 focus:ring-4"
                 >
                   <SelectValue placeholder="Pilih Sumber" />
                 </SelectTrigger>
@@ -182,7 +183,7 @@ export const AddGoalDepositModal: React.FC<AddGoalDepositModalProps> = ({
                       className="py-3"
                     >
                       <div className="flex items-center gap-2">
-                        <Wallet size={16} className="text-blue-500" />
+                        <Wallet size={16} className="text-blue-royal" />
                         <span className="font-bold">{asset.name}</span>
                         <span className="text-[10px] opacity-40">
                           ({formatToRupiah(asset.value.toString())})
@@ -202,7 +203,7 @@ export const AddGoalDepositModal: React.FC<AddGoalDepositModalProps> = ({
             <Button
               type="submit"
               disabled={depositMutation.isPending}
-              className="group h-18 w-full rounded-[28px] bg-linear-to-r from-blue-600 to-indigo-600 text-sm font-black tracking-[0.2em] text-white uppercase shadow-2xl shadow-blue-500/30 transition-all hover:scale-[1.02] active:scale-95"
+              className="group from-blue-royal shadow-blue-royal/30 h-18 w-full rounded-[28px] bg-linear-to-r to-indigo-600 text-sm font-black tracking-[0.2em] text-white uppercase shadow-2xl transition-all hover:scale-[1.02] active:scale-95"
             >
               {depositMutation.isPending ? (
                 <Loader2 className="animate-spin" />

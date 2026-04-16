@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import * as Sentry from '@sentry/nextjs';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 
 /**
  * Dompet Kita - Graceful Error Boundary
@@ -21,16 +21,16 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#e5f1fa] text-center p-6">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#e5f1fa] p-6 text-center">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="w-full max-w-md p-8 rounded-3xl bg-white/60 backdrop-blur-xl border border-white/40 shadow-2xl"
+        className="w-full max-w-md rounded-3xl border border-white/40 bg-white/60 p-8 shadow-2xl backdrop-blur-xl"
       >
-        <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 rounded-full bg-red-100/50 text-red-600 border border-red-200">
+        <div className="bg-red-stat/10 text-red-stat border-red-stat/20 mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full border">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="w-10 h-10"
+            className="h-10 w-10"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -38,38 +38,41 @@ export default function GlobalError({
             strokeLinecap="round"
             strokeLinejoin="round"
           >
+            <title>Icon Peringatan Error</title>
             <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
             <path d="M12 9v4" />
             <path d="M12 17h.01" />
           </svg>
         </div>
 
-        <h1 className="text-2xl font-bold text-slate-900 mb-2">
+        <h1 className="mb-2 text-2xl font-bold text-slate-900">
           Gagal Memuat Transaksi
         </h1>
-        <p className="text-slate-500 mb-8 leading-relaxed">
-          Terjadi kesalahan tak terduga saat mencoba sinkronisasi dompet Anda. 
+        <p className="mb-8 leading-relaxed text-slate-500">
+          Terjadi kesalahan tak terduga saat mencoba sinkronisasi dompet Anda.
           Sistem telah mencatat kejanggalan ini untuk audit.
         </p>
 
         <div className="space-y-3">
           <button
+            type="button"
             onClick={() => reset()}
-            className="w-full py-4 rounded-2xl bg-blue-600 text-white font-semibold shadow-xl shadow-blue-500/20 transition-all hover:bg-blue-700 active:scale-95"
+            className="bg-blue-royal shadow-blue-royal/20 w-full rounded-2xl py-4 font-semibold text-white shadow-xl transition-all hover:brightness-110 active:scale-95"
           >
             Coba Sinkron Ulang
           </button>
-          
+
           <button
+            type="button"
             onClick={() => (globalThis.location.href = '/')}
-            className="w-full py-3 rounded-2xl bg-white/40 text-slate-600 font-medium border border-white/50 transition-all hover:bg-white/60"
+            className="w-full rounded-2xl border border-white/50 bg-white/40 py-3 font-medium text-slate-600 transition-all hover:bg-white/60"
           >
             Kembali ke Dashboard
           </button>
         </div>
 
         {error.digest && (
-          <p className="mt-8 text-[10px] text-slate-400 font-mono tracking-tighter">
+          <p className="mt-8 font-mono text-[10px] tracking-tighter text-slate-400">
             REF_AUDIT: {error.digest}
           </p>
         )}

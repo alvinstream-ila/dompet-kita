@@ -1,23 +1,23 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  ShieldCheck,
-  ShieldAlert,
-  TrendingUp,
+  Clock,
   Info,
   RotateCw,
-  Clock,
+  ShieldAlert,
+  ShieldCheck,
+  TrendingUp,
   ZapOff,
 } from 'lucide-react';
-import axios from 'axios';
-import { useAiGuardian } from '../hooks/useAiGuardian';
+import type React from 'react';
 import { cn } from '@/lib/utils';
+import { useAiGuardian } from '../hooks/useAiGuardian';
 
 // --- Sub-components to reduce Cognitive Complexity ---
 
 const GuardianLoading: React.FC = () => (
-  <div className="group relative h-48 w-full overflow-hidden rounded-[40px] bg-slate-100/50 p-8 shadow-inner ring-1 ring-slate-200/50 backdrop-blur-sm dark:bg-slate-800/30 dark:ring-slate-700/30">
-    <div className="animate-shimmer absolute inset-x-0 top-0 h-1 bg-linear-to-r from-blue-400 via-violet-400 to-blue-400" />
+  <div className="group glass-card relative h-48 w-full overflow-hidden p-8 shadow-inner ring-1 ring-white/20 backdrop-blur-sm dark:bg-slate-800/30 dark:ring-slate-700/30">
+    <div className="animate-shimmer from-blue-royal via-pink-primary to-blue-royal absolute inset-x-0 top-0 h-1 bg-linear-to-r" />
     <div className="flex h-full flex-col justify-between">
       <div className="flex items-center gap-4">
         <div className="h-12 w-12 animate-pulse rounded-2xl bg-slate-200 dark:bg-slate-700" />
@@ -52,12 +52,12 @@ const GuardianError: React.FC<GuardianErrorProps> = ({
       className="relative flex h-full min-h-48 w-full flex-col items-center justify-center space-y-4 overflow-hidden rounded-[40px] border border-slate-200 bg-white/50 p-8 text-center shadow-2xl backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/50"
     >
       <div className="relative">
-        <div className="absolute inset-0 animate-ping rounded-full bg-violet-400/20" />
-        <div className="relative rounded-2xl bg-violet-100 p-4 dark:bg-violet-900/30">
+        <div className="bg-pink-primary/20 absolute inset-0 animate-ping rounded-full" />
+        <div className="bg-pink-primary/10 relative rounded-2xl p-4 dark:bg-violet-900/30">
           {isRateLimited ? (
-            <Clock className="h-8 w-8 text-violet-500" />
+            <Clock className="text-pink-primary h-8 w-8" />
           ) : (
-            <ZapOff className="h-8 w-8 text-rose-500" />
+            <ZapOff className="text-red-stat h-8 w-8" />
           )}
         </div>
       </div>
@@ -74,6 +74,7 @@ const GuardianError: React.FC<GuardianErrorProps> = ({
       </div>
 
       <button
+        type="button"
         onClick={onRefresh}
         disabled={isRefetching}
         className="group relative flex items-center gap-2 rounded-2xl bg-slate-900 px-6 py-2.5 text-[10px] font-black tracking-widest text-white uppercase transition-all hover:bg-slate-800 active:scale-95 disabled:opacity-50 dark:bg-white dark:text-slate-900"
@@ -166,18 +167,18 @@ export const AiGuardianCard: React.FC = () => {
 
   const statusConfig = {
     CRITICAL: {
-      bg: 'bg-rose-50/80 dark:bg-rose-950/20',
-      border: 'border-rose-200 dark:border-rose-900/50',
-      text: 'text-rose-600 dark:text-rose-400',
-      subText: 'text-rose-400 dark:text-rose-500',
-      accent: 'bg-rose-500',
+      bg: 'bg-red-stat/10 dark:bg-rose-950/20',
+      border: 'border-red-stat/20 dark:border-rose-900/50',
+      text: 'text-red-stat',
+      subText: 'text-red-stat/70',
+      accent: 'bg-red-stat',
     },
     WARNING: {
-      bg: 'bg-amber-50/80 dark:bg-amber-950/20',
-      border: 'border-amber-200 dark:border-amber-900/50',
-      text: 'text-amber-600 dark:text-amber-400',
-      subText: 'text-amber-400 dark:text-amber-500',
-      accent: 'bg-amber-500',
+      bg: 'bg-yellow-outlook/10 dark:bg-amber-950/20',
+      border: 'border-yellow-outlook/20 dark:border-amber-900/50',
+      text: 'text-yellow-outlook',
+      subText: 'text-yellow-outlook/70',
+      accent: 'bg-yellow-outlook',
     },
     CAUTION: {
       bg: 'bg-orange-50/80 dark:bg-orange-950/20',
@@ -187,18 +188,18 @@ export const AiGuardianCard: React.FC = () => {
       accent: 'bg-orange-500',
     },
     safe: {
-      bg: 'bg-slate-900/95 dark:bg-black/80',
+      bg: 'bg-slate-900/95 dark:bg-black/80 shadow-[0_20px_50px_-12px_rgba(74,108,247,0.25)]',
       border: 'border-slate-800 dark:border-slate-700/50',
       text: 'text-white',
-      subText: 'text-blue-400',
-      accent: 'bg-blue-500',
+      subText: 'text-blue-royal',
+      accent: 'bg-blue-royal',
     },
   }[status as keyof typeof statusConfig] || {
     bg: 'bg-slate-900',
     border: 'border-none',
     text: 'text-white',
-    subText: 'text-blue-400',
-    accent: 'bg-blue-500',
+    subText: 'text-blue-royal',
+    accent: 'bg-blue-royal',
   };
 
   return (
@@ -219,7 +220,7 @@ export const AiGuardianCard: React.FC = () => {
               key={`bg-dot-${n}`}
               className={cn(
                 'h-8 w-8 transform-gpu rounded-full blur-xl transition-colors duration-1000',
-                isCrisis ? 'bg-rose-400' : 'bg-blue-400'
+                isCrisis ? 'bg-red-stat/40' : 'bg-blue-royal/40'
               )}
             />
           ))}
@@ -232,13 +233,13 @@ export const AiGuardianCard: React.FC = () => {
             <div
               className={cn(
                 'rounded-2xl p-4 shadow-xl ring-1 ring-black/5',
-                isCrisis ? 'bg-white' : 'bg-blue-500/10 backdrop-blur-md'
+                isCrisis ? 'bg-white' : 'bg-blue-royal/10 backdrop-blur-md'
               )}
             >
               {isCrisis ? (
                 <ShieldAlert className={cn('h-7 w-7', statusConfig.text)} />
               ) : (
-                <ShieldCheck className="h-7 w-7 text-blue-400" />
+                <ShieldCheck className="text-blue-royal h-7 w-7" />
               )}
             </div>
             <div>
@@ -272,6 +273,7 @@ export const AiGuardianCard: React.FC = () => {
           </div>
 
           <button
+            type="button"
             onClick={handleRefresh}
             disabled={isRefetching}
             className={cn(
@@ -293,8 +295,8 @@ export const AiGuardianCard: React.FC = () => {
             />
             {isRefetching && (
               <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex h-3 w-3 rounded-full bg-blue-500"></span>
+                <span className="bg-blue-royal/75 absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
+                <span className="bg-blue-royal relative inline-flex h-3 w-3 rounded-full"></span>
               </span>
             )}
           </button>
@@ -328,10 +330,10 @@ export const AiGuardianCard: React.FC = () => {
 
         <div className="mt-8 flex items-center justify-between">
           <div className="flex -space-x-2.5">
-            <div className="z-10 flex h-9 w-9 items-center justify-center rounded-full border-2 border-slate-900 bg-blue-500 text-[10px] font-black text-white shadow-lg">
+            <div className="bg-blue-royal z-10 flex h-9 w-9 items-center justify-center rounded-full border-2 border-slate-900 text-[10px] font-black text-white shadow-lg">
               AI
             </div>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-slate-900 bg-violet-500 text-[10px] font-black text-white shadow-lg">
+            <div className="bg-pink-primary flex h-9 w-9 items-center justify-center rounded-full border-2 border-slate-900 text-[10px] font-black text-white shadow-lg">
               G2
             </div>
           </div>

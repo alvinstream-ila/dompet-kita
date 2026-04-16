@@ -35,14 +35,6 @@ class GoalTransaction extends Model
         'date',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'date' => 'datetime',
-            'amount' => 'decimal:2',
-        ];
-    }
-
     /** @return BelongsTo<Goal, $this> */
     public function goal(): BelongsTo
     {
@@ -59,5 +51,13 @@ class GoalTransaction extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'date' => 'datetime',
+            'amount' => 'decimal:2',
+        ];
     }
 }

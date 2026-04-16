@@ -35,7 +35,7 @@ class CheckBudgetLimitsAction extends BaseAction
 
         $spending = (float) $query->sum('amount');
 
-        $percentage = $limit > 0 ? ($spending / $limit) * 100 : 0;
+        $percentage = $limit > 0 ? $spending / $limit * 100 : 0;
 
         $status = 'safe';
         if ($percentage >= 100) {

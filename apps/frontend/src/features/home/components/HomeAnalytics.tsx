@@ -1,20 +1,20 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { AIInsightCard } from './AIInsightCard';
 import { AiGuardianCard } from './AiGuardianCard';
-import dynamic from 'next/dynamic';
 
-const GaugeChart = dynamic(() =>
-  import('@/components/charts/GaugeChart').then((m) => m.GaugeChart),
+const GaugeChart = dynamic(
+  () => import('@/components/charts/GaugeChart').then((m) => m.GaugeChart),
   {
     ssr: false,
     loading: () => (
       <div className="flex h-full w-full animate-pulse items-center justify-center text-[10px] font-black tracking-widest text-slate-400 uppercase">
         Analisis Kesehatan...
       </div>
-    )
+    ),
   }
 );
 

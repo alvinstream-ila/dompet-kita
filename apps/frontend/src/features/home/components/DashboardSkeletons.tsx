@@ -1,6 +1,5 @@
-import React from 'react';
-import { Skeleton } from '@/components/ui/Skeleton';
 import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 /**
  * StatCardSkeleton - 3D Card Loading State 🃏
@@ -60,6 +59,21 @@ export function RecentTransactionsSkeleton() {
           ))}
         </div>
       </Card>
+    </div>
+  );
+}
+
+/**
+ * DashboardSkeletons - Composite loading state for PPR 🌌
+ */
+export function DashboardSkeletons() {
+  return (
+    <div className="space-y-8 p-4 md:p-8">
+      <StatCardSkeleton />
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+        <AnalyticsSkeleton />
+        <RecentTransactionsSkeleton />
+      </div>
     </div>
   );
 }

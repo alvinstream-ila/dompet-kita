@@ -10,6 +10,8 @@ use Illuminate\Console\Command;
 
 class SecurityDeepAudit extends Command
 {
+    private const SEPARATOR = '========================================';
+
     /**
      * The name and signature of the console command.
      *
@@ -23,8 +25,6 @@ class SecurityDeepAudit extends Command
      * @var string
      */
     protected $description = 'Deep scan for dependency and infrastructure vulnerabilities (Snyk & Composer Audit)';
-
-    private const SEPARATOR = '========================================';
 
     /**
      * Execute the console command.

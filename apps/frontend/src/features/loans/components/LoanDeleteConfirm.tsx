@@ -1,12 +1,12 @@
-import React from 'react';
 import { AlertTriangle } from 'lucide-react';
+import type React from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import type { Loan } from '@/types';
 
 interface LoanDeleteConfirmProps {

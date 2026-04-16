@@ -1,6 +1,5 @@
-import React from 'react';
-import { Skeleton } from '@/components/ui/Skeleton';
 import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 /**
  * ReportStatSkeleton - Loading state for high-level numbers 📊
@@ -80,7 +79,7 @@ export function ReportChartSkeleton() {
         <div className="flex h-48 items-end justify-between gap-2">
           {[70, 40, 90, 60, 80, 50].map((h, i) => (
             <Skeleton
-              key={`bar-${h}-${i}`}
+              key={`skeleton-bar-${h}-${i * 7}`}
               className="w-full"
               style={{ height: `${h}%` }}
             />

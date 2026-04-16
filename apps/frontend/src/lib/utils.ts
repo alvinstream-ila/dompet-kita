@@ -1,4 +1,4 @@
-import { clsx, type ClassValue } from 'clsx';
+import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export function formatToRupiah(value: string | number): string {
   const numberString = value.toString().replace(/[^0-9]/g, '');
   if (!numberString) return '';
-  return new Intl.NumberFormat('id-ID').format(parseInt(numberString));
+  return new Intl.NumberFormat('id-ID').format(parseInt(numberString, 10));
 }
 
 export function getTerbilang(amount: number): string {

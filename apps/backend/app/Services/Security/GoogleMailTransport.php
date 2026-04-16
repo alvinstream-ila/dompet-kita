@@ -25,6 +25,14 @@ class GoogleMailTransport extends AbstractTransport
     }
 
     /**
+     * Get the string representation of the transport.
+     */
+    public function __toString(): string
+    {
+        return 'gmail-http';
+    }
+
+    /**
      * Send the given message.
      */
     protected function doSend(SentMessage $message): void
@@ -48,13 +56,5 @@ class GoogleMailTransport extends AbstractTransport
         if (! $response->successful()) {
             throw new MailTransportException('Gmail HTTP API Error: '.$response->body());
         }
-    }
-
-    /**
-     * Get the string representation of the transport.
-     */
-    public function __toString(): string
-    {
-        return 'gmail-http';
     }
 }

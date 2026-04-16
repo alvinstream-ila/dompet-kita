@@ -21,6 +21,16 @@ class WealthHistory extends Model
     ];
 
     /**
+     * Get the user that owns the wealth history.
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -32,15 +42,5 @@ class WealthHistory extends Model
             'month' => 'integer',
             'year' => 'integer',
         ];
-    }
-
-    /**
-     * Get the user that owns the wealth history.
-     *
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 }

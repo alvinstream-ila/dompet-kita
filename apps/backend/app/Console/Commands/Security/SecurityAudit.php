@@ -10,6 +10,10 @@ use Illuminate\Console\Command;
 
 class SecurityAudit extends Command
 {
+    private const SEPARATOR = '========================================';
+
+    private const SCORE_SUFFIX = '/100)';
+
     /**
      * The name and signature of the console command.
      *
@@ -23,10 +27,6 @@ class SecurityAudit extends Command
      * @var string
      */
     protected $description = 'Perform a deep security audit and calculate a system health score';
-
-    private const SEPARATOR = '========================================';
-
-    private const SCORE_SUFFIX = '/100)';
 
     /**
      * Execute the console command.

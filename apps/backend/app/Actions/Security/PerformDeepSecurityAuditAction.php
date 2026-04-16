@@ -15,7 +15,7 @@ class PerformDeepSecurityAuditAction extends BaseAction
      * @return array{
      *     snyk_backend: array{success: bool, output: string},
      *     snyk_frontend: array{success: bool, output: string},
-     *     secrets: array{success: bool, findings: string[]}
+     *     secrets: array{success: bool, findings: array<string>}
      * }
      */
     public function execute(): array

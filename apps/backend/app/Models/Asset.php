@@ -29,14 +29,6 @@ class Asset extends Model
 {
     use HasUserScope, LogsActivity;
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly(['name', 'type', 'value', 'invested_capital'])
-            ->logOnlyDirty()
-            ->dontLogEmptyChanges();
-    }
-
     protected $fillable = [
         'user_id',
         'name',
@@ -48,21 +40,12 @@ class Asset extends Model
         'invested_capital',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function getActivitylogOptions(): LogOptions
     {
-        return [
-            'name' => 'encrypted',
-            'type' => AssetType::class,
-            'value' => 'float',
-            'quantity' => 'float',
-            'is_market_synced' => 'boolean',
-            'invested_capital' => 'float',
-        ];
+        return LogOptions::defaults()
+            ->logOnly(['name', 'type', 'value', 'invested_capital'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
     }
 
     /**
@@ -92,5 +75,22 @@ class Asset extends Model
     public function scopeMarketSynced($query)
     {
         return $query->whereRaw('is_market_synced IS TRUE');
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'name' => 'encrypted',
+            'type' => AssetType::class,
+            'value' => 'float',
+            'quantity' => 'float',
+            'is_market_synced' => 'boolean',
+            'invested_capital' => 'float',
+        ];
     }
 }

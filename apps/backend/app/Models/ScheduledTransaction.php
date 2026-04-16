@@ -52,24 +52,6 @@ class ScheduledTransaction extends Model
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'amount' => 'decimal:2',
-            'next_due_date' => 'date',
-            'is_auto_execute' => 'boolean',
-            'last_executed_at' => 'datetime',
-            'type' => TransactionType::class,
-            'recurrence' => RecurrenceFrequency::class,
-            'status' => ScheduleStatus::class,
-        ];
-    }
-
-    /**
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -93,5 +75,23 @@ class ScheduledTransaction extends Model
     public function scopeDue($query)
     {
         return $query->where('next_due_date', '<=', now()->toDateString());
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'amount' => 'decimal:2',
+            'next_due_date' => 'date',
+            'is_auto_execute' => 'boolean',
+            'last_executed_at' => 'datetime',
+            'type' => TransactionType::class,
+            'recurrence' => RecurrenceFrequency::class,
+            'status' => ScheduleStatus::class,
+        ];
     }
 }

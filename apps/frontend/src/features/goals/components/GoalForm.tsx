@@ -1,20 +1,21 @@
-import React, { useState } from 'react';
 import {
-  Target,
+  Briefcase,
+  Car,
+  Gamepad,
   Heart,
   Home,
-  Car,
+  Loader2,
   Plane,
   ShoppingBag,
-  Briefcase,
-  Gamepad,
-  Loader2,
+  Target,
 } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useAddGoal, useUpdateGoal } from '../hooks/useGoals';
 import { cn, formatToRupiah, getTerbilang } from '@/lib/utils';
 import type { Goal } from '@/types';
+import { useAddGoal, useUpdateGoal } from '../hooks/useGoals';
 
 interface GoalFormProps {
   readonly onSuccess?: () => void;
@@ -86,13 +87,13 @@ export const GoalForm: React.FC<GoalFormProps> = ({ onSuccess, goal }) => {
           Apa Mimpimu, Sayang?
         </label>
         <div className="relative">
-          <Target className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-blue-500" />
+          <Target className="text-blue-royal absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2" />
           <Input
             id="goal-name"
             placeholder="Contoh: Rumah Impian / DP Mobil"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="h-14 rounded-2xl border-none bg-slate-50 pl-12 font-bold text-slate-700 placeholder:text-slate-300 focus:ring-2 focus:ring-blue-400"
+            className="focus:ring-blue-royal/20 h-14 rounded-2xl border-none bg-slate-50 pl-12 font-bold text-slate-700 placeholder:text-slate-300 focus:ring-2"
             required
           />
         </div>
@@ -106,20 +107,20 @@ export const GoalForm: React.FC<GoalFormProps> = ({ onSuccess, goal }) => {
           Target Tabungan (Rp)
         </label>
         <div className="relative">
-          <div className="absolute top-1/2 left-4 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-blue-100">
-            <span className="text-sm font-bold text-blue-600">Rp</span>
+          <div className="bg-blue-royal/10 absolute top-1/2 left-4 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full">
+            <span className="text-blue-royal text-sm font-bold">Rp</span>
           </div>
           <Input
             id="goal-amount"
             placeholder="0"
             value={targetAmount}
             onChange={(e) => setTargetAmount(formatToRupiah(e.target.value))}
-            className="h-14 rounded-2xl border-none bg-slate-50 pl-14 font-bold text-slate-700 placeholder:text-slate-300 focus:ring-2 focus:ring-blue-400"
+            className="focus:ring-blue-royal/20 h-14 rounded-2xl border-none bg-slate-50 pl-14 font-bold text-slate-700 placeholder:text-slate-300 focus:ring-2"
             required
           />
         </div>
         {targetAmount && (
-          <p className="mt-1 px-2 text-[10px] font-bold text-blue-500 italic">
+          <p className="text-blue-royal mt-1 px-2 text-[10px] font-bold italic">
             {getTerbilang(Number(targetAmount.replaceAll('.', '')))} Rupiah
           </p>
         )}
@@ -139,7 +140,7 @@ export const GoalForm: React.FC<GoalFormProps> = ({ onSuccess, goal }) => {
               type="date"
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
-              className="block h-14 w-full rounded-2xl border-none bg-slate-50 px-4 font-bold text-slate-700 focus:ring-2 focus:ring-blue-400"
+              className="focus:ring-blue-royal/20 block h-14 w-full rounded-2xl border-none bg-slate-50 px-4 font-bold text-slate-700 focus:ring-2"
             />
           </div>
         </div>
@@ -165,7 +166,7 @@ export const GoalForm: React.FC<GoalFormProps> = ({ onSuccess, goal }) => {
                   className={cn(
                     'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-all',
                     selectedIcon === item.name
-                      ? 'bg-blue-600 text-white shadow-lg'
+                      ? 'bg-blue-royal text-white shadow-lg'
                       : 'bg-slate-50 text-slate-400 hover:bg-slate-100'
                   )}
                 >
@@ -180,7 +181,7 @@ export const GoalForm: React.FC<GoalFormProps> = ({ onSuccess, goal }) => {
       <Button
         type="submit"
         disabled={loading}
-        className="group h-16 w-full rounded-[24px] bg-linear-to-r from-blue-600 to-indigo-600 text-sm font-black tracking-widest text-white uppercase shadow-xl shadow-blue-200 transition-all hover:from-blue-700 hover:to-indigo-700"
+        className="group from-blue-royal shadow-blue-royal/20 hover:bg-blue-royal/90 h-16 w-full rounded-[24px] bg-linear-to-r to-indigo-600 text-sm font-black tracking-widest text-white uppercase shadow-xl transition-all"
       >
         {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : buttonText}
       </Button>

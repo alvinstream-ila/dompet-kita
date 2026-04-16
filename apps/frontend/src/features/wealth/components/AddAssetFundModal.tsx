@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Plus, ArrowRight } from 'lucide-react';
-import { useAssetTransactions } from '../hooks/useAssetTransactions';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight, Plus, X } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 import type { Asset } from '@/types';
+import { useAssetTransactions } from '../hooks/useAssetTransactions';
 
 interface AddAssetFundModalProps {
   isOpen: boolean;
@@ -65,8 +66,9 @@ export const AddAssetFundModal: React.FC<AddAssetFundModalProps> = ({
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             className="relative w-full max-w-md overflow-hidden rounded-[32px] bg-white shadow-2xl"
           >
-            <div className="relative bg-linear-to-br from-blue-600 to-indigo-700 p-6 text-center text-white">
+            <div className="from-blue-royal relative bg-linear-to-br to-indigo-700 p-6 text-center text-white">
               <button
+                type="button"
                 onClick={onClose}
                 className="absolute top-4 right-4 rounded-full bg-white/10 p-2 transition-all hover:bg-white/20"
               >
@@ -80,7 +82,7 @@ export const AddAssetFundModal: React.FC<AddAssetFundModalProps> = ({
               <h2 className="text-xl font-black tracking-tight uppercase">
                 Top Up Aset
               </h2>
-              <p className="text-sm font-medium text-blue-100">
+              <p className="text-blue-royal/30 text-sm font-medium brightness-200">
                 Tambah modal untuk {targetAsset.name}
               </p>
             </div>
@@ -113,7 +115,7 @@ export const AddAssetFundModal: React.FC<AddAssetFundModalProps> = ({
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="0"
-                    className="w-full rounded-2xl border-2 border-slate-100 bg-slate-50 py-4 pr-4 pl-12 text-xl font-black text-slate-900 transition-all outline-none focus:border-blue-500 focus:bg-white"
+                    className="focus:border-blue-royal w-full rounded-2xl border-2 border-slate-100 bg-slate-50 py-4 pr-4 pl-12 text-xl font-black text-slate-900 transition-all outline-none focus:bg-white"
                     required
                   />
                 </div>
@@ -135,7 +137,7 @@ export const AddAssetFundModal: React.FC<AddAssetFundModalProps> = ({
                         e.target.value ? Number(e.target.value) : undefined
                       )
                     }
-                    className="w-full appearance-none rounded-2xl border-2 border-slate-100 bg-slate-50 p-4 text-sm font-bold text-slate-700 transition-all outline-none focus:border-blue-500 focus:bg-white"
+                    className="focus:border-blue-royal w-full appearance-none rounded-2xl border-2 border-slate-100 bg-slate-50 p-4 text-sm font-bold text-slate-700 transition-all outline-none focus:bg-white"
                   >
                     <option value="">Saldo Luar (Manual)</option>
                     {sourceOptions.map((asset) => (
@@ -164,14 +166,14 @@ export const AddAssetFundModal: React.FC<AddAssetFundModalProps> = ({
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Contoh: Beli emas bulan ini"
-                  className="w-full rounded-2xl border-2 border-slate-100 bg-slate-50 p-4 text-sm font-bold text-slate-700 transition-all outline-none focus:border-blue-500 focus:bg-white"
+                  className="focus:border-blue-royal w-full rounded-2xl border-2 border-slate-100 bg-slate-50 p-4 text-sm font-bold text-slate-700 transition-all outline-none focus:bg-white"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isFunding || !amount}
-                className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-blue-600 to-indigo-700 py-4 text-sm font-black text-white shadow-lg transition-all hover:scale-[1.02] hover:shadow-blue-200 active:scale-95 disabled:opacity-50 disabled:grayscale"
+                className="group from-blue-royal hover:shadow-blue-royal/20 flex w-full items-center justify-center gap-2 rounded-2xl bg-linear-to-r to-indigo-700 py-4 text-sm font-black text-white shadow-lg transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:grayscale"
               >
                 {isFunding ? (
                   'Memproses...'

@@ -1,5 +1,5 @@
-import React from 'react';
-import { TrendingUp, Target, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Target, TrendingUp } from 'lucide-react';
+import type React from 'react';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
@@ -48,7 +48,7 @@ export const WealthStats: React.FC<WealthStatsProps> = ({
               <p className="mb-1 text-[8px] font-black tracking-widest text-slate-500 uppercase">
                 Goal Reserves
               </p>
-              <p className="text-sm font-bold text-blue-400">
+              <p className="text-blue-royal text-sm font-bold">
                 {formatAmount(goalReserves)}
               </p>
             </div>
@@ -58,8 +58,8 @@ export const WealthStats: React.FC<WealthStatsProps> = ({
             className={cn(
               'inline-flex items-center gap-2 rounded-xl border border-white/5 px-3.5 py-1.5 text-[10px] font-black backdrop-blur-md',
               growthPercentage >= 0
-                ? 'bg-emerald-500/10 text-emerald-400'
-                : 'bg-rose-500/10 text-rose-400'
+                ? 'bg-green-stat/10 text-green-stat'
+                : 'bg-red-stat/10 text-red-stat'
             )}
           >
             <ArrowUpRight
@@ -83,8 +83,8 @@ export const WealthStats: React.FC<WealthStatsProps> = ({
               Menuju Kebebasan Financial ✨
             </p>
           </div>
-          <div className="rounded-2xl bg-pink-50 p-3 transition-colors group-hover:bg-pink-100">
-            <Target className="size-6 text-pink-500" />
+          <div className="bg-pink-primary/10 group-hover:bg-pink-primary/20 rounded-2xl p-3 transition-colors">
+            <Target className="text-pink-primary size-6" />
           </div>
         </div>
         <div className="space-y-5">
@@ -99,10 +99,10 @@ export const WealthStats: React.FC<WealthStatsProps> = ({
           <div className="h-4 overflow-hidden rounded-full bg-slate-100 p-1 shadow-inner">
             <Progress
               value={freedomProgress}
-              className="h-full rounded-full bg-linear-to-r from-pink-500 to-rose-500 transition-all duration-1000"
+              className="from-pink-primary to-pink-primary/80 h-full rounded-full bg-linear-to-r transition-all duration-1000"
             />
           </div>
-          <p className="line-clamp-1 rounded-lg border-l-4 border-pink-400 bg-slate-50 px-1 py-2 text-[10px] font-black text-slate-400 italic">
+          <p className="border-pink-primary line-clamp-1 rounded-lg border-l-4 bg-slate-50 px-1 py-2 text-[10px] font-black text-slate-400 italic">
             &quot;{freedomMessage}&quot;
           </p>
         </div>

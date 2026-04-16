@@ -29,14 +29,6 @@ class Loan extends Model
 {
     use HasUserScope, LogsActivity;
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly(['type', 'amount', 'remaining_amount', 'contact_name', 'due_date'])
-            ->logOnlyDirty()
-            ->dontLogEmptyChanges();
-    }
-
     /**
      * @var list<string>
      */
@@ -50,6 +42,24 @@ class Loan extends Model
         'due_date',
         'status',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['type', 'amount', 'remaining_amount', 'contact_name', 'due_date'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
+
+    /**
+     * Get the user that owns the loan.
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -66,15 +76,5 @@ class Loan extends Model
             'due_date' => 'date',
             'description' => 'encrypted',
         ];
-    }
-
-    /**
-     * Get the user that owns the loan.
-     *
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 }

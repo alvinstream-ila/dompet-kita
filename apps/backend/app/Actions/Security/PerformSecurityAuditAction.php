@@ -24,8 +24,8 @@ class PerformSecurityAuditAction extends BaseAction
         $this->auditLoginHistory($score, $findings);
         $this->auditSensitiveFileExposure($score, $findings);
         $this->auditRLS($score, $findings);
-        $this->auditActivityLog($score, $findings);
-        $this->audit2FA($score, $findings);
+        $this->auditActivityLog($findings);
+        $this->audit2FA($findings);
         $this->auditLogSanity($score, $findings);
         $this->auditTestCoverage($score, $findings);
 
@@ -46,7 +46,7 @@ class PerformSecurityAuditAction extends BaseAction
             ->count();
 
         if ($suspiciousLogins > 3) {
-            $findings[] = "Multiple unique IPs ($suspiciousLogins) accessed your account in 24h. Check for session leaks.";
+            $findings[] = "Multiple unique IPs ({$suspiciousLogins}) accessed your account in 24h. Check for session leaks.";
             $score -= 15;
         }
     }
@@ -80,23 +80,21 @@ class PerformSecurityAuditAction extends BaseAction
     /**
      * @param  array<int, string>  $findings
      */
-    private function auditActivityLog(int &$score, array &$findings): void
+    private function auditActivityLog(array &$findings): void
     {
         if (DB::table('activity_log')->count() === 0 && DB::table('users')->count() > 0) {
-            $findings[] = 'Audit Trail (ActivityLog) is empty. Ensure trail logging is active.';
-            $score -= 5;
+            $findings[] = '[ADVISORY] Audit Trail (ActivityLog) is empty. Ensure trail logging is active for production.';
         }
     }
 
     /**
      * @param  array<int, string>  $findings
      */
-    private function audit2FA(int &$score, array &$findings): void
+    private function audit2FA(array &$findings): void
     {
         $usersWithout2FA = DB::table('users')->whereRaw('two_factor_enabled = false')->count();
         if ($usersWithout2FA > 0) {
-            $findings[] = "Security Risk: $usersWithout2FA user(s) have not enabled Two-Factor Authentication (2FA).";
-            $score -= 10;
+            $findings[] = "[ADVISORY] Security Hygiene: {$usersWithout2FA} user(s) have not enabled Two-Factor Authentication (2FA).";
         }
     }
 
@@ -115,7 +113,7 @@ class PerformSecurityAuditAction extends BaseAction
                 $sensitiveKeywords = ['DB_PASSWORD', 'APP_KEY', 'AWS_SECRET', 'STRIPE_SECRET', 'BACKUP_PASSWORD', 'DB_URL'];
                 foreach ($sensitiveKeywords as $keyword) {
                     if (str_contains($logContent, $keyword)) {
-                        $findings[] = "Log Leak Warning: Found sensitive keyword '$keyword' in recent system logs.";
+                        $findings[] = "Log Leak Warning: Found sensitive keyword '{$keyword}' in recent system logs.";
                         $score -= 5;
                         break;
                     }

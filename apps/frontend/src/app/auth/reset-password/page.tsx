@@ -1,20 +1,21 @@
 'use client';
 
-import React, { useState, useEffect, useRef, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import api from '@/lib/axios';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Lock,
-  Loader2,
-  CheckCircle,
   ArrowLeft,
-  Mail,
-  Heart,
+  CheckCircle,
   Eye,
   EyeOff,
+  Heart,
+  Loader2,
+  Lock,
+  Mail,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter, useSearchParams } from 'next/navigation';
+import type React from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import api from '@/lib/axios';
 import { cn } from '@/lib/utils';
 
 /**
@@ -114,9 +115,9 @@ function ResetPasswordContent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#e5f1fa] p-4">
       {/* Premium Background Blobs */}
-      <div className="animate-blob absolute top-0 left-0 -z-10 h-64 w-64 rounded-full bg-blue-400 opacity-20 mix-blend-multiply blur-3xl filter" />
-      <div className="animate-blob animation-delay-2000 absolute top-0 right-0 -z-10 h-64 w-64 rounded-full bg-purple-400 opacity-20 mix-blend-multiply blur-3xl filter" />
-      <div className="animate-blob animation-delay-4000 absolute -bottom-8 left-20 -z-10 h-64 w-64 rounded-full bg-pink-400 opacity-20 mix-blend-multiply blur-3xl filter" />
+      <div className="animate-blob bg-blue-royal absolute top-0 left-0 -z-10 h-64 w-64 rounded-full opacity-20 mix-blend-multiply blur-3xl filter" />
+      <div className="animate-blob animation-delay-2000 absolute top-0 right-0 -z-10 h-64 w-64 rounded-full bg-indigo-400 opacity-20 mix-blend-multiply blur-3xl filter" />
+      <div className="animate-blob animation-delay-4000 bg-pink-primary absolute -bottom-8 left-20 -z-10 h-64 w-64 rounded-full opacity-20 mix-blend-multiply blur-3xl filter" />
 
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -138,7 +139,7 @@ function ResetPasswordContent() {
                     animate={{ scale: 1.2 }}
                     className="absolute -inset-4 rounded-full bg-emerald-100/50 blur-xl"
                   />
-                  <div className="relative flex h-32 w-32 items-center justify-center rounded-[40px] bg-emerald-500 shadow-2xl shadow-emerald-500/40">
+                  <div className="bg-green-stat shadow-green-stat/40 relative flex h-32 w-32 items-center justify-center rounded-[40px] shadow-2xl">
                     <CheckCircle className="h-16 w-16 text-white" />
                   </div>
                 </div>
@@ -147,7 +148,7 @@ function ResetPasswordContent() {
                   <h2 className="text-4xl font-black tracking-tighter text-slate-800 uppercase">
                     Yatta! 🎉
                   </h2>
-                  <p className="mt-3 text-lg font-bold text-emerald-600">
+                  <p className="text-green-stat mt-3 text-lg font-bold">
                     Password Berhasil Diganti!
                   </p>
                   <p className="mt-1 text-xs font-black tracking-widest text-slate-500 uppercase">
@@ -155,7 +156,7 @@ function ResetPasswordContent() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2 font-black text-blue-500 italic">
+                <div className="text-blue-royal flex items-center gap-2 font-black italic">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <span>Redirecting to Login...</span>
                 </div>
@@ -169,7 +170,7 @@ function ResetPasswordContent() {
               >
                 <div className="flex flex-col items-center">
                   <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-[32px] bg-white shadow-xl">
-                    <Lock className="h-12 w-12 text-blue-500" />
+                    <Lock className="text-blue-royal h-12 w-12" />
                   </div>
                   <h1 className="text-center text-3xl font-black tracking-tighter text-slate-800 uppercase">
                     Secured Recovery
@@ -179,9 +180,9 @@ function ResetPasswordContent() {
                   </p>
                 </div>
 
-                <div className="rounded-3xl bg-blue-500/5 p-6 text-center">
+                <div className="bg-blue-royal/5 rounded-3xl p-6 text-center">
                   <p className="flex items-center justify-center gap-2 text-sm font-bold text-slate-600">
-                    <Mail className="h-4 w-4 text-blue-500" />
+                    <Mail className="text-blue-royal h-4 w-4" />
                     Kode aman dikirim ke:
                   </p>
                   <p className="mt-1 text-lg font-black text-slate-800">
@@ -220,9 +221,9 @@ function ResetPasswordContent() {
                           onChange={(e) => handleChange(index, e.target.value)}
                           onKeyDown={(e) => handleKeyDown(index, e)}
                           className={cn(
-                            'h-14 w-full rounded-2xl border-none bg-white text-center text-2xl font-black text-slate-800 shadow-inner transition-all outline-none focus:ring-4 focus:ring-blue-500/20',
+                            'focus:ring-blue-royal/20 h-14 w-full rounded-2xl border-none bg-white text-center text-2xl font-black text-slate-800 shadow-inner transition-all outline-none focus:ring-4',
                             error?.includes('Kode')
-                              ? 'ring-2 ring-rose-500/50'
+                              ? 'ring-red-stat/50 ring-2'
                               : 'ring-1 ring-slate-100'
                           )}
                           required
@@ -246,7 +247,7 @@ function ResetPasswordContent() {
                           type={showPassword ? 'text' : 'password'}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="h-14 w-full rounded-2xl border-none bg-white px-6 font-bold text-slate-800 shadow-inner transition-all outline-none focus:ring-4 focus:ring-blue-500/20"
+                          className="focus:ring-blue-royal/20 h-14 w-full rounded-2xl border-none bg-white px-6 font-bold text-slate-800 shadow-inner transition-all outline-none focus:ring-4"
                           placeholder="Minimal 8 karakter ya Sayang"
                           required
                         />
@@ -278,7 +279,7 @@ function ResetPasswordContent() {
                         onChange={(e) =>
                           setPasswordConfirmation(e.target.value)
                         }
-                        className="h-14 w-full rounded-2xl border-none bg-white px-6 font-bold text-slate-800 shadow-inner transition-all outline-none focus:ring-4 focus:ring-blue-500/20"
+                        className="focus:ring-blue-royal/20 h-14 w-full rounded-2xl border-none bg-white px-6 font-bold text-slate-800 shadow-inner transition-all outline-none focus:ring-4"
                         placeholder="Ulangi password barumu"
                         required
                       />
@@ -289,7 +290,7 @@ function ResetPasswordContent() {
                     <motion.p
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="text-center text-xs font-bold tracking-wider text-rose-500 uppercase"
+                      className="text-red-stat text-center text-xs font-bold tracking-wider uppercase"
                     >
                       {error}
                     </motion.p>
@@ -311,6 +312,7 @@ function ResetPasswordContent() {
                 </form>
 
                 <button
+                  type="button"
                   onClick={() => router.push('/auth/login')}
                   className="mx-auto flex items-center gap-2 text-[10px] font-black tracking-[0.2em] text-slate-400 uppercase transition-colors hover:text-slate-600"
                 >
@@ -327,7 +329,7 @@ function ResetPasswordContent() {
           Dompet Kita Guardians • Slotted with Love{' '}
           <Heart
             size={10}
-            className="inline-block fill-pink-500 text-pink-500"
+            className="fill-pink-primary text-pink-primary inline-block"
           />
         </p>
       </motion.div>
@@ -344,7 +346,7 @@ export default function ResetPasswordPage() {
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-[#e5f1fa]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
+            <Loader2 className="text-blue-royal h-12 w-12 animate-spin" />
             <p className="text-xs font-black tracking-widest text-slate-500 uppercase">
               Preparing Secure Channel...
             </p>

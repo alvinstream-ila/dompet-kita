@@ -9,6 +9,8 @@ use Illuminate\Console\Command;
 
 class AiSelfAudit extends Command
 {
+    private const SEPARATOR = '========================================';
+
     /**
      * The name and signature of the console command.
      *
@@ -22,8 +24,6 @@ class AiSelfAudit extends Command
      * @var string
      */
     protected $description = 'AI Self-Evaluation tool to scan for technical debt and architecture violations';
-
-    private const SEPARATOR = '========================================';
 
     /**
      * Execute the console command.

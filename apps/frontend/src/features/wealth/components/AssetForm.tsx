@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { Loader2, ArrowLeft, Info } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowLeft, Info, Loader2 } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/WealthCheckbox';
-import { motion, AnimatePresence } from 'framer-motion';
+import type { Asset, AssetType } from '@/types';
 import { AssetTypeSelector } from './AssetTypeSelector';
 import { PremiumAssetIcon } from './PremiumAssetIcon';
-import type { Asset, AssetType } from '@/types';
 
 interface AssetFormProps {
   initialData?: Asset | null;
@@ -40,20 +41,20 @@ const MarketSyncSection: React.FC<{
   if (!['stock', 'crypto', 'commodity'].includes(type)) return null;
 
   return (
-    <div className="flex items-center space-x-3 rounded-2xl border border-blue-50 bg-blue-50/30 p-4">
+    <div className="border-blue-royal/10 bg-blue-royal/5 flex items-center space-x-3 rounded-2xl border p-4">
       <Checkbox id="sync" checked={checked} onCheckedChange={onChange} />
       <div className="grid gap-1.5 leading-none">
         <label
           htmlFor="sync"
-          className="cursor-pointer text-[10px] font-black tracking-tight text-blue-700 uppercase"
+          className="text-blue-royal cursor-pointer text-[10px] font-black tracking-tight uppercase"
         >
           Sync Realtime Market
         </label>
-        <p className="text-[9px] font-bold text-blue-500/80">
+        <p className="text-blue-royal/60 text-[9px] font-bold">
           Otomatis update harga sesuai pasar dunia ✨
         </p>
       </div>
-      <Info className="ml-auto size-4 text-blue-300" />
+      <Info className="text-blue-royal/30 ml-auto size-4" />
     </div>
   );
 };

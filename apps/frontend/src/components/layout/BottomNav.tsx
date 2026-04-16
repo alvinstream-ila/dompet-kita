@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Home, ArrowRightLeft, TrendingUp, Plus, History } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { AddTransactionModal } from '@/features/transactions';
 import { useQueryClient } from '@tanstack/react-query';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRightLeft, History, Home, Plus, TrendingUp } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import type React from 'react';
+import { useState } from 'react';
+import { AddTransactionModal } from '@/features/transactions';
 import { useUiStore } from '@/lib/store/useUiStore';
+import { cn } from '@/lib/utils';
 
 interface NavItemProps {
   icon: React.ElementType;
@@ -14,7 +15,12 @@ interface NavItemProps {
   onClick: () => void;
 }
 
-const MenuItem: React.FC<NavItemProps> = ({ icon: Icon, label, isActive, onClick }) => {
+const MenuItem: React.FC<NavItemProps> = ({
+  icon: Icon,
+  label,
+  isActive,
+  onClick,
+}) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -23,14 +29,19 @@ const MenuItem: React.FC<NavItemProps> = ({ icon: Icon, label, isActive, onClick
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
       className={cn(
-        'relative flex h-11 sm:h-9 shrink-0 items-center justify-center gap-2 rounded-[20px] px-3.5 transition-all md:h-12 md:rounded-[22px] md:px-4.5',
+        'relative flex h-11 shrink-0 items-center justify-center gap-2 rounded-[20px] px-3.5 transition-all sm:h-9 md:h-12 md:rounded-[22px] md:px-4.5',
         isActive
-          ? 'bg-slate-900 text-white shadow-xl px-5'
+          ? 'bg-slate-900 px-5 text-white shadow-xl'
           : 'text-slate-400 hover:bg-slate-100/50'
       )}
       layout
     >
-      <Icon className={cn('size-5 shrink-0 md:size-5.5', isActive ? 'text-white' : 'text-slate-400')} />
+      <Icon
+        className={cn(
+          'size-5 shrink-0 md:size-5.5',
+          isActive ? 'text-white' : 'text-slate-400'
+        )}
+      />
       <AnimatePresence mode="popLayout" initial={false}>
         {(isHovered || isActive) && (
           <motion.span
@@ -60,7 +71,12 @@ export function BottomNav() {
   ];
 
   const rightItems = [
-    { id: 'transactions', icon: History, label: 'Riwayat', path: '/transactions' },
+    {
+      id: 'transactions',
+      icon: History,
+      label: 'Riwayat',
+      path: '/transactions',
+    },
     { id: 'loans', icon: ArrowRightLeft, label: 'Titipan', path: '/loans' },
   ];
 
@@ -79,12 +95,11 @@ export function BottomNav() {
     <>
       <div className="pointer-events-none fixed right-0 bottom-4 left-0 z-50 flex justify-center md:bottom-8">
         <div className="flex w-full max-w-2xl items-center justify-center gap-3 px-4 sm:gap-6 md:gap-8">
-          
           {/* LEFT MENU PILL */}
           <div className="pointer-events-auto">
             <motion.div
               layout
-              className="flex h-14 sm:h-12 items-center gap-1 rounded-[28px] border border-white/60 bg-white/80 px-1.5 shadow-2xl backdrop-blur-3xl md:h-16 md:rounded-[36px] md:px-2"
+              className="flex h-14 items-center gap-1 rounded-[28px] border border-white/60 bg-white/80 px-1.5 shadow-2xl backdrop-blur-3xl sm:h-12 md:h-16 md:rounded-[36px] md:px-2"
             >
               {leftItems.map((item) => (
                 <MenuItem
@@ -122,7 +137,7 @@ export function BottomNav() {
           <div className="pointer-events-auto">
             <motion.div
               layout
-              className="flex h-14 sm:h-12 items-center gap-1 rounded-[28px] border border-white/60 bg-white/80 px-1.5 shadow-2xl backdrop-blur-3xl md:h-16 md:rounded-[36px] md:px-2"
+              className="flex h-14 items-center gap-1 rounded-[28px] border border-white/60 bg-white/80 px-1.5 shadow-2xl backdrop-blur-3xl sm:h-12 md:h-16 md:rounded-[36px] md:px-2"
             >
               {rightItems.map((item) => (
                 <MenuItem
@@ -135,7 +150,6 @@ export function BottomNav() {
               ))}
             </motion.div>
           </div>
-
         </div>
       </div>
 

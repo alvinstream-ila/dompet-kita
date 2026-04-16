@@ -1,8 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import api from '@/lib/axios';
 import Cookies from 'js-cookie';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import api from '@/lib/axios';
+
 export type { User } from '@/types';
-import { User } from '@/types';
+
+import type { User } from '@/types';
 
 interface AuthContextType {
   user: User | null;
@@ -92,7 +94,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       isAuthenticated: !!user,
       isVerified: !!user?.email_verified_at,
     }),
-    [user, loading]
+    [user, loading, logout, login]
   );
 
   return (

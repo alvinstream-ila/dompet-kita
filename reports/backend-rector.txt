@@ -1,0 +1,4 @@
+
+ [ERROR] Your config already enables dead code set.                                                                    
+         Remove "->withDeadCodeLevel()" as it only duplicates it, or remove dead code set.                             
+

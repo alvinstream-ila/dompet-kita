@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
 import { AlertTriangle, Loader2 } from 'lucide-react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import type React from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
 interface DeleteConfirmDialogProps {
@@ -40,14 +41,19 @@ export const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
     onClose();
   };
 
+  const getButtonLabel = () => {
+    if (loading) return null;
+    return confirmStep === 0 ? 'IA, SAYA YAKIN' : confirmLabel;
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="overflow-hidden rounded-[32px] border-none p-0 shadow-2xl sm:max-w-[400px]">
         <div className="space-y-6 p-8 text-center">
-          <div className="group mx-auto mb-2 flex h-20 w-20 items-center justify-center rounded-full bg-red-50">
+          <div className="group bg-red-stat/5 mx-auto mb-2 flex h-20 w-20 items-center justify-center rounded-full">
             <AlertTriangle
               className={cn(
-                'size-10 text-red-500 transition-all duration-300',
+                'text-red-stat size-10 transition-all duration-300',
                 confirmStep === 1
                   ? 'scale-125 animate-bounce'
                   : 'group-hover:scale-110'
@@ -73,16 +79,14 @@ export const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
               className={cn(
                 'h-12 rounded-2xl text-[11px] font-black tracking-widest uppercase shadow-lg transition-all active:scale-95',
                 confirmStep === 0
-                  ? 'bg-red-500 shadow-red-200 hover:bg-red-600'
+                  ? 'bg-red-stat shadow-red-stat/20 hover:bg-red-stat/90'
                   : 'bg-slate-900 hover:bg-black'
               )}
             >
               {loading ? (
                 <Loader2 className="size-5 animate-spin" />
-              ) : confirmStep === 0 ? (
-                'IA, SAYA YAKIN'
               ) : (
-                confirmLabel
+                getButtonLabel()
               )}
             </Button>
 
@@ -99,7 +103,7 @@ export const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
         <div className="flex h-1.5 w-full bg-slate-100">
           <div
             className={cn(
-              'h-full bg-red-500 transition-all duration-500',
+              'bg-red-stat h-full transition-all duration-500',
               confirmStep === 0 ? 'w-1/2' : 'w-full'
             )}
           />

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
 import { AlertTriangle, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import type React from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
 
 interface TransactionDeleteConfirmProps {
   readonly isOpen: boolean;
@@ -25,10 +26,10 @@ export const TransactionDeleteConfirm: React.FC<
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="overflow-hidden rounded-[32px] border-none p-0 shadow-2xl sm:max-w-[400px]">
         <div className="space-y-6 p-8 text-center">
-          <div className="group mx-auto mb-2 flex h-20 w-20 items-center justify-center rounded-full bg-red-50">
+          <div className="group bg-red-stat/10 mx-auto mb-2 flex h-20 w-20 items-center justify-center rounded-full">
             <AlertTriangle
               className={cn(
-                'size-10 text-red-500 transition-all duration-300',
+                'text-red-stat size-10 transition-all duration-300',
                 confirmStep === 1
                   ? 'scale-125 animate-bounce'
                   : 'group-hover:scale-110'
@@ -53,7 +54,7 @@ export const TransactionDeleteConfirm: React.FC<
             {confirmStep < 1 ? (
               <Button
                 onClick={() => setConfirmStep(1)}
-                className="h-12 rounded-2xl bg-red-500 text-[11px] font-black tracking-widest text-white uppercase shadow-lg shadow-red-200 transition-all hover:bg-red-600 active:scale-95"
+                className="bg-red-stat shadow-red-stat/20 hover:bg-red-stat/90 h-12 rounded-2xl text-[11px] font-black tracking-widest text-white uppercase shadow-lg transition-all active:scale-95"
               >
                 IA, SAYA YAKIN
               </Button>
@@ -85,7 +86,7 @@ export const TransactionDeleteConfirm: React.FC<
         <div className="flex h-1.5 w-full bg-slate-100">
           <div
             className={cn(
-              'h-full bg-red-500 transition-all duration-500',
+              'bg-red-stat h-full transition-all duration-500',
               confirmStep === 0 ? 'w-1/2' : 'w-full'
             )}
           />

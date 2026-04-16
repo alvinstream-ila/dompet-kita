@@ -45,7 +45,7 @@ class AiHealthController extends Controller
                 $results[$name] = [
                     'status' => 'Failed',
                     'error' => $e->getMessage(),
-                    'trace' => substr($e->getTraceAsString(), 0, 500),
+                    'trace' => config('app.debug') ? substr($e->getTraceAsString(), 0, 500) : 'Hidden for security',
                 ];
             }
         }

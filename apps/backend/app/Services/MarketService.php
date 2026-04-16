@@ -33,8 +33,8 @@ class MarketService
      */
     public function getRates(): array
     {
-        /** @var array{currency_rates: array<string, float>, gold_antam_gram: float, gold_global_oz: float, inflation_rate: float, last_updated: string} $rates */
-        $rates = Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function (): array {
+        /** @var array{currency_rates: array<string, float>, gold_antam_gram: float, gold_global_oz: float, inflation_rate: float, last_updated: string} */
+        return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function (): array {
             try {
                 // 1. Forex: Frankfurter (Unlimited/Keyless)
                 $fxResponse = Http::timeout(5)->get('https://api.frankfurter.app/latest?from=USD');
@@ -67,8 +67,6 @@ class MarketService
                 ];
             }
         });
-
-        return $rates;
     }
 
     /**
@@ -76,35 +74,47 @@ class MarketService
      */
     public function scrapeAntam(): ?float
     {
-        try {
-            $response = Http::timeout(10)->get('https://www.logammulia.com/id/harga-emas-hari-ini');
-            if ($response->successful() && preg_match('/idr">([0-9.]+)/', $response->body(), $matches)) {
-                return (float) str_replace('.', '', $matches[1]);
+        return retry(2, function () {
+            try {
+                $response = Http::timeout(15)->get('https://www.logammulia.com/id/harga-emas-hari-ini');
+                if ($response->successful() && preg_match('/idr">([0-9.]+)/', $response->body(), $matches)) {
+                    return (float) str_replace('.', '', $matches[1]);
+                }
+            } catch (\Exception $e) {
+                Log::error('Antam Scraping Attempt Failed: '.$e->getMessage());
+                throw $e;
             }
-        } catch (\Exception $e) {
-            Log::error('Antam Scraping Failed: '.$e->getMessage());
-        }
 
-        return null;
+            return null;
+        }, 500);
     }
 
     /**
      * Get Crypto Price from Binance Public API (Keyless)
+     * Supports multi-endpoint failover for better global reach.
      */
     public function getCryptoPrice(string $symbol): ?float
     {
         $cacheKey = "crypto_price_{$symbol}";
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($symbol) {
-            try {
-                $response = Http::timeout(5)->get("https://api.binance.com/api/v3/ticker/price?symbol={$symbol}");
-                if ($response->successful()) {
-                    $priceData = $response->json('price');
+            $endpoints = [
+                "https://api.binance.com/api/v3/ticker/price?symbol={$symbol}",
+                "https://api1.binance.com/api/v3/ticker/price?symbol={$symbol}",
+                "https://api3.binance.com/api/v3/ticker/price?symbol={$symbol}",
+            ];
 
-                    return is_numeric($priceData) ? (float) $priceData : null;
+            foreach ($endpoints as $url) {
+                try {
+                    $response = Http::timeout(10)->retry(2, 500)->get($url);
+                    if ($response->successful()) {
+                        $priceData = $response->json('price');
+
+                        return is_numeric($priceData) ? (float) $priceData : null;
+                    }
+                } catch (\Exception $e) {
+                    Log::warning("Binance Fetch Failed for {$symbol} on {$url}: ".$e->getMessage());
                 }
-            } catch (\Exception $e) {
-                Log::error("Binance Fetch Failed for {$symbol}: ".$e->getMessage());
             }
 
             return null;

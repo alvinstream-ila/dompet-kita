@@ -1,15 +1,15 @@
-import React from 'react';
 import {
-  Chart as ChartJS,
   ArcElement,
-  Tooltip,
-  Legend,
-  type TooltipItem,
+  Chart as ChartJS,
   type ChartOptions,
+  Legend,
+  Tooltip,
+  type TooltipItem,
 } from 'chart.js';
+import { motion } from 'framer-motion';
+import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { useTransactions } from '@/features/transactions';
-import { motion } from 'framer-motion';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 

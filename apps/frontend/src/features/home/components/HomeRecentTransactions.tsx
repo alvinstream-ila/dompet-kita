@@ -1,26 +1,26 @@
 'use client';
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  Wallet,
   ArrowDownCircle,
   ArrowUpCircle,
-  RefreshCcw,
-  Sparkles,
-  TrendingUp as TrendingUpIcon,
-  Zap as ZapIcon,
-  Utensils,
-  Car,
-  Home as HomeIcon,
-  ShoppingBag,
-  Heart,
   Briefcase,
-  Gift,
+  Car,
   Coins,
   Gamepad as GamepadIcon,
+  Gift,
   GraduationCap,
+  Heart,
+  Home as HomeIcon,
+  RefreshCcw,
+  ShoppingBag,
+  Sparkles,
+  TrendingUp as TrendingUpIcon,
+  Utensils,
+  Wallet,
+  Zap as ZapIcon,
 } from 'lucide-react';
+import type React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -96,8 +96,8 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
     <div className="mt-8 pb-12 md:mt-12 lg:col-span-12">
       <Card className="glass-premium group relative overflow-hidden rounded-[32px] border border-slate-200/50 bg-slate-50/40 p-6 shadow-2xl backdrop-blur-xl sm:p-8 md:rounded-[64px] md:p-12 dark:border-slate-800/50 dark:bg-slate-900/40">
         {/* Decorative background gradients */}
-        <div className="absolute top-0 right-0 -z-10 h-[500px] w-[500px] rounded-full bg-blue-500/10 blur-[120px] transition-transform duration-1000 group-hover:scale-110" />
-        <div className="absolute bottom-0 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-pink-500/10 blur-[120px] transition-transform duration-1000 group-hover:scale-110" />
+        <div className="bg-blue-royal/10 absolute top-0 right-0 -z-10 h-[500px] w-[500px] rounded-full blur-[120px] transition-transform duration-1000 group-hover:scale-110" />
+        <div className="bg-pink-primary/10 absolute bottom-0 left-0 -z-10 h-[500px] w-[500px] rounded-full blur-[120px] transition-transform duration-1000 group-hover:scale-110" />
 
         <div className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-center md:mb-12 md:gap-6">
           <div className="space-y-1">
@@ -118,7 +118,7 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => onNavigate('/transactions')}
-                className="flex h-12 items-center gap-2 rounded-2xl border border-blue-200/50 bg-white px-6 text-[11px] font-black tracking-widest text-blue-600 uppercase shadow-xl shadow-blue-500/10 transition-all hover:bg-blue-50 hover:shadow-blue-500/20 active:scale-95 dark:border-blue-900/50 dark:bg-slate-800 dark:text-blue-400"
+                className="border-blue-royal/20 text-blue-royal shadow-blue-royal/10 hover:bg-blue-royal/5 hover:shadow-blue-royal/20 dark:border-blue-royal/50 dark:text-blue-royal/80 flex h-12 items-center gap-2 rounded-2xl border bg-white px-6 text-[11px] font-black tracking-widest uppercase shadow-xl transition-all active:scale-95 dark:bg-slate-800"
               >
                 Riwayat Lengkap
                 <ArrowDownCircle className="h-3.5 w-3.5 rotate-225" />
@@ -161,15 +161,15 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
                 className={cn(
                   'group relative flex cursor-pointer flex-col gap-5 overflow-hidden rounded-[40px] border border-slate-200/60 bg-white p-7 shadow-xl transition-all hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/80',
                   t.type === 'income'
-                    ? 'hover:border-emerald-300 dark:hover:border-emerald-800'
-                    : 'hover:border-rose-300 dark:hover:border-rose-800'
+                    ? 'hover:border-green-stat/30 dark:hover:border-green-stat/50'
+                    : 'hover:border-red-stat/30 dark:hover:border-red-stat/50'
                 )}
               >
                 {/* Visual Accent Bar */}
                 <div
                   className={cn(
                     'absolute top-0 right-0 bottom-0 w-1 transition-all group-hover:w-2',
-                    t.type === 'income' ? 'bg-emerald-400' : 'bg-rose-400'
+                    t.type === 'income' ? 'bg-green-stat' : 'bg-red-stat'
                   )}
                 />
 
@@ -178,8 +178,8 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
                     className={cn(
                       'relative flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl shadow-inner transition-transform duration-500 group-hover:-rotate-12',
                       t.type === 'income'
-                        ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400'
-                        : 'bg-rose-50 text-rose-600 dark:bg-rose-950/30 dark:text-rose-400'
+                        ? 'bg-green-stat/10 text-green-stat dark:bg-green-stat/20 dark:text-green-stat'
+                        : 'bg-red-stat/10 text-red-stat dark:bg-red-stat/20 dark:text-red-stat'
                     )}
                   >
                     {getCategoryIcon(t.category, t.type)}
@@ -192,7 +192,7 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
                     <p className="mb-1 truncate text-[11px] font-black tracking-widest text-slate-400 uppercase">
                       {t.category}
                     </p>
-                    <h5 className="truncate text-lg font-black tracking-tight text-slate-800 transition-colors group-hover:text-blue-600 dark:text-slate-100">
+                    <h5 className="group-hover:text-blue-royal truncate text-lg font-black tracking-tight text-slate-800 transition-colors dark:text-slate-100">
                       {t.description || t.category}
                     </h5>
                   </div>
@@ -211,8 +211,8 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
                       className={cn(
                         'text-2xl font-black tracking-tighter tabular-nums',
                         t.type === 'income'
-                          ? 'text-emerald-500'
-                          : 'text-rose-500'
+                          ? 'text-green-stat'
+                          : 'text-red-stat'
                       )}
                     >
                       {t.type === 'income' ? '+' : '-'}
@@ -220,7 +220,7 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
                     </span>
                   </div>
 
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-50 text-slate-300 transition-colors group-hover:bg-blue-50 group-hover:text-blue-500 dark:bg-slate-800">
+                  <div className="group-hover:bg-blue-royal/5 group-hover:text-blue-royal flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-50 text-slate-300 transition-colors dark:bg-slate-800">
                     <ArrowDownCircle
                       className={cn(
                         'h-5 w-5',
@@ -240,10 +240,10 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
                   duration: 4,
                   ease: 'easeInOut',
                 }}
-                className="mx-auto mb-8 flex h-32 w-32 items-center justify-center rounded-full border-2 border-dashed border-slate-200 bg-slate-50/80 shadow-inner transition-all group-hover:border-blue-200 group-hover:bg-white dark:border-slate-800 dark:bg-slate-900/50"
+                className="group-hover:border-blue-royal/30 mx-auto mb-8 flex h-32 w-32 items-center justify-center rounded-full border-2 border-dashed border-slate-200 bg-slate-50/80 shadow-inner transition-all group-hover:bg-white dark:border-slate-800 dark:bg-slate-900/50"
               >
                 <Wallet
-                  className="h-14 w-14 text-slate-300 transition-colors group-hover:text-blue-300"
+                  className="group-hover:text-blue-royal/40 h-14 w-14 text-slate-300 transition-colors"
                   strokeWidth={1.5}
                 />
               </motion.div>

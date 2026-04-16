@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import type React from 'react';
 import { VerificationBanner } from '@/components/auth/VerificationBanner';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { NextProtectedRoute } from '@/components/layout/NextProtectedRoute';
@@ -8,7 +8,7 @@ import { FidgetPet } from '@/components/ui/FidgetPet';
 
 /**
  * ProtectedLayout - The "Premium Shell" 🏰
- * 
+ *
  * This layout serves as the consistent frame for all authenticated routes.
  * It includes:
  * - NextProtectedRoute: Client-side session guard.
@@ -23,21 +23,21 @@ export default function ProtectedLayout({
 }>) {
   return (
     <NextProtectedRoute>
-      <div 
-        className="relative min-h-screen w-full bg-[#e5f1fa] bg-fixed bg-cover bg-center bg-no-repeat"
+      <div
+        className="relative min-h-screen w-full bg-[#e5f1fa] bg-cover bg-fixed bg-center bg-no-repeat"
         style={{ backgroundImage: 'url("/app-bg.svg")' }}
       >
         {/* Top-level system alerts */}
         <VerificationBanner />
-        
+
         {/* Main Fluid Content */}
-        <main className="pb-32 md:pb-40 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
+        <main className="animate-in fade-in slide-in-from-bottom-2 pb-32 duration-500 ease-out md:pb-40">
           {children}
         </main>
 
         {/* Global Persistence Layer */}
         <BottomNav />
-        
+
         {/* AI Assistant - Floating Sovereign Agent */}
         <FidgetPet />
       </div>

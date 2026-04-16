@@ -50,9 +50,9 @@ $sslMode = Config::get('database.connections.pgsql.sslmode');
 $isProd = $app->environment('production');
 
 if ($sslMode === 'prefer' || $sslMode === 'verify-full') {
-    echo "SUCCESS (SSL Mode: $sslMode)\n";
+    echo "SUCCESS (SSL Mode: {$sslMode})\n";
 } else {
-    echo "WARNING (SSL Mode insecure: $sslMode)\n";
+    echo "WARNING (SSL Mode insecure: {$sslMode})\n";
 }
 
 if ($isProd) {

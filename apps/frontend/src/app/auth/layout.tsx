@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 /**
  * AuthLayout - Shell for login, register, and recovery pages. 🔐

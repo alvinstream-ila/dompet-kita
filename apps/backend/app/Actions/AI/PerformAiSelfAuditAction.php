@@ -41,7 +41,7 @@ class PerformAiSelfAuditAction extends BaseAction
         foreach ($commands as $file) {
             $name = $file->getFilename();
             if (! preg_match('/^[A-Z][a-zA-Z]+\.php$/', $name)) {
-                $violations[] = "Wrong naming format for $name";
+                $violations[] = "Wrong naming format for {$name}";
             }
         }
 

@@ -15,6 +15,16 @@ class ChatHistory extends Model
     ];
 
     /**
+     * Get the user that owns the chat history.
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -24,15 +34,5 @@ class ChatHistory extends Model
         return [
             'metadata' => 'array',
         ];
-    }
-
-    /**
-     * Get the user that owns the chat history.
-     *
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 }

@@ -1,24 +1,24 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import {
+  ArrowDownCircle,
+  ArrowUpCircle,
+  Briefcase,
   Calendar as CalendarIcon,
-  Trash2,
-  Edit3,
-  Utensils,
   Car,
+  Coins,
+  Edit3,
+  Gamepad,
+  Gift,
+  GraduationCap,
+  Heart,
   Home as HomeIcon,
   ShoppingBag,
-  Gamepad,
-  Heart,
-  GraduationCap,
-  Zap as ZapIcon,
-  Briefcase,
+  Trash2,
   TrendingUp,
-  Gift,
-  Coins,
-  ArrowUpCircle,
-  ArrowDownCircle,
+  Utensils,
+  Zap as ZapIcon,
 } from 'lucide-react';
+import type React from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { Transaction } from '@/types';
@@ -31,7 +31,10 @@ interface TransactionItemProps {
   readonly onDelete: (id: string) => void;
 }
 
-const CATEGORY_MAP: Record<string, { keywords: string[]; icon: React.ReactNode }> = {
+const CATEGORY_MAP: Record<
+  string,
+  { keywords: string[]; icon: React.ReactNode }
+> = {
   gaji: { keywords: ['gaji'], icon: <Briefcase className="h-5 w-5" /> },
   investasi: {
     keywords: ['investasi', 'tabungan'],
@@ -39,7 +42,10 @@ const CATEGORY_MAP: Record<string, { keywords: string[]; icon: React.ReactNode }
   },
   hadiah: { keywords: ['hadiah', 'bonus'], icon: <Gift className="h-5 w-5" /> },
   bisnis: { keywords: ['bisnis', 'jual'], icon: <Coins className="h-5 w-5" /> },
-  makan: { keywords: ['makan', 'minum'], icon: <Utensils className="h-5 w-5" /> },
+  makan: {
+    keywords: ['makan', 'minum'],
+    icon: <Utensils className="h-5 w-5" />,
+  },
   transport: {
     keywords: ['transport', 'ojek', 'bensin'],
     icon: <Car className="h-5 w-5" />,
@@ -95,14 +101,14 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.03 }}
-      className="group flex items-center gap-4 rounded-[32px] border border-slate-100/50 bg-white p-4 shadow-sm transition-all hover:border-blue-100 hover:shadow-xl md:gap-6 md:p-6"
+      className="group hover:border-blue-royal/20 flex items-center gap-4 rounded-[32px] border border-slate-100/50 bg-white p-4 shadow-sm transition-all hover:shadow-xl md:gap-6 md:p-6"
     >
       <div
         className={cn(
           'flex size-12 shrink-0 items-center justify-center rounded-2xl shadow-inner transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 md:size-16',
           transaction.type === 'income'
-            ? 'bg-emerald-50 text-emerald-600'
-            : 'bg-rose-50 text-rose-600'
+            ? 'bg-green-stat/10 text-green-stat'
+            : 'bg-red-stat/10 text-red-stat'
         )}
       >
         {getCategoryIcon(transaction.category, transaction.type)}
@@ -117,8 +123,8 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
             className={cn(
               'rounded-full border px-2.5 py-0.5 text-[8px] font-black tracking-widest uppercase shadow-xs',
               transaction.type === 'income'
-                ? 'border-emerald-100 bg-emerald-50 text-emerald-600'
-                : 'border-rose-100 bg-rose-50 text-rose-600'
+                ? 'border-green-stat/20 bg-green-stat/5 text-green-stat'
+                : 'border-red-stat/20 bg-red-stat/5 text-red-stat'
             )}
           >
             {transaction.type}
@@ -136,7 +142,7 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
             </span>
           </div>
           <div className="flex items-center gap-1.5 text-slate-400 transition-colors group-hover:text-slate-500">
-            <div className="size-1.5 rounded-full bg-slate-200 transition-all group-hover:bg-blue-400" />
+            <div className="group-hover:bg-blue-royal size-1.5 rounded-full bg-slate-200 transition-all" />
             <span className="text-[10px] font-black tracking-[0.15em] uppercase">
               {transaction.category}
             </span>
@@ -148,9 +154,7 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
         <p
           className={cn(
             'text-base font-black tracking-tighter transition-all group-hover:scale-105 md:text-2xl',
-            transaction.type === 'income'
-              ? 'text-emerald-600'
-              : 'text-slate-800'
+            transaction.type === 'income' ? 'text-green-stat' : 'text-slate-800'
           )}
         >
           {transaction.type === 'income' ? '+' : '-'}
@@ -160,7 +164,7 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className="size-9 rounded-xl border border-transparent shadow-sm transition-all hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md active:scale-90"
+            className="hover:border-blue-royal/30 hover:bg-blue-royal/5 hover:text-blue-royal size-9 rounded-xl border border-transparent shadow-sm transition-all hover:shadow-md active:scale-90"
             onClick={() => onEdit(transaction)}
           >
             <Edit3 size={15} strokeWidth={2.5} />
@@ -168,7 +172,7 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className="size-9 rounded-xl border border-transparent shadow-sm transition-all hover:border-rose-100 hover:bg-rose-50 hover:text-rose-600 hover:shadow-md active:scale-90"
+            className="hover:border-red-stat/30 hover:bg-red-stat/5 hover:text-red-stat size-9 rounded-xl border border-transparent shadow-sm transition-all hover:shadow-md active:scale-90"
             onClick={() => onDelete(transaction.id)}
           >
             <Trash2 size={15} strokeWidth={2.5} />

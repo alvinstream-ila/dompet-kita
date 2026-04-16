@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Heart, Link as LinkIcon, ShieldCheck } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -11,12 +13,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { toast } from 'sonner';
 import {
-  getInvitationAction,
   acceptInvitationAction,
+  getInvitationAction,
 } from '../actions/partner';
-import { Heart, Link as LinkIcon, ShieldCheck } from 'lucide-react';
 
 export function AcceptPartnerModal() {
   const searchParams = useSearchParams();
@@ -67,8 +67,8 @@ export function AcceptPartnerModal() {
     <Dialog open={isOpen} onOpenChange={(open) => !open && setIsOpen(false)}>
       <DialogContent className="rounded-3xl border-white/20 bg-white/90 shadow-2xl backdrop-blur-xl sm:max-w-[425px]">
         <DialogHeader>
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-pink-100">
-            <Heart className="h-8 w-8 animate-pulse fill-pink-600 text-pink-600" />
+          <div className="bg-pink-primary/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+            <Heart className="fill-pink-primary text-pink-primary h-8 w-8 animate-pulse" />
           </div>
           <DialogTitle className="text-center text-2xl font-bold text-slate-900">
             Undangan Partner ❤️
@@ -88,9 +88,9 @@ export function AcceptPartnerModal() {
             </p>
           </div>
 
-          <div className="flex items-start gap-3 rounded-2xl border border-blue-100 bg-blue-50/50 p-4">
-            <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
-            <div className="text-xs leading-relaxed text-blue-800">
+          <div className="border-blue-royal/20 bg-blue-royal/5 flex items-start gap-3 rounded-2xl border p-4">
+            <ShieldCheck className="text-blue-royal mt-0.5 h-5 w-5 shrink-0" />
+            <div className="text-blue-royal/80 text-xs leading-relaxed">
               <span className="font-bold tracking-tight uppercase">
                 Apa yang terjadi nanti?
               </span>
@@ -113,7 +113,7 @@ export function AcceptPartnerModal() {
             Nanti Saja
           </Button>
           <Button
-            className="h-12 flex-3 rounded-xl bg-blue-600 px-8 font-bold shadow-lg shadow-blue-100 transition-all hover:bg-blue-700 active:scale-95"
+            className="bg-blue-royal shadow-blue-royal/20 h-12 flex-3 rounded-xl px-8 font-bold shadow-lg transition-all hover:brightness-110 active:scale-95"
             onClick={handleAccept}
             disabled={isLoading}
           >

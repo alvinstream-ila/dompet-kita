@@ -1,8 +1,13 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
-import { useRouter, usePathname, useSearchParams, useParams as useNextParams } from 'next/navigation';
+import {
+  useParams as useNextParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
+import type React from 'react';
 
 /**
  * BRIDGE COMPONENT: Link
@@ -29,7 +34,7 @@ export { LinkCompat as Link };
  */
 export const useNavigate = () => {
   const router = useRouter();
-  
+
   return (path: string | number, options?: { replace?: boolean }) => {
     if (typeof path === 'number') {
       if (path === -1) {
@@ -39,7 +44,7 @@ export const useNavigate = () => {
       }
       return;
     }
-    
+
     if (options?.replace) {
       router.replace(path);
     } else {
@@ -55,8 +60,10 @@ export const useNavigate = () => {
 export const useLocation = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const searchString = searchParams?.toString() ? `?${searchParams.toString()}` : '';
-  
+  const searchString = searchParams?.toString()
+    ? `?${searchParams.toString()}`
+    : '';
+
   return {
     pathname,
     search: searchString,
@@ -79,19 +86,26 @@ export const useParams = () => {
  * BRIDGE COMPONENT: NavLink
  * Simplifies NavLink with basic active state support if needed (can be extended).
  */
-interface NavLinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'className'> {
+interface NavLinkProps extends Omit<
+  React.AnchorHTMLAttributes<HTMLAnchorElement>,
+  'className'
+> {
   to: string;
   children: React.ReactNode;
   className?: string | ((props: { isActive: boolean }) => string);
 }
 
-export const NavLink = ({ to, children, className, ...props }: NavLinkProps) => {
+export const NavLink = ({
+  to,
+  children,
+  className,
+  ...props
+}: NavLinkProps) => {
   const pathname = usePathname();
   const isActive = pathname === to;
-  
-  const resolvedClassName = typeof className === 'function' 
-    ? className({ isActive }) 
-    : className;
+
+  const resolvedClassName =
+    typeof className === 'function' ? className({ isActive }) : className;
 
   return (
     <Link href={to} className={resolvedClassName} {...props}>
@@ -102,7 +116,7 @@ export const NavLink = ({ to, children, className, ...props }: NavLinkProps) => 
 
 /**
  * BRIDGE COMPONENT: Outlet
- * In Next.js, children are passed via the layout/page structure, 
+ * In Next.js, children are passed via the layout/page structure,
  * so Outlet simply acts as a passthrough for nested compositions.
  */
 export const Outlet = ({ children }: { children?: React.ReactNode }) => {
@@ -116,7 +130,7 @@ const reactRouterDom = {
   useLocation,
   useParams,
   NavLink,
-  Outlet
+  Outlet,
 };
 
 export default reactRouterDom;

@@ -1,18 +1,18 @@
-import React from 'react';
-import { Bar, Doughnut, Line } from 'react-chartjs-2';
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  PointElement,
-  LineElement,
   ArcElement,
+  BarElement,
+  CategoryScale,
+  type ChartData,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend,
-  ChartData,
 } from 'chart.js';
+import type React from 'react';
+import { Bar, Doughnut, Line } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
@@ -37,7 +37,7 @@ export const ReportCharts: React.FC<ReportChartsProps> = ({
 }) => {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-      <div className="group flex min-h-[400px] flex-col rounded-[40px] border border-white bg-white/90 p-8 shadow-xl backdrop-blur-2xl transition-all hover:border-blue-50 hover:shadow-2xl">
+      <div className="group hover:border-blue-royal/20 flex min-h-[400px] flex-col rounded-[40px] border border-white bg-white/90 p-8 shadow-xl backdrop-blur-2xl transition-all hover:shadow-2xl">
         <h3 className="mb-8 text-sm leading-none font-black tracking-tighter text-slate-800 uppercase opacity-60 transition-opacity group-hover:opacity-100">
           Pemasukan vs Pengeluaran
         </h3>
@@ -56,7 +56,7 @@ export const ReportCharts: React.FC<ReportChartsProps> = ({
         </div>
       </div>
 
-      <div className="group flex min-h-[400px] flex-col rounded-[40px] border border-white bg-white/90 p-8 shadow-xl backdrop-blur-2xl transition-all hover:border-rose-50 hover:shadow-2xl">
+      <div className="group hover:border-red-stat/20 flex min-h-[400px] flex-col rounded-[40px] border border-white bg-white/90 p-8 shadow-xl backdrop-blur-2xl transition-all hover:shadow-2xl">
         <h3 className="mb-8 text-sm leading-none font-black tracking-tighter text-slate-800 uppercase opacity-60 transition-opacity group-hover:opacity-100">
           Komposisi Pengeluaran
         </h3>
@@ -76,7 +76,7 @@ export const ReportCharts: React.FC<ReportChartsProps> = ({
         </div>
       </div>
 
-      <div className="group flex min-h-[400px] flex-col rounded-[40px] border border-white bg-white/90 p-8 shadow-xl backdrop-blur-2xl transition-all hover:border-violet-50 hover:shadow-2xl">
+      <div className="group hover:border-blue-royal/20 flex min-h-[400px] flex-col rounded-[40px] border border-white bg-white/90 p-8 shadow-xl backdrop-blur-2xl transition-all hover:shadow-2xl">
         <h3 className="mb-8 text-sm leading-none font-black tracking-tighter text-slate-800 uppercase opacity-60 transition-opacity group-hover:opacity-100">
           Tren Berjalan
         </h3>

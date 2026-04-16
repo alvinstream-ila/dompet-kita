@@ -89,7 +89,6 @@ class TransactionController extends Controller
                 'transactions' => TransactionResource::collection($data['recentTransactions']),
                 'period' => $data['period'],
             ], 'Summary terhitung rapi ya Sayang! 📊');
-
         } catch (\Exception $e) {
             Log::error('TRANSACTION_SUMMARY_ERROR: '.$e->getMessage());
 

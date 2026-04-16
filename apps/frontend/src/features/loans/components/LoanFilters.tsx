@@ -1,5 +1,5 @@
-import React from 'react';
-import { Search, LayoutGrid, Plus, Pencil } from 'lucide-react';
+import { LayoutGrid, Pencil, Plus, Search } from 'lucide-react';
+import type React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -36,19 +36,19 @@ export const LoanFilters: React.FC<LoanFiltersProps> = ({
     <div className="flex flex-col items-center justify-between gap-6 rounded-[32px] border border-slate-50 bg-white p-6 shadow-sm transition-all hover:shadow-md md:flex-row">
       <div className="flex w-full flex-1 flex-col gap-3 sm:flex-row sm:gap-4">
         <div className="group relative flex-1">
-          <Search className="absolute top-1/2 left-5 size-4 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-pink-500" />
+          <Search className="group-focus-within:text-pink-primary absolute top-1/2 left-5 size-4 -translate-y-1/2 text-slate-400 transition-colors" />
           <Input
             placeholder="Cari titipan sayang kita..."
             value={localSearch}
             onChange={(e) => onLocalSearchChange(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && onSearchSubmit()}
-            className="h-14 rounded-2xl border-none bg-slate-50/50 pl-14 font-bold shadow-inner transition-colors hover:bg-slate-100 focus-visible:ring-pink-500/10"
+            className="focus-visible:ring-pink-primary/10 h-14 rounded-2xl border-none bg-slate-50/50 pl-14 font-bold shadow-inner transition-colors hover:bg-slate-100"
           />
         </div>
         <Select value={filterType} onValueChange={onFilterTypeChange}>
           <SelectTrigger className="group h-14 w-full rounded-2xl border-none bg-slate-50/50 text-[10px] font-black tracking-[0.2em] text-slate-500 uppercase shadow-inner sm:w-[200px]">
             <div className="flex items-center gap-3">
-              <LayoutGrid className="size-4 text-slate-400 transition-colors group-hover:text-pink-500" />
+              <LayoutGrid className="group-hover:text-pink-primary size-4 text-slate-400 transition-colors" />
               <SelectValue placeholder="Tipe Titipan" />
             </div>
           </SelectTrigger>
@@ -61,13 +61,13 @@ export const LoanFilters: React.FC<LoanFiltersProps> = ({
             </SelectItem>
             <SelectItem
               value="utang"
-              className="rounded-2xl py-3 text-[10px] font-black tracking-widest text-rose-500 uppercase"
+              className="text-red-stat rounded-2xl py-3 text-[10px] font-black tracking-widest uppercase"
             >
               Titipan Masuk
             </SelectItem>
             <SelectItem
               value="piutang"
-              className="rounded-2xl py-3 text-[10px] font-black tracking-widest text-emerald-500 uppercase"
+              className="text-green-stat rounded-2xl py-3 text-[10px] font-black tracking-widest uppercase"
             >
               Titipan Keluar
             </SelectItem>
@@ -93,7 +93,7 @@ export const LoanFilters: React.FC<LoanFiltersProps> = ({
               'size-5',
               isEditMode
                 ? 'text-white'
-                : 'text-slate-400 group-hover:text-pink-500'
+                : 'group-hover:text-pink-primary text-slate-400'
             )}
             strokeWidth={2.5}
           />

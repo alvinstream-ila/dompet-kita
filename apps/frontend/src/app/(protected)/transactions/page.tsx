@@ -1,17 +1,26 @@
-import React from 'react';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import { getQueryClient } from '@/lib/get-query-client';
-import { TransactionsView } from '@/features/transactions';
+import { Suspense } from 'react';
 import { getUserProfileAction } from '@/features/auth/actions/user';
+import { RecentTransactionsSkeleton } from '@/features/home/components/DashboardSkeletons';
+import { TransactionsView } from '@/features/transactions';
+import { getQueryClient } from '@/lib/get-query-client';
 import { serverApi } from '@/lib/server-api';
 
 /**
  * Transactions Page (RSC)
- * Prefetches the first page of transactions for instant loading.
+ * Utilizing Next.js 16 PPR for instant loading of the transaction management interface.
  */
-export const dynamic = 'force-dynamic';
+// Removed: export const dynamic = 'force-dynamic';
 
 export default async function TransactionsPage() {
+  return (
+    <Suspense fallback={<RecentTransactionsSkeleton />}>
+      <TransactionsContent />
+    </Suspense>
+  );
+}
+
+async function TransactionsContent() {
   const queryClient = getQueryClient();
 
   const prefetchData = async () => {

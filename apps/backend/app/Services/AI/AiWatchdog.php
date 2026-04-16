@@ -48,7 +48,8 @@ class AiWatchdog
                 'name' => ucfirst($name),
                 'status' => $isQuarantined ? 'Quarantined (Down)' : 'Healthy',
                 'recent_latency' => self::getRecentLatency($name),
-            ]];
+            ],
+            ];
         })->all();
     }
 

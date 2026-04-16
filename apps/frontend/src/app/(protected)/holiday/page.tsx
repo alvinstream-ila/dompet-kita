@@ -1,22 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Plane, Plus, Search } from 'lucide-react';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Plane, Search } from 'lucide-react';
-
-import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 import { UserNavDropdown } from '@/components/layout';
-import { PageLoader } from '@/components/ui/PageLoader';
-import { cn } from '@/lib/utils';
-import {
-  useHolidays,
-  useDeleteHoliday,
-  useAddHoliday,
-  useUpdateHoliday,
-  type Holiday as HolidayType,
-} from '@/features/holidays';
-import { useFormatting } from '@/lib/hooks/useFormatting';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -24,15 +14,21 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
+import { PageLoader } from '@/components/ui/PageLoader';
 import { StatCard } from '@/components/ui/StatCard';
-
 import {
+  HolidayDeleteConfirm,
+  HolidayExpenseModal,
   HolidayForm,
   HolidayTripCard,
-  HolidayExpenseModal,
-  HolidayDeleteConfirm,
+  type Holiday as HolidayType,
+  useAddHoliday,
+  useDeleteHoliday,
+  useHolidays,
+  useUpdateHoliday,
 } from '@/features/holidays';
+import { useFormatting } from '@/lib/hooks/useFormatting';
+import { cn } from '@/lib/utils';
 
 /**
  * Holiday Page - Romantic Getaways ✈️
@@ -132,7 +128,7 @@ export default function HolidayPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 md:px-8 md:py-10 pb-36 md:pb-40 lg:px-12 lg:py-12">
+    <div className="container mx-auto px-4 py-6 pb-36 md:px-8 md:py-10 md:pb-40 lg:px-12 lg:py-12">
       {/* Mobile Greeting */}
       <div className="mb-6 flex justify-center text-center md:mb-10 lg:hidden">
         <div className="glass-premium h-auto w-full transform-gpu items-center justify-center rounded-[24px] border border-white/50 px-6 py-4 shadow-2xl md:rounded-[32px] md:px-10 md:py-6">
@@ -345,9 +341,9 @@ export default function HolidayPage() {
               ❤️
             </h2>
             <p className="text-lg leading-relaxed font-bold text-white/70 italic">
-              &quot;Setiap perjalanan yang kita lalui adalah memori abadi. Nabung
-              yang rajin ya, nanti aku ajak kamu ke tempat yang paling indah di
-              dunia. Promise! ✨&quot;
+              &quot;Setiap perjalanan yang kita lalui adalah memori abadi.
+              Nabung yang rajin ya, nanti aku ajak kamu ke tempat yang paling
+              indah di dunia. Promise! ✨&quot;
             </p>
           </div>
         </Card>

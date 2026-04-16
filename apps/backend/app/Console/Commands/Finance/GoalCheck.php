@@ -43,7 +43,7 @@ class GoalCheck extends Command
 
             $this->info('### 🎯 Financial Goals Progress');
             foreach ($goals as $goal) {
-                $percentage = $goal->target_amount > 0 ? ($goal->current_amount / $goal->target_amount) * 100 : 0;
+                $percentage = $goal->target_amount > 0 ? $goal->current_amount / $goal->target_amount * 100 : 0;
                 $bar = $this->renderProgressBar($percentage);
 
                 $this->line("\n**{$goal->name}**");

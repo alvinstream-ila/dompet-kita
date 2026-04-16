@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { useDeleteTransaction } from './hooks/useTransactions';
 import { ArrowDownCircle, ArrowUpCircle, Trash2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-
+import type React from 'react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { TransactionForm } from './TransactionForm';
-import { TransactionDeleteConfirm } from './TransactionDeleteConfirm';
+import { cn } from '@/lib/utils';
 import type { Transaction } from '@/types';
+import { useDeleteTransaction } from './hooks/useTransactions';
+import { TransactionDeleteConfirm } from './TransactionDeleteConfirm';
+import { TransactionForm } from './TransactionForm';
 
 interface EditTransactionModalProps {
   readonly isOpen: boolean;
@@ -53,7 +53,7 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
   const activeColorClass =
     currentType === 'expense'
       ? 'bg-slate-900 border-slate-900'
-      : 'bg-emerald-600 border-emerald-600';
+      : 'bg-green-stat border-green-stat';
 
   return (
     <>
@@ -86,7 +86,7 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
                   variant="ghost"
                   size="icon"
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="rounded-xl text-white hover:bg-red-500/20 hover:text-white"
+                  className="hover:bg-red-stat/20 rounded-xl text-white hover:text-white"
                 >
                   <Trash2 className="size-5" />
                 </Button>

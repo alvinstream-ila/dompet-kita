@@ -57,6 +57,6 @@ class AiHealthCheckCommand extends Command
     {
         $label = $status['status'] === 'safe' ? '<info>SAFE</info>' : '<error>'.strtoupper($status['status']).'</error>';
 
-        return "[$label] ".$status['message'];
+        return "[{$label}] ".$status['message'];
     }
 }

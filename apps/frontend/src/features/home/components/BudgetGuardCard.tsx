@@ -1,12 +1,12 @@
+import { Settings2, ShieldAlert, Sparkles } from 'lucide-react';
 import React from 'react';
 import { Card, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
-import { ShieldAlert, Settings2, Sparkles } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useBudgetGuard } from '../hooks/useBudgetGuard';
+import { Progress } from '@/components/ui/progress';
 import { useSettings } from '@/features/settings';
 import { useFormatting } from '@/lib/hooks/useFormatting';
+import { cn } from '@/lib/utils';
+import { useBudgetGuard } from '../hooks/useBudgetGuard';
 
 export const BudgetGuardCard = React.memo(() => {
   const { spent, limit, remaining, progress, aiMessage, status } =
@@ -29,21 +29,24 @@ export const BudgetGuardCard = React.memo(() => {
   };
 
   const statusColors: Record<string, string> = {
-    SAFE: 'text-emerald-500 bg-emerald-50 border-emerald-100',
-    CAUTION: 'text-blue-500 bg-blue-50 border-blue-100',
-    WARNING: 'text-amber-500 bg-amber-50 border-amber-100',
-    DANGER: 'text-rose-500 bg-rose-50 border-rose-100',
+    SAFE: 'text-[var(--color-green-stat)] bg-[var(--color-green-stat)]/10 border-[var(--color-green-stat)]/20',
+    CAUTION:
+      'text-[var(--color-blue-royal)] bg-[var(--color-blue-royal)]/10 border-[var(--color-blue-royal)]/20',
+    WARNING:
+      'text-[var(--color-yellow-outlook)] bg-[var(--color-yellow-outlook)]/10 border-[var(--color-yellow-outlook)]/20',
+    DANGER:
+      'text-[var(--color-red-stat)] bg-[var(--color-red-stat)]/10 border-[var(--color-red-stat)]/20',
   };
 
   const progressColors: Record<string, string> = {
-    SAFE: 'bg-emerald-500',
-    CAUTION: 'bg-blue-500',
-    WARNING: 'bg-amber-500',
-    DANGER: 'bg-rose-500',
+    SAFE: 'bg-[var(--color-green-stat)]',
+    CAUTION: 'bg-[var(--color-blue-royal)]',
+    WARNING: 'bg-[var(--color-yellow-outlook)]',
+    DANGER: 'bg-[var(--color-red-stat)]',
   };
 
   return (
-    <Card className="group relative flex flex-col overflow-hidden rounded-[40px] border-white/60 bg-white/70 p-6 shadow-lg backdrop-blur-xl">
+    <Card className="group glass-card relative flex flex-col p-6">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <ShieldAlert
@@ -127,6 +130,7 @@ export const BudgetGuardCard = React.memo(() => {
                 </div>
               ) : (
                 <button
+                  type="button"
                   onClick={() => setIsEditing(true)}
                   className="flex items-center gap-1 transition-colors hover:text-slate-600"
                 >

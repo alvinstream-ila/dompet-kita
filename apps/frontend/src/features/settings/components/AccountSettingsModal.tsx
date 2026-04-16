@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import api from '@/lib/axios';
-import { useAuth, type User as UserType } from '@/features/auth';
-import type { ApiError } from '@/types';
-import { ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, ShieldCheck } from 'lucide-react';
+import type React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -11,10 +9,13 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { type User as UserType, useAuth } from '@/features/auth';
+import api from '@/lib/axios';
+import type { ApiError } from '@/types';
 import { useSettings } from '../hooks/useSettings';
+import { PreferencesTab } from './PreferencesTab';
 import { ProfileTab } from './ProfileTab';
 import { SecurityTab } from './SecurityTab';
-import { PreferencesTab } from './PreferencesTab';
 
 interface AccountSettingsModalProps {
   isOpen: boolean;
@@ -164,15 +165,15 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({
               Control Center
             </p>
             <DialogTitle className="flex items-center gap-2 text-2xl font-black tracking-tight text-white">
-              <ShieldCheck className="h-6 w-6 text-blue-400" />
+              <ShieldCheck className="text-blue-royal h-6 w-6" />
               PENGATURAN AKUN
             </DialogTitle>
             <DialogDescription className="sr-only">
               Kelola profil, keamanan, dan preferensi aplikasi Anda di sini.
             </DialogDescription>
           </div>
-          <div className="absolute -top-10 -right-10 h-48 w-48 rounded-full bg-blue-500/20 blur-3xl" />
-          <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-pink-500/10 blur-2xl" />
+          <div className="bg-blue-royal/20 absolute -top-10 -right-10 h-48 w-48 rounded-full blur-3xl" />
+          <div className="bg-pink-primary/10 absolute -bottom-10 -left-10 h-32 w-32 rounded-full blur-2xl" />
         </DialogHeader>
 
         <div className="relative z-20 -mt-8 px-6 pb-8">
@@ -208,8 +209,8 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({
               <div className="flex-1 overflow-y-auto px-4 py-6">
                 {success ? (
                   <div className="animate-in fade-in zoom-in space-y-4 py-12 text-center duration-300">
-                    <div className="mx-auto mb-2 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50">
-                      <CheckCircle2 className="h-10 w-10 text-emerald-500" />
+                    <div className="bg-green-stat/10 mx-auto mb-2 flex h-20 w-20 items-center justify-center rounded-full">
+                      <CheckCircle2 className="text-green-stat h-10 w-10" />
                     </div>
                     <div className="space-y-1">
                       <h3 className="text-xl font-black tracking-tight text-slate-800 uppercase">

@@ -1,9 +1,9 @@
-import React from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import type React from 'react';
 import { Button } from '@/components/ui/button';
-import { GoalForm } from './GoalForm';
 import type { Goal } from '@/types';
+import { GoalForm } from './GoalForm';
 
 interface AddGoalModalProps {
   isOpen: boolean;

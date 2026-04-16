@@ -1,20 +1,20 @@
 'use client';
 
-import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Heart, Plus } from 'lucide-react';
 import Image from 'next/image';
-import { Plus, Heart } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { PageLoader } from '@/components/ui/PageLoader';
-import { 
-  useGoals, 
-  useDeleteGoal, 
-  GoalCard, 
-  GoalStats, 
-  GoalFilters,
-  AddGoalModal 
-} from '@/features/goals';
+import { useState } from 'react';
 import { UserNavDropdown } from '@/components/layout';
 import { Card } from '@/components/ui/card';
+import { PageLoader } from '@/components/ui/PageLoader';
+import {
+  AddGoalModal,
+  GoalCard,
+  GoalFilters,
+  GoalStats,
+  useDeleteGoal,
+  useGoals,
+} from '@/features/goals';
 
 /**
  * MimpiKita Page - Couple's Roadmap 🗺️
@@ -177,8 +177,9 @@ export default function MimpiKitaPage() {
               <Heart className="fill-white text-white" size={24} />
             </div>
             <p className="text-lg leading-relaxed font-bold text-white/80 italic">
-              &quot;Satu per satu ya Sayang. Gak usah buru-buru, yang penting kita
-              konsisten dan selalu bareng. I&apos;m so proud of our progress! ✨&quot;
+              &quot;Satu per satu ya Sayang. Gak usah buru-buru, yang penting
+              kita konsisten dan selalu bareng. I&apos;m so proud of our
+              progress! ✨&quot;
             </p>
           </div>
         </div>

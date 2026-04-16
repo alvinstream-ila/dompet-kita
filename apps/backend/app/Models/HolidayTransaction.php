@@ -35,14 +35,6 @@ class HolidayTransaction extends Model
         'transaction_date',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'transaction_date' => 'date',
-            'amount' => 'decimal:2',
-        ];
-    }
-
     /** @return BelongsTo<Holiday, $this> */
     public function holiday(): BelongsTo
     {
@@ -59,5 +51,13 @@ class HolidayTransaction extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'transaction_date' => 'date',
+            'amount' => 'decimal:2',
+        ];
     }
 }

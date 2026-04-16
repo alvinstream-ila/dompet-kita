@@ -1,18 +1,13 @@
 'use client';
 
-import React from 'react';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { useAuth } from '@/features/auth';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { useFormatting } from '@/lib/hooks/useFormatting';
 import { useQuery } from '@tanstack/react-query';
-import api from '@/lib/axios';
-import { toast } from 'sonner';
-import { InvitePartnerDialog } from '@/features/family/components/InvitePartnerDialog';
-import { unlinkPartnerAction } from '@/features/family/actions/partner';
+import { motion } from 'framer-motion';
 import { LogOut, User as UserIcon } from 'lucide-react';
+import Image from 'next/image';
+import React from 'react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import {
   Dialog,
@@ -25,6 +20,11 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useAuth } from '@/features/auth';
+import { unlinkPartnerAction } from '@/features/family/actions/partner';
+import { InvitePartnerDialog } from '@/features/family/components/InvitePartnerDialog';
+import api from '@/lib/axios';
+import { useFormatting } from '@/lib/hooks/useFormatting';
 
 /**
  * FamilyHub Page - Ecosystem & Legacy 🏡
@@ -90,7 +90,7 @@ export default function FamilyHubPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-4xl font-black tracking-tight text-slate-800"
         >
-          Family <span className="text-blue-600">Ecosystem</span>
+          Family <span className="text-blue-royal">Ecosystem</span>
         </motion.h1>
         <p className="mt-2 font-medium text-slate-400">
           Membangun masa depan bersama {user?.name} &{' '}
@@ -157,7 +157,7 @@ export default function FamilyHubPage() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="h-8 rounded-lg text-[10px] font-black text-blue-600 uppercase hover:bg-blue-100"
+                          className="text-blue-royal hover:bg-blue-royal/10 h-8 rounded-lg text-[10px] font-black uppercase"
                         >
                           Edit
                         </Button>
@@ -191,7 +191,7 @@ export default function FamilyHubPage() {
                           <Button
                             onClick={handleUpdateThreshold}
                             disabled={isUpdatingThreshold || !newThreshold}
-                            className="h-12 w-full rounded-xl bg-blue-600 font-bold hover:bg-blue-700"
+                            className="bg-blue-royal hover:bg-blue-royal/90 h-12 w-full rounded-xl font-bold"
                           >
                             {isUpdatingThreshold
                               ? 'Menyimpan...'
@@ -205,7 +205,7 @@ export default function FamilyHubPage() {
                   <Button
                     variant="ghost"
                     onClick={() => setIsUnlinkOpen(true)}
-                    className="h-12 w-full rounded-xl font-bold text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                    className="hover:bg-red-stat/5 hover:text-red-stat h-12 w-full rounded-xl font-bold text-slate-400 transition-colors"
                   >
                     <LogOut className="mr-2 h-4 w-4" /> Unlink Akun
                   </Button>
@@ -228,7 +228,7 @@ export default function FamilyHubPage() {
 
         {/* Tax Assistant Card */}
         <Card className="glass-premium group overflow-hidden rounded-[40px] border-none shadow-2xl">
-          <CardHeader className="relative flex h-48 items-center justify-center bg-linear-to-br from-orange-50/50 to-amber-50/50">
+          <CardHeader className="from-yellow-outlook/10 to-yellow-outlook/20 relative flex h-48 items-center justify-center bg-linear-to-br">
             <Image
               src="/icons/3d/tax.png"
               alt="Tax"
@@ -252,19 +252,19 @@ export default function FamilyHubPage() {
             ) : (
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-2xl border border-amber-100 bg-amber-50/50 p-4">
-                    <span className="block text-[10px] font-black tracking-widest text-amber-600/70 uppercase">
+                  <div className="border-yellow-outlook/20 bg-yellow-outlook/10 rounded-2xl border p-4">
+                    <span className="text-yellow-outlook block text-[10px] font-black tracking-widest uppercase">
                       Income
                     </span>
-                    <span className="text-lg font-bold text-amber-800">
+                    <span className="text-lg font-bold text-slate-900">
                       {formatAmount(taxData?.total_income || 0)}
                     </span>
                   </div>
-                  <div className="rounded-2xl border border-blue-100 bg-blue-50/50 p-4">
-                    <span className="block text-[10px] font-black tracking-widest text-blue-600/70 uppercase">
+                  <div className="border-blue-royal/20 bg-blue-royal/10 rounded-2xl border p-4">
+                    <span className="text-blue-royal block text-[10px] font-black tracking-widest uppercase">
                       Est. Tax
                     </span>
-                    <span className="text-lg font-bold text-blue-800">
+                    <span className="text-lg font-bold text-slate-900">
                       {formatAmount(taxData?.estimated_tax || 0)}
                     </span>
                   </div>
@@ -284,7 +284,7 @@ export default function FamilyHubPage() {
 
         {/* Legacy Planning Card */}
         <Card className="glass-premium group overflow-hidden rounded-[40px] border-none shadow-2xl">
-          <CardHeader className="relative flex h-48 items-center justify-center bg-linear-to-br from-purple-50/50 to-pink-50/50">
+          <CardHeader className="from-pink-primary/10 to-pink-primary/20 relative flex h-48 items-center justify-center bg-linear-to-br">
             <Image
               src="/icons/3d/legacy.png"
               alt="Legacy"
@@ -306,7 +306,7 @@ export default function FamilyHubPage() {
                 onClick={() =>
                   toast.success('Tunggu ya sayang, laporan lagi disiapin! ✨')
                 }
-                className="h-12 w-full rounded-2xl bg-purple-600 font-bold shadow-lg shadow-purple-200 hover:bg-purple-700"
+                className="bg-pink-primary shadow-pink-primary/20 hover:bg-pink-primary/90 h-12 w-full rounded-2xl font-bold shadow-lg"
               >
                 Generate Legacy PDF
               </Button>

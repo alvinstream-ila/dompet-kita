@@ -1,12 +1,12 @@
-# 🏦 Dompet Kita - Sentient Backend Core (v7.1.20)
+# 🏦 Dompet Kita - Sentient Backend Core (v7.2.1)
 
-The powerful engine behind **Dompet Kita**, built with **Laravel 12** and **PHP 8.4**.
-Hardened under the **Sovereign Singularity** architecture, this backend is fully integrated with decentralized storage, multi-provider AI, and resilient cloud databases.
+The high-performance engine behind **Dompet Kita**, newly modernized to **Laravel 13** and fully optimized for **PHP 8.4**.
+Hardened under the **Sovereign Performance** milestone, this backend utilizes the latest framework features and Symfony 8 components for peak responsiveness.
 
 ## 🚀 Key Features
 
 - **Transaction Engine**: Handles Income/Expense with multi-criteria filtering.
-- **AI-Powered Insights**: Integrated with **Groq (Primary) , Gemini (Vision), and OpenRouter** via a dynamic Multi-Provider AI Manager.
+- **AI-Powered Insights**: Integrated with **Groq (Primary), Gemini (Vision), and OpenRouter** via a dynamic Multi-Provider AI Manager.
 - **Cognitive Document Processing**: Automated receipt scanning and categorization via Gemini Vision.
 - **Decentralized Storage**: Secure file and avatar uploads via **Storj (S3 Compatible)** object storage.
 - **Resilient Database**: Connected via **Supabase Transaction Pooler (AWS-1 Singapore)** for high availability.
@@ -20,8 +20,9 @@ Hardened under the **Sovereign Singularity** architecture, this backend is fully
 
 ## 🛠️ Tech Stack & Infrastructure
 
-- **Framework**: Laravel 12.56.0
-- **Language**: PHP 8.4.19
+- **Framework**: Laravel 13.4.0 (Modernized from v12)
+- **Engine Core**: Symfony 8.x Components
+- **Language**: PHP 8.4.x
 - **Database**: PostgreSQL 17.6 (Managed by Supabase - `aws-1-ap-southeast-1.pooler.supabase.com:6543`)
 - **Auth**: Laravel Sanctum (Cookie & Token-Based)
 - **AI Engine**: Groq (Llama-3), Gemini (Vision), OpenRouter
@@ -53,6 +54,7 @@ The API documentation is generated using **Swagger/L5-Swagger**.
    cd apps/backend
    copy .env.example .env
    ```
+
 2. **Environment Configuration**:
    Contact the admin for the Production `.env`. You will need:
    - Supabase Credentials
@@ -61,8 +63,10 @@ The API documentation is generated using **Swagger/L5-Swagger**.
 
 3. **Install Dependencies**:
    ```powershell
-   # Windows optimization to prevent stalling
-   $env:COMPOSER_MEMORY_LIMIT = "-1"; composer install --no-interaction --prefer-dist --no-scripts
+   # Windows optimization to prevent stalling and ensure clean Laravel 13 upgrade
+   $env:COMPOSER_MEMORY_LIMIT = "-1"
+   composer install --no-interaction --prefer-dist --no-scripts
+   composer dump-autoload -o
    ```
 
 4. **Initialize System**:

@@ -1,26 +1,25 @@
 'use client';
 
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '@/lib/axios';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
+  AlertCircle,
   CalendarClock,
+  Clock,
   Cpu,
-  Plus,
-  Trash2,
   Pause,
   Play,
-  AlertCircle,
+  Plus,
+  Shield,
+  Sparkles,
+  Trash2,
   TrendingDown,
   TrendingUp,
-  Clock,
-  Sparkles,
-  Zap,
-  Shield,
   X,
+  Zap,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import api from '@/lib/axios';
 import { cn } from '@/lib/utils';
 import type { ApiError } from '@/types';
 
@@ -119,7 +118,8 @@ export default function ScheduledTransactionsPage() {
     onError: (err: unknown) => {
       const axiosError = err as ApiError;
       toast.error(
-        axiosError.response?.data?.message || 'Gagal menjalankan analisis kuantum. 🥺'
+        axiosError.response?.data?.message ||
+          'Gagal menjalankan analisis kuantum. 🥺'
       );
     },
   });
@@ -131,7 +131,7 @@ export default function ScheduledTransactionsPage() {
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
         >
-          <Cpu className="size-10 text-pink-400" />
+          <Cpu className="text-pink-primary size-10" />
         </motion.div>
       </div>
     );
@@ -157,44 +157,48 @@ export default function ScheduledTransactionsPage() {
       >
         <div>
           <h1 className="text-3xl font-black tracking-tight text-slate-900 md:text-4xl">
-            CFO AI <span className="text-pink-500">Sentinel</span>
+            CFO AI <span className="text-pink-primary">Sentinel</span>
           </h1>
-          <p className="mt-1 text-slate-500 font-medium">
+          <p className="mt-1 font-medium text-slate-500">
             Phase 6: Autonomous Intelligence Hub
           </p>
         </div>
-        <button className="flex size-12 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-xl transition-transform active:scale-95">
+        <button
+          type="button"
+          className="flex size-12 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-xl transition-transform active:scale-95"
+        >
           <Plus className="size-6" />
         </button>
       </motion.div>
 
       {/* Quantum Insights Section */}
       <div className="mb-12">
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h3 className="text-xl font-black text-slate-800 flex items-center gap-2">
-              <Sparkles className="size-5 text-amber-500" />
+            <h3 className="flex items-center gap-2 text-xl font-black text-slate-800">
+              <Sparkles className="text-yellow-outlook size-5" />
               Quantum Insights
             </h3>
-            <span className="text-xs font-bold uppercase tracking-widest text-slate-400">
+            <span className="text-xs font-bold tracking-widest text-slate-400 uppercase">
               Sentient Findings
             </span>
           </div>
 
           <motion.button
+            type="button"
             whileTap={{ scale: 0.95 }}
             onClick={() => generateInsightsMutation.mutate()}
             disabled={generateInsightsMutation.isPending}
             className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all',
+              'flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black tracking-widest uppercase transition-all',
               generateInsightsMutation.isPending
-                ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                : 'bg-amber-100 text-amber-600 hover:bg-amber-200 shadow-sm'
+                ? 'cursor-not-allowed bg-slate-100 text-slate-400'
+                : 'bg-yellow-outlook/10 text-yellow-outlook hover:bg-yellow-outlook/20 shadow-sm'
             )}
           >
             {generateInsightsMutation.isPending ? (
               <>
-                <div className="size-3 border-2 border-amber-500 border-t-transparent animate-spin rounded-full" />
+                <div className="border-yellow-outlook size-3 animate-spin rounded-full border-2 border-t-transparent" />
                 Analyzing...
               </>
             ) : (
@@ -207,7 +211,7 @@ export default function ScheduledTransactionsPage() {
         </div>
 
         {insights && insights.length > 0 ? (
-          <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 no-scrollbar">
+          <div className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-4">
             {insights.map((insight, idx) => (
               <motion.div
                 key={insight.id}
@@ -215,36 +219,37 @@ export default function ScheduledTransactionsPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.1 }}
                 className={cn(
-                  'relative min-w-[300px] max-w-[350px] glass-card p-6 border-l-4 overflow-hidden',
-                  insight.type === 'leak' && 'border-l-rose-500',
-                  insight.type === 'optimization' && 'border-l-blue-500',
-                  insight.type === 'trend' && 'border-l-amber-500',
-                  insight.type === 'achievement' && 'border-l-teal-500'
+                  'glass-card relative max-w-[350px] min-w-[300px] overflow-hidden border-l-4 p-6',
+                  insight.type === 'leak' && 'border-l-red-stat',
+                  insight.type === 'optimization' && 'border-l-blue-royal',
+                  insight.type === 'trend' && 'border-l-yellow-outlook',
+                  insight.type === 'achievement' && 'border-l-green-stat'
                 )}
               >
                 <button
+                  type="button"
                   onClick={() =>
                     updateInsightMutation.mutate({
                       id: insight.id,
                       status: 'archived',
                     })
                   }
-                  className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
+                  className="absolute top-4 right-4 text-slate-400 transition-colors hover:text-slate-600"
                 >
                   <X className="size-4" />
                 </button>
 
-                <div className="flex items-start gap-4 mb-3">
+                <div className="mb-3 flex items-start gap-4">
                   <div
                     className={cn(
                       'flex size-10 items-center justify-center rounded-xl',
-                      insight.type === 'leak' && 'bg-rose-100 text-rose-600',
+                      insight.type === 'leak' && 'bg-red-stat/10 text-red-stat',
                       insight.type === 'optimization' &&
-                        'bg-blue-100 text-blue-600',
+                        'bg-blue-royal/10 text-blue-royal',
                       insight.type === 'trend' &&
-                        'bg-amber-100 text-amber-600',
+                        'bg-yellow-outlook/10 text-yellow-outlook',
                       insight.type === 'achievement' &&
-                        'bg-teal-100 text-teal-600'
+                        'bg-green-stat/10 text-green-stat'
                     )}
                   >
                     {insight.type === 'leak' && (
@@ -261,17 +266,17 @@ export default function ScheduledTransactionsPage() {
                     )}
                   </div>
                   <div>
-                    <h4 className="font-black text-slate-900 leading-tight pr-4">
+                    <h4 className="pr-4 leading-tight font-black text-slate-900">
                       {insight.title}
                     </h4>
-                    <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mt-1">
+                    <p className="mt-1 text-[10px] font-bold tracking-widest text-slate-400 uppercase">
                       Potential Impact: Rp{' '}
                       {insight.impact_value.toLocaleString('id-ID')}
                     </p>
                   </div>
                 </div>
 
-                <p className="text-sm font-medium text-slate-600 mb-4 line-clamp-3">
+                <p className="mb-4 line-clamp-3 text-sm font-medium text-slate-600">
                   {insight.content}
                 </p>
 
@@ -282,7 +287,7 @@ export default function ScheduledTransactionsPage() {
                   {insight.action_url && (
                     <a
                       href={insight.action_url}
-                      className="text-xs font-black text-slate-900 flex items-center gap-1 hover:underline"
+                      className="flex items-center gap-1 text-xs font-black text-slate-900 hover:underline"
                     >
                       Audit Sekarang <TrendingUp className="size-3" />
                     </a>
@@ -292,25 +297,26 @@ export default function ScheduledTransactionsPage() {
                 {/* Ambient glow */}
                 <div
                   className={cn(
-                    'absolute -bottom-12 -right-12 size-24 blur-3xl rounded-full opacity-20',
-                    insight.type === 'leak' && 'bg-rose-500',
-                    insight.type === 'optimization' && 'bg-blue-500',
-                    insight.type === 'trend' && 'bg-amber-500',
-                    insight.type === 'achievement' && 'bg-teal-500'
+                    'absolute -right-12 -bottom-12 size-24 rounded-full opacity-20 blur-3xl',
+                    insight.type === 'leak' && 'bg-red-stat',
+                    insight.type === 'optimization' && 'bg-blue-royal',
+                    insight.type === 'trend' && 'bg-yellow-outlook',
+                    insight.type === 'achievement' && 'bg-green-stat'
                   )}
                 />
               </motion.div>
             ))}
           </div>
         ) : (
-          <div className="glass-card flex flex-col items-center justify-center py-10 bg-slate-50/50 border-dashed border-2">
-            <Cpu className="size-10 text-slate-300 mb-3" />
+          <div className="glass-card flex flex-col items-center justify-center border-2 border-dashed bg-slate-50/50 py-10">
+            <Cpu className="mb-3 size-10 text-slate-300" />
             <p className="text-sm font-bold text-slate-400">
               Belum ada temuan terbaru.
             </p>
             <button
+              type="button"
               onClick={() => generateInsightsMutation.mutate()}
-              className="mt-3 text-xs font-black text-amber-600 uppercase tracking-widest hover:underline"
+              className="text-yellow-outlook mt-3 text-xs font-black tracking-widest uppercase hover:underline"
             >
               Cek Pola Sekarang
             </button>
@@ -319,18 +325,18 @@ export default function ScheduledTransactionsPage() {
       </div>
 
       {/* Summary Analytics */}
-      <div className="grid gap-4 md:grid-cols-2 mb-8">
+      <div className="mb-8 grid gap-4 md:grid-cols-2">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 }}
           className="glass-card flex items-center gap-6 p-6"
         >
-          <div className="flex size-14 items-center justify-center rounded-2xl bg-pink-100 text-pink-500">
+          <div className="bg-pink-primary/10 text-pink-primary flex size-14 items-center justify-center rounded-2xl">
             <CalendarClock className="size-8" />
           </div>
           <div>
-            <p className="text-sm font-bold uppercase tracking-wider text-slate-400">
+            <p className="text-sm font-bold tracking-wider text-slate-400 uppercase">
               Monthly Commitment
             </p>
             <h2 className="text-2xl font-black text-slate-900">
@@ -345,15 +351,15 @@ export default function ScheduledTransactionsPage() {
           transition={{ delay: 0.2 }}
           className="glass-card flex items-center gap-6 p-6"
         >
-          <div className="flex size-14 items-center justify-center rounded-2xl bg-blue-100 text-blue-500">
+          <div className="bg-blue-royal/10 text-blue-royal flex size-14 items-center justify-center rounded-2xl">
             <Cpu className="size-8" />
           </div>
           <div>
-            <p className="text-sm font-bold uppercase tracking-wider text-slate-400">
+            <p className="text-sm font-bold tracking-wider text-slate-400 uppercase">
               AI Autonomy Status
             </p>
             <div className="flex items-center gap-2">
-              <div className="size-3 animate-pulse rounded-full bg-green-500" />
+              <div className="bg-green-stat size-3 animate-pulse rounded-full" />
               <h2 className="text-2xl font-black text-slate-900">Active</h2>
             </div>
           </div>
@@ -362,7 +368,7 @@ export default function ScheduledTransactionsPage() {
 
       {/* Task List */}
       <div className="space-y-4">
-        <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+        <h3 className="flex items-center gap-2 text-xl font-bold text-slate-800">
           <Clock className="size-5 text-slate-400" />
           Scheduled Automations
         </h3>
@@ -387,7 +393,7 @@ export default function ScheduledTransactionsPage() {
                     className={cn(
                       'flex size-14 items-center justify-center rounded-2xl shadow-sm transition-colors',
                       task.type === 'income'
-                        ? 'bg-green-100 text-green-600'
+                        ? 'bg-green-stat/10 text-green-stat'
                         : 'bg-slate-100 text-slate-600'
                     )}
                   >
@@ -403,7 +409,7 @@ export default function ScheduledTransactionsPage() {
                         {task.description}
                       </h4>
                       {task.is_auto_execute && (
-                        <span className="flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-black uppercase tracking-tighter text-blue-600">
+                        <span className="bg-blue-royal/10 text-blue-royal flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-black tracking-tighter uppercase">
                           <Cpu className="size-3" /> Auto
                         </span>
                       )}
@@ -428,7 +434,7 @@ export default function ScheduledTransactionsPage() {
                     className={cn(
                       'text-xl font-black',
                       task.type === 'income'
-                        ? 'text-green-600'
+                        ? 'text-green-stat'
                         : 'text-slate-900'
                     )}
                   >
@@ -437,6 +443,7 @@ export default function ScheduledTransactionsPage() {
                   </p>
                   <div className="mt-2 flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
                     <button
+                      type="button"
                       onClick={() =>
                         toggleStatusMutation.mutate({
                           id: task.id,
@@ -453,8 +460,9 @@ export default function ScheduledTransactionsPage() {
                       )}
                     </button>
                     <button
+                      type="button"
                       onClick={() => deleteMutation.mutate(task.id)}
-                      className="flex size-9 items-center justify-center rounded-xl bg-white text-red-500 shadow-sm transition-all hover:bg-red-50"
+                      className="text-red-stat hover:bg-red-stat/5 flex size-9 items-center justify-center rounded-xl bg-white shadow-sm transition-all"
                     >
                       <Trash2 className="size-4" />
                     </button>
@@ -466,7 +474,7 @@ export default function ScheduledTransactionsPage() {
               <div
                 className={cn(
                   'h-1.5 w-full',
-                  task.status === 'active' ? 'bg-blue-500' : 'bg-slate-300'
+                  task.status === 'active' ? 'bg-blue-royal' : 'bg-slate-300'
                 )}
               />
             </motion.div>

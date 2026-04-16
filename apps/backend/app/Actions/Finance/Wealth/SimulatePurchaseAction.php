@@ -32,7 +32,7 @@ class SimulatePurchaseAction extends BaseAction
             'purchase_amount' => $amount,
             'reason' => $reason,
             'wealth_delta' => -$amount,
-            'impact_summary' => 'Pembelian ini akan mengurangi total kekayaan akhir tahun kita sebesar '.number_format(($amount / max(1, $originalFinalWealth)) * 100, 2).'%.',
+            'impact_summary' => 'Pembelian ini akan mengurangi total kekayaan akhir tahun kita sebesar '.number_format($amount / max(1, $originalFinalWealth) * 100, 2).'%.',
             'goal_delay_risk' => count($goals) > 0 && $goals->first() ? 'Risiko tinggi delay pada target: '.$goals->first()->name : 'Aman, belum ada target kritis terdekat.',
         ];
     }

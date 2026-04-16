@@ -1,8 +1,8 @@
-import React from 'react';
-import { User, Users, Heart, CalendarDays, Globe, Loader2 } from 'lucide-react';
+import { CalendarDays, Globe, Heart, Loader2, User, Users } from 'lucide-react';
+import type React from 'react';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 
 interface ProfileTabProps {
   readonly displayName: string;
@@ -39,7 +39,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
     <div className="animate-in slide-in-from-left-2 m-0 space-y-6 text-center duration-300">
       <div className="mb-2 flex flex-col items-center gap-4">
         <div className="relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-4 border-slate-50 bg-slate-100 shadow-md">
-          <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-blue-500 to-indigo-600 text-3xl font-black text-white">
+          <div className="from-blue-royal to-blue-royal/80 flex h-full w-full items-center justify-center bg-linear-to-br text-3xl font-black text-white">
             {(displayName || userEmail || '?').charAt(0).toUpperCase()}
           </div>
         </div>
@@ -58,7 +58,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
               Nama Panggilan
             </Label>
             <div className="group relative">
-              <User className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-blue-500" />
+              <User className="group-focus-within:text-blue-royal absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors" />
               <Input
                 id="profile-display-name"
                 value={displayName}
@@ -76,7 +76,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
               Nama Lengkap
             </Label>
             <div className="group relative">
-              <Users className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-blue-500" />
+              <Users className="group-focus-within:text-blue-royal absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors" />
               <Input
                 id="profile-full-name"
                 value={fullName}
@@ -97,7 +97,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
               Nama Pasangan
             </Label>
             <div className="group relative">
-              <Heart className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-pink-500" />
+              <Heart className="group-focus-within:text-pink-primary absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors" />
               <Input
                 id="profile-partner-name"
                 value={partnerName}
@@ -115,7 +115,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
               Hari Spesial
             </Label>
             <div className="group relative">
-              <CalendarDays className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-red-500" />
+              <CalendarDays className="group-focus-within:text-red-stat absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors" />
               <Input
                 id="profile-anniversary-date"
                 type="date"
@@ -135,12 +135,12 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
             Wilayah Waktu (Zona Waktu)
           </Label>
           <div className="group relative">
-            <Globe className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-blue-500" />
+            <Globe className="group-focus-within:text-blue-royal absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors" />
             <select
               id="profile-timezone"
               value={timezone}
               onChange={(e) => setTimezone(e.target.value)}
-              className="h-11 w-full appearance-none rounded-xl border-slate-200 bg-slate-50 pr-4 pl-11 text-sm font-bold focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+              className="focus:ring-blue-royal/20 h-11 w-full appearance-none rounded-xl border-slate-200 bg-slate-50 pr-4 pl-11 text-sm font-bold focus:ring-2 focus:outline-none"
             >
               <option value="Asia/Jakarta">WIB (Jakarta/Sumatera/Jawa)</option>
               <option value="Asia/Makassar">

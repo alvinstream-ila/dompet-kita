@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { CheckCircle2, Loader2, Mail, Send } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/features/auth';
-import { Mail, Send, Loader2, CheckCircle2 } from 'lucide-react';
 import api from '@/lib/axios';
-import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 export const VerificationBanner: React.FC = () => {

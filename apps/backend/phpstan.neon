@@ -17,7 +17,7 @@ parameters:
     level: 9
 
     ignoreErrors:
-        - '#Call to an undefined method PHPUnit\\Framework\\TestCase::(postJson|actingAs|get|deleteJson|putJson|json|assertStatus|assertJson|assertJsonValidationErrors)\(\)#'
+        - '#Call to an undefined method (PHPUnit\\Framework\\TestCase|Pest\\PendingCalls\\TestCall)::(postJson|actingAs|get|deleteJson|putJson|json|assertStatus|assertJson|assertJsonValidationErrors)\(\)#'
         - '#Cannot access offset .* on mixed#'
         - '#Cannot cast mixed to (int|string|float|bool)#'
 

@@ -17,7 +17,7 @@ class FundAssetAction extends BaseAction
      */
     public function execute(User $user, Asset $asset, array $data): Asset
     {
-        $result = DB::transaction(function () use ($user, $asset, $data): Asset {
+        return DB::transaction(function () use ($user, $asset, $data): Asset {
             $amount = (float) $data['amount'];
             $sourceAssetId = $data['source_asset_id'] ?? null;
             $description = $data['description'] ?? 'Top up aset';
@@ -61,7 +61,5 @@ class FundAssetAction extends BaseAction
 
             return $asset->fresh() ?? $asset;
         });
-
-        return $result;
     }
 }

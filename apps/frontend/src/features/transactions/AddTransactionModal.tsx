@@ -1,17 +1,16 @@
+import { ArrowDownCircle, ArrowUpCircle, X } from 'lucide-react';
 import React from 'react';
-import { X, ArrowDownCircle, ArrowUpCircle } from 'lucide-react';
-import { TransactionForm } from './TransactionForm';
-import { cn } from '@/lib/utils';
-
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { TransactionForm } from './TransactionForm';
 
 interface AddTransactionModalProps {
   readonly isOpen: boolean;

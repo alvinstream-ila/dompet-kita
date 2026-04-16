@@ -1,6 +1,6 @@
-import React from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Calendar, ChevronDown } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import type React from 'react';
 import { cn } from '@/lib/utils';
 
 interface ReportPeriodPickerProps {
@@ -29,9 +29,9 @@ export const ReportPeriodPicker: React.FC<ReportPeriodPickerProps> = ({
       <button
         type="button"
         onClick={onToggle}
-        className="group/btn flex h-16 w-full min-w-[320px] cursor-pointer items-center gap-5 overflow-hidden rounded-[28px] border border-slate-100/80 bg-white px-8 font-black text-slate-700 shadow-sm transition-all hover:border-blue-100 hover:bg-slate-50 md:w-auto"
+        className="group/btn hover:border-blue-royal/30 flex h-16 w-full min-w-[320px] cursor-pointer items-center gap-5 overflow-hidden rounded-[28px] border border-slate-100/80 bg-white px-8 font-black text-slate-700 shadow-sm transition-all hover:bg-slate-50 md:w-auto"
       >
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-500 transition-transform group-hover/btn:scale-110">
+        <div className="bg-blue-royal/10 text-blue-royal flex size-10 shrink-0 items-center justify-center rounded-2xl transition-transform group-hover/btn:scale-110">
           <Calendar className="h-5 w-5" />
         </div>
         <div className="flex flex-col items-start gap-1 leading-none">
@@ -45,7 +45,7 @@ export const ReportPeriodPicker: React.FC<ReportPeriodPickerProps> = ({
         <ChevronDown
           className={cn(
             'ml-auto h-5 w-5 text-slate-300 transition-all',
-            isOpen && 'rotate-180 text-blue-500'
+            isOpen && 'text-blue-royal rotate-180'
           )}
         />
       </button>
@@ -93,7 +93,7 @@ export const ReportPeriodPicker: React.FC<ReportPeriodPickerProps> = ({
                       className={cn(
                         'w-full rounded-2xl px-5 py-3 text-left text-xs font-black tracking-widest uppercase transition-all',
                         selectedYear === y
-                          ? 'bg-blue-600 text-white shadow-xl shadow-blue-100'
+                          ? 'bg-blue-royal shadow-blue-royal/20 text-white shadow-xl'
                           : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
                       )}
                       type="button"

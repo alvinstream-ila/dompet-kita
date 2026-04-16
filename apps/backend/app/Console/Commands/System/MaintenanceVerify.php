@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Process;
 
 class MaintenanceVerify extends Command
 {
+    private const SEPARATOR = '========================================';
+
     /**
      * The name and signature of the console command.
      *
@@ -24,8 +26,6 @@ class MaintenanceVerify extends Command
      * @var string
      */
     protected $description = 'Run project maintenance scripts';
-
-    private const SEPARATOR = '========================================';
 
     /**
      * Execute the console command.

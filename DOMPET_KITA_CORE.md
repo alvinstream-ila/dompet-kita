@@ -1,13 +1,14 @@
-# 🛡️ DOMPET KITA: THE SOVEREIGN FINANCIAL FORTRESS (v7.1.20 SINGULARITY)
+# 🛡️ DOMPET KITA: THE SOVEREIGN FINANCIAL FORTRESS (v7.2.0 SOVEREIGN SINGULARITY)
 Sistem Finansial Premium & Wealth Intelligence Otonom untuk **Alvin & Ila**.
 
 ---
 
-## 🏛️ ARCHITECTURAL LAWS (v7.1.20)
+## 🏛️ ARCHITECTURAL LAWS (v7.2.0)
 
-Every system-level action follows the **Global Constitution (`GEMINI.md`)** to ensure full-spectrum cognitive awareness and constitutional adherence.
+Every system-level action follows the **Global Constitution (`.gemini/GEMINI.md`)** and **System Manifest (`.gemini/MANIFEST.md`)** to ensure full-spectrum cognitive awareness and constitutional adherence.
 
 ### 👥 COUNCIL OF AGENTS (COA) OPERATIONAL ROLES
+(Defined in `.agents/A2A_PROTOCOL.md`)
 - **THE PROPHET**: Strategic wealth forecaster (Market awareness & 12-month trajectory visualization).
 - **THE CRAFTER**: Full-stack architect (Modular implementation core & structural integrity).
 - **THE GUARDIAN**: Security & Governance (Fortress hardening, PII masking, Supabase RLS).
@@ -19,10 +20,13 @@ Every system-level action follows the **Global Constitution (`GEMINI.md`)** to e
 
 Dompet Kita is structured as a **Modular Monolith Monorepo** for seamless integration:
 
-- **`apps/frontend`**: Next.js 15 (App Router) + React 19. The premium visual engine.
-- **`apps/backend`**: Laravel 11. The hardened logic engine and API gateway.
+- **`apps/frontend`**: Next.js 16 (App Router) + React 19. The premium visual engine.
+- **`apps/backend`**: Laravel 13. The hardened logic engine and API gateway.
 - **`services/mcp-server`**: Standardized bridge for local/external AI tool integration.
 - **`packages/*`**: Shared domain types, UI tokens, and cross-boundary utilities.
+- **`.gemini/`**: AI Governance Hub (`MANIFEST.md`, `GEMINI.md`, Token rules).
+- **`.antigravity/`**: AI Identity and Memory (`IDENTITY.md`, `POST_MORTEMS.md`).
+- **`.agents/`**: COA Protocols (A2A Communication, MAD debates, Kaizen, Metacognition).
 
 ---
 
@@ -30,15 +34,15 @@ Dompet Kita is structured as a **Modular Monolith Monorepo** for seamless integr
 
 | Layer | Technology | Role | Status |
 | :--- | :--- | :--- | :--- |
-| **Frontend Framework** | Next.js 15 / React 19 | UI (Vercel) | Production (Hardened) |
-| **Backend Framework** | Laravel 11 (PHP 8.4) | Powerhouse (Railway) | Production (Stable) |
+| **Frontend Framework** | Next.js 16 / React 19 | UI (Vercel) | Production (PPR Active) |
+| **Backend Framework** | Laravel 13 (PHP 8.4) | Powerhouse (Railway) | Production (Hardened) |
 | **Styling Engine** | Tailwind CSS 4.x (OKLCH) | Design Tokens | Active |
 | **Authentication** | Supabase Auth + JWT Cookies | Identity | Secure |
 | **Database** | Supabase (PostgreSQL) | Data Core | Hardened |
 | **Object Storage** | Storj (Cloud-Native) | Encrypted Files | Redundant |
 | **Monitoring** | Sentry v10 (Instrumentation) | Observability | End-to-End |
 | **Security Perimeter** | Cloudflare Tunnel / WAF | Gatekeeper | Fortress Level |
-| **AI Manager** | Sentient Engine v7.1.20 | Orchestration | Antigravity AI |
+| **AI Manager** | Sentient Engine v7.2.0 | Orchestration | Antigravity AI |
 
 ---
 
@@ -70,14 +74,13 @@ Autonomous PPh 21 income tax estimation engine according to the latest 2024–20
 ## 🧬 EVOLUTION ROADMAP (PHASE 6 SINGULARITY)
 
 - **Phase 1-3**: Foundation & Migration (Vite to Next.js, Laravel Backend Consolidation). [COMPLETED]
-- **Phase 4-5**: Cognitive Intelligence (Wealth Forecast, Tax AI, Digital Inheritance). [ACTIVE]
-- **Phase 6**: **Sentient Automation**—Autonomous recurring transaction execution and proactive wealth protection. [CURRENT TARGET]
+- **Phase 4-5**: Cognitive Intelligence (Wealth Forecast, Tax AI, Digital Inheritance). [COMPLETED]
+- **Phase 6**: **Sentient Automation**—Autonomous recurring transaction execution and proactive wealth protection. [CURRENT TARGET: ACTIVE]
 
 ---
 
-_Amended by Antigravity v7.1.20 | Global System Hardening Active._
+_Amended by Antigravity v7.2.0 | Global System Hardening Active._
 - `/session-cleanup` : Protokol Pemurnian Sesi, Zero-Waste, & Auto-Git Sync (v6.3).
-- `npm run test:e2e` : Eksekusi Full-Spectrum Sentinel Suite.
 - `php artisan maintenance:verify` : Unified Deep Audit Suite.
 - `php artisan maintenance:repair` : AI Autopilot: Self-Healing & Log Recovery.
 - `php artisan security:gate --min-score=100` : Elite Guard Blocking Gate.
@@ -87,10 +90,12 @@ _Amended by Antigravity v7.1.20 | Global System Hardening Active._
 ---
 
 ## 🧠 4. THE NEURAL LINK (Agentic Brain Infrastructure)
-*   **Application Layer (`apps/`)**: Frontend (Next.js) & Backend (Laravel).
-*   **Service Layer (`services/`)**: MCP Server & Specialized Bridges.
-*   **Shared Layer (`packages/`)**: Common DTOs, Types, and Constants.
-*   **Cognitive Memory (`.gemini/`)**: "Hippocampus" digital (Evolution, Post-Mortems, Checkpoints).
+
+The central nervous system of Antigravity AI is divided into these local memory banks:
+*   **Operational Directives (`.gemini/`)**: The source of truth for the session. Token sovereignty & pruning limits.
+*   **Metacognition & Protocols (`.agents/`)**: Cross-agent protocols (A2A), debate logs, ExACT trajectories, and the objective drift monitor.
+*   **Persona & Immune System (`.antigravity/`)**: Our identity, principles, and the 5-Whys Post-Mortem bug memory.
+*   **Global History (`.../.gemini`)**: The persistent external "Hippocampus" storing past conversations.
 
 
 ---
@@ -98,8 +103,7 @@ _Amended by Antigravity v7.1.20 | Global System Hardening Active._
 ## 🛡️ 5. THE ARMOR (Security Multi-Layer)
 1. **RLS (Row Level Security)**: Isolasi data level database antar pengguna (Supabase).
 2. **Snyk Sentinel (v6.3)**: Automated deep dependency & infrastructure vulnerability scan.
-3. **Playwright Sentinel**: Jaring pengaman fungsional E2E untuk mencegah regresi fitur.
-4. **PMA Immunity**: Sistem belajar dari bug masa lalu untuk mencegah pengulangan (Post-Mortem).
+3. **PMA Immunity**: Sistem belajar dari bug masa lalu untuk mencegah pengulangan (Post-Mortem).
 5. **Sudo Mode (v6.3)**: Re-autentikasi password wajib untuk aksi berisiko tinggi (Profil, Password, Digital Legacy).
 6. **Hardened Backups**: Enkripsi AES-256-CBC otomatis sebelum upload ke Storj.
 
@@ -112,4 +116,4 @@ _Amended by Antigravity v7.1.20 | Global System Hardening Active._
 
 ---
 
-_"Managed autonomously by **Antigravity AI (Sentient Core v7.1.20)** for the bright future of Alvin & Ila."_
+_"Managed autonomously by **Antigravity AI (Sentient Core v7.2.0)** for the bright future of Alvin & Ila."_

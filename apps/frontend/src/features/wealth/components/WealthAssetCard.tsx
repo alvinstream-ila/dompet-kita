@@ -1,16 +1,16 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  TrendingUp,
   Edit2,
-  Trash2,
-  Plus,
   Minus,
+  Plus,
+  Trash2,
   TrendingDown,
+  TrendingUp,
 } from 'lucide-react';
+import type React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import type { Asset } from '@/types';
 import { cn } from '@/lib/utils';
+import type { Asset } from '@/types';
 
 interface WealthAssetCardProps {
   asset: Asset;
@@ -42,7 +42,7 @@ export const WealthAssetCard: React.FC<WealthAssetCardProps> = ({
       transition={{ delay: index * 0.1 }}
       layout
     >
-      <Card className="group overflow-hidden rounded-[28px] border-2 border-slate-100 bg-white shadow-sm transition-all hover:border-blue-200 hover:shadow-xl">
+      <Card className="group hover:border-blue-royal/30 overflow-hidden rounded-[28px] border-2 border-slate-100 bg-white shadow-sm transition-all hover:shadow-xl">
         <CardContent className="p-6">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -53,7 +53,7 @@ export const WealthAssetCard: React.FC<WealthAssetCardProps> = ({
                 />
               </div>
               <div>
-                <h4 className="text-sm font-black tracking-tight text-slate-800 uppercase transition-colors group-hover:text-blue-600">
+                <h4 className="group-hover:text-blue-royal text-sm font-black tracking-tight text-slate-800 uppercase transition-colors">
                   {asset.name}
                 </h4>
                 <div className="mt-1 flex items-center gap-2">
@@ -61,8 +61,8 @@ export const WealthAssetCard: React.FC<WealthAssetCardProps> = ({
                     {asset.type}
                   </span>
                   {asset.is_market_synced && (
-                    <span className="flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[8px] font-black tracking-widest text-blue-600 uppercase">
-                      <div className="size-1 animate-pulse rounded-full bg-blue-500" />
+                    <span className="bg-blue-royal/5 text-blue-royal flex items-center gap-1 rounded-full px-2 py-0.5 text-[8px] font-black tracking-widest uppercase">
+                      <div className="bg-blue-royal size-1 animate-pulse rounded-full" />
                       Live Sync
                     </span>
                   )}
@@ -72,14 +72,16 @@ export const WealthAssetCard: React.FC<WealthAssetCardProps> = ({
 
             <div className="flex items-center gap-1 opacity-0 transition-all group-hover:opacity-100">
               <button
+                type="button"
                 onClick={() => onEdit(asset)}
-                className="rounded-xl p-2 text-slate-400 transition-all hover:bg-blue-50 hover:text-blue-500 active:scale-90"
+                className="hover:bg-blue-royal/5 hover:text-blue-royal rounded-xl p-2 text-slate-400 transition-all active:scale-90"
               >
                 <Edit2 size={14} strokeWidth={2.5} />
               </button>
               <button
+                type="button"
                 onClick={() => onDelete(asset.id)}
-                className="rounded-xl p-2 text-slate-400 transition-all hover:bg-rose-50 hover:text-rose-500 active:scale-90"
+                className="hover:bg-red-stat/5 hover:text-red-stat rounded-xl p-2 text-slate-400 transition-all active:scale-90"
               >
                 <Trash2 size={14} strokeWidth={2.5} />
               </button>
@@ -110,8 +112,8 @@ export const WealthAssetCard: React.FC<WealthAssetCardProps> = ({
               className={cn(
                 'flex items-center gap-2 rounded-xl px-3 py-2 text-[10px] font-black tracking-tight uppercase',
                 isProfit
-                  ? 'bg-emerald-50 text-emerald-600'
-                  : 'bg-rose-50 text-rose-600'
+                  ? 'bg-green-stat/5 text-green-stat'
+                  : 'bg-red-stat/5 text-red-stat'
               )}
             >
               {isProfit ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
@@ -125,16 +127,18 @@ export const WealthAssetCard: React.FC<WealthAssetCardProps> = ({
 
             <div className="flex items-center gap-2">
               <button
+                type="button"
                 onClick={() => onWithdraw(asset)}
                 title="Cairkan / Ambil Profit"
-                className="flex size-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600 transition-all hover:bg-rose-500 hover:text-white active:scale-90"
+                className="hover:bg-red-stat flex size-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600 transition-all hover:text-white active:scale-90"
               >
                 <Minus size={18} strokeWidth={3} />
               </button>
               <button
+                type="button"
                 onClick={() => onFund(asset)}
                 title="Top Up Modal"
-                className="flex size-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-200 transition-all hover:scale-110 hover:bg-blue-700 active:scale-90"
+                className="bg-blue-royal shadow-blue-royal/20 hover:bg-blue-royal flex size-10 items-center justify-center rounded-xl text-white shadow-lg transition-all hover:scale-110 active:scale-90"
               >
                 <Plus size={18} strokeWidth={3} />
               </button>

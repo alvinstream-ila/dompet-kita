@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
-import { X, ArrowDownCircle, ArrowUpCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { ArrowDownCircle, ArrowUpCircle, X } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogClose,
-  DialogDescription,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { LoanForm } from '@/features/loans';
+import { cn } from '@/lib/utils';
 import type { Loan } from '@/types';
 
 interface AddLoanModalProps {
@@ -30,8 +31,8 @@ export const AddLoanModal: React.FC<AddLoanModalProps> = ({
 
   const activeColorClass =
     currentType === 'utang'
-      ? 'bg-rose-500 border-rose-500'
-      : 'bg-emerald-600 border-emerald-600';
+      ? 'bg-red-stat border-red-stat'
+      : 'bg-green-stat border-green-stat';
 
   return (
     <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>

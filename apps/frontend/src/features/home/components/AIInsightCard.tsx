@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { RefreshCcw, Heart, AlertTriangle } from 'lucide-react';
 import axios from 'axios';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertTriangle, Heart, RefreshCcw } from 'lucide-react';
+import type React from 'react';
 import { cn } from '@/lib/utils';
 import { useAIInsights } from '../hooks/useAIInsights';
 
@@ -51,6 +51,7 @@ export const AIInsightCard: React.FC = () => {
             </p>
           </div>
           <button
+            type="button"
             onClick={() => refetch()}
             className="flex items-center justify-center gap-2 rounded-xl bg-slate-50 py-2.5 text-xs font-black tracking-widest text-slate-500 uppercase transition-all hover:bg-slate-100 active:scale-95"
           >
@@ -99,6 +100,7 @@ export const AIInsightCard: React.FC = () => {
             </h4>
           </div>
           <button
+            type="button"
             onClick={() => refetch()}
             disabled={isLoading || isFetching}
             className="rounded-xl p-2 transition-colors hover:bg-slate-100 disabled:opacity-50"

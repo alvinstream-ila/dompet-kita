@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SudoMode;
+use App\Http\Middleware\UnkeyMiddleware;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -26,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(SecurityHeaders::class);
         $middleware->alias([
             'sudo' => SudoMode::class,
+            'unkey' => UnkeyMiddleware::class,
         ]);
 
         // Moderate Rate Limiting for API (60 req/min)

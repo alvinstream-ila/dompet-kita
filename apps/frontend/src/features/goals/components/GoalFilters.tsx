@@ -1,5 +1,6 @@
-import React from 'react';
-import { Search, Plus } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
+import type React from 'react';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -8,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
 
 export type GoalStatus = 'all' | 'active' | 'completed';
 
@@ -31,12 +31,12 @@ export const GoalFilters: React.FC<GoalFiltersProps> = ({
     <div className="mb-10 flex flex-col items-center justify-between gap-4 rounded-[32px] border border-white/60 bg-white/60 p-5 shadow-sm backdrop-blur-xl md:flex-row">
       <div className="flex w-full flex-1 gap-3">
         <div className="group relative flex-1">
-          <Search className="absolute top-1/2 left-4 size-4 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-blue-500" />
+          <Search className="group-focus-within:text-blue-royal absolute top-1/2 left-4 size-4 -translate-y-1/2 text-slate-400 transition-colors" />
           <Input
             placeholder="Cari mimpi kita..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-12 rounded-2xl border-none bg-slate-50/50 pl-12 font-bold shadow-inner focus:ring-blue-500/10"
+            className="focus:ring-blue-royal/10 h-12 rounded-2xl border-none bg-slate-50/50 pl-12 font-bold shadow-inner"
           />
         </div>
         <Select
@@ -57,13 +57,13 @@ export const GoalFilters: React.FC<GoalFiltersProps> = ({
             </SelectItem>
             <SelectItem
               value="active"
-              className="rounded-xl py-3 text-[10px] font-black tracking-widest text-blue-500 uppercase"
+              className="text-blue-royal rounded-xl py-3 text-[10px] font-black tracking-widest uppercase"
             >
               Masih Berjalan
             </SelectItem>
             <SelectItem
               value="completed"
-              className="rounded-xl py-3 text-[10px] font-black tracking-widest text-emerald-500 uppercase"
+              className="text-green-stat rounded-xl py-3 text-[10px] font-black tracking-widest uppercase"
             >
               Mimpi Mewujud
             </SelectItem>

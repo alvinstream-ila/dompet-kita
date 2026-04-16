@@ -1,14 +1,14 @@
 'use client';
 
+import { ChevronDown, LogOut, Settings, ShieldCheck } from 'lucide-react';
 import React, { useState } from 'react';
-import { useAuth } from '@/features/auth';
-import { LogOut, Settings, ChevronDown, ShieldCheck } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
+import { useAuth } from '@/features/auth';
 import { AccountSettingsModal } from '@/features/settings';
 
 export const UserNavDropdown = React.memo(() => {
@@ -27,8 +27,8 @@ export const UserNavDropdown = React.memo(() => {
           variant="outline"
           className="group flex h-10 items-center gap-2 overflow-hidden rounded-full border-slate-100 bg-white p-1.5 px-2 shadow-sm transition-all hover:scale-110 active:scale-95 md:h-12 md:px-3"
         >
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-100 bg-blue-50 shadow-sm md:h-8 md:w-8">
-            <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-blue-500 to-blue-600 text-[12px] font-black text-white md:text-[14px]">
+          <div className="bg-blue-royal/10 flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-100 shadow-sm md:h-8 md:w-8">
+            <div className="from-blue-royal flex h-full w-full items-center justify-center bg-linear-to-br to-[#3a5bd9] text-[12px] font-black text-white md:text-[14px]">
               {(user?.name || user?.email || '?').charAt(0).toUpperCase()}
             </div>
           </div>
@@ -57,13 +57,14 @@ export const UserNavDropdown = React.memo(() => {
 
         <div className="space-y-1">
           <button
+            type="button"
             onClick={() => {
               setInitialTab('profile');
               setIsSettingsOpen(true);
             }}
             className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-slate-50"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover:bg-blue-100 group-hover:text-blue-600">
+            <div className="group-hover:bg-blue-royal/10 group-hover:text-blue-royal flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors">
               <Settings className="h-4 w-4" />
             </div>
             <div className="flex flex-col">
@@ -77,13 +78,14 @@ export const UserNavDropdown = React.memo(() => {
           </button>
 
           <button
+            type="button"
             onClick={() => {
               setInitialTab('privacy');
               setIsSettingsOpen(true);
             }}
             className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-slate-50"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover:bg-emerald-100 group-hover:text-emerald-600">
+            <div className="group-hover:bg-green-stat/10 group-hover:text-green-stat flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors">
               <ShieldCheck className="h-4 w-4" />
             </div>
             <div className="flex flex-col">
@@ -120,12 +122,12 @@ export const UserNavDropdown = React.memo(() => {
             onClick={handleLogout}
             className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-red-50"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover:bg-red-100 group-hover:text-red-500">
+            <div className="group-hover:bg-red-stat/10 group-hover:text-red-stat flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors">
               <LogOut className="h-4 w-4" />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-red-600">Keluar</span>
-              <span className="text-[10px] font-medium text-red-400">
+              <span className="text-red-stat text-sm font-bold">Keluar</span>
+              <span className="text-red-stat text-[10px] font-medium opacity-70">
                 Selesai sesi ini
               </span>
             </div>

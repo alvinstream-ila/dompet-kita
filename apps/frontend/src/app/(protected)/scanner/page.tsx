@@ -1,19 +1,20 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Upload,
-  X,
   Check,
+  Image as ImageIcon,
   Loader2,
   ScanText,
-  Image as ImageIcon,
+  Upload,
+  X,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import type React from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import api from '@/lib/axios';
-import { motion, AnimatePresence } from 'framer-motion';
 
 /**
  * Receipt Scanner Page - AI-powered OCR 📸
@@ -119,6 +120,7 @@ export default function ReceiptScannerPage() {
     <div className="container mx-auto max-w-2xl px-4 py-8 pb-36">
       <div className="mb-8 flex items-center justify-between">
         <button
+          type="button"
           onClick={() => router.back()}
           className="rounded-full p-2 transition-colors hover:bg-slate-100"
         >

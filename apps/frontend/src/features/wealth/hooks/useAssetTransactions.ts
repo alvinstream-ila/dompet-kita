@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import api from '@/lib/axios';
 import { toast } from 'sonner';
-import { Asset, ApiError } from '@/types';
+import api from '@/lib/axios';
+import type { ApiError, Asset } from '@/types';
 
 export interface AssetTransaction {
   id: number;

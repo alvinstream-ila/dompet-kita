@@ -40,7 +40,7 @@ $models = [
 
 foreach ($models as $name => $class) {
     try {
-        echo "Accessing $name model... ";
+        echo "Accessing {$name} model... ";
         $record = $class::first();
         echo 'SUCCESS (Found: '.($record ? 'Y' : 'N').")\n";
     } catch (Throwable $e) {

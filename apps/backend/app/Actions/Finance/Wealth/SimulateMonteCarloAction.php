@@ -38,12 +38,12 @@ class SimulateMonteCarloAction extends BaseAction
 
             for ($m = 1; $m <= $months; $m++) {
                 // 1. Savings volatility: ±25%
-                $savingsNoise = (random_int(-25, 25) / 100) * $avgSavings;
+                $savingsNoise = random_int(-25, 25) / 100 * $avgSavings;
                 $actualSavings = $avgSavings + $savingsNoise;
 
                 // 2. Market volatility (Paper wealth/Gold logic): ±5%
-                $marketNoise = (random_int(-5, 5) / 100);
-                $runningWealth = ($runningWealth * (1 + $marketNoise));
+                $marketNoise = random_int(-5, 5) / 100;
+                $runningWealth = $runningWealth * (1 + $marketNoise);
 
                 // 3. Regular Savings & Inflation
                 $runningWealth = ($runningWealth + $actualSavings) * (1 - $inflationMonthly);

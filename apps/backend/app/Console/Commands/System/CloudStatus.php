@@ -10,6 +10,8 @@ use Illuminate\Console\Command;
 
 class CloudStatus extends Command
 {
+    private const SEPARATOR = '===============================================';
+
     /**
      * The name and signature of the console command.
      *
@@ -23,8 +25,6 @@ class CloudStatus extends Command
      * @var string
      */
     protected $description = 'DevOps Observatory: Monitor real-time status of Railway and Supabase infrastructure';
-
-    private const SEPARATOR = '===============================================';
 
     /**
      * Execute the console command.

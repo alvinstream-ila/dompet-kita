@@ -21,10 +21,8 @@ class WealthHistoryResource extends JsonResource
     {
         // Check if $this->resource is an array
         if (is_array($this->resource)) {
-            /** @var array<string, mixed> $resource */
-            $resource = $this->resource;
-
-            return $resource;
+            /** @var array<string, mixed> */
+            return $this->resource;
         }
 
         $date = Carbon::create((int) $this->year, (int) $this->month, 1);

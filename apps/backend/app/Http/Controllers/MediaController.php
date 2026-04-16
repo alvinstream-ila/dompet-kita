@@ -76,7 +76,6 @@ class MediaController extends Controller
                 'url' => $url,       // Temporary URL to display in Frontend
                 'disk' => $diskName,
             ]);
-
         } catch (\Exception $e) {
             Log::error('🛡️ Security Leak Prevented / Upload failed: '.$e->getMessage(), [
                 'user_id' => $request->user()?->id,

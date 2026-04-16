@@ -1,11 +1,12 @@
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 /**
- * Dompet Kita - Sovereign Middleware
+ * Dompet Kita - Sovereign Middleware Logic
  * Handles instant server-side redirection based on the auth_token cookie.
+ * Ported from proxy.ts to resolve build conflicts.
  */
-export function middleware(request: NextRequest) {
+export function middlewareLogic(request: NextRequest) {
   const token = request.cookies.get('auth_token')?.value;
   const isVerified = request.cookies.get('user_verified')?.value === 'true';
   const { pathname } = request.nextUrl;
@@ -77,17 +78,3 @@ export function middleware(request: NextRequest) {
 
   return response;
 }
-
-// See "Matching Paths" below to learn more
-export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  ],
-};

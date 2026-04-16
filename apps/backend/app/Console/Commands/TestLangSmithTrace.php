@@ -37,7 +37,6 @@ class TestLangSmithTrace extends Command
             $this->info('✅ Response: '.$result['text']);
             $this->info('📊 Usage: '.((int) $result['usage']['total_tokens']).' tokens');
             $this->info('⭐ Trace sent to LangSmith. Check your dashboard at https://smith.langchain.com/');
-
         } catch (\Exception $e) {
             $this->error('❌ Test failed: '.$e->getMessage());
             $this->error($e->getTraceAsString());

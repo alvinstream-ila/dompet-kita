@@ -1,24 +1,24 @@
-import React, { useState, useEffect, type SyntheticEvent } from 'react';
-import {
-  useAddTransaction,
-  useUpdateTransaction,
-} from '@/features/transactions/hooks/useTransactions';
-import {
-  Loader2,
-  ImageIcon,
-  Check,
-  CalendarIcon,
-  Target,
-  Sparkles,
-} from 'lucide-react';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
-import api from '@/lib/axios';
 import { motion } from 'framer-motion';
-
+import {
+  CalendarIcon,
+  Check,
+  ImageIcon,
+  Loader2,
+  Sparkles,
+  Target,
+} from 'lucide-react';
+import React, { type SyntheticEvent, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -28,13 +28,12 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { cn, formatToRupiah, getTerbilang } from '@/lib/utils';
+  useAddTransaction,
+  useUpdateTransaction,
+} from '@/features/transactions/hooks/useTransactions';
+import api from '@/lib/axios';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/constants';
+import { cn, formatToRupiah, getTerbilang } from '@/lib/utils';
 
 export interface TransactionFormProps {
   readonly onSuccess?: () => void;
@@ -221,7 +220,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
       }
 
       const payload = {
-        amount: Number.parseInt(amount.replaceAll('.', '')),
+        amount: Number.parseInt(amount.replaceAll('.', ''), 10),
         description,
         category,
         sub_category: subCategory,
@@ -285,7 +284,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
           </TabsTrigger>
           <TabsTrigger
             value="income"
-            className="rounded-lg py-2.5 text-[10px] font-black tracking-wider uppercase transition-all data-[state=active]:bg-emerald-500 data-[state=active]:text-white data-[state=active]:shadow-md"
+            className="data-[state=active]:bg-green-stat rounded-lg py-2.5 text-[10px] font-black tracking-wider uppercase transition-all data-[state=active]:text-white data-[state=active]:shadow-md"
           >
             PEMASUKAN
           </TabsTrigger>
@@ -452,7 +451,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
             'h-11 flex-1 rounded-2xl text-[12px] font-black tracking-widest text-white uppercase shadow-lg transition-all active:scale-[0.98]',
             type === 'expense'
               ? 'bg-slate-900 shadow-slate-900/10 hover:bg-black'
-              : 'bg-emerald-600 shadow-emerald-600/10 hover:bg-emerald-700'
+              : 'bg-green-stat shadow-green-stat/10 hover:bg-green-stat/90'
           )}
         >
           {submitLabel}
@@ -473,8 +472,9 @@ const AmountInput: React.FC<AmountInputProps> = ({ amount, onChange }) => (
       <Label className="text-[10px] font-black tracking-widest text-slate-800 uppercase">
         Nominal (Rp)
       </Label>
-      <span className="text-[10px] font-bold text-blue-500 italic">
-        {amount && getTerbilang(Number.parseInt(amount.replaceAll('.', '')))}
+      <span className="text-blue-royal text-[10px] font-bold italic">
+        {amount &&
+          getTerbilang(Number.parseInt(amount.replaceAll('.', ''), 10))}
       </span>
     </div>
     <div className="relative">
@@ -544,8 +544,8 @@ const ReceiptSection: React.FC<ReceiptSectionProps> = ({
           </div>
           {scanning && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-white/60 backdrop-blur-[2px]">
-              <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-              <span className="animate-pulse text-[10px] font-black tracking-widest text-blue-600">
+              <Loader2 className="text-blue-royal h-8 w-8 animate-spin" />
+              <span className="text-blue-royal animate-pulse text-[10px] font-black tracking-widest">
                 ANALYZING...
               </span>
             </div>
@@ -580,7 +580,7 @@ const ReceiptSection: React.FC<ReceiptSectionProps> = ({
             className={cn(
               'h-9 rounded-full border-2 border-dashed px-5 transition-all outline-none',
               file || preview
-                ? 'border-emerald-200 bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
+                ? 'border-green-stat/30 bg-green-stat/5 text-green-stat hover:bg-green-stat/10'
                 : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
             )}
           >
@@ -600,7 +600,7 @@ const ReceiptSection: React.FC<ReceiptSectionProps> = ({
             <Button
               type="button"
               variant="outline"
-              className="h-9 rounded-full border-2 border-dashed border-blue-200 bg-white px-5 text-blue-600 transition-all hover:bg-blue-50"
+              className="border-blue-royal/30 text-blue-royal hover:bg-blue-royal/5 h-9 rounded-full border-2 border-dashed bg-white px-5 transition-all"
               disabled={scanning}
               onClick={onScan}
             >

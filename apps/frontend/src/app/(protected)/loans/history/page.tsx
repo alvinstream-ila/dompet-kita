@@ -1,19 +1,28 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import {
-  Search,
-  ArrowLeft,
-  LayoutGrid,
-  Trash2,
-  AlertTriangle,
-  History,
-  CheckCircle2,
-  ArrowRight,
-} from 'lucide-react';
 import { motion } from 'framer-motion';
+import {
+  AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  History,
+  LayoutGrid,
+  Search,
+  Trash2,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import { UserNavDropdown } from '@/components/layout';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { PageLoader } from '@/components/ui/PageLoader';
 import {
   Select,
   SelectContent,
@@ -21,17 +30,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { useDeleteLoan, useLoans } from '@/features/loans';
 import { cn } from '@/lib/utils';
-import { useLoans, useDeleteLoan } from '@/features/loans';
-import { PageLoader } from '@/components/ui/PageLoader';
-import { UserNavDropdown } from '@/components/layout';
 import type { Loan } from '@/types';
 
 const ITEMS_PER_PAGE = 15;
@@ -76,7 +76,7 @@ export default function LoanHistoryPage() {
   // Reset page when filter changes
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [filterType, searchQuery]);
+  }, []);
 
   if (isLoading)
     return (
@@ -92,7 +92,7 @@ export default function LoanHistoryPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 md:px-8 md:py-10 pb-36 md:pb-40 lg:px-12 lg:py-12">
+    <div className="container mx-auto px-4 py-6 pb-36 md:px-8 md:py-10 md:pb-40 lg:px-12 lg:py-12">
       <header className="mb-12">
         <div className="mb-10 flex flex-col items-start justify-between gap-6 md:flex-row">
           <motion.div
@@ -102,7 +102,8 @@ export default function LoanHistoryPage() {
           >
             {/* Back button — uses `useRouter` in place of `useNavigate` */}
             <button
-              className="mb-3 flex items-center gap-3 appearance-none border-none justify-start px-0 bg-transparent text-left"
+              type="button"
+              className="mb-3 flex appearance-none items-center justify-start gap-3 border-none bg-transparent px-0 text-left"
               onClick={() => router.push('/loans')}
             >
               <div className="rounded-xl border border-slate-100 bg-white p-2 shadow-sm transition-colors hover:bg-slate-50">

@@ -1,23 +1,22 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import Image from 'next/image';
-import { StatCard } from '@/components/ui/StatCard';
-import { UserNavDropdown } from '@/components/layout';
-import { useFormatting } from '@/lib/hooks/useFormatting';
-import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { useFinancialSummary } from '@/features/transactions';
-import { useAuth } from '@/features/auth';
-import dynamic from 'next/dynamic';
-import { toast } from 'sonner';
 import Cookies from 'js-cookie';
-
-import { HomeGreeting } from './HomeGreeting';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+import React, { useEffect } from 'react';
+import { toast } from 'sonner';
+import { UserNavDropdown } from '@/components/layout';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { StatCard } from '@/components/ui/StatCard';
+import { useAuth } from '@/features/auth';
+import { useFinancialSummary } from '@/features/transactions';
+import { useFormatting } from '@/lib/hooks/useFormatting';
 import {
-  StatCardSkeleton,
   AnalyticsSkeleton,
   RecentTransactionsSkeleton,
+  StatCardSkeleton,
 } from './DashboardSkeletons';
+import { HomeGreeting } from './HomeGreeting';
 
 const HomeAnalytics = dynamic(
   () => import('./HomeAnalytics').then((m) => m.HomeAnalytics),

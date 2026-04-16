@@ -1,13 +1,13 @@
-import React from 'react';
 import { AlertTriangle } from 'lucide-react';
+import type React from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import type { Holiday } from '../hooks/useHolidays';
 
 interface HolidayDeleteConfirmProps {

@@ -22,9 +22,9 @@ export default function Loading() {
         <motion.div
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ duration: 1.5, repeat: Infinity }}
-          className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-white/50 bg-linear-to-br from-blue-500/20 to-purple-500/20"
+          className="from-blue-royal/20 to-pink-primary/20 relative flex h-24 w-24 items-center justify-center rounded-2xl border border-white/50 bg-linear-to-br"
         >
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500/30 border-t-blue-600" />
+          <div className="border-blue-royal/30 border-t-blue-royal h-12 w-12 animate-spin rounded-full border-4" />
         </motion.div>
 
         {/* Skeleton Texts */}

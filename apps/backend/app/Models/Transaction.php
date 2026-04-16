@@ -34,14 +34,6 @@ class Transaction extends Model
     /** @use HasFactory<TransactionFactory> */
     use HasFactory, HasUserScope, LogsActivity;
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly(['amount', 'category', 'type', 'date'])
-            ->logOnlyDirty()
-            ->dontLogEmptyChanges();
-    }
-
     /**
      * @var list<string>
      */
@@ -59,20 +51,12 @@ class Transaction extends Model
         'asset_id',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function getActivitylogOptions(): LogOptions
     {
-        return [
-            'date' => 'date',
-            'is_ai_generated' => 'boolean',
-            'metadata' => 'array',
-            'type' => TransactionType::class,
-            'amount' => 'decimal:2',
-        ];
+        return LogOptions::defaults()
+            ->logOnly(['amount', 'category', 'type', 'date'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
     }
 
     /**
@@ -107,5 +91,21 @@ class Transaction extends Model
         $dates = $budgetService->getBudgetCycleDates($month, $year, $startDay);
 
         return $query->whereBetween('date', [$dates['start'], $dates['end']]);
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'date' => 'date',
+            'is_ai_generated' => 'boolean',
+            'metadata' => 'array',
+            'type' => TransactionType::class,
+            'amount' => 'decimal:2',
+        ];
     }
 }

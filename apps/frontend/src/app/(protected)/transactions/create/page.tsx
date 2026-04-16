@@ -1,11 +1,10 @@
 'use client';
 
-import React from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { ChevronLeft, Sparkles } from 'lucide-react';
-import { TransactionForm } from '@/features/transactions';
-import { Card } from '@/components/ui/card';
 import { motion } from 'framer-motion';
+import { ChevronLeft, Sparkles } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Card } from '@/components/ui/card';
+import { TransactionForm } from '@/features/transactions';
 
 /**
  * CreateTransaction Page - Manual / pre-filled via Scanner 💸
@@ -32,7 +31,8 @@ export default function CreateTransactionPage() {
         category: searchParams.get('category') || '',
         receipt_url: searchParams.get('receipt_url') || '',
         type: (searchParams.get('type') as 'income' | 'expense') || 'expense',
-        date: searchParams.get('date') || new Date().toISOString().split('T')[0],
+        date:
+          searchParams.get('date') || new Date().toISOString().split('T')[0],
       }
     : undefined;
 
@@ -40,6 +40,7 @@ export default function CreateTransactionPage() {
     <div className="container mx-auto max-w-2xl px-4 py-8 pb-36">
       <div className="mb-8 flex items-center justify-between">
         <button
+          type="button"
           onClick={() => router.back()}
           className="group flex items-center gap-2 rounded-full p-2 transition-colors hover:bg-slate-100"
         >

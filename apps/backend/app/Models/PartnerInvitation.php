@@ -16,6 +16,15 @@ class PartnerInvitation extends Model
     ];
 
     /**
+     * Get the user who sent the invitation.
+     */
+    /** @return BelongsTo<User, $this> */
+    public function inviter(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'inviter_id');
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -26,14 +35,5 @@ class PartnerInvitation extends Model
             'expires_at' => 'datetime',
             'status' => 'string',
         ];
-    }
-
-    /**
-     * Get the user who sent the invitation.
-     */
-    /** @return BelongsTo<User, $this> */
-    public function inviter(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'inviter_id');
     }
 }

@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogClose,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Plus,
-  Trash2,
-  Settings2,
   ArrowDownCircle,
   ArrowUpCircle,
   Check,
+  Plus,
+  Settings2,
+  Trash2,
   X,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import type React from 'react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/constants';
+import { cn } from '@/lib/utils';
 
 interface CategoryManagementModalProps {
   readonly isOpen: boolean;
@@ -60,8 +61,8 @@ export const CategoryManagementModal: React.FC<
         <DialogHeader className="relative overflow-hidden bg-slate-900 p-8 pb-12 text-white">
           <div className="relative z-10 space-y-1">
             <div className="mb-1 flex items-center gap-2">
-              <Settings2 className="h-4 w-4 text-pink-400" />
-              <p className="text-[10px] font-black tracking-[0.2em] text-pink-400 uppercase">
+              <Settings2 className="text-pink-primary h-4 w-4" />
+              <p className="text-pink-primary text-[10px] font-black tracking-[0.2em] uppercase">
                 Settings
               </p>
             </div>
@@ -73,7 +74,7 @@ export const CategoryManagementModal: React.FC<
               Atur kategori pengeluaran dan pemasukan sesuka hati kamu ya..
             </p>
           </div>
-          <div className="absolute -top-10 -right-10 h-48 w-48 rounded-full bg-pink-500/20 blur-3xl" />
+          <div className="bg-pink-primary/20 absolute -top-10 -right-10 h-48 w-48 rounded-full blur-3xl" />
 
           <DialogClose asChild>
             <Button
@@ -89,6 +90,7 @@ export const CategoryManagementModal: React.FC<
         <div className="relative z-20 -mt-8 space-y-6 px-8 pb-10">
           <div className="flex rounded-2xl border border-slate-100 bg-white p-1.5 shadow-xl">
             <button
+              type="button"
               onClick={() => setActiveTab('expense')}
               className={cn(
                 'flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-[11px] font-black tracking-widest uppercase transition-all',
@@ -101,11 +103,12 @@ export const CategoryManagementModal: React.FC<
               Pengeluaran
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab('income')}
               className={cn(
                 'flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-[11px] font-black tracking-widest uppercase transition-all',
                 activeTab === 'income'
-                  ? 'bg-emerald-500 text-white shadow-lg'
+                  ? 'bg-green-stat text-white shadow-lg'
                   : 'text-slate-400 hover:bg-slate-50'
               )}
             >
@@ -129,7 +132,7 @@ export const CategoryManagementModal: React.FC<
             </div>
             <Button
               type="submit"
-              className="h-12 w-12 shrink-0 rounded-2xl border-none bg-pink-500 p-0 text-white shadow-lg shadow-pink-500/20 hover:bg-pink-600"
+              className="bg-pink-primary shadow-pink-primary/20 hover:bg-pink-primary/90 h-12 w-12 shrink-0 rounded-2xl border-none p-0 text-white shadow-lg"
             >
               <Plus className="h-6 w-6" strokeWidth={3} />
             </Button>
@@ -151,8 +154,8 @@ export const CategoryManagementModal: React.FC<
                       className={cn(
                         'h-2 w-2 rounded-full',
                         activeTab === 'expense'
-                          ? 'bg-pink-400'
-                          : 'bg-emerald-400'
+                          ? 'bg-pink-primary'
+                          : 'bg-green-stat'
                       )}
                     />
                     <span className="text-sm font-bold text-slate-700">
@@ -163,7 +166,7 @@ export const CategoryManagementModal: React.FC<
                     variant="ghost"
                     size="icon"
                     onClick={() => handleDeleteCategory(cat)}
-                    className="h-9 w-9 rounded-xl text-slate-300 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-500"
+                    className="hover:bg-red-stat/5 hover:text-red-stat h-9 w-9 rounded-xl text-slate-300 opacity-0 transition-all group-hover:opacity-100"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

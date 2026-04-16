@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
  */
 class AiProviderManager
 {
-    /** @var AiProviderInterface[] */
+    /** @var array<AiProviderInterface> */
     protected array $providers = [];
 
     protected int $quarantineMinutes = 10;
@@ -20,7 +20,7 @@ class AiProviderManager
     protected int $errorThreshold = 3;
 
     /**
-     * @param  AiProviderInterface[]  $providers
+     * @param  array<AiProviderInterface>  $providers
      */
     public function __construct(array $providers = [])
     {
@@ -138,6 +138,26 @@ class AiProviderManager
         throw new AiServiceException('Maaf Sayang, AI gagal memproses suaramu. Coba lagi ya! ❤️ ['.implode(' | ', $errors).']');
     }
 
+    public function forceReset(): void
+    {
+        foreach ($this->providers as $provider) {
+            $name = $provider->getName();
+            Cache::forget("ai_provider_quarantine_{$name}");
+            Cache::forget("ai_provider_failures_{$name}");
+        }
+        Log::info('AI Provider Manager states have been force reset.');
+    }
+
+    /**
+     * Get the registered providers (primarily for diagnostics).
+     *
+     * @return array<AiProviderInterface>
+     */
+    public function getProviders(): array
+    {
+        return $this->providers;
+    }
+
     /**
      * CIRCUIT BREAKER: Is the provider in quarantine?
      */
@@ -178,7 +198,7 @@ class AiProviderManager
         $errors = (is_int($cachedErrors) || is_string($cachedErrors) ? (int) $cachedErrors : 0) + 1;
         Cache::put($key, $errors, now()->addMinutes(60));
 
-        Log::warning('AI Provider '.$provider->getName()." failed (Error count: $errors)");
+        Log::warning('AI Provider '.$provider->getName()." failed (Error count: {$errors})");
 
         // Let the Watchdog record this failure
         AiWatchdog::logPerformance($provider->getName(), 0.0, false);
@@ -198,25 +218,5 @@ class AiProviderManager
         Log::warning("AI Failover Decision: Error '{$message}' triggered failover.");
 
         return true;
-    }
-
-    public function forceReset(): void
-    {
-        foreach ($this->providers as $provider) {
-            $name = $provider->getName();
-            Cache::forget("ai_provider_quarantine_{$name}");
-            Cache::forget("ai_provider_failures_{$name}");
-        }
-        Log::info('AI Provider Manager states have been force reset.');
-    }
-
-    /**
-     * Get the registered providers (primarily for diagnostics).
-     *
-     * @return AiProviderInterface[]
-     */
-    public function getProviders(): array
-    {
-        return $this->providers;
     }
 }

@@ -1,28 +1,27 @@
 'use client';
 
-import React, { useState } from 'react';
-import { FileSpreadsheet, FileText } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useTransactions } from '@/features/transactions';
-import type { CategorySummary, Transaction } from '@/types';
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
   ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
   Title,
   Tooltip,
-  Legend,
 } from 'chart.js';
-
+import { FileSpreadsheet, FileText } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { ReportHeader, ReportPeriodPicker } from '@/features/reports';
 import {
+  ReportChartSkeleton,
   ReportStatSkeleton,
   ReportTableSkeleton,
-  ReportChartSkeleton,
 } from '@/features/reports/components/ReportSkeletons';
-import dynamic from 'next/dynamic';
+import { useTransactions } from '@/features/transactions';
+import type { CategorySummary, Transaction } from '@/types';
 
 const ReportStats = dynamic(
   () => import('@/features/reports').then((m) => m.ReportStats),
@@ -190,7 +189,6 @@ export default function ReportsPage() {
     setIsExporting(true);
     try {
       const ExcelJS = await import('exceljs');
-      const { saveAs } = await import('file-saver');
       const workbook = new ExcelJS.Workbook();
       workbook.creator = 'Dompet Kita';
       const summarySheet = workbook.addWorksheet('Ringkasan');
@@ -223,7 +221,19 @@ export default function ReportsPage() {
       const blob = new Blob([buffer], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
-      saveAs(blob, `Laporan_${months[selectedMonth]}_${selectedYear}.xlsx`);
+
+      // Native Download Implementation (Replaces file-saver)
+      const url = globalThis.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute(
+        'download',
+        `Laporan_${months[selectedMonth]}_${selectedYear}.xlsx`
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      globalThis.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Excel export failed:', error);
     } finally {

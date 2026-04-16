@@ -23,7 +23,7 @@ foreach ($iterator as $file) {
                 // If the type hint doesn't have ? at the start
                 $hit = $match[0];
                 if (strpos($hit, '?') === false) {
-                    fwrite($results, "DEPRECATION in $path at offset ".$match[1].": $hit\n");
+                    fwrite($results, "DEPRECATION in {$path} at offset ".$match[1].": {$hit}\n");
                 }
             }
         }

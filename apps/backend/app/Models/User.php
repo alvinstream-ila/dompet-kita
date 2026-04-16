@@ -103,38 +103,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'social_id' => 'string',
-            'social_type' => 'string',
-            'anniversary_date' => 'date',
-            'budget_cycle_start' => 'integer',
-            'is_privacy_mode' => 'boolean',
-            'is_eco_mode' => 'boolean',
-            'exchange_rate' => 'float',
-            'monthly_budget_limit' => 'float',
-            'large_expense_threshold' => 'float',
-            'partner_id' => 'integer',
-            'full_name' => 'encrypted',
-            'partner_name' => 'encrypted',
-            'last_active_at' => 'datetime',
-            'legacy_threshold_months' => 'integer',
-            'is_legacy_triggered' => 'boolean',
-            'two_factor_enabled' => 'boolean',
-            'two_factor_expires_at' => 'datetime',
-            'email_verification_expires_at' => 'datetime',
-            'otp_reset_expires_at' => 'datetime',
-        ];
-    }
-
     /* Relationships */
 
     /**
@@ -260,5 +228,37 @@ class User extends Authenticatable implements MustVerifyEmail
         ]);
 
         $this->notify(new VerifyEmailNotification($code));
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'social_id' => 'string',
+            'social_type' => 'string',
+            'anniversary_date' => 'date',
+            'budget_cycle_start' => 'integer',
+            'is_privacy_mode' => 'boolean',
+            'is_eco_mode' => 'boolean',
+            'exchange_rate' => 'float',
+            'monthly_budget_limit' => 'float',
+            'large_expense_threshold' => 'float',
+            'partner_id' => 'integer',
+            'full_name' => 'encrypted',
+            'partner_name' => 'encrypted',
+            'last_active_at' => 'datetime',
+            'legacy_threshold_months' => 'integer',
+            'is_legacy_triggered' => 'boolean',
+            'two_factor_enabled' => 'boolean',
+            'two_factor_expires_at' => 'datetime',
+            'email_verification_expires_at' => 'datetime',
+            'otp_reset_expires_at' => 'datetime',
+        ];
     }
 }

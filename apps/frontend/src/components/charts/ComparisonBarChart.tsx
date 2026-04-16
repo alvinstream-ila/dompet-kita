@@ -1,15 +1,15 @@
-import React from 'react';
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
   BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  type ChartOptions,
+  Legend,
+  LinearScale,
   Title,
   Tooltip,
-  Legend,
   type TooltipItem,
-  type ChartOptions,
 } from 'chart.js';
+import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { useTransactions } from '@/features/transactions';
 

@@ -37,21 +37,6 @@ class Goal extends Model
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'name' => 'encrypted',
-            'target_amount' => 'decimal:2',
-            'current_amount' => 'decimal:2',
-            'deadline' => 'date',
-        ];
-    }
-
-    /**
      * Get the user that owns the goal.
      *
      * @return BelongsTo<User, $this>
@@ -69,5 +54,20 @@ class Goal extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(GoalTransaction::class);
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'name' => 'encrypted',
+            'target_amount' => 'decimal:2',
+            'current_amount' => 'decimal:2',
+            'deadline' => 'date',
+        ];
     }
 }

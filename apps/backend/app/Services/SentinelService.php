@@ -31,6 +31,16 @@ class SentinelService
     }
 
     /**
+     * Audit log a specific user action for Digital Inheritance trail.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function auditAction(string $userId, string $action, array $data = []): void
+    {
+        Log::channel('audit')->info("User {$userId} action: {$action}", $data);
+    }
+
+    /**
      * Send message to Telegram Bot with robust timeout and retries.
      */
     private function sendToTelegram(string $text): bool
@@ -61,15 +71,5 @@ class SentinelService
 
             return false;
         }
-    }
-
-    /**
-     * Audit log a specific user action for Digital Inheritance trail.
-     *
-     * @param  array<string, mixed>  $data
-     */
-    public function auditAction(string $userId, string $action, array $data = []): void
-    {
-        Log::channel('audit')->info("User {$userId} action: {$action}", $data);
     }
 }

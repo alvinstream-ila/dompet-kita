@@ -1,23 +1,23 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  Target,
+  Briefcase,
   Calendar,
-  Trash2,
+  Car,
+  Gamepad,
   Heart,
   Home,
-  Car,
   Plane,
+  Plus,
   ShoppingBag,
-  Briefcase,
-  Gamepad,
+  Target,
+  Trash2,
   TrendingUp,
 } from 'lucide-react';
+import React from 'react';
+import { Button } from '@/components/ui/button';
 import { cn, formatToRupiah } from '@/lib/utils';
 import type { Goal } from '@/types';
 import { AddGoalDepositModal } from './AddGoalDepositModal';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
 
 const ICON_MAP: Record<string, React.ElementType> = {
   heart: Heart,
@@ -57,13 +57,13 @@ export const GoalCard: React.FC<GoalCardProps> = ({
     >
       <div
         className={cn(
-          'group relative flex h-full transform-gpu flex-col rounded-[32px] border border-slate-100/50 bg-white p-8 shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl',
-          isCompleted && 'bg-slate-50/50 grayscale-[0.5]'
+          'group glass-card relative flex h-full transform-gpu flex-col p-8 transition-all duration-500 hover:-translate-y-1',
+          isCompleted && 'bg-white/40 grayscale-[0.3]'
         )}
       >
         {isCompleted && (
           <div className="absolute top-6 right-6">
-            <div className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[9px] font-black tracking-widest text-emerald-600 uppercase">
+            <div className="border-green-stat/20 bg-green-stat/10 text-green-stat rounded-full border px-3 py-1 text-[9px] font-black tracking-widest uppercase">
               Terwujud! ✨
             </div>
           </div>
@@ -72,10 +72,10 @@ export const GoalCard: React.FC<GoalCardProps> = ({
         <div className="mb-8 flex items-center gap-4">
           <div
             className={cn(
-              'flex size-14 items-center justify-center rounded-2xl shadow-sm transition-transform duration-500 group-hover:scale-110',
+              'flex size-14 items-center justify-center rounded-2xl transition-transform duration-500 group-hover:scale-110',
               isCompleted
-                ? 'bg-slate-100 text-slate-400'
-                : 'bg-blue-50 text-blue-500'
+                ? 'bg-slate-200/50 text-slate-400'
+                : 'bg-blue-royal/10 text-blue-royal'
             )}
           >
             <Icon size={24} />
@@ -111,7 +111,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
           </div>
 
           <div className="space-y-2">
-            <div className="h-3 w-full overflow-hidden rounded-full border border-slate-100/50 bg-slate-50">
+            <div className="h-3 w-full overflow-hidden rounded-full border border-white/20 bg-slate-100/50">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${Math.min(progress, 100)}%` }}
@@ -119,8 +119,8 @@ export const GoalCard: React.FC<GoalCardProps> = ({
                 className={cn(
                   'h-full rounded-full transition-all duration-500',
                   isCompleted
-                    ? 'bg-emerald-500'
-                    : 'bg-linear-to-r from-blue-500 to-indigo-500'
+                    ? 'bg-green-stat'
+                    : 'from-blue-royal to-pink-primary bg-linear-to-r'
                 )}
               />
             </div>
@@ -135,18 +135,18 @@ export const GoalCard: React.FC<GoalCardProps> = ({
           </div>
         </div>
 
-        <div className="mt-8 flex items-center justify-between border-t border-slate-50 pt-6">
+        <div className="mt-8 flex items-center justify-between border-t border-slate-100/50 pt-6">
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-[9px] font-black tracking-widest text-slate-400 uppercase">
-              <Calendar size={12} />
+            <div className="flex items-center gap-2 rounded-lg border border-slate-200/50 bg-white/50 px-2 py-1 text-[9px] font-black tracking-widest text-slate-400 uppercase">
+              <Calendar size={12} className="text-blue-royal" />
               {goal.deadline
                 ? new Date(goal.deadline).toLocaleDateString()
-                : 'Cepat atau Lambat'}
+                : 'Sesuai Takdir'}
             </div>
             {!isCompleted && (
               <button
                 onClick={() => onDelete(goal.id)}
-                className="p-2 text-slate-300 transition-colors hover:text-rose-500 active:scale-90"
+                className="hover:text-red-stat p-2 text-slate-300 transition-colors active:scale-90"
               >
                 <Trash2 size={16} />
               </button>
@@ -156,7 +156,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
           {!isCompleted && (
             <Button
               onClick={() => setIsDepositModalOpen(true)}
-              className="h-10 rounded-2xl bg-blue-600 px-6 text-[10px] font-black tracking-widest text-white uppercase shadow-lg shadow-blue-200 transition-all hover:scale-105 active:scale-95"
+              className="bg-blue-royal shadow-blue-royal/20 h-10 rounded-2xl px-6 text-[10px] font-black tracking-widest text-white uppercase shadow-lg transition-all hover:scale-105 active:scale-95"
             >
               <Plus className="mr-2 h-3 w-3" strokeWidth={4} />
               Nabung ✨

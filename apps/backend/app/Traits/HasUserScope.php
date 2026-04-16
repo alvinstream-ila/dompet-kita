@@ -9,6 +9,14 @@ use Illuminate\Support\Facades\Auth;
 trait HasUserScope
 {
     /**
+     * Define the user relationship (if not already defined).
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * Boot the trait to automatically filter by user_id for all Eloquent queries.
      */
     protected static function bootHasUserScope(): void
@@ -24,13 +32,5 @@ trait HasUserScope
                 $builder->where('user_id', Auth::id());
             }
         });
-    }
-
-    /**
-     * Define the user relationship (if not already defined).
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class);
     }
 }

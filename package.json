@@ -8,6 +8,7 @@
     "services/*",
     "packages/*"
   ],
+  "packageManager": "npm@11.9.0",
   "scripts": {
     "dev": "npm run dev -w @dompet-kita/frontend",
     "start": "npx concurrently \"npm run dev -w @dompet-kita/frontend\" \"php -S localhost:8000 -t apps/backend/public\"",
@@ -18,10 +19,9 @@
     "setup": "npm run install-all && php apps/backend/artisan key:generate && php apps/backend/artisan migrate",
     "migrate": "php apps/backend/artisan migrate",
     "security-gate": "php apps/backend/artisan security:gate --min-score=100",
-    "test:e2e": "npx playwright test",
-    "e2e:build": "npm run build -w @dompet-kita/frontend",
-    "e2e:serve": "npx concurrently \"npm run start -w @dompet-kita/frontend\" \"php -S localhost:8000 -t apps/backend/public\"",
-    "test:e2e-ui": "npx playwright test --ui",
+    "scan": "turbo run scan && node scripts/generate-summary.mjs",
+    "scan:fix": "turbo run scan:fix && node scripts/generate-summary.mjs",
+    "report:summary": "node scripts/generate-summary.mjs",
     "supabase": "supabase",
     "uplink": "infra\\bin\\uplink",
     "rclone": "infra\\bin\\rclone --config infra\\config\\rclone.conf",
@@ -39,16 +39,13 @@
   "keywords": [],
   "author": "Antigravity & Alvin",
   "license": "ISC",
-  "dependencies": {
-    "pg": "^8.20.0"
-  },
   "devDependencies": {
-    "@playwright/test": "^1.59.0",
-    "husky": "^8.0.0",
-    "lint-staged": "^15.2.0",
-    "prettier": "^3.8.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.2",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "supabase": "^2.84.5",
-    "vite": "7.3.2"
+    "turbo": "^2.9.6",
+    "vite": "^8.0.8"
   }
 }

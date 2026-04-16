@@ -75,20 +75,14 @@ export async function getFinancialSummaryAction(
   year?: number,
   budgetCycleStart?: number
 ) {
-  try {
-    const params = new URLSearchParams();
-    if (month !== undefined) params.set('month', month.toString());
-    if (year !== undefined) params.set('year', year.toString());
-    if (budgetCycleStart !== undefined)
-      params.set('budget_cycle_start', budgetCycleStart.toString());
+  const params = new URLSearchParams();
+  if (month !== undefined) params.set('month', month.toString());
+  if (year !== undefined) params.set('year', year.toString());
+  if (budgetCycleStart !== undefined)
+    params.set('budget_cycle_start', budgetCycleStart.toString());
 
-    const response = await serverApi(
-      `/transactions/summary?${params.toString()}`
-    );
-    return response.data;
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Failed to fetch summary:', message);
-    return null;
-  }
+  const response = await serverApi(
+    `/transactions/summary?${params.toString()}`
+  );
+  return response.data;
 }

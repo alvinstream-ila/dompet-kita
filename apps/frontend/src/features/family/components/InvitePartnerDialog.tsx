@@ -1,6 +1,8 @@
 'use client';
 
+import { Heart, Mail, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -13,9 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
 import { invitePartnerAction } from '../actions/partner';
-import { Heart, ShieldCheck, Mail } from 'lucide-react';
 
 export function InvitePartnerDialog() {
   const [email, setEmail] = useState('');
@@ -51,14 +51,14 @@ export function InvitePartnerDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="h-12 w-full rounded-2xl bg-blue-600 font-bold shadow-lg shadow-blue-200 transition-all hover:bg-blue-700 active:scale-95">
+        <Button className="bg-blue-royal shadow-blue-royal/20 h-12 w-full rounded-2xl font-bold shadow-lg transition-all hover:brightness-110 active:scale-95">
           Undang Pasangan ✨
         </Button>
       </DialogTrigger>
       <DialogContent className="rounded-3xl border-white/20 bg-white/80 shadow-2xl backdrop-blur-xl sm:max-w-[425px]">
         <DialogHeader>
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
-            <Heart className="h-8 w-8 fill-blue-600 text-blue-600" />
+          <div className="bg-blue-royal/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+            <Heart className="fill-blue-royal text-blue-royal h-8 w-8" />
           </div>
           <DialogTitle className="text-center text-2xl font-bold text-slate-900">
             Hubungkan Mimpi Bersama
@@ -68,10 +68,10 @@ export function InvitePartnerDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="my-2 flex items-start gap-3 rounded-2xl border border-blue-100 bg-blue-50/50 p-4">
-          <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
-          <div className="text-xs leading-relaxed text-blue-800">
-            <span className="font-bold">PEMBERITAHUAN PRIVAASI:</span>
+        <div className="border-blue-royal/20 bg-blue-royal/5 my-2 flex items-start gap-3 rounded-2xl border p-4">
+          <ShieldCheck className="text-blue-royal mt-0.5 h-5 w-5 shrink-0" />
+          <div className="text-blue-royal/80 text-xs leading-relaxed">
+            <span className="font-bold">PEMBERITAHUAN PRIVASI:</span>
             <p className="mt-1">
               Dengan menghubungkan partner, kamu dan pasangan akan saling
               mendapatkan notifikasi untuk **pengeluaran skala besar** yang
@@ -94,7 +94,7 @@ export function InvitePartnerDialog() {
                 placeholder="email@pasangan.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-12 rounded-xl border-slate-200 bg-slate-50 pl-10 transition-all focus:border-blue-500 focus:ring-blue-500"
+                className="focus:border-blue-royal focus:ring-blue-royal h-12 rounded-xl border-slate-200 bg-slate-50 pl-10 transition-all"
                 required
               />
             </div>
@@ -107,7 +107,7 @@ export function InvitePartnerDialog() {
           <DialogFooter className="pt-4">
             <Button
               type="submit"
-              className="h-12 w-full rounded-xl bg-blue-600 font-bold shadow-lg shadow-blue-100 transition-all hover:bg-blue-700 active:scale-95"
+              className="bg-blue-royal shadow-blue-royal/10 h-12 w-full rounded-xl font-bold shadow-lg transition-all hover:brightness-110 active:scale-95"
               disabled={isLoading}
             >
               {isLoading ? 'Mengirim...' : 'Kirim Undangan Ke Dia 💌'}

@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import api from '@/lib/axios';
 import type { Goal } from '@/types';
-import { toast } from 'sonner';
 
 export function useGoals() {
   return useQuery({
@@ -33,7 +33,7 @@ export function useAddGoal() {
       queryClient.setQueryData(['goals'], (old: Goal[] | undefined) => {
         const optimisticGoal = {
           ...newGoal,
-          id: 'temp-' + Date.now(),
+          id: `temp-${Date.now()}`,
           current_amount: 0,
           status: 'active',
           created_at: new Date().toISOString(),

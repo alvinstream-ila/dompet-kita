@@ -1,8 +1,8 @@
 'use client';
 
 import { Suspense } from 'react';
-import { AcceptPartnerModal } from '@/features/family/components/AcceptPartnerModal';
 import { PageLoader } from '@/components/ui/PageLoader';
+import { AcceptPartnerModal } from '@/features/family/components/AcceptPartnerModal';
 
 /**
  * AcceptInvite Page

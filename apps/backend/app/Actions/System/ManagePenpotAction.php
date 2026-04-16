@@ -6,6 +6,7 @@ namespace App\Actions\System;
 
 use App\Actions\BaseAction;
 use Exception;
+use App\Exceptions\PenpotException;
 use Illuminate\Support\Facades\Http;
 
 class ManagePenpotAction extends BaseAction
@@ -23,13 +24,11 @@ class ManagePenpotAction extends BaseAction
         $response = Http::withToken($token, 'Token')->post("{$this->baseUrl}/list-projects");
 
         if (! $response->successful()) {
-            throw new Exception("Failed to fetch Penpot projects: {$response->status()}");
+            throw new PenpotException("Failed to fetch Penpot projects: {$response->status()}");
         }
 
-        /** @var array<int, array{id: string, name: string}> $data */
-        $data = $response->json();
-
-        return $data;
+        /** @var array<int, array{id: string, name: string}> */
+        return (array) $response->json();
     }
 
     /**
@@ -43,20 +42,18 @@ class ManagePenpotAction extends BaseAction
         $response = Http::withToken($token, 'Token')->post("{$this->baseUrl}/get-project", ['id' => $projectId]);
 
         if (! $response->successful()) {
-            throw new Exception("Failed to fetch project detail: {$response->status()}");
+            throw new PenpotException("Failed to fetch project detail: {$response->status()}");
         }
 
-        /** @var array<string, mixed> $data */
-        $data = $response->json();
-
-        return $data;
+        /** @var array<string, mixed> */
+        return (array) $response->json();
     }
 
     private function getToken(): string
     {
         $token = config('services.penpot.token');
         if (! $token) {
-            throw new Exception('PENPOT_TOKEN is missing in configuration.');
+            throw new PenpotException('PENPOT_TOKEN is missing in configuration.');
         }
 
         return (string) $token;

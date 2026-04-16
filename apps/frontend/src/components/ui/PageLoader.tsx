@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Heart, WifiOff } from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface PageLoaderProps {
   readonly isLoading: boolean;

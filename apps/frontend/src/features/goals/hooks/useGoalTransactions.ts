@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import api from '@/lib/axios';
 import { toast } from 'sonner';
+import api from '@/lib/axios';
 import type { Goal } from '@/types';
 
 export interface GoalDepositPayload {

@@ -1,22 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
-import Image from 'next/image';
+import { AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
   ArrowRight,
-  Clock as ClockIcon,
   CheckCircle2 as CheckCircleIcon,
+  Clock as ClockIcon,
 } from 'lucide-react';
-import { AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { useLoans, useDeleteLoan } from '@/features/loans';
-import {
-  LoanStatSkeleton,
-  LoanCardSkeleton,
-} from '@/features/loans/components/LoanSkeletons';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { useDeleteLoan, useLoans } from '@/features/loans';
+import {
+  LoanCardSkeleton,
+  LoanStatSkeleton,
+} from '@/features/loans/components/LoanSkeletons';
+import { cn } from '@/lib/utils';
 
 const LoanStats = dynamic(
   () => import('@/features/loans').then((m) => m.LoanStats),
@@ -106,7 +106,7 @@ export default function LoansPage() {
 
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [filterType, searchQuery, activeTab]);
+  }, []);
 
   const totalPiutang = loans
     .filter((l) => l.type === 'piutang')

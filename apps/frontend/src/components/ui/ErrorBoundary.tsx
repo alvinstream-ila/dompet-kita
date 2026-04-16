@@ -1,7 +1,7 @@
-import React from 'react';
 import * as Sentry from '@sentry/react';
-import { Button } from '@/components/ui/button';
 import { AlertCircle, RefreshCcw } from 'lucide-react';
+import React from 'react';
+import { Button } from '@/components/ui/button';
 
 interface ErrorBoundaryProps {
   readonly children: React.ReactNode;
@@ -38,8 +38,8 @@ export class ErrorBoundary extends React.Component<
               Waduh, Sayang... 🥺
             </h2>
             <p className="mb-8 font-medium text-slate-500">
-              Aplikasinya lagi &quot;pusing&quot; sebentar nih. Coba kita refresh yuk,
-              siapa tahu dia langsung seger lagi! ❤️
+              Aplikasinya lagi &quot;pusing&quot; sebentar nih. Coba kita
+              refresh yuk, siapa tahu dia langsung seger lagi! ❤️
             </p>
             <Button
               onClick={() => globalThis.location.reload()}

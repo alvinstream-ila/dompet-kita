@@ -1,22 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
-import Image from 'next/image';
 import { ReceiptText } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { CategoryManagementModal } from '@/features/settings';
-import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
-import { UserNavDropdown } from '@/components/layout';
-import { PageLoader } from '@/components/ui/PageLoader';
-import { useFormatting } from '@/lib/hooks/useFormatting';
-import { deleteTransactionAction } from './actions/transactions';
-import type { Transaction } from '@/types';
+import Image from 'next/image';
+import { useState } from 'react';
 import { toast } from 'sonner';
+import { UserNavDropdown } from '@/components/layout';
+import { Button } from '@/components/ui/button';
+import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
+import { PageLoader } from '@/components/ui/PageLoader';
+import { CategoryManagementModal } from '@/features/settings';
+import { useFormatting } from '@/lib/hooks/useFormatting';
+import type { Transaction } from '@/types';
+import { deleteTransactionAction } from './actions/transactions';
 
 import { EditTransactionModal } from './EditTransactionModal';
 import { useTransactions } from './hooks/useTransactions';
-import { TransactionItem } from './TransactionItem';
 import { TransactionFilters } from './TransactionFilters';
+import { TransactionItem } from './TransactionItem';
 
 export function TransactionsView() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -59,18 +59,18 @@ export function TransactionsView() {
 
   const confirmDelete = async () => {
     if (!transactionToDelete) return;
-    
+
     setIsDeleting(true);
     const result = await deleteTransactionAction(transactionToDelete);
     setIsDeleting(false);
-    
+
     if (result.success) {
       toast.info('Transaksi Dihapus 🗑️');
       refetch();
     } else {
       toast.error(result.error);
     }
-    
+
     setTransactionToDelete(null);
     setIsDeleteConfirmOpen(false);
   };
@@ -85,11 +85,11 @@ export function TransactionsView() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 md:px-8 md:py-10 pb-36 md:pb-40 lg:px-12 lg:py-12">
+    <div className="container mx-auto px-4 py-6 pb-36 md:px-8 md:py-10 md:pb-40 lg:px-12 lg:py-12">
       <div className="mb-10 flex justify-center text-center lg:hidden">
         <div className="glass-premium w-full items-center justify-center rounded-[32px] border border-white/50 px-10 py-6 shadow-2xl">
           <h2 className="text-xl leading-tight font-black tracking-tight text-slate-800 md:text-3xl">
-            <span className="font-script mb-1 block text-5xl text-pink-500 md:text-8xl">
+            <span className="font-script text-pink-primary mb-1 block text-5xl md:text-8xl">
               Cuan & Jajan
             </span>
             <span className="block text-xs leading-none font-bold tracking-widest text-slate-500 md:text-lg">
@@ -111,7 +111,7 @@ export function TransactionsView() {
           </div>
           <div className="flex flex-col gap-0.5 md:gap-1">
             <h1 className="text-sm leading-none font-black tracking-tight text-slate-800 uppercase md:text-2xl">
-              Riwayat<span className="text-blue-600">Transaksi</span>
+              Riwayat<span className="text-blue-royal">Transaksi</span>
             </h1>
             <span className="font-mono text-[8px] font-bold tracking-[0.3em] text-slate-400 uppercase md:text-[10px]">
               Money Journals
@@ -120,9 +120,9 @@ export function TransactionsView() {
         </div>
 
         <div className="glass-premium group relative hidden transform-gpu items-center justify-center overflow-hidden rounded-[48px] border border-white/50 px-[64px] py-8 shadow-2xl transition-transform hover:scale-105 lg:flex">
-          <div className="absolute inset-0 bg-linear-to-r from-blue-50/50 to-pink-50/50 opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
+          <div className="from-blue-royal/10 to-pink-primary/10 absolute inset-0 bg-linear-to-r opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
           <h2 className="relative z-10 flex items-center text-2xl font-black tracking-tight whitespace-nowrap text-slate-800">
-            <span className="font-script mr-5 block -rotate-2 transform text-[4.5rem] leading-none text-pink-500 transition-transform group-hover:rotate-0 lg:inline-block">
+            <span className="font-script text-pink-primary mr-5 block -rotate-2 transform text-[4.5rem] leading-none transition-transform group-hover:rotate-0 lg:inline-block">
               Sayang,
             </span>
             <div className="flex flex-col">
@@ -172,7 +172,7 @@ export function TransactionsView() {
             <Button
               variant="outline"
               onClick={() => fetchNextPage()}
-              className="h-14 rounded-2xl border-2 border-dashed px-12 text-[11px] font-black tracking-[0.25em] text-slate-500 uppercase transition-all hover:border-blue-200 hover:bg-slate-50 hover:text-blue-600 active:scale-95"
+              className="hover:border-blue-royal/30 hover:text-blue-royal h-14 rounded-2xl border-2 border-dashed px-12 text-[11px] font-black tracking-[0.25em] text-slate-500 uppercase transition-all hover:bg-slate-50 active:scale-95"
             >
               Lihat Lebih Banyak Rekaman Mimpi ✨
             </Button>
@@ -189,13 +189,14 @@ export function TransactionsView() {
                 Jejak Belum Ditemukan
               </h4>
               <p className="text-[10px] font-bold text-slate-400 italic opacity-70">
-                &quot;Setiap keping jajan kita berharga, catat yuk Sayang! ✨&quot;
+                &quot;Setiap keping jajan kita berharga, catat yuk Sayang!
+                ✨&quot;
               </p>
             </div>
             <Button
               variant="ghost"
               onClick={() => (globalThis.location.href = '/')}
-              className="h-12 rounded-full border border-blue-100 px-8 text-[10px] font-black tracking-widest text-blue-500 uppercase hover:bg-blue-50"
+              className="border-blue-royal/10 text-blue-royal hover:bg-blue-royal/5 h-12 rounded-full border px-8 text-[10px] font-black tracking-widest uppercase"
             >
               Mulai Mencatat
             </Button>

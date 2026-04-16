@@ -1,16 +1,16 @@
 {
-  "name": "Dompet Kita",
-  "short_name": "DompetKita",
-  "description": "Ultimate Wealth Management for Alvin & Ila",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#e5f1fa",
-  "theme_color": "#e5f1fa",
-  "icons": [
-    {
-      "src": "/icons.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
-    }
-  ]
+	"name": "Dompet Kita",
+	"short_name": "DompetKita",
+	"description": "Ultimate Wealth Management for Alvin & Ila",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#e5f1fa",
+	"theme_color": "#e5f1fa",
+	"icons": [
+		{
+			"src": "/icons.svg",
+			"sizes": "any",
+			"type": "image/svg+xml"
+		}
+	]
 }

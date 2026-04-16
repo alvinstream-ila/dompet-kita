@@ -22,6 +22,16 @@ class LoginHistory extends Model
     ];
 
     /**
+     * Get the user that owns the login history.
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -32,15 +42,5 @@ class LoginHistory extends Model
             'metadata' => 'array',
             'login_at' => 'datetime',
         ];
-    }
-
-    /**
-     * Get the user that owns the login history.
-     *
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 }

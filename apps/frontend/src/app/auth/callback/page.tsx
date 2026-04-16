@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useEffect, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useAuth } from '@/features/auth';
-import { Loader2 } from 'lucide-react';
-import api from '@/lib/axios';
-
 import Cookies from 'js-cookie';
+import { Loader2 } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect } from 'react';
+import { useAuth } from '@/features/auth';
+import api from '@/lib/axios';
 
 /**
  * AuthCallbackContent - Inner component to use useSearchParams() safely within Suspense.
@@ -56,10 +55,10 @@ function AuthCallbackContent() {
   }, [searchParams, router, login]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#e5f1fa]">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50">
       <div className="relative">
-        <div className="absolute inset-0 animate-pulse rounded-full bg-blue-400/20 blur-2xl" />
-        <Loader2 className="relative h-16 w-16 animate-spin text-blue-500" />
+        <div className="bg-blue-royal/10 absolute inset-0 animate-pulse rounded-full blur-2xl" />
+        <Loader2 className="text-blue-royal relative h-16 w-16 animate-spin" />
       </div>
       <p className="animate-pulse text-[12px] font-black tracking-[0.2em] text-slate-600 uppercase">
         Lagi menyambungkan diri sayang...
@@ -75,8 +74,8 @@ export default function AuthCallbackPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-[#e5f1fa]">
-          <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
+        <div className="flex min-h-screen items-center justify-center bg-slate-50">
+          <Loader2 className="text-blue-royal h-10 w-10 animate-spin" />
         </div>
       }
     >

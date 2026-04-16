@@ -47,7 +47,7 @@ class SyncMarketAssetsAction extends BaseAction
         $oldValue = $asset->value;
         $newValue = $this->resolvePrice($asset, $market);
 
-        if ($newValue != $oldValue) {
+        if ($newValue !== $oldValue) {
             $asset->update(['value' => $newValue]);
             $stats['updated']++;
 

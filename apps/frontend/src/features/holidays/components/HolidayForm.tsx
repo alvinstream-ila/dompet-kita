@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { Calendar as CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { Calendar as CalendarIcon, Loader2 } from 'lucide-react';
+import Image from 'next/image';
+import type React from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -12,12 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
 import { cn, formatToRupiah, getTerbilang } from '@/lib/utils';
 import type { Holiday } from '../hooks/useHolidays';
 
@@ -123,7 +124,7 @@ export const HolidayForm: React.FC<HolidayFormProps> = ({
                 const val = e.target.value.replaceAll(/\D/g, '');
                 setFormData({
                   ...formData,
-                  budget: val ? Number.parseInt(val) : 0,
+                  budget: val ? Number.parseInt(val, 10) : 0,
                 });
               }}
               className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 pr-6 pl-14 font-bold text-slate-700"

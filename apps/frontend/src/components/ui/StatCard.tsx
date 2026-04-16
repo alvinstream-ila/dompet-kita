@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
-import Image from 'next/image';
 import type { LucideIcon } from 'lucide-react';
+import Image from 'next/image';
+import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 import { useFormatting } from '@/lib/hooks/useFormatting';
+import { cn } from '@/lib/utils';
 
 interface StatCardProps {
   title: string;
@@ -31,27 +31,27 @@ export const StatCard = React.memo(
       switch (variant) {
         case 'income':
           return {
-            text: 'text-emerald-600',
-            iconBg: 'bg-emerald-50',
-            iconColor: 'text-emerald-600',
-            gradient: 'from-emerald-500/5 to-transparent',
-            shadow: 'shadow-emerald-500/10',
+            text: 'text-[var(--color-green-stat)]',
+            iconBg: 'bg-[var(--color-green-stat)]/10',
+            iconColor: 'text-[var(--color-green-stat)]',
+            gradient: 'from-[var(--color-green-stat)]/5 to-transparent',
+            shadow: 'shadow-[var(--color-green-stat)]/10',
           };
         case 'expense':
           return {
-            text: 'text-rose-600',
-            iconBg: 'bg-rose-50',
-            iconColor: 'text-rose-600',
-            gradient: 'from-rose-500/5 to-transparent',
-            shadow: 'shadow-rose-500/10',
+            text: 'text-[var(--color-red-stat)]',
+            iconBg: 'bg-[var(--color-red-stat)]/10',
+            iconColor: 'text-[var(--color-red-stat)]',
+            gradient: 'from-[var(--color-red-stat)]/5 to-transparent',
+            shadow: 'shadow-[var(--color-red-stat)]/10',
           };
         default:
           return {
             text: 'text-slate-900',
-            iconBg: 'bg-slate-50',
-            iconColor: 'text-slate-600',
-            gradient: 'from-blue-500/5 to-transparent',
-            shadow: 'shadow-blue-500/10',
+            iconBg: 'bg-[var(--color-blue-royal)]/10',
+            iconColor: 'text-[var(--color-blue-royal)]',
+            gradient: 'from-[var(--color-blue-royal)]/5 to-transparent',
+            shadow: 'shadow-[var(--color-blue-royal)]/10',
           };
       }
     };
@@ -77,7 +77,7 @@ export const StatCard = React.memo(
     return (
       <Card
         className={cn(
-          'group relative cursor-pointer overflow-hidden rounded-[32px] border-none bg-white shadow-[0_15px_40px_-15px_rgba(0,0,0,0.08)] transition-[transform,shadow,scale] duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.12)] active:scale-[0.95]',
+          'group glass-card relative cursor-pointer overflow-hidden transition-[transform,shadow,scale] duration-300 hover:-translate-y-1 active:scale-[0.95]',
           colors.shadow,
           className
         )}

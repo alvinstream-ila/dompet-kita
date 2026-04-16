@@ -1,38 +1,39 @@
 'use client';
 
-import React, { useState } from 'react';
-import Image from 'next/image';
 import { AnimatePresence } from 'framer-motion';
-import { Plus, Info, Heart } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { Heart, Info, Plus } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { useFormatting } from '@/lib/hooks/useFormatting';
+import { Card } from '@/components/ui/card';
 import {
-  useAssets,
-  useWealthHistory,
-  useAddAsset,
-  useUpdateAsset,
-  useDeleteAsset,
-  useWealthSimulation,
-  WealthStats,
-  WealthChart,
-  AssetForm,
-  WealthAssetCard,
   AddAssetFundModal,
+  AssetForm,
+  useAddAsset,
+  useAssets,
+  useDeleteAsset,
+  useUpdateAsset,
+  useWealthHistory,
+  useWealthSimulation,
+  WealthAssetCard,
+  WealthChart,
+  WealthStats,
   WithdrawAssetModal,
 } from '@/features/wealth';
 import {
-  WealthStatSkeleton,
-  WealthChartSkeleton,
   WealthAssetSkeleton,
+  WealthChartSkeleton,
+  WealthStatSkeleton,
 } from '@/features/wealth/components/WealthSkeletons';
-import dynamic from 'next/dynamic';
+import { useFormatting } from '@/lib/hooks/useFormatting';
 
 const WealthSimulationChart = dynamic(
   () => import('@/features/wealth').then((m) => m.WealthSimulationChart),
   { ssr: false }
 );
-import { useGoals } from '@/features/goals';
+
+import { UserNavDropdown } from '@/components/layout';
 
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import {
@@ -41,7 +42,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { UserNavDropdown } from '@/components/layout';
+import { useGoals } from '@/features/goals';
 import type { Asset } from '@/types';
 
 /**

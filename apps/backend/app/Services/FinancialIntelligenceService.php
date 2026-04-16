@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Enums\TransactionType;
-use App\Models\Asset;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Carbon;
@@ -124,14 +123,14 @@ class FinancialIntelligenceService
 
         $advice = [];
 
-        if ($actualCash > ($safetyBuffer * 1.5)) {
+        if ($actualCash > $safetyBuffer * 1.5) {
             $surplus = $actualCash - $safetyBuffer;
             $advice[] = [
                 'action' => 'INVEST',
                 'amount' => (float) $surplus,
                 'reason' => 'Ada surplus likuiditas nih Sayang! Dana menganggur sebesar Rp '.number_format($surplus).' sebaiknya dipindahkan ke SBN atau Emas biar makin cuan. 💰',
             ];
-        } elseif ($actualCash < ($monthlyNeed * 0.5)) {
+        } elseif ($actualCash < $monthlyNeed * 0.5) {
             $advice[] = [
                 'action' => 'REPLENISH',
                 'reason' => 'Dana tunai kita terlalu rendah nih. Pertimbangkan untuk mencairkan sebagian investasi atau kurangi jajan dulu ya Sayang. 🥺',

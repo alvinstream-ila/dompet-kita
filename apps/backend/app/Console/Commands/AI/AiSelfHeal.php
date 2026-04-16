@@ -57,13 +57,12 @@ class AiSelfHeal extends Command
             if ($isAutoFix) {
                 $this->comment('🚀 Triggering Automated Self-Healing...');
                 foreach ($result['actions_taken'] as $actionItem) {
-                    $this->info("   ✅ $actionItem");
+                    $this->info("   ✅ {$actionItem}");
                 }
                 $this->info('✨ System restored to stable state.');
             } else {
                 $this->warn('💡 TIP: Run with --auto-fix to automatically clear cache and optimize config.');
             }
-
         } catch (Exception $e) {
             $this->error("Fatal Error during self-healing: {$e->getMessage()}");
 

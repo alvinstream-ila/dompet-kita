@@ -1,6 +1,6 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Pencil, Trash2, History as HistoryIcon } from 'lucide-react';
+import { History as HistoryIcon, Pencil, Trash2 } from 'lucide-react';
+import type React from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { Loan } from '@/types';
@@ -35,8 +35,8 @@ export const LoanCard: React.FC<LoanCardProps> = ({
           className={cn(
             'rounded-full px-4 py-1.5 text-[9px] font-black tracking-[0.2em] uppercase shadow-xs',
             loan.type === 'utang'
-              ? 'border border-rose-100 bg-rose-50 text-rose-600'
-              : 'border border-emerald-100 bg-emerald-50 text-emerald-600'
+              ? 'border-red-stat/10 bg-red-stat/5 text-red-stat border'
+              : 'border-green-stat/10 bg-green-stat/5 text-green-stat border'
           )}
         >
           {loan.type === 'utang' ? 'Titipan Masuk' : 'Titipan Keluar'}
@@ -47,7 +47,7 @@ export const LoanCard: React.FC<LoanCardProps> = ({
               <Button
                 variant="ghost"
                 size="icon"
-                className="size-9 rounded-xl border border-transparent shadow-sm transition-all hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600 active:scale-90"
+                className="hover:border-blue-royal/10 hover:bg-blue-royal/5 hover:text-blue-royal size-9 rounded-xl border border-transparent shadow-sm transition-all active:scale-90"
                 onClick={() => onEdit(loan)}
               >
                 <Pencil className="size-4" strokeWidth={2.5} />
@@ -56,7 +56,7 @@ export const LoanCard: React.FC<LoanCardProps> = ({
             <Button
               variant="ghost"
               size="icon"
-              className="size-9 rounded-xl border border-transparent shadow-sm transition-all hover:border-rose-100 hover:bg-rose-50 hover:text-rose-600 active:scale-90"
+              className="hover:border-red-stat/10 hover:bg-red-stat/5 hover:text-red-stat size-9 rounded-xl border border-transparent shadow-sm transition-all active:scale-90"
               onClick={() => onDelete(loan)}
             >
               <Trash2 className="size-4" strokeWidth={2.5} />
@@ -67,7 +67,7 @@ export const LoanCard: React.FC<LoanCardProps> = ({
 
       <div className="space-y-6">
         <div>
-          <h3 className="mb-2 text-xl leading-none font-black tracking-tight text-slate-800 transition-colors group-hover:text-pink-600">
+          <h3 className="group-hover:text-pink-primary mb-2 text-xl leading-none font-black tracking-tight text-slate-800 transition-colors">
             {loan.contact_name}
           </h3>
           <p className="line-clamp-1 max-w-[200px] text-[10px] leading-relaxed font-black tracking-[0.15em] text-slate-400 uppercase">
@@ -94,16 +94,16 @@ export const LoanCard: React.FC<LoanCardProps> = ({
                   className={cn(
                     'size-1.5 rounded-full',
                     loan.status === 'paid'
-                      ? 'bg-emerald-500'
-                      : 'animate-pulse bg-amber-500'
+                      ? 'bg-green-stat'
+                      : 'bg-yellow-outlook animate-pulse'
                   )}
                 />
                 <p
                   className={cn(
                     'text-[9px] font-black tracking-widest uppercase',
                     loan.status === 'paid'
-                      ? 'text-emerald-500'
-                      : 'text-amber-500'
+                      ? 'text-green-stat'
+                      : 'text-yellow-outlook'
                   )}
                 >
                   {loan.status === 'paid' ? 'Lunas' : 'Berjalan'}
@@ -120,8 +120,8 @@ export const LoanCard: React.FC<LoanCardProps> = ({
               className={cn(
                 'h-full rounded-full shadow-[0_0_10px_rgba(0,0,0,0.1)] transition-all duration-700',
                 loan.type === 'utang'
-                  ? 'bg-linear-to-r from-rose-400 to-rose-600'
-                  : 'bg-linear-to-r from-emerald-400 to-emerald-600'
+                  ? 'from-red-stat/60 to-red-stat bg-linear-to-r'
+                  : 'from-green-stat/60 to-green-stat bg-linear-to-r'
               )}
             />
           </div>

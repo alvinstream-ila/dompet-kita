@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
+import { CheckCircle, Loader2, Lock, LogIn, Mail, User } from 'lucide-react';
 import Image from 'next/image';
-import api from '@/lib/axios';
-import { useAuth } from '@/features/auth';
-import { Mail, Lock, Loader2, LogIn, User, CheckCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import type React from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/features/auth';
+import api from '@/lib/axios';
 import { cn } from '@/lib/utils';
 
 export type AuthMode = 'forgot' | 'signup' | 'login' | '2fa';
@@ -25,6 +26,7 @@ const CustomLogo: React.FC = () => (
 
 const GoogleIcon = () => (
   <svg viewBox="0 0 24 24" className="h-6 w-6">
+    <title>Google Logo</title>
     <path
       fill="#EA4335"
       d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115z"
@@ -46,6 +48,7 @@ const GoogleIcon = () => (
 
 const FacebookLogo = () => (
   <svg viewBox="0 0 24 24" className="h-8 w-8 fill-current text-[#1877F2]">
+    <title>Facebook Logo</title>
     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
   </svg>
 );
@@ -249,7 +252,7 @@ const Branding = () => (
       <h1 className="text-left text-lg leading-none font-black tracking-tighter text-slate-900 md:text-xl">
         Dompet Kita
       </h1>
-      <span className="font-script -rotate-1 transform text-[12px] text-pink-500 drop-shadow-sm">
+      <span className="font-script text-pink-primary -rotate-1 transform text-[12px] drop-shadow-sm">
         Financial Planner
       </span>
     </div>
@@ -263,28 +266,28 @@ const AuthHeader = ({ mode }: { mode: AuthMode }) => {
   > = {
     forgot: {
       icon: (
-        <Lock className="h-10 w-10 text-yellow-500 transition-transform group-hover:scale-110" />
+        <Lock className="text-yellow-outlook h-10 w-10 transition-transform group-hover:scale-110" />
       ),
       title: 'Reset Password',
       sub: 'Biar Kami Bantu Ingat Kembali',
     },
     signup: {
       icon: (
-        <User className="h-10 w-10 text-pink-500 transition-transform group-hover:scale-110" />
+        <User className="text-pink-primary h-10 w-10 transition-transform group-hover:scale-110" />
       ),
       title: 'Create New Account',
       sub: 'Join Us To Start Managing Better',
     },
     login: {
       icon: (
-        <LogIn className="h-10 w-10 text-slate-900 transition-transform group-hover:scale-110" />
+        <LogIn className="text-blue-royal h-10 w-10 transition-transform group-hover:scale-110" />
       ),
       title: 'Sign In With Email',
       sub: 'Make Your Dream Come True With Planning Your Finance',
     },
     '2fa': {
       icon: (
-        <Lock className="h-10 w-10 text-pink-500 transition-transform group-hover:scale-110" />
+        <Lock className="text-pink-primary h-10 w-10 transition-transform group-hover:scale-110" />
       ),
       title: 'Security Verification',
       sub: 'Cek Email Kamu Buat Kode Aman Ya Sayang! ❤️',
@@ -314,12 +317,12 @@ const SuccessAlert = ({ message }: { message: string | null }) => {
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="flex items-start gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 p-4"
+      className="border-green-stat/20 bg-green-stat/10 flex items-start gap-3 rounded-2xl border p-4"
     >
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+      <div className="bg-green-stat/10 text-green-stat flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
         <CheckCircle className="h-4 w-4" />
       </div>
-      <p className="text-[11px] leading-relaxed font-bold text-emerald-700">
+      <p className="text-green-stat text-[11px] leading-relaxed font-bold">
         {message}
       </p>
     </motion.div>
@@ -346,11 +349,13 @@ const AuthInput = ({
   disabled?: boolean;
 }) => {
   const ringColor =
-    focusColor === 'pink' ? 'focus:ring-pink-500/20' : 'focus:ring-blue-500/20';
+    focusColor === 'pink'
+      ? 'focus:ring-[var(--color-pink-primary)]/20'
+      : 'focus:ring-[var(--color-blue-royal)]/20';
   const iconColor =
     focusColor === 'pink'
-      ? 'group-focus-within:text-pink-500'
-      : 'group-focus-within:text-blue-500';
+      ? 'group-focus-within:text-[var(--color-pink-primary)]'
+      : 'group-focus-within:text-[var(--color-blue-royal)]';
 
   return (
     <div className="group relative">
@@ -388,19 +393,19 @@ const SubmitButton = ({
 }) => {
   const config: Record<AuthMode, { bg: string; label: string }> = {
     forgot: {
-      bg: 'bg-yellow-500 hover:bg-yellow-600 shadow-yellow-500/30 text-slate-900',
+      bg: 'bg-[var(--color-yellow-outlook)] hover:brightness-110 shadow-[var(--color-yellow-outlook)]/30 text-slate-900',
       label: 'Send Reset Link',
     },
     signup: {
-      bg: 'bg-pink-500 hover:bg-pink-600 shadow-pink-500/30 text-white',
+      bg: 'bg-[var(--color-pink-primary)] hover:brightness-110 shadow-[var(--color-pink-primary)]/30 text-white',
       label: 'Create Account',
     },
     login: {
-      bg: 'bg-blue-500 hover:bg-blue-600 shadow-blue-500/30 text-white',
+      bg: 'bg-[var(--color-blue-royal)] hover:brightness-110 shadow-[var(--color-blue-royal)]/30 text-white',
       label: 'Log In',
     },
     '2fa': {
-      bg: 'bg-pink-500 hover:bg-pink-600 shadow-pink-500/30 text-white',
+      bg: 'bg-[var(--color-pink-primary)] hover:brightness-110 shadow-[var(--color-pink-primary)]/30 text-white',
       label: 'Verify Code',
     },
   };
@@ -448,6 +453,7 @@ const ModeSwitcher = ({
   return (
     <div className="pt-2 pb-4 text-center">
       <button
+        type="button"
         onClick={onSignUpToggle}
         className="text-[11px] font-black tracking-widest text-slate-500 uppercase transition-all hover:text-slate-900"
       >
@@ -455,6 +461,7 @@ const ModeSwitcher = ({
       </button>
       {is2faMode && (
         <button
+          type="button"
           onClick={() => {
             setIs2faMode(false);
             setTwoFactorCode('');
@@ -467,6 +474,7 @@ const ModeSwitcher = ({
       )}
       {mode === 'forgot' && (
         <button
+          type="button"
           onClick={onCancelForgot}
           className="mx-auto mt-4 block text-[11px] font-black tracking-widest text-slate-400 uppercase transition-all hover:text-slate-800"
         >

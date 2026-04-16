@@ -28,6 +28,16 @@ class TransactionInsight extends Model
     ];
 
     /**
+     * Get the user that owns the insight.
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -38,15 +48,5 @@ class TransactionInsight extends Model
             'metadata' => 'array',
             'impact_value' => 'decimal:2',
         ];
-    }
-
-    /**
-     * Get the user that owns the insight.
-     *
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 }

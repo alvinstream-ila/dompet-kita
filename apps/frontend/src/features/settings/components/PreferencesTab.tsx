@@ -1,13 +1,12 @@
-import React from 'react';
 import {
-  ShieldCheck,
   CalendarDays,
-  EyeOff,
   Coins,
+  EyeOff,
   Settings2,
+  ShieldCheck,
 } from 'lucide-react';
+import type React from 'react';
 import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
@@ -15,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 
 interface UserSettings {
   monthlyBudgetLimit: number;
@@ -45,7 +45,7 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
     <div className="animate-in slide-in-from-right-2 m-0 space-y-6 duration-300">
       <div className="space-y-3 rounded-2xl border border-slate-100 bg-slate-50 p-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
+          <div className="bg-green-stat/20 text-green-stat flex h-8 w-8 items-center justify-center rounded-lg">
             <ShieldCheck className="h-4 w-4" />
           </div>
           <div className="flex flex-col">
@@ -71,7 +71,7 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
             className="h-10 rounded-xl border-slate-200 bg-white pl-9 text-sm font-bold"
           />
           {monthlyBudgetLimit > 0 && (
-            <p className="mt-2 px-1 text-[9px] font-black tracking-tight text-emerald-500 uppercase italic">
+            <p className="text-green-stat mt-2 px-1 text-[9px] font-black tracking-tight uppercase italic">
               {new Intl.NumberFormat('id-ID', {
                 notation: 'compact',
                 compactDisplay: 'long',
@@ -84,7 +84,7 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
 
       <div className="space-y-3 rounded-2xl border border-slate-100 bg-slate-50 p-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+          <div className="bg-blue-royal/20 text-blue-royal flex h-8 w-8 items-center justify-center rounded-lg">
             <CalendarDays className="h-4 w-4" />
           </div>
           <div className="flex flex-col">
@@ -99,9 +99,9 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
         <select
           value={budgetCycleStart}
           onChange={(e) =>
-            updateSettings({ budgetCycleStart: parseInt(e.target.value) })
+            updateSettings({ budgetCycleStart: parseInt(e.target.value, 10) })
           }
-          className="h-10 w-full rounded-xl border-slate-200 bg-white px-3 text-sm font-bold focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+          className="focus:ring-blue-royal/20 h-10 w-full rounded-xl border-slate-200 bg-white px-3 text-sm font-bold focus:ring-2 focus:outline-none"
         >
           {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
             <option key={day} value={day}>
@@ -113,7 +113,7 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
 
       <div className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-pink-100 text-pink-600">
+          <div className="bg-pink-primary/20 text-pink-primary flex h-8 w-8 items-center justify-center rounded-lg">
             <EyeOff className="h-4 w-4" />
           </div>
           <div className="flex flex-col">
@@ -136,7 +136,7 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
       <div className="space-y-3 rounded-2xl border border-slate-100 bg-slate-50 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
+            <div className="bg-yellow-outlook/20 text-yellow-outlook flex h-8 w-8 items-center justify-center rounded-lg">
               <Coins className="h-4 w-4" />
             </div>
             <div className="flex flex-col">
@@ -152,67 +152,67 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
             value={currencyFormat}
             onValueChange={(value) => updateSettings({ currencyFormat: value })}
           >
-            <SelectTrigger className="h-9 w-[140px] rounded-lg border-slate-200 bg-white text-[11px] font-black focus:ring-amber-500/20">
+            <SelectTrigger className="focus:ring-yellow-outlook/20 h-9 w-[140px] rounded-lg border-slate-200 bg-white text-[11px] font-black">
               <SelectValue placeholder="Pilih Mata Uang" />
             </SelectTrigger>
             <SelectContent className="rounded-xl border-slate-100 shadow-xl shadow-slate-200/50">
               <SelectItem
                 value="IDR"
-                className="py-2 text-[11px] font-bold focus:bg-amber-50"
+                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
               >
                 IDR - Rupiah 🇮🇩
               </SelectItem>
               <SelectItem
                 value="USD"
-                className="py-2 text-[11px] font-bold focus:bg-amber-50"
+                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
               >
                 USD - Dollar 🇺🇸
               </SelectItem>
               <SelectItem
                 value="EUR"
-                className="py-2 text-[11px] font-bold focus:bg-amber-50"
+                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
               >
                 EUR - Euro 🇪🇺
               </SelectItem>
               <SelectItem
                 value="JPY"
-                className="py-2 text-[11px] font-bold focus:bg-amber-50"
+                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
               >
                 JPY - Yen 🇯🇵
               </SelectItem>
               <SelectItem
                 value="SGD"
-                className="py-2 text-[11px] font-bold focus:bg-amber-50"
+                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
               >
                 SGD - Dollar 🇸🇬
               </SelectItem>
               <SelectItem
                 value="MYR"
-                className="py-2 text-[11px] font-bold focus:bg-amber-50"
+                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
               >
                 MYR - Ringgit 🇲🇾
               </SelectItem>
               <SelectItem
                 value="SAR"
-                className="py-2 text-[11px] font-bold focus:bg-amber-50"
+                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
               >
                 SAR - Riyal 🇸🇦
               </SelectItem>
               <SelectItem
                 value="GBP"
-                className="py-2 text-[11px] font-bold focus:bg-amber-50"
+                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
               >
                 GBP - Pound 🇬🇧
               </SelectItem>
               <SelectItem
                 value="AUD"
-                className="py-2 text-[11px] font-bold focus:bg-amber-50"
+                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
               >
                 AUD - Dollar 🇦🇺
               </SelectItem>
               <SelectItem
                 value="KRW"
-                className="py-2 text-[11px] font-bold focus:bg-amber-50"
+                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
               >
                 KRW - Won 🇰🇷
               </SelectItem>
@@ -225,7 +225,7 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
             <span className="text-[9px] font-bold tracking-tight text-slate-400 uppercase">
               Kurs Realtime (vs IDR)
             </span>
-            <span className="text-[10px] font-black text-amber-600">
+            <span className="text-yellow-outlook text-[10px] font-black">
               1 {currencyFormat} ={' '}
               {new Intl.NumberFormat('id-ID', {
                 maximumFractionDigits: 2,

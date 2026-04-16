@@ -18,7 +18,23 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // ── Firewall Autoload Patch ────────────────────────────────────────────
+        // akaunting/laravel-firewall is installed but missing from the static
+        // autoload map (vendor/composer/autoload_static.php) because composer
+        // dump-autoload has not been run yet. We register the namespace manually
+        // here so the Provider in bootstrap/providers.php can be resolved.
+        // This can be removed after running `composer dump-autoload` on the server.
+        spl_autoload_register(function (string $class): void {
+            $prefix = 'Akaunting\\Firewall\\';
+            $baseDir = base_path('vendor/akaunting/laravel-firewall/src/');
+            if (str_starts_with($class, $prefix)) {
+                $relative = str_replace('\\', '/', substr($class, strlen($prefix)));
+                $file = $baseDir.$relative.'.php';
+                if (file_exists($file)) {
+                    require $file;
+                }
+            }
+        }, prepend: true);
     }
 
     /**
@@ -83,7 +99,7 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('production') || str_starts_with($appUrl, 'https://')) {
             config(['logging.channels.stack.level' => 'info']);
             URL::forceScheme('https');
-            URL::forceRootUrl($appUrl ?: null);
+            URL::forceRootUrl($appUrl ? $appUrl : null);
         }
     }
 }

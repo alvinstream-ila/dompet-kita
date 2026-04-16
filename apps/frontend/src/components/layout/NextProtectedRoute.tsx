@@ -1,15 +1,18 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
+import { usePathname, useRouter } from 'next/navigation';
+import type React from 'react';
+import { useEffect } from 'react';
 import { useAuth } from '@/features/auth';
-import { motion, AnimatePresence } from 'framer-motion';
 
 /**
  * NextProtectedRoute - Client-Side Auth Guard
  * Wraps pages that require an active session.
  */
-export function NextProtectedRoute({ children }: Readonly<{ children: React.ReactNode }>) {
+export function NextProtectedRoute({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -29,7 +32,7 @@ export function NextProtectedRoute({ children }: Readonly<{ children: React.Reac
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-          className="h-10 w-10 border-4 border-deep-sea border-t-transparent rounded-full"
+          className="border-deep-sea h-10 w-10 rounded-full border-4 border-t-transparent"
         />
       </div>
     );

@@ -1,14 +1,14 @@
-import React from 'react';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
   Calendar as CalendarIcon,
   Heart,
   Pencil,
-  Trash2,
   PiggyBank,
+  Trash2,
   Wallet,
 } from 'lucide-react';
+import Image from 'next/image';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -29,11 +29,11 @@ interface HolidayTripCardProps {
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'completed':
-      return 'bg-emerald-50 text-emerald-600 border-emerald-100';
+      return 'bg-green-stat/5 text-green-stat border-green-stat/10';
     case 'booked':
-      return 'bg-blue-50 text-blue-600 border-blue-100';
+      return 'bg-blue-royal/5 text-blue-royal border-blue-royal/10';
     default:
-      return 'bg-amber-50 text-amber-600 border-amber-100';
+      return 'bg-yellow-outlook/5 text-yellow-outlook border-yellow-outlook/10';
   }
 };
 
@@ -102,7 +102,7 @@ export const HolidayTripCard: React.FC<HolidayTripCardProps> = ({
           <div className="mb-4 flex items-start justify-end">
             <div className="flex gap-1">
               <button
-                className="p-2 text-slate-300 transition-colors hover:text-blue-500"
+                className="hover:text-blue-royal p-2 text-slate-300 transition-colors"
                 onClick={() => onEdit(holiday)}
               >
                 <Pencil className="size-4" />
@@ -112,8 +112,8 @@ export const HolidayTripCard: React.FC<HolidayTripCardProps> = ({
                 className={cn(
                   'p-2 transition-all active:scale-95',
                   holiday.is_favorite
-                    ? 'text-pink-500'
-                    : 'text-slate-300 hover:text-pink-500'
+                    ? 'text-pink-primary'
+                    : 'hover:text-pink-primary text-slate-300'
                 )}
               >
                 <Heart
@@ -125,14 +125,14 @@ export const HolidayTripCard: React.FC<HolidayTripCardProps> = ({
               </button>
               <button
                 onClick={() => onDelete(holiday)}
-                className="p-2 text-slate-300 transition-colors hover:text-rose-500"
+                className="hover:text-red-stat p-2 text-slate-300 transition-colors"
               >
                 <Trash2 className="size-4" />
               </button>
             </div>
           </div>
 
-          <h3 className="mb-2 line-clamp-1 text-2xl font-black tracking-tight text-slate-800 transition-colors group-hover:text-blue-600">
+          <h3 className="group-hover:text-blue-royal mb-2 line-clamp-1 text-2xl font-black tracking-tight text-slate-800 transition-colors">
             {holiday.destination}
           </h3>
 
@@ -162,7 +162,7 @@ export const HolidayTripCard: React.FC<HolidayTripCardProps> = ({
                   animate={{
                     width: `${Math.min(100, ((holiday.funded_amount || 0) / holiday.budget) * 100)}%`,
                   }}
-                  className="h-full bg-linear-to-r from-emerald-500 to-teal-500"
+                  className="from-green-stat/80 to-green-stat h-full bg-linear-to-r"
                 />
               </div>
             </div>
@@ -182,7 +182,7 @@ export const HolidayTripCard: React.FC<HolidayTripCardProps> = ({
                   animate={{
                     width: `${Math.min(100, ((holiday.spent || 0) / holiday.budget) * 100)}%`,
                   }}
-                  className="h-full bg-linear-to-r from-blue-500 to-indigo-500"
+                  className="from-blue-royal/80 to-blue-royal h-full bg-linear-to-r"
                 />
               </div>
             </div>
@@ -203,7 +203,7 @@ export const HolidayTripCard: React.FC<HolidayTripCardProps> = ({
               variant="ghost"
               size="icon"
               onClick={() => setIsFundModalOpen(true)}
-              className="transform rounded-2xl bg-white shadow-sm transition-all hover:bg-emerald-600 hover:text-white"
+              className="hover:bg-green-stat transform rounded-2xl bg-white shadow-sm transition-all hover:text-white"
               title="Isi Dana Liburan"
             >
               <PiggyBank className="size-5" />
@@ -212,7 +212,7 @@ export const HolidayTripCard: React.FC<HolidayTripCardProps> = ({
               variant="ghost"
               size="icon"
               onClick={() => onExpense(holiday)}
-              className="transform rounded-2xl bg-white shadow-sm transition-all group-hover:rotate-12 hover:bg-pink-600 hover:text-white"
+              className="hover:bg-pink-primary transform rounded-2xl bg-white shadow-sm transition-all group-hover:rotate-12 hover:text-white"
               title="Catat Pengeluaran"
             >
               <Wallet className="size-5" />

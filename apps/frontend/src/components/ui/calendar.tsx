@@ -1,21 +1,20 @@
 'use client';
 
-import * as React from 'react';
 import {
-  DayPicker,
-  getDefaultClassNames,
-  type DayButton,
-  type Locale,
-} from 'react-day-picker';
-
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { buttonVariants } from '@/components/ui/button-variants';
-import {
+  ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  ChevronDownIcon,
 } from 'lucide-react';
+import * as React from 'react';
+import {
+  type DayButton,
+  DayPicker,
+  getDefaultClassNames,
+  type Locale,
+} from 'react-day-picker';
+import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button-variants';
+import { cn } from '@/lib/utils';
 
 function Calendar({
   className,
@@ -156,11 +155,18 @@ function CalendarRoot({
   className,
   rootRef,
   ...props
-}: Readonly<React.HTMLAttributes<HTMLDivElement> & {
-  rootRef?: React.Ref<HTMLDivElement>;
-}>) {
+}: Readonly<
+  React.HTMLAttributes<HTMLDivElement> & {
+    rootRef?: React.Ref<HTMLDivElement>;
+  }
+>) {
   return (
-    <div data-slot="calendar" ref={rootRef} className={cn(className)} {...props} />
+    <div
+      data-slot="calendar"
+      ref={rootRef}
+      className={cn(className)}
+      {...props}
+    />
   );
 }
 
@@ -168,9 +174,11 @@ function CalendarChevron({
   className,
   orientation,
   ...props
-}: Readonly<React.ComponentProps<typeof ChevronLeftIcon> & {
-  orientation?: 'left' | 'right' | 'up' | 'down';
-}>) {
+}: Readonly<
+  React.ComponentProps<typeof ChevronLeftIcon> & {
+    orientation?: 'left' | 'right' | 'up' | 'down';
+  }
+>) {
   if (orientation === 'left') {
     return <ChevronLeftIcon className={cn('size-4', className)} {...props} />;
   }
@@ -188,7 +196,9 @@ function CalendarDayButton({
   modifiers,
   locale,
   ...props
-}: Readonly<React.ComponentProps<typeof DayButton> & { locale?: Partial<Locale> }>) {
+}: Readonly<
+  React.ComponentProps<typeof DayButton> & { locale?: Partial<Locale> }
+>) {
   const defaultClassNames = getDefaultClassNames();
 
   const ref = React.useRef<HTMLButtonElement>(null);
@@ -242,9 +252,9 @@ function CalendarDayButtonWrapper({
 
 export {
   Calendar,
-  CalendarDayButton,
-  CalendarRoot,
   CalendarChevron,
-  CalendarWeekNumber,
+  CalendarDayButton,
   CalendarDayButtonWrapper,
+  CalendarRoot,
+  CalendarWeekNumber,
 };

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Search, Settings2, ChevronDown, RefreshCw } from 'lucide-react';
+import { ChevronDown, RefreshCw, Search, Settings2 } from 'lucide-react';
+import type React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -29,20 +29,20 @@ export const TransactionFilters: React.FC<TransactionFiltersProps> = ({
     <div className="mb-10 flex flex-col items-center justify-between gap-5 rounded-[32px] border border-slate-50 bg-white p-5 shadow-sm transition-all hover:shadow-md lg:flex-row">
       <div className="flex w-full flex-1 flex-col gap-3 sm:flex-row sm:gap-4">
         <div className="group relative flex-1">
-          <Search className="absolute top-1/2 left-5 size-4 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-blue-500" />
+          <Search className="group-focus-within:text-blue-royal absolute top-1/2 left-5 size-4 -translate-y-1/2 text-slate-400 transition-colors" />
           <Input
             placeholder="Cari transaksi jajan kita, Sayang..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="h-14 rounded-2xl border-none bg-slate-50/50 pl-14 font-bold shadow-inner transition-colors group-hover:bg-slate-100 focus-visible:ring-blue-500/10"
+            className="focus-visible:ring-blue-royal/10 h-14 rounded-2xl border-none bg-slate-50/50 pl-14 font-bold shadow-inner transition-colors group-hover:bg-slate-100"
           />
         </div>
         <div className="group relative w-full sm:w-auto">
-          <Settings2 className="pointer-events-none absolute top-1/2 left-5 size-4 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-blue-500" />
+          <Settings2 className="group-focus-within:text-blue-royal pointer-events-none absolute top-1/2 left-5 size-4 -translate-y-1/2 text-slate-400 transition-colors" />
           <select
             value={selectedCategory}
             onChange={(e) => onCategoryChange(e.target.value)}
-            className="h-14 w-full min-w-[200px] cursor-pointer appearance-none rounded-2xl border-none bg-slate-50/50 pr-12 pl-14 text-[10px] font-black tracking-[0.2em] text-slate-500 uppercase shadow-inner transition-colors group-hover:bg-slate-100 focus:ring-4 focus:ring-blue-500/5 focus:outline-none"
+            className="focus:ring-blue-royal/5 h-14 w-full min-w-[200px] cursor-pointer appearance-none rounded-2xl border-none bg-slate-50/50 pr-12 pl-14 text-[10px] font-black tracking-[0.2em] text-slate-500 uppercase shadow-inner transition-colors group-hover:bg-slate-100 focus:ring-4 focus:outline-none"
           >
             {categories.map((cat: string) => (
               <option

@@ -37,7 +37,7 @@ class BudgetService
     {
         $year = $year ?? Carbon::now()->year;
         // Normalize 0-indexed month to 1-indexed Carbon month
-        $month = ($monthIndex !== null) ? ($monthIndex + 1) : Carbon::now()->month;
+        $month = $monthIndex !== null ? $monthIndex + 1 : Carbon::now()->month;
 
         $start = Carbon::createFromDate($year, $month, $startDay)->startOfDay();
         $end = $start->copy()->addMonth()->subSecond();
@@ -76,7 +76,7 @@ class BudgetService
 
             $limit = (float) $budget->limit;
             $remaining = max(0, $limit - $used);
-            $percentage = $limit > 0 ? ($used / $limit) * 100 : 0;
+            $percentage = $limit > 0 ? $used / $limit * 100 : 0;
 
             return [
                 'id' => (string) $budget->id,

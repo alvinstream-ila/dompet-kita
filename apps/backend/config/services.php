@@ -64,4 +64,9 @@ return [
         'redirect' => env('FACEBOOK_REDIRECT_URL'),
     ],
 
+    'unkey' => [
+        'api_id' => env('UNKEY_API_ID'),
+        'root_key' => env('UNKEY_ROOT_KEY'),
+    ],
+
 ];

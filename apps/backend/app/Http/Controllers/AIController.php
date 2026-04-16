@@ -63,7 +63,6 @@ class AIController extends Controller
                 'category' => (string) ($result['category'] ?? 'Other'),
                 'message' => (string) ($result['message'] ?? ''),
             ], 'Struk berhasil diproses! ✨');
-
         } catch (\Throwable $e) {
             Log::error('AI_RECEIPT_SCAN_ERROR: '.$e->getMessage());
 
@@ -120,7 +119,6 @@ class AIController extends Controller
                 'title' => $data['title'],
                 'insight' => $data['insight'],
             ]);
-
         } catch (\Throwable $e) {
             Log::error('AI_DASHBOARD_INSIGHT_ERROR: '.$e->getMessage());
 
@@ -243,7 +241,7 @@ class AIController extends Controller
         try {
             $trajectories = $this->simulateMonteCarloAction->execute($user, $months);
 
-            return $this->success($trajectories, "Monte Carlo 100-iteration wealth pulse for $months months.");
+            return $this->success($trajectories, "Monte Carlo 100-iteration wealth pulse for {$months} months.");
         } catch (\Exception $e) {
             Log::error('AI_WEALTH_SIMULATION_ERROR: '.$e->getMessage());
 

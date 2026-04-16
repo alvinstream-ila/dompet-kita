@@ -38,7 +38,7 @@ class GoalResource extends JsonResource
             'status' => $this->status,
             'note' => $this->note,
             'progress_percentage' => (float) ($this->target_amount > 0
-                ? ($this->current_amount / $this->target_amount) * 100
+                ? $this->current_amount / $this->target_amount * 100
                 : 0),
             'created_at' => $this->created_at->toIso8601String(),
         ];

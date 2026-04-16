@@ -72,7 +72,7 @@ class CalculateTaxAction extends BaseAction
         $taxableIncome = max(0, $totalIncome - $ptkp);
         $taxPayable = $this->calculateProgressiveTax($taxableIncome);
 
-        $effectiveRate = $totalIncome > 0 ? ($taxPayable / $totalIncome) * 100 : 0;
+        $effectiveRate = $totalIncome > 0 ? $taxPayable / $totalIncome * 100 : 0;
 
         return [
             'year' => $year,

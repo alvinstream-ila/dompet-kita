@@ -58,7 +58,7 @@ class AiDoctorCommand extends Command
                     $provider->generateText('Hi');
                     $end = microtime(true);
                     $status = '✅ Healthy';
-                    $latency = round(($end - $start), 2).'s';
+                    $latency = round($end - $start, 2).'s';
                 } catch (\Exception $e) {
                     $status = '❌ Failed: '.substr($e->getMessage(), 0, 50);
                 }

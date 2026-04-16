@@ -44,22 +44,6 @@ class Holiday extends Model
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'budget' => 'decimal:2',
-            'funded_amount' => 'decimal:2',
-            'spent' => 'decimal:2',
-            'start_date' => 'date',
-            'end_date' => 'date',
-        ];
-    }
-
-    /**
      * Get the user that owns the holiday.
      *
      * @return BelongsTo<User, $this>
@@ -77,5 +61,21 @@ class Holiday extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(HolidayTransaction::class);
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'budget' => 'decimal:2',
+            'funded_amount' => 'decimal:2',
+            'spent' => 'decimal:2',
+            'start_date' => 'date',
+            'end_date' => 'date',
+        ];
     }
 }
