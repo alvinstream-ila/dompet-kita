@@ -77,7 +77,7 @@ export function ReportChartSkeleton() {
       <Card className="glass-premium h-80 rounded-[40px] border-none p-8">
         <Skeleton className="mb-8 h-5 w-40" />
         <div className="flex h-48 items-end justify-between gap-2">
-          {[70, 40, 90, 60, 80, 50].map((h, _i) => (
+          {[70, 40, 90, 60, 80, 50].map((h) => (
             <Skeleton
               key={`bar-${h}`}
               className="w-full"
