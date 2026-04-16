@@ -104,6 +104,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CI/CD Fixes**:
     - [Infra] Resolved `google/osv-scanner-action` integration error by transitioning to job-level reusable workflows.
     - [Infra] Implemented sequential quality gate: `sentinel-gate` now waits for `sentinel-osv` results.
+- [Frontend] Migrated ESLint configuration to native Next.js 16 Flat Config, resolving push-blocking schema validation errors.
 - **Docker Compose**: Pre-configured setup for local PostgreSQL, Redis, and Minio dependencies.
 - **Github Actions**: Automated complete CI/CD pipeline guarding production deployments.
 

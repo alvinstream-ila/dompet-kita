@@ -1,26 +1,15 @@
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-import { FlatCompat } from "@eslint/eslintrc";
-import js from "@eslint/js";
+import nextVitals from "eslint-config-next/core-web-vitals";
 import reactHooks from "eslint-plugin-react-hooks";
 import pluginSecurity from "eslint-plugin-security";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-	baseDirectory: __dirname,
-});
-
 const config = [
 	{
 		ignores: ["dist", ".next", "node_modules", "next-env.d.ts"],
 	},
-	js.configs.recommended,
+	...nextVitals,
 	...tseslint.configs.recommended,
-	...compat.extends("next/core-web-vitals"),
 	{
 		files: ["**/*.{ts,tsx}"],
 		plugins: {
