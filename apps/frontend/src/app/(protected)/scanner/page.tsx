@@ -9,6 +9,7 @@ import {
   Upload,
   X,
 } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import type React from 'react';
 import { useRef, useState } from 'react';
@@ -142,10 +143,11 @@ export default function ReceiptScannerPage() {
               className="space-y-6"
             >
               <div className="relative aspect-3/4 overflow-hidden rounded-[30px] border-4 border-white shadow-inner">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={image}
                   alt="Receipt preview"
+                  width={600}
+                  height={800}
                   className="h-full w-full object-cover"
                 />
                 <button
@@ -189,6 +191,7 @@ export default function ReceiptScannerPage() {
                     </div>
                   </div>
                   <Button
+                    type="button"
                     onClick={handleSave}
                     className="mt-2 h-14 w-full rounded-2xl bg-emerald-600 font-black tracking-widest text-white uppercase shadow-lg shadow-emerald-200 hover:bg-emerald-700"
                   >
@@ -197,6 +200,7 @@ export default function ReceiptScannerPage() {
                 </motion.div>
               ) : (
                 <Button
+                  type="button"
                   onClick={processImage}
                   disabled={isScanning}
                   className="h-14 w-full rounded-2xl bg-linear-to-r from-pink-500 to-rose-600 text-lg font-black tracking-widest uppercase shadow-xl shadow-pink-200 transition-all active:scale-[0.98] disabled:opacity-70"

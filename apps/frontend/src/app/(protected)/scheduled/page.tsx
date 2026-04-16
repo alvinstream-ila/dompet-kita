@@ -90,6 +90,7 @@ export default function ScheduledBillsPage() {
           className="space-y-1"
         >
           <button
+            type="button"
             onClick={() => router.push('/')}
             className="group mb-2 flex items-center gap-2 transition-all"
           >

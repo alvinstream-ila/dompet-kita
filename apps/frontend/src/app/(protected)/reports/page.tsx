@@ -210,13 +210,13 @@ export default function ReportsPage() {
         { header: 'Tipe', key: 'type', width: 15 },
         { header: 'Nominal', key: 'amount', width: 18 },
       ];
-      transactions.forEach((t) =>
+      transactions.forEach((t) => {
         transSheet.addRow({
           date: new Date(t.date).toLocaleDateString('id-ID'),
           type: t.type,
           amount: t.amount,
-        })
-      );
+        });
+      });
       const buffer = await workbook.xlsx.writeBuffer();
       const blob = new Blob([buffer], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

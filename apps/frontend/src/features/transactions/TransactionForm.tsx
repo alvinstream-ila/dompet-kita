@@ -9,6 +9,7 @@ import {
   Sparkles,
   Target,
 } from 'lucide-react';
+import Image from 'next/image';
 import React, { type SyntheticEvent, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -525,10 +526,11 @@ const ReceiptSection: React.FC<ReceiptSectionProps> = ({
           animate={{ opacity: 1, y: 0 }}
           className="group relative aspect-video overflow-hidden rounded-2xl border border-slate-200 bg-slate-100"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={preview}
             alt="Receipt preview"
+            width={600}
+            height={400}
             className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">

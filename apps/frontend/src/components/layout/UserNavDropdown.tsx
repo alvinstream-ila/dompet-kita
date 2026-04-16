@@ -97,6 +97,7 @@ export const UserNavDropdown = React.memo(() => {
           </button>
 
           <button
+            type="button"
             onClick={() => {
               setInitialTab('preferences');
               setIsSettingsOpen(true);
@@ -119,6 +120,7 @@ export const UserNavDropdown = React.memo(() => {
 
         <div className="mt-1 border-t border-slate-50 pt-1">
           <button
+            type="button"
             onClick={handleLogout}
             className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-red-50"
           >

@@ -118,8 +118,8 @@ export const HomeQuickActions: React.FC = () => {
           onClick={() => {
             if (btn.isModal) {
               openAddModal();
-            } else {
-              router.push(btn.path!);
+            } else if (btn.path) {
+              router.push(btn.path);
             }
           }}
           className={cn(

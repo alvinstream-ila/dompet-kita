@@ -77,6 +77,7 @@ export const HolidayTripCard: React.FC<HolidayTripCardProps> = ({
 
           <div className="absolute top-6 left-6">
             <button
+              type="button"
               onClick={() => {
                 const statuses: Holiday['status'][] = [
                   'planning',
@@ -102,12 +103,14 @@ export const HolidayTripCard: React.FC<HolidayTripCardProps> = ({
           <div className="mb-4 flex items-start justify-end">
             <div className="flex gap-1">
               <button
+                type="button"
                 className="hover:text-blue-royal p-2 text-slate-300 transition-colors"
                 onClick={() => onEdit(holiday)}
               >
                 <Pencil className="size-4" />
               </button>
               <button
+                type="button"
                 onClick={() => onFavorite(holiday)}
                 className={cn(
                   'p-2 transition-all active:scale-95',
@@ -124,6 +127,7 @@ export const HolidayTripCard: React.FC<HolidayTripCardProps> = ({
                 />
               </button>
               <button
+                type="button"
                 onClick={() => onDelete(holiday)}
                 className="hover:text-red-stat p-2 text-slate-300 transition-colors"
               >

@@ -194,9 +194,12 @@ export default function HolidayPage() {
       {/* Modals Section */}
       <Dialog
         open={isAddDialogOpen}
-        onOpenChange={(open: boolean) =>
-          !open && (setIsAddDialogOpen(false), setEditingHoliday(null))
-        }
+        onOpenChange={(open: boolean) => {
+          if (!open) {
+            setIsAddDialogOpen(false);
+            setEditingHoliday(null);
+          }
+        }}
       >
         <DialogContent className="max-w-2xl rounded-[32px] p-8">
           <DialogHeader>
@@ -270,6 +273,7 @@ export default function HolidayPage() {
             {(['all', 'planning', 'booked', 'completed'] as const).map(
               (status) => (
                 <button
+                  type="button"
                   key={status}
                   onClick={() => setStatusFilter(status)}
                   className={cn(

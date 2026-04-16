@@ -169,8 +169,10 @@ export const FidgetPet: React.FC = () => {
                   </div>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setIsChatOpen(false)}
                   className="rounded-full p-1.5 transition-colors hover:bg-black/10"
+                  aria-label="Close Chat"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -233,12 +235,14 @@ export const FidgetPet: React.FC = () => {
                     className="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium placeholder:text-slate-400 focus:border-pink-300 focus:outline-none"
                   />
                   <button
+                    type="button"
                     onClick={handleSendMessage}
                     disabled={!inputValue.trim() || isPending}
                     className={cn(
                       'flex h-9 w-9 items-center justify-center rounded-full text-white shadow-lg transition-all active:scale-95 disabled:grayscale',
                       getPetColor()
                     )}
+                    aria-label="Send Message"
                   >
                     <Send className="h-4 w-4" />
                   </button>

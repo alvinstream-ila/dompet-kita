@@ -196,6 +196,7 @@ export default function LoansPage() {
       <div className="mb-10 flex justify-center">
         <div className="flex w-full max-w-[420px] transform-gpu gap-2 rounded-full border border-slate-100 bg-white/80 p-2 shadow-xl backdrop-blur-3xl transition-all hover:shadow-2xl">
           <button
+            type="button"
             onClick={() => setActiveTab('active')}
             className={cn(
               'flex h-14 flex-1 items-center justify-center gap-3 rounded-full text-[10px] font-black tracking-[0.2em] uppercase transition-all',
@@ -208,6 +209,7 @@ export default function LoansPage() {
             Titipan Aktif
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('finished')}
             className={cn(
               'flex h-14 flex-1 items-center justify-center gap-3 rounded-full text-[10px] font-black tracking-[0.2em] uppercase transition-all',

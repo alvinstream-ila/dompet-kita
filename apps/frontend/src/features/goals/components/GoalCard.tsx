@@ -145,6 +145,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
             </div>
             {!isCompleted && (
               <button
+                type="button"
                 onClick={() => onDelete(goal.id)}
                 className="hover:text-red-stat p-2 text-slate-300 transition-colors active:scale-90"
               >

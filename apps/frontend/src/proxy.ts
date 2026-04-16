@@ -5,7 +5,7 @@ import { middlewareLogic } from '@/lib/middleware-logic';
 
 // 🛡️ Initialize Arcjet
 const aj = arcjet({
-  key: process.env.ARCJET_KEY!, // Key from your .env file
+  key: process.env.ARCJET_KEY ?? '', // Key from your .env file
   characteristics: ['ip.src'], // Track requests by IP address
   rules: [
     // 1. Shield: Protect against common attacks like SQLi/XSS

@@ -143,7 +143,10 @@ export default function LegacyVaultPage() {
             dikirim secara aman ke pasangan yang terdaftar.&quot;
           </p>
 
-          <button className="w-full rounded-xl bg-sky-600 py-3 font-medium text-white transition-colors hover:bg-sky-500">
+          <button
+            type="button"
+            className="w-full rounded-xl bg-sky-600 py-3 font-medium text-white transition-colors hover:bg-sky-500"
+          >
             Ganti Pasangan
           </button>
         </motion.div>
@@ -160,10 +163,16 @@ export default function LegacyVaultPage() {
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm text-slate-400">
+              <label
+                htmlFor="inactive-threshold"
+                className="text-sm text-slate-400"
+              >
                 Threshold Masa Inaktif (Bulan)
               </label>
-              <select className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-white transition-all outline-none focus:ring-2 focus:ring-indigo-500/50">
+              <select
+                id="inactive-threshold"
+                className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-white transition-all outline-none focus:ring-2 focus:ring-indigo-500/50"
+              >
                 <option value="3">3 Bulan</option>
                 <option value="6" defaultValue="6">
                   6 Bulan (Recomended)
@@ -195,7 +204,10 @@ export default function LegacyVaultPage() {
               <FileText className="h-5 w-5 text-emerald-400" />
               Vault Archive
             </h3>
-            <button className="flex items-center gap-1 text-sm text-emerald-400 transition-colors hover:text-emerald-300">
+            <button
+              type="button"
+              className="flex items-center gap-1 text-sm text-emerald-400 transition-colors hover:text-emerald-300"
+            >
               Lihat Semua
             </button>
           </div>
@@ -219,7 +231,10 @@ export default function LegacyVaultPage() {
                     </p>
                   </div>
                 </div>
-                <button className="rounded-lg bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-400 transition-all hover:bg-emerald-500/20">
+                <button
+                  type="button"
+                  className="rounded-lg bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-400 transition-all hover:bg-emerald-500/20"
+                >
                   Download
                 </button>
               </div>
