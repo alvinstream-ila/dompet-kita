@@ -7,8 +7,15 @@ on:
     branches: [ "main" ]
 
 jobs:
+  sentinel-osv:
+    name: "Sovereign OSV Audit"
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v1
+    with:
+      scan-args: ./
+
   sentinel-gate:
     name: "Sovereign Security & Quality Gate"
+    needs: [sentinel-osv]
     runs-on: ubuntu-latest
     
     services:
@@ -116,7 +123,4 @@ jobs:
       - name: 🏗️ Build Production Bundle
         working-directory: ./apps/frontend
         run: npm run build
-      - name: 🔍 Google OSV-Scanner (Unlimited)
-        uses: google/osv-scanner-action@v2.3.5
-        with:
-          scan-args: ./
+

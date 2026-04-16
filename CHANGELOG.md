@@ -101,6 +101,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Session Purifier**: Git integrated end-of-session auto cleanup workflow.
 - **Cloud Orchestrator**: Unification of Railway, Supabase, and Storj backups via `cloud:sync`.
 - **E2E Testing Base**: Playwright test suite for unified frontend and backend integration validation.
+- **CI/CD Fixes**:
+    - [Infra] Resolved `google/osv-scanner-action` integration error by transitioning to job-level reusable workflows.
+    - [Infra] Implemented sequential quality gate: `sentinel-gate` now waits for `sentinel-osv` results.
 - **Docker Compose**: Pre-configured setup for local PostgreSQL, Redis, and Minio dependencies.
 - **Github Actions**: Automated complete CI/CD pipeline guarding production deployments.
 
