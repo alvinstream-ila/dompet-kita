@@ -96,7 +96,10 @@ class AppServiceProvider extends ServiceProvider
     private function bootSecurityGuards(): void
     {
         $appUrl = (string) config('app.url', '');
-        if ($this->app->environment('production') || str_starts_with($appUrl, 'https://')) {
+        $isSecure = str_starts_with($appUrl, 'https://');
+
+        // Only enforce production security guards if in production and NOT in testing
+        if (($this->app->environment('production') || $isSecure) && ! $this->app->environment('testing')) {
             config(['logging.channels.stack.level' => 'info']);
             URL::forceScheme('https');
             URL::forceRootUrl($appUrl ? $appUrl : null);

@@ -73,6 +73,36 @@ php artisan about | grep -i firewall
 php artisan route:list | grep -i firewall
 ```
 
+### [PMA-002] — Silent Test Failure due to Environment Misdetection
+**Date**: 2026-04-17  
+**Severity**: 🟠 High  
+**Component**: backend  
+**Status**: ✅ Resolved  
+
+#### What Happened
+Running `php artisan test` failed with exit code 1 but provided no clear output of which tests failed (it appeared as a silent hang or crash). When forced to show errors, it revealed a `BadMethodCallException` related to console confirmation prompts during HTTP Feature tests.
+
+#### 5 Whys Root Cause Analysis
+1. **Why**: `php artisan test` exited with code 1 without printing results.
+2. **Why**: The application environment was incorrectly detected as `production` during the mass test run.
+3. **Why**: The main `.env` file had `APP_ENV=production` and `APP_URL=https://...`, and `AppServiceProvider` was forcing production constraints based on `https` prefix.
+4. **Why**: `RefreshDatabase` trait detects `production` environment and triggers a "Do you really want to run this command?" prompt for destructive database operations.
+5. **Root Cause**: Lack of a dedicated `.env.testing` file and overly aggressive environment detection logic in `AppServiceProvider` that triggered production safeguards even during CLI tests.
+
+#### Fix Applied
+- Created a dedicated `apps/backend/.env.testing` to strictly enforce `APP_ENV=testing` and safe defaults.
+- Modified `AppServiceProvider::bootSecurityGuards()` to explicitly exclude the `testing` environment from forcing HTTPS and production logic.
+- Updated `phpunit.xml` to disable noisy coverage reporting by default and commented out the unused coverage block.
+
+#### Prevention SOP Update
+> **RULE**: All Laravel services MUST have a `.env.testing` file in the repository to prevent environment leakage from local `.env`. 
+> **RULE**: Security middleware/providers MUST explicitly check for `!app()->environment('testing')` before enforcing destructive or interactive production constraints.
+
+#### Regression Test
+```bash
+php artisan test --env=testing --no-coverage
+```
+
 ---
 
-_Log maintained by Antigravity v7.2.0 | Last updated: 2026-04-15_
+_Log maintained by Antigravity v7.3.0 | Last updated: 2026-04-17_

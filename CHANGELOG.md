@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Deprecation Sanitization**: Removed `initialFocus` across the frontend to align with `react-day-picker` v9 standards.
 - **Import Optimization**: Consolidated `lucide-react` import blocks and resolved multiple "name not found" errors in `GoalForm.tsx`.
+- **Test Environment Sovereignty**: Resolved silent test failures and `BadMethodCallException` by implementing a dedicated `.env.testing` layer and hardening `AppServiceProvider` against environment leakage during full suite runs.
 
 ## [7.2.9] - 2026-04-17 (Sovereign Audit Singularity)
 
