@@ -42,7 +42,9 @@ class AiLegacyReportCommand extends Command
 
             $this->info("🏛️ Generating digital inheritance snapshot for: {$user->name}");
 
-            $report = $generateReportAction->execute($user);
+            $reportResponse = $generateReportAction->execute($user);
+            /** @var array{filename: string, data: array<string, mixed>} $report */
+            $report = $reportResponse;
 
             $this->info('✅ Snapshot Generated Successfully!');
             $this->line('');

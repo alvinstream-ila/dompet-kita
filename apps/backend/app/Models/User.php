@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -31,6 +31,11 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property bool $two_factor_enabled
  * @property string|null $two_factor_code
  * @property Carbon|null $two_factor_expires_at
+ * @property-read Collection<int, Asset> $assets
+ * @property-read Collection<int, Loan> $loans
+ * @property-read Collection<int, LegacyVaultReport> $reports
+ * @property-read Collection<int, LoginHistory> $sessions
+ * @property-read User|null $partner
  */
 class User extends Authenticatable implements MustVerifyEmail
 {

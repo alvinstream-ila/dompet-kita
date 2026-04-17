@@ -45,8 +45,12 @@ mutation variableUpsert($input: VariableUpsertInput!) {
                 value: "v_final_" + Date.now(),
             },
         });
-        console.log(JSON.stringify(res, null, 2));
+        if (res.errors) {
+            console.error("Railway API Errors:", JSON.stringify(res.errors, null, 2));
+        } else {
+            console.log("Railway Cache Bust Status: SUCCESS");
+        }
     } catch (error) {
-        console.error(error);
+        console.error("Railway Request Failed:", error.message);
     }
 })();

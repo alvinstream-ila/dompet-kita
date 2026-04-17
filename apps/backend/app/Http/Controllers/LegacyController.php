@@ -24,7 +24,7 @@ class LegacyController extends Controller
     public function index(Request $request): JsonResponse
     {
         /** @var User $user */
-        $user = $request->user();
+        $user = $request->user() ?? abort(401);
 
         $reports = LegacyVaultReport::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
@@ -42,7 +42,7 @@ class LegacyController extends Controller
     public function updateSettings(Request $request): JsonResponse
     {
         /** @var User $user */
-        $user = $request->user();
+        $user = $request->user() ?? abort(401);
 
         $validated = $request->validate([
             'legacy_threshold_months' => 'required|integer|min:1|max:60',
@@ -66,7 +66,7 @@ class LegacyController extends Controller
     public function heartbeat(Request $request): JsonResponse
     {
         /** @var User $user */
-        $user = $request->user();
+        $user = $request->user() ?? abort(401);
 
         $this->recordActivityAction->execute($user);
 
@@ -82,7 +82,7 @@ class LegacyController extends Controller
     public function triggerSnapshot(Request $request): JsonResponse
     {
         /** @var User $user */
-        $user = $request->user();
+        $user = $request->user() ?? abort(401);
         $password = (string) $request->input('password', '');
 
         $filename = $this->generateReportAction->execute($user, $password ?: null);
@@ -100,7 +100,7 @@ class LegacyController extends Controller
     public function download(Request $request, string|int $id): StreamedResponse
     {
         /** @var User $user */
-        $user = $request->user();
+        $user = $request->user() ?? abort(401);
 
         $report = LegacyVaultReport::where('user_id', $user->id)->findOrFail($id);
 
@@ -113,7 +113,7 @@ class LegacyController extends Controller
     public function generateStream(Request $request): StreamedResponse
     {
         /** @var User $user */
-        $user = $request->user();
+        $user = $request->user() ?? abort(401);
 
         return response()->streamDownload(function () use ($user) {
             $result = $this->generateReportAction->execute($user);

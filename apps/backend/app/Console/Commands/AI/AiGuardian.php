@@ -8,6 +8,7 @@ use App\Actions\AI\GuardianAnalyzeAction;
 use App\Models\User;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Collection;
 
 class AiGuardian extends Command
 {
@@ -34,10 +35,7 @@ class AiGuardian extends Command
         $this->info('================================================');
 
         try {
-            $userId = $this->option('user');
-            $users = $userId
-                ? User::where('id', $userId)->get()
-                : User::all();
+            $users = $this->getUsers();
 
             if ($users->isEmpty()) {
                 $this->warn('No users found for analysis.');
@@ -46,33 +44,7 @@ class AiGuardian extends Command
             }
 
             foreach ($users as $user) {
-                $this->comment("\n🔍 Analyzing data for: {$user->name}");
-
-                try {
-                    $result = $action->execute($user);
-
-                    $this->line('   Current Cash  : Rp '.number_format((float) $result['current_cash']));
-                    $this->line('   Daily Burn    : Rp '.number_format((float) $result['burn_rate']));
-                    $this->line('   Days Remaining: '.($result['days_remaining'] > 300 ? 'Stable (>300)' : $result['days_remaining']));
-
-                    if ($result['status'] !== 'safe') {
-                        $this->error("   🚨 STATUS     : {$result['status']}");
-                        $this->warn("   ⚠️  MESSAGE    : {$result['message']}");
-
-                        if ($result['ai_advice']) {
-                            $this->info('   ✨ AI STRATEGY ARROW:');
-                            $this->line('      '.$result['ai_advice']);
-                        }
-                    } else {
-                        $this->info('   ✅ STATUS     : SAFE (Everything looks good!)');
-
-                        foreach ($result['opportunities'] as $adv) {
-                            $this->warn('   💡 OPPORTUNITY: '.$adv['reason']);
-                        }
-                    }
-                } catch (Exception $e) {
-                    $this->error("   ❌ Error analyzing user {$user->name}: {$e->getMessage()}");
-                }
+                $this->processUser($user, $action);
             }
         } catch (Exception $e) {
             $this->error("Fatal Error: {$e->getMessage()}");
@@ -85,5 +57,64 @@ class AiGuardian extends Command
         $this->info('================================================');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Get users based on command options.
+     *
+     * @return Collection<int, User>
+     */
+    private function getUsers(): Collection
+    {
+        $userId = $this->option('user');
+
+        return $userId
+            ? User::where('id', $userId)->get()
+            : User::all();
+    }
+
+    /**
+     * Process analysis for a single user.
+     */
+    private function processUser(User $user, GuardianAnalyzeAction $action): void
+    {
+        $this->comment("\n🔍 Analyzing data for: {$user->name}");
+
+        try {
+            /** @var array{current_cash: float, burn_rate: float, days_remaining: float, status: string, message: string, ai_advice: string|null, opportunities: array<int, array{action: string, reason: string}>} $result */
+            $result = $action->execute($user);
+            $result['days_remaining'] = (int) $result['days_remaining'];
+            $this->renderResult($result);
+        } catch (Exception $e) {
+            $this->error("   ❌ Error analyzing user {$user->name}: {$e->getMessage()}");
+        }
+    }
+
+    /**
+     * Render the analysis result to the console.
+     *
+     * @param  array{current_cash: float|int, burn_rate: float|int, days_remaining: int, status: string, message: string, ai_advice: ?string, opportunities: array<int, array{action: string, reason: string}>}  $result
+     */
+    private function renderResult(array $result): void
+    {
+        $this->line('   Current Cash  : Rp '.number_format((float) $result['current_cash']));
+        $this->line('   Daily Burn    : Rp '.number_format((float) $result['burn_rate']));
+        $this->line('   Days Remaining: '.($result['days_remaining'] > 300 ? 'Stable (>300)' : $result['days_remaining']));
+
+        if ($result['status'] !== 'safe') {
+            $this->error("   🚨 STATUS     : {$result['status']}");
+            $this->warn("   ⚠️  MESSAGE    : {$result['message']}");
+
+            if ($result['ai_advice']) {
+                $this->info('   ✨ AI STRATEGY ARROW:');
+                $this->line('      '.$result['ai_advice']);
+            }
+        } else {
+            $this->info('   ✅ STATUS     : SAFE (Everything looks good!)');
+
+            foreach ($result['opportunities'] as $adv) {
+                $this->warn('   💡 OPPORTUNITY: '.$adv['reason']);
+            }
+        }
     }
 }
