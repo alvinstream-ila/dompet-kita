@@ -1,0 +1,137 @@
+<?php
+
+namespace App\Models;
+
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
+
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string|null $tax_status
+ * @property int|null $dependents_count
+ * @property string|null $industry_sector
+ * @property Carbon|null $last_active_at
+ * @property Carbon|null $legacy_grace_start_at
+ * @property int|null $legacy_threshold_months
+ * @property bool $is_legacy_triggered
+ * @property int|null $partner_id
+ * @property User|null $partner
+ * @property bool $two_factor_enabled
+ * @property string|null $two_factor_code
+ * @property Carbon|null $two_factor_expires_at
+ */
+class User extends Authenticatable implements MustVerifyEmail
+{
+    /** @use HasFactory<UserFactory> */
+    use HasApiTokens, HasFactory, LogsActivity, Notifiable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'last_active_at',
+        'legacy_threshold_months',
+        'is_legacy_triggered',
+        'legacy_grace_start_at',
+        'legacy_partner_name',
+        'legacy_partner_email',
+        'partner_id',
+        'large_expense_threshold',
+        'monthly_budget_limit',
+        'tax_status',
+        'dependents_count',
+        'industry_sector',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'last_active_at' => 'datetime',
+            'legacy_grace_start_at' => 'datetime',
+            'is_legacy_triggered' => 'boolean',
+            'two_factor_enabled' => 'boolean',
+            'two_factor_expires_at' => 'datetime',
+        ];
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'email', 'partner_id', 'two_factor_enabled'])
+            ->logOnlyDirty();
+    }
+
+    /**
+     * @return HasMany<LoginHistory, $this>
+     */
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(LoginHistory::class);
+    }
+
+    /**
+     * @return HasMany<Asset, $this>
+     */
+    public function assets(): HasMany
+    {
+        return $this->hasMany(Asset::class);
+    }
+
+    /**
+     * @return HasMany<Loan, $this>
+     */
+    public function loans(): HasMany
+    {
+        return $this->hasMany(Loan::class);
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function partner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'partner_id');
+    }
+
+    /**
+     * @return HasMany<LegacyVaultReport, $this>
+     */
+    public function reports(): HasMany
+    {
+        return $this->hasMany(LegacyVaultReport::class);
+    }
+}

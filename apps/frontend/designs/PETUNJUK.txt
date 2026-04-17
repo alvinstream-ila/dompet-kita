@@ -1,0 +1,2 @@
+Silakan letakkan file desain Anda (gambar, PDF, atau file desain lainnya) di dalam folder ini.
+Saya akan mempelajari desain tersebut untuk memastikannya terwujud di aplikasi kita.

@@ -1,0 +1,22 @@
+﻿ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé    SonarQube CLI  v0.7.0     Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+Usage: sonar [options] [command]
+
+SonarQube CLI
+
+Options:
+  -v, --version          display version for command
+  -h, --help             display help for command
+
+Commands:
+  integrate              Setup SonarQube integration for AI coding agents, git
+                         and others.
+  list                   List Sonar resources
+  auth                   Manage authentication tokens and credentials
+  analyze                Analyze code for security issues
+  verify [options]       Analyze a file for issues
+  config                 Configure CLI settings
+  self-update [options]  Update sonar CLI to the latest version
+  help [command]         display help for command

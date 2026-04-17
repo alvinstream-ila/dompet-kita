@@ -1,0 +1,9 @@
+
+ [WARNING] The "strictBooleans" set is deprecated as mostly risky and not practical. Remove it from withPreparedSets() 
+           method and use "codeQuality" and "codingStyle" sets instead. They already contain more granular and stable  
+           rules on same note.                                                                                         
+
+
+ [ERROR] Your config already enables type declarations set.                                                            
+         Remove "->withTypeCoverageLevel()" as it only duplicates it, or remove type declaration set.                  
+

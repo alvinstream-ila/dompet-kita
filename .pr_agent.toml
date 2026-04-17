@@ -1,0 +1,28 @@
+# PR Agent Configuration for Dompet Kita (Sovereign Engine)
+
+[config]
+# Default model to use (Gemini 3 Flash for speed/cost)
+model = "gemini/gemini-1.5-flash"
+
+[pr_reviewer]
+# General review configuration
+num_code_suggestions = 5
+inline_code_comments = true
+require_score_review = true
+extra_instructions = """
+Review with the context of a high-security wealth management application.
+Check for:
+1. SQL Injection or insecure database queries (especially in Laravel).
+2. PII (Personal Identifiable Information) leaks in logs or frontend.
+3. React 19 / Next.js 15 best practices in the frontend.
+4. Glassmorphism and design token consistency.
+"""
+
+[pr_description]
+# How the PR is summarized
+publish_labels = true
+use_semantic_title = true
+
+[pr_code_suggestions]
+# Maximize quality of suggestions
+max_number_of_code_suggestions = 5

@@ -1,0 +1,8 @@
+{
+  "name": "@dompet-kita/backend",
+  "private": true,
+  "scripts": {
+    "scan": "composer run scan",
+    "scan:fix": "composer run scan:fix"
+  }
+}

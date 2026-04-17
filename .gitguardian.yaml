@@ -1,0 +1,22 @@
+version: 2
+instance: https://dashboard.gitguardian.com
+
+secret:
+  # Exclude paths from being scanned
+  ignored_paths:
+    - 'tests/'
+    - 'vendor/'
+    - 'node_modules/'
+    - 'dist/'
+    - 'build/'
+    - '.env.example'
+    - 'storage/framework/'
+    - 'storage/logs/'
+    - '.next/'
+    - 'bin/'
+    - '.turbo/'
+    - 'reports/'
+    - 'artifacts/'
+  
+  # Show only the first 4 characters of a secret in the output
+  show_secrets: false

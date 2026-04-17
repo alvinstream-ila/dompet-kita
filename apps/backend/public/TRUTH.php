@@ -1,0 +1,3 @@
+<?php
+
+echo 'SAYANG_V7.1.18_SINGULARITY_ACTIVE';

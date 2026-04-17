@@ -1,0 +1,59 @@
+
+echo "======================================"
+echo "🚀 Running Dompet Kita Pre-Push Checks"
+echo "======================================"
+
+echo "1/6: Checking Frontend Code Quality (Linting)..."
+cd apps/frontend
+if ! npm run lint; then
+  echo "❌ Frontend Linting Failed! Please fix errors before pushing."
+  exit 1
+fi
+
+echo "2/6: Checking Frontend Build (TypeScript)..."
+if ! npm run build; then
+  echo "❌ Frontend Build Failed! Please fix errors before pushing."
+  exit 1
+fi
+
+echo "3/6: Running Frontend CLI Audit (Design, SEO, Security)..."
+if ! npm run ci:frontend-check; then
+  echo "❌ Frontend Audit Failed! Please resolve CLI warnings before pushing."
+  exit 1
+fi
+cd ../..
+
+# PHP Detection
+PHP_EXE="php"
+if ! command -v php >/dev/null 2>&1; then
+  PHP_PATH=$(where.exe php | head -n 1)
+  if [ -n "$PHP_PATH" ]; then
+    PHP_EXE="$PHP_PATH"
+  fi
+fi
+
+if command -v "$PHP_EXE" >/dev/null 2>&1 || [ -f "$PHP_EXE" ]; then
+  echo "4/6: Checking Backend Styling (Laravel Pint)..."
+  if ! "$PHP_EXE" apps/backend/vendor/bin/pint --test; then
+    echo "❌ Styling Check Failed! Run './vendor/bin/pint' in apps/backend to fix."
+    exit 1
+  fi
+
+  echo "5/6: Checking Backend Logic (PHPStan Level 9)..."
+  if ! "$PHP_EXE" apps/backend/vendor/bin/phpstan analyse -c apps/backend/phpstan.neon --no-progress --memory-limit=1G; then
+    echo "❌ PHPStan Analysis Failed! Please resolve new Level 9 errors before pushing."
+    exit 1
+  fi
+
+  echo "6/6: Checking Backend Security Gate (Elite Threshold: 95)..."
+  if ! "$PHP_EXE" apps/backend/artisan security:gate --min-score=95; then
+    echo "❌ Backend Security Gate Failed! Score below 95. Resolve all high/medium vulnerabilities before pushing."
+    exit 1
+  fi
+else
+  echo "⚠️ PHP not found in environment, skipping backend gate checks for this push..."
+fi
+
+echo "======================================"
+echo "✅ All checks passed! Ready to push."
+echo "======================================"

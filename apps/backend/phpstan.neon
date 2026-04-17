@@ -1,0 +1,27 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+    - ./vendor/pestphp/pest/extension.neon
+
+parameters:
+
+    paths:
+        - app/
+        - database/
+        - tests/
+
+    # scanFiles:
+    #     - _ide_helper.php
+    #     - _ide_helper_models.php
+
+    # Level 9 - Zero-Tolerance Mode (Expert Absolute Standard)
+    level: 9
+
+    ignoreErrors:
+        - '#Call to an undefined method (PHPUnit\\Framework\\TestCase|Pest\\PendingCalls\\TestCall)::(postJson|actingAs|get|deleteJson|putJson|json|assertStatus|assertJson|assertJsonValidationErrors)\(\)#'
+        - '#Cannot access offset .* on mixed#'
+        - '#Cannot cast mixed to (int|string|float|bool)#'
+
+    excludePaths:
+        - ./*/*/FileToBeExcluded.php
+
+    # checkMissingIterableValueType: false

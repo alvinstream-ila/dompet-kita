@@ -1,0 +1,43 @@
+name: 🤖 AI Code Reviewer (Sovereign 2026 Edition)
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, synchronize]
+  issue_comment:
+    types: [created]
+
+# Hindari review ganda jika ada push baru secara cepat (Hemat Token/Biaya)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  pr_agent_job:
+    name: "🤖 AI Review (Gemini 2.0)"
+    runs-on: ubuntu-latest
+    if: >
+      github.event.sender.type != 'Bot' && (
+        github.event_name == 'pull_request' ||
+        (github.event_name == 'issue_comment' && github.event.issue.pull_request != null)
+      )
+
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: read
+
+    steps:
+      - name: 🤖 Run PR Agent (Qodo Merge)
+        uses: qodo-ai/pr-agent@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Upgrade ke Gemini 2.0 Flash (Standar 2026 - Lebih Cerdas & Cepat)
+          GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          config.model: "gemini/gemini-2.0-flash" 
+          config.fallback_models: '["gemini/gemini-2.0-flash"]'
+          
+          # Konfigurasi Otomatisasi
+          github_action_config.auto_review: "true"
+          github_action_config.auto_describe: "true"
+          github_action_config.auto_improve: "true" # Diaktifkan agar AI memberi saran kode langsung
+          github_action_config.pr_reviewer.inline_code_comments: "true"

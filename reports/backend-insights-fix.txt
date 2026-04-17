@@ -1,0 +1,22 @@
+
+
+   JsonException 
+
+  Syntax error
+
+  at vendor\nunomaduro\phpinsights\src\Domain\Insights\SyntaxCheck.php:57
+     53▕         }
+     54▕         $configuration = Container::make()->get(Configuration::class);
+     55▕         $process->setTimeout($configuration->getTimeout())->run();
+     56▕ 
+  ➜  57▕         $output = json_decode($process->getOutput(), true, 512, JSON_THROW_ON_ERROR);
+     58▕         $errors = $output['results']['errors'] ?? [];
+     59▕ 
+     60▕         foreach ($errors as $error) {
+     61▕             if (preg_match('/^.*error:(.*) in .* on line [\d]+/m', $error['message'], $matches) === 1) {
+
+  1   vendor\nunomaduro\phpinsights\src\Domain\Insights\SyntaxCheck.php:57
+
+  2   vendor\nunomaduro\phpinsights\src\Domain\Runner.php:171
+      NunoMaduro\PhpInsights\Domain\Insights\SyntaxCheck::process()
+

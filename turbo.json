@@ -1,0 +1,13 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "scan": {
+      "outputs": ["reports/**"],
+      "cache": false
+    },
+    "scan:fix": {
+      "outputs": ["reports/**"],
+      "cache": false
+    }
+  }
+}

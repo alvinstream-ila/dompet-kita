@@ -1,0 +1,54 @@
+{
+  "name": "dompet-kita-monorepo",
+  "private": true,
+  "version": "7.1.22",
+  "description": "Dompet Kita: Sentient Core v6.3 | Elite Guard (100/100) | Phase 6 Singularity",
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ],
+  "packageManager": "npm@11.9.0",
+  "scripts": {
+    "dev": "npm run dev -w @dompet-kita/frontend",
+    "start": "npx concurrently \"npm run dev -w @dompet-kita/frontend\" \"php -S localhost:8000 -t apps/backend/public\"",
+    "backend": "php -S localhost:8000 -t apps/backend/public",
+    "frontend-install": "npm install -w @dompet-kita/frontend",
+    "backend-install": "composer install --working-dir=apps/backend",
+    "install-all": "npm run frontend-install && npm run backend-install",
+    "setup": "npm run install-all && php apps/backend/artisan key:generate && php apps/backend/artisan migrate",
+    "migrate": "php apps/backend/artisan migrate",
+    "security-gate": "php apps/backend/artisan security:gate --min-score=100",
+    "scan": "turbo run scan && node scripts/generate-summary.mjs",
+    "scan:fix": "turbo run scan:fix && node scripts/generate-summary.mjs",
+    "report:summary": "node scripts/generate-summary.mjs",
+    "supabase": "supabase",
+    "uplink": "infra\\bin\\uplink",
+    "rclone": "infra\\bin\\rclone --config infra\\config\\rclone.conf",
+    "prepare": "node -e \"if(process.env.NODE_ENV !== 'production' && !process.env.CI && !process.env.VERCEL && require('fs').existsSync('.git')){require('child_process').execSync('husky install')}\" || exit 0"
+  },
+  "overrides": {
+    "glob": "^9.0.0",
+    "rimraf": "^4.0.0",
+    "dompurify": "^3.4.0",
+    "hono": "^4.12.14",
+    "basic-ftp": "5.3.0"
+  },
+  "lint-staged": {
+    "apps/frontend/src/**/*.{ts,tsx,css}": [
+      "prettier --write"
+    ]
+  },
+  "keywords": [],
+  "author": "Antigravity & Alvin",
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.2",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "supabase": "^2.84.5",
+    "turbo": "^2.9.6",
+    "vite": "^8.0.8"
+  }
+}

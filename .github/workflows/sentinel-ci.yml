@@ -1,0 +1,192 @@
+name: Dompet Kita Sentinel CI (v7.1 - Sovereign Sentinel + SonarQube)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sentinel-osv:
+    name: "Sovereign OSV Audit"
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.3.5
+    with:
+      scan-args: ./
+      upload-sarif: false
+
+  sentinel-gate:
+    name: "Sovereign Security & Quality Gate"
+    needs: [sentinel-osv]
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: dompet_kita_test
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: 🛰️ Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: 🐘 Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, curl, libxml, mbstring, zip, pdo, bcmath, json, pgsql, pdo_pgsql
+          coverage: none
+          tools: phpstan, pint
+
+      - name: 📁 Create Coverage Directory
+        working-directory: ./apps/backend
+        run: mkdir -p coverage
+          
+      - name: 📦 Install Monorepo Dependencies
+        run: npm ci --ignore-scripts
+        
+      - name: 📦 Install Backend Dependencies
+        working-directory: ./apps/backend
+        run: |
+          composer install --prefer-dist --no-progress --no-interaction --no-scripts
+          cp .env.example .env
+          php artisan key:generate
+        
+      - name: 🧹 Linting Check (PHP Pint)
+        working-directory: ./apps/backend
+        run: ./vendor/bin/pint --test
+
+      - name: 🧠 Static Analysis (PHPStan Level 9)
+        working-directory: ./apps/backend
+        run: ./vendor/bin/phpstan analyse --memory-limit=2G
+
+      - name: 🕵️ Dependency Audit (Composer)
+        working-directory: ./apps/backend
+        run: composer audit
+
+      - name: 🕵️ Dependency Audit (NPM)
+        run: npm audit --audit-level=high
+
+      - name: 🛡️ Vulnerability Scan (Trivy FS - Unlimited)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+          scanners: 'vuln,secret,misconfig'
+          trivy-config: trivy.yaml
+          skip-dirs: 'apps/backend/vendor,node_modules'
+
+      - name: 🗄️ Run Database Migrations
+        working-directory: ./apps/backend
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: dompet_kita_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: password
+        run: php artisan migrate --force
+
+      - name: 🤺 Run Sentinel Security Gate
+        working-directory: ./apps/backend
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: dompet_kita_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: password
+        run: php artisan security:gate --min-score=100
+
+      - name: 🧪 Run Backend Logic Tests (Pest)
+        working-directory: ./apps/backend
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: dompet_kita_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: password
+        run: php artisan test --env=testing
+
+      - name: 🏗️ Build Production Bundle
+        working-directory: ./apps/frontend
+        run: npm run build
+
+  # ─── 🔬 SONARQUBE CLOUD COGNITIVE ANALYSIS ────────────────────────────────
+  sonar-analysis:
+    name: "🔬 SonarCloud Cognitive Analysis"
+    needs: [sentinel-gate]
+    runs-on: ubuntu-latest
+    # Run on push to main AND on all pull_requests (PR decoration)
+    if: always() && needs.sentinel-gate.result == 'success'
+
+    steps:
+      - name: 🛰️ Checkout Code (Full History for SonarQube)
+        uses: actions/checkout@v4
+        with:
+          # Required for SonarCloud to detect new code and blame annotations
+          fetch-depth: 0
+
+      - name: 🐘 Setup PHP (with PCOV for fast coverage)
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, curl, libxml, mbstring, zip, pdo, bcmath, json, pgsql, pdo_pgsql, pcov
+          coverage: pcov
+          tools: none
+
+      - name: 📦 Install Backend Dependencies (for coverage)
+        working-directory: ./apps/backend
+        run: |
+          composer install --prefer-dist --no-progress --no-interaction --no-scripts
+          cp .env.example .env
+          php artisan key:generate
+          mkdir -p coverage
+
+      - name: 🧪 Generate Coverage Report (Clover + JUnit)
+        working-directory: ./apps/backend
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ":memory:"
+        run: |
+          php artisan test \
+            --coverage-clover=coverage/clover.xml \
+            --log-junit=coverage/junit.xml \
+            --env=testing || true
+          # Allow test failures — SonarQube analysis should still run
+
+      - name: 🔬 Run SonarCloud Analysis
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          # Use the sonar-project.properties at monorepo root
+          projectBaseDir: .
+          args: >
+            -Dsonar.php.coverage.reportPaths=apps/backend/coverage/clover.xml
+            -Dsonar.php.tests.reportPath=apps/backend/coverage/junit.xml
+            -Dsonar.verbose=false
+
