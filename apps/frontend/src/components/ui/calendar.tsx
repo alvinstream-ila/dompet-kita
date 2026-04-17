@@ -1,5 +1,8 @@
 'use client';
 
+import { format, setMonth, setYear } from 'date-fns';
+import { id } from 'date-fns/locale';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -7,254 +10,338 @@ import {
 } from 'lucide-react';
 import * as React from 'react';
 import {
-  type DayButton,
   DayPicker,
   getDefaultClassNames,
-  type Locale,
+  type DayPickerProps,
 } from 'react-day-picker';
 import { Button } from '@/components/ui/button';
 import { buttonVariants } from '@/components/ui/button-variants';
 import { cn } from '@/lib/utils';
 
+// --- Context for Sovereign Navigation ---
+type CalendarView = 'days' | 'months' | 'years';
+
+interface CalendarContextValue {
+  view: CalendarView;
+  setView: (view: CalendarView) => void;
+  navDate: Date;
+  setNavDate: (date: Date) => void;
+}
+
+const CalendarContext = React.createContext<CalendarContextValue | undefined>(
+  undefined
+);
+
+function useCalendarContext() {
+  const context = React.useContext(CalendarContext);
+  if (!context)
+    throw new Error('useCalendarContext must be used within Calendar');
+  return context;
+}
+
+// --- Types ---
+export type CalendarProps = DayPickerProps & {
+  buttonVariant?: React.ComponentProps<typeof Button>['variant'];
+};
+
+const months = [
+  'Januari',
+  'Februari',
+  'Maret',
+  'April',
+  'Mei',
+  'Juni',
+  'Juli',
+  'Agustus',
+  'September',
+  'Oktober',
+  'November',
+  'Desember',
+];
+
+/**
+ * Sovereign Premium Calendar v2.2 🎆
+ * - Uses Context API to resolve nested component warnings.
+ * - Optimized for Type-Safety with union props.
+ * - Clean zero-warning architecture.
+ */
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
-  captionLayout = 'label',
-  buttonVariant = 'ghost',
-  locale,
-  formatters,
-  components,
   ...props
-}: Readonly<
-  React.ComponentProps<typeof DayPicker> & {
-    buttonVariant?: React.ComponentProps<typeof Button>['variant'];
-  }
->) {
+}: CalendarProps) {
+  // Use any cast for initialization to handle DayPicker union props safely
+  const initialDate =
+    'selected' in props && props.selected instanceof Date
+      ? props.selected
+      : props.month || new Date();
+
+  const [view, setView] = React.useState<CalendarView>('days');
+  const [navDate, setNavDate] = React.useState<Date>(initialDate);
+
+  const contextValue = React.useMemo(
+    () => ({
+      view,
+      setView,
+      navDate,
+      setNavDate,
+    }),
+    [view, navDate]
+  );
+
+  return (
+    <CalendarContext.Provider value={contextValue}>
+      <div
+        className={cn('bg-background relative overflow-hidden p-3', className)}
+      >
+        <AnimatePresence mode="wait">
+          {view === 'days' && (
+            <motion.div
+              key="days"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+            >
+              <SovereignDayPicker
+                props={props}
+                showOutsideDays={showOutsideDays}
+                classNames={classNames}
+              />
+            </motion.div>
+          )}
+
+          {view === 'months' && <MonthPicker />}
+
+          {view === 'years' && <YearPicker />}
+        </AnimatePresence>
+      </div>
+    </CalendarContext.Provider>
+  );
+}
+
+// --- Specialized Components ---
+
+function SovereignDayPicker({
+  props,
+  showOutsideDays,
+  classNames,
+}: {
+  readonly props: DayPickerProps;
+  readonly showOutsideDays: boolean;
+  readonly classNames?: DayPickerProps['classNames'];
+}) {
+  const { navDate, setNavDate } = useCalendarContext();
   const defaultClassNames = getDefaultClassNames();
 
   return (
     <DayPicker
+      month={navDate}
+      onMonthChange={setNavDate}
       showOutsideDays={showOutsideDays}
-      className={cn(
-        'group/calendar bg-background p-2 [--cell-radius:var(--radius-md)] [--cell-size:--spacing(7)] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent',
-        String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
-        String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
-        className
-      )}
-      captionLayout={captionLayout}
-      locale={locale}
-      formatters={{
-        formatMonthDropdown: (date) =>
-          date.toLocaleString(locale?.code, { month: 'short' }),
-        ...formatters,
-      }}
+      className="group/calendar"
+      locale={id}
       classNames={{
+        ...defaultClassNames,
         root: cn('w-fit', defaultClassNames.root),
-        months: cn(
-          'relative flex flex-col gap-4 md:flex-row',
-          defaultClassNames.months
-        ),
-        month: cn('flex w-full flex-col gap-4', defaultClassNames.month),
+        months: cn('relative flex flex-col gap-4', defaultClassNames.months),
         nav: cn(
-          'absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1',
+          'absolute inset-x-0 top-0 flex w-full items-center justify-between z-20',
           defaultClassNames.nav
         ),
         button_previous: cn(
-          buttonVariants({ variant: buttonVariant }),
-          'size-(--cell-size) p-0 select-none aria-disabled:opacity-50',
+          buttonVariants({ variant: 'outline' }),
+          'size-8 p-0 border-slate-100 hover:bg-slate-50 rounded-lg',
           defaultClassNames.button_previous
         ),
         button_next: cn(
-          buttonVariants({ variant: buttonVariant }),
-          'size-(--cell-size) p-0 select-none aria-disabled:opacity-50',
+          buttonVariants({ variant: 'outline' }),
+          'size-8 p-0 border-slate-100 hover:bg-slate-50 rounded-lg',
           defaultClassNames.button_next
         ),
-        month_caption: cn(
-          'flex h-(--cell-size) w-full items-center justify-center px-(--cell-size)',
-          defaultClassNames.month_caption
-        ),
-        dropdowns: cn(
-          'flex h-(--cell-size) w-full items-center justify-center gap-1.5 text-sm font-medium',
-          defaultClassNames.dropdowns
-        ),
-        dropdown_root: cn(
-          'relative rounded-(--cell-radius)',
-          defaultClassNames.dropdown_root
-        ),
-        dropdown: cn(
-          'absolute inset-0 bg-popover opacity-0',
-          defaultClassNames.dropdown
-        ),
-        caption_label: cn(
-          'font-medium select-none',
-          captionLayout === 'label'
-            ? 'text-sm'
-            : 'flex items-center gap-1 rounded-(--cell-radius) text-sm [&>svg]:size-3.5 [&>svg]:text-muted-foreground',
-          defaultClassNames.caption_label
-        ),
+        month_caption: 'flex justify-center mb-4 pt-1',
+        caption_label: 'hidden',
         table: 'w-full border-collapse',
-        weekdays: cn('flex', defaultClassNames.weekdays),
-        weekday: cn(
-          'flex-1 rounded-(--cell-radius) text-[0.8rem] font-normal text-muted-foreground select-none',
-          defaultClassNames.weekday
-        ),
-        week: cn('mt-2 flex w-full', defaultClassNames.week),
-        week_number_header: cn(
-          'w-(--cell-size) select-none',
-          defaultClassNames.week_number_header
-        ),
-        week_number: cn(
-          'text-[0.8rem] text-muted-foreground select-none',
-          defaultClassNames.week_number
-        ),
+        weekdays: 'flex mb-2',
+        weekday:
+          'flex-1 text-[10px] font-black text-slate-400 uppercase text-center',
+        week: 'flex w-full mt-1',
         day: cn(
-          'group/day relative aspect-square h-full w-full rounded-(--cell-radius) p-0 text-center select-none [&:last-child[data-selected=true]_button]:rounded-r-(--cell-radius)',
-          props.showWeekNumber
-            ? '[&:nth-child(2)[data-selected=true]_button]:rounded-l-(--cell-radius)'
-            : '[&:first-child[data-selected=true]_button]:rounded-l-(--cell-radius)',
+          'relative p-0 text-center text-sm focus-within:relative focus-within:z-20',
           defaultClassNames.day
         ),
-        range_start: cn(
-          'relative isolate z-0 rounded-l-(--cell-radius) bg-muted after:absolute after:inset-y-0 after:right-0 after:w-4 after:bg-muted',
-          defaultClassNames.range_start
-        ),
-        range_middle: cn('rounded-none', defaultClassNames.range_middle),
-        range_end: cn(
-          'relative isolate z-0 rounded-r-(--cell-radius) bg-muted after:absolute after:inset-y-0 after:left-0 after:w-4 after:bg-muted',
-          defaultClassNames.range_end
-        ),
-        today: cn(
-          'rounded-(--cell-radius) bg-muted text-foreground data-[selected=true]:rounded-none',
-          defaultClassNames.today
-        ),
-        outside: cn(
-          'text-muted-foreground aria-selected:text-muted-foreground',
-          defaultClassNames.outside
-        ),
-        disabled: cn(
-          'text-muted-foreground opacity-50',
-          defaultClassNames.disabled
-        ),
-        hidden: cn('invisible', defaultClassNames.hidden),
+        today: 'bg-slate-100/50 text-slate-900 font-bold rounded-lg',
+        outside: 'text-slate-300 opacity-50',
+        selected:
+          'bg-slate-900 text-white hover:bg-slate-900 hover:text-white focus:bg-slate-900 focus:text-white rounded-lg',
         ...classNames,
       }}
       components={{
-        Root: CalendarRoot,
-        Chevron: CalendarChevron,
-        DayButton: CalendarDayButtonWrapper,
-        WeekNumber: CalendarWeekNumber,
-        ...components,
+        CaptionLabel: SovereignCaptionLabel,
+        Chevron: SovereignChevron,
       }}
       {...props}
     />
   );
 }
 
-function CalendarRoot({
-  className,
-  rootRef,
-  ...props
-}: Readonly<
-  React.HTMLAttributes<HTMLDivElement> & {
-    rootRef?: React.Ref<HTMLDivElement>;
-  }
->) {
-  return (
-    <div
-      data-slot="calendar"
-      ref={rootRef}
-      className={cn(className)}
-      {...props}
-    />
-  );
-}
-
-function CalendarChevron({
-  className,
-  orientation,
-  ...props
-}: Readonly<
-  React.ComponentProps<typeof ChevronLeftIcon> & {
-    orientation?: 'left' | 'right' | 'up' | 'down';
-  }
->) {
-  if (orientation === 'left') {
-    return <ChevronLeftIcon className={cn('size-4', className)} {...props} />;
-  }
-
-  if (orientation === 'right') {
-    return <ChevronRightIcon className={cn('size-4', className)} {...props} />;
-  }
-
-  return <ChevronDownIcon className={cn('size-4', className)} {...props} />;
-}
-
-function CalendarDayButton({
-  className,
-  day,
-  modifiers,
-  locale,
-  ...props
-}: Readonly<
-  React.ComponentProps<typeof DayButton> & { locale?: Partial<Locale> }
->) {
-  const defaultClassNames = getDefaultClassNames();
-
-  const ref = React.useRef<HTMLButtonElement>(null);
-  React.useEffect(() => {
-    if (modifiers.focused) ref.current?.focus();
-  }, [modifiers.focused]);
-
+function SovereignCaptionLabel() {
+  const { navDate, setView } = useCalendarContext();
   return (
     <Button
-      ref={ref}
       variant="ghost"
-      size="icon"
-      data-day={day.date.toLocaleDateString(locale?.code)}
-      data-selected-single={
-        modifiers.selected &&
-        !modifiers.range_start &&
-        !modifiers.range_end &&
-        !modifiers.range_middle
-      }
-      data-range-start={modifiers.range_start}
-      data-range-end={modifiers.range_end}
-      data-range-middle={modifiers.range_middle}
-      className={cn(
-        'group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-ring/50 data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground data-[range-middle=true]:bg-muted data-[range-middle=true]:text-foreground data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground dark:hover:text-foreground relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 border-0 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:rounded-r-(--cell-radius) data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:rounded-l-(--cell-radius) [&>span]:text-xs [&>span]:opacity-70',
-        defaultClassNames.day,
-        className
-      )}
-      {...props}
-    />
+      size="sm"
+      className="group/jump flex h-8 items-center gap-2 rounded-xl px-3 hover:bg-slate-100"
+      onClick={() => setView('months')}
+    >
+      <span className="text-sm font-black tracking-tight text-slate-800">
+        {format(navDate, 'MMMM yyyy', { locale: id })}
+      </span>
+      <ChevronDownIcon className="size-3.5 text-slate-300 transition-transform group-hover/jump:translate-y-0.5" />
+    </Button>
   );
 }
 
-function CalendarWeekNumber({
-  children,
-  ...props
-}: Readonly<React.HTMLAttributes<HTMLTableCellElement>>) {
+function SovereignChevron({
+  orientation,
+}: {
+  readonly orientation?: 'left' | 'right' | 'up' | 'down';
+}) {
+  return orientation === 'left' ? (
+    <ChevronLeftIcon className="size-4" />
+  ) : (
+    <ChevronRightIcon className="size-4" />
+  );
+}
+
+function MonthPicker() {
+  const { navDate, setNavDate, setView } = useCalendarContext();
+
+  const handleMonthClick = (monthIndex: number) => {
+    setNavDate(setMonth(navDate, monthIndex));
+    setView('days');
+  };
+
   return (
-    <td {...props}>
-      <div className="flex size-(--cell-size) items-center justify-center text-center">
-        {children}
+    <motion.div
+      key="months"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      className="w-[280px]"
+    >
+      <div className="mb-4 flex items-center justify-between">
+        <span className="px-2 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+          PILIH BULAN
+        </span>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-blue-royal hover:bg-blue-royal/5 h-7 px-2 text-xs font-black"
+          onClick={() => setView('years')}
+        >
+          {navDate.getFullYear()} <ChevronRightIcon className="ml-1 size-3" />
+        </Button>
       </div>
-    </td>
+      <div className="grid grid-cols-3 gap-2">
+        {months.map((m, i) => (
+          <Button
+            key={m}
+            variant="ghost"
+            className={cn(
+              'h-12 rounded-xl text-[10px] font-black uppercase transition-all',
+              navDate.getMonth() === i
+                ? 'bg-slate-900 text-white shadow-lg'
+                : 'text-slate-500 hover:bg-slate-50'
+            )}
+            onClick={() => handleMonthClick(i)}
+          >
+            {m.substring(0, 3)}
+          </Button>
+        ))}
+      </div>
+      <Button
+        variant="ghost"
+        className="mt-4 h-8 w-full text-[10px] font-black text-slate-400 uppercase"
+        onClick={() => setView('days')}
+      >
+        KEMBALI KE KALENDER
+      </Button>
+    </motion.div>
   );
 }
 
-function CalendarDayButtonWrapper({
-  ...props
-}: React.ComponentProps<typeof DayButton>) {
-  return <CalendarDayButton {...props} />;
+function YearPicker() {
+  const { navDate, setNavDate, setView } = useCalendarContext();
+  const startYear = Math.floor(navDate.getFullYear() / 12) * 12;
+  const years = Array.from({ length: 12 }, (_, i) => startYear + i);
+
+  const handleYearClick = (year: number) => {
+    setNavDate(setYear(navDate, year));
+    setView('months');
+  };
+
+  return (
+    <motion.div
+      key="years"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      className="w-[280px]"
+    >
+      <div className="mb-4 flex items-center justify-between">
+        <span className="px-2 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+          PILIH TAHUN
+        </span>
+        <div className="flex gap-1">
+          <Button
+            variant="outline"
+            size="icon"
+            className="size-7 rounded-lg"
+            onClick={() =>
+              setNavDate(setYear(navDate, navDate.getFullYear() - 12))
+            }
+          >
+            <ChevronLeftIcon className="size-3" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="size-7 rounded-lg"
+            onClick={() =>
+              setNavDate(setYear(navDate, navDate.getFullYear() + 12))
+            }
+          >
+            <ChevronRightIcon className="size-3" />
+          </Button>
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-2">
+        {years.map((y) => (
+          <Button
+            key={y}
+            variant="ghost"
+            className={cn(
+              'h-12 rounded-xl text-[12px] font-black transition-all',
+              navDate.getFullYear() === y
+                ? 'bg-blue-royal text-white shadow-lg'
+                : 'text-slate-500 hover:bg-slate-50'
+            )}
+            onClick={() => handleYearClick(y)}
+          >
+            {y}
+          </Button>
+        ))}
+      </div>
+      <Button
+        variant="ghost"
+        className="mt-4 h-8 w-full text-[10px] font-black text-slate-400 uppercase"
+        onClick={() => setView('months')}
+      >
+        KEMBALI KE BULAN
+      </Button>
+    </motion.div>
+  );
 }
 
-export {
-  Calendar,
-  CalendarChevron,
-  CalendarDayButton,
-  CalendarDayButtonWrapper,
-  CalendarRoot,
-  CalendarWeekNumber,
-};
+export { Calendar };

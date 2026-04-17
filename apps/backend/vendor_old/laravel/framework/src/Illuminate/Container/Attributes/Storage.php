@@ -1,0 +1,28 @@
+<?php
+
+namespace Illuminate\Container\Attributes;
+
+use Attribute;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Container\ContextualAttribute;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use UnitEnum;
+
+#[Attribute(Attribute::TARGET_PARAMETER)]
+class Storage implements ContextualAttribute
+{
+    /**
+     * Create a new class instance.
+     */
+    public function __construct(public UnitEnum|string|null $disk = null) {}
+
+    /**
+     * Resolve the storage disk.
+     *
+     * @return Filesystem
+     */
+    public static function resolve(self $attribute, Container $container)
+    {
+        return $container->make('filesystem')->disk($attribute->disk);
+    }
+}

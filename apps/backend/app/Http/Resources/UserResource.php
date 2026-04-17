@@ -53,6 +53,9 @@ class UserResource extends JsonResource
             'monthly_budget_limit' => (float) $this->monthly_budget_limit,
             'is_social_login' => (bool) $this->social_id,
             'last_active_at' => $this->last_active_at?->toIso8601String(),
+            'tax_status' => $this->tax_status,
+            'dependents_count' => (int) $this->dependents_count,
+            'industry_sector' => $this->industry_sector,
             'created_at' => $this->created_at->toIso8601String(),
         ];
     }

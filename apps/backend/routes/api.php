@@ -133,8 +133,12 @@ Route::middleware('firewall.all')->group(function () {
         Route::post('/ai/wisdom/generate', [AIController::class, 'generateWisdom'])->middleware('throttle:ai-insight');
         Route::get('/ai/wealth/simulate', [AIController::class, 'simulateWealth'])->middleware('throttle:ai-insight');
         Route::get('/ai/tax/estimate', [TaxController::class, 'getEstimate'])->middleware('throttle:ai-insight');
-        Route::get('/ai/legacy/report', [LegacyController::class, 'getReport'])->middleware('throttle:ai-insight');
-        Route::post('/ai/legacy/archive', [LegacyController::class, 'prepareArchive'])->middleware(['throttle:ai-insight', 'sudo']);
+        // Digital Legacy Vault
+        Route::get('/legacy', [LegacyController::class, 'index']);
+        Route::patch('/legacy/settings', [LegacyController::class, 'updateSettings']);
+        Route::post('/legacy/heartbeat', [LegacyController::class, 'heartbeat']);
+        Route::post('/legacy/snapshot', [LegacyController::class, 'triggerSnapshot'])->middleware('sudo');
+        Route::get('/legacy/download/{id}', [LegacyController::class, 'download']);
         // Quantum Insights (Phase 6)
         Route::get('/ai/quantum-insights', [InsightController::class, 'index']);
         Route::post('/ai/quantum-insights/generate', [InsightController::class, 'generate'])->middleware('throttle:ai-insight');

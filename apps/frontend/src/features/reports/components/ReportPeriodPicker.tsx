@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Calendar, ChevronDown } from 'lucide-react';
+import { Calendar, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import type React from 'react';
 import { cn } from '@/lib/utils';
 
@@ -11,7 +11,6 @@ interface ReportPeriodPickerProps {
   onSelectMonth: (month: number) => void;
   onSelectYear: (year: number) => void;
   months: string[];
-  years: number[];
 }
 
 export const ReportPeriodPicker: React.FC<ReportPeriodPickerProps> = ({
@@ -22,7 +21,6 @@ export const ReportPeriodPicker: React.FC<ReportPeriodPickerProps> = ({
   onSelectMonth,
   onSelectYear,
   months,
-  years,
 }) => {
   return (
     <div className="group/period relative w-full md:w-auto">
@@ -56,53 +54,70 @@ export const ReportPeriodPicker: React.FC<ReportPeriodPickerProps> = ({
             initial={{ opacity: 0, y: 15, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.95 }}
-            className="absolute top-full right-0 left-0 z-60 mt-4 min-w-[340px] transform-gpu rounded-[40px] border border-white bg-white/95 p-6 shadow-2xl backdrop-blur-3xl"
+            className="absolute top-full right-0 left-0 z-60 mt-4 min-w-[340px] transform-gpu overflow-hidden rounded-[40px] border border-white/40 bg-white/95 p-8 shadow-2xl backdrop-blur-3xl"
           >
-            <div className="grid h-72 grid-cols-2 gap-8">
-              <div className="flex flex-col gap-3">
-                <span className="mb-2 px-2 text-[10px] font-black tracking-[0.2em] text-slate-400 uppercase">
-                  Pilih Bulan
+            {/* Year Navigation Header */}
+            <div className="mb-8 flex items-center justify-between px-2">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelectYear(selectedYear - 1);
+                }}
+                className="hover:bg-blue-royal/10 hover:text-blue-royal flex size-10 items-center justify-center rounded-xl text-slate-400 transition-all active:scale-90"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+
+              <div className="flex flex-col items-center">
+                <span className="text-[10px] font-black tracking-[0.3em] text-slate-300 uppercase">
+                  Tahun
                 </span>
-                <div className="custom-scrollbar flex-1 space-y-1 overflow-y-auto pr-2">
-                  {months.map((m, i) => (
-                    <button
-                      key={m}
-                      onClick={() => onSelectMonth(i)}
-                      className={cn(
-                        'w-full rounded-2xl px-5 py-3 text-left text-xs font-black tracking-widest uppercase transition-all',
-                        selectedMonth === i
-                          ? 'bg-slate-900 text-white shadow-xl shadow-slate-200'
-                          : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
-                      )}
-                      type="button"
-                    >
-                      {m}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex flex-col gap-3">
-                <span className="mb-2 px-2 text-[10px] font-black tracking-[0.2em] text-slate-400 uppercase">
-                  Pilih Tahun
+                <span className="text-xl font-black tracking-tight text-slate-800">
+                  {selectedYear}
                 </span>
-                <div className="custom-scrollbar flex-1 space-y-1 overflow-y-auto pr-2">
-                  {years.map((y) => (
-                    <button
-                      key={y}
-                      onClick={() => onSelectYear(y)}
-                      className={cn(
-                        'w-full rounded-2xl px-5 py-3 text-left text-xs font-black tracking-widest uppercase transition-all',
-                        selectedYear === y
-                          ? 'bg-blue-royal shadow-blue-royal/20 text-white shadow-xl'
-                          : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
-                      )}
-                      type="button"
-                    >
-                      {y}
-                    </button>
-                  ))}
-                </div>
               </div>
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelectYear(selectedYear + 1);
+                }}
+                className="hover:bg-blue-royal/10 hover:text-blue-royal flex size-10 items-center justify-center rounded-xl text-slate-400 transition-all active:scale-90"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Month Grid (3x4) */}
+            <div className="grid grid-cols-3 gap-3">
+              {months.map((m, i) => (
+                <button
+                  key={m}
+                  onClick={() => onSelectMonth(i)}
+                  className={cn(
+                    'group/month relative flex h-14 items-center justify-center rounded-2xl text-[10px] font-black tracking-widest uppercase transition-all duration-300',
+                    selectedMonth === i
+                      ? 'bg-blue-royal ring-blue-royal/10 text-white shadow-[0_10px_25px_-5px_rgba(65,105,225,0.4)] ring-4'
+                      : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+                  )}
+                  type="button"
+                >
+                  <span className="relative z-10">{m.substring(0, 3)}</span>
+                  {selectedMonth === i && (
+                    <motion.div
+                      layoutId="activeMonth"
+                      className="absolute inset-x-0 top-0 bottom-0 rounded-2xl bg-white/10"
+                      transition={{
+                        type: 'spring',
+                        bounce: 0.2,
+                        duration: 0.6,
+                      }}
+                    />
+                  )}
+                </button>
+              ))}
             </div>
           </motion.div>
         )}

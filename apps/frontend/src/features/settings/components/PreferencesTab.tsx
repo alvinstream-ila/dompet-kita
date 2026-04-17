@@ -7,14 +7,8 @@ import {
 } from 'lucide-react';
 import type React from 'react';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { SovereignCurrencyPicker } from './SovereignCurrencyPicker';
 
 interface UserSettings {
   monthlyBudgetLimit: number;
@@ -65,7 +59,7 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
             type="text"
             value={new Intl.NumberFormat('id-ID').format(monthlyBudgetLimit)}
             onChange={(e) => {
-              const val = e.target.value.replace(/[^0-9]/g, '');
+              const val = e.target.value.replaceAll(/\D/g, '');
               updateSettings({ monthlyBudgetLimit: Number(val) || 0 });
             }}
             className="h-10 rounded-xl border-slate-200 bg-white pl-9 text-sm font-bold"
@@ -99,7 +93,9 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
         <select
           value={budgetCycleStart}
           onChange={(e) =>
-            updateSettings({ budgetCycleStart: parseInt(e.target.value, 10) })
+            updateSettings({
+              budgetCycleStart: Number.parseInt(e.target.value, 10),
+            })
           }
           className="focus:ring-blue-royal/20 h-10 w-full rounded-xl border-slate-200 bg-white px-3 text-sm font-bold focus:ring-2 focus:outline-none"
         >
@@ -148,90 +144,39 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
               </span>
             </div>
           </div>
-          <Select
+          <SovereignCurrencyPicker
             value={currencyFormat}
             onValueChange={(value) => updateSettings({ currencyFormat: value })}
-          >
-            <SelectTrigger className="focus:ring-yellow-outlook/20 h-9 w-[140px] rounded-lg border-slate-200 bg-white text-[11px] font-black">
-              <SelectValue placeholder="Pilih Mata Uang" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl border-slate-100 shadow-xl shadow-slate-200/50">
-              <SelectItem
-                value="IDR"
-                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
-              >
-                IDR - Rupiah 🇮🇩
-              </SelectItem>
-              <SelectItem
-                value="USD"
-                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
-              >
-                USD - Dollar 🇺🇸
-              </SelectItem>
-              <SelectItem
-                value="EUR"
-                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
-              >
-                EUR - Euro 🇪🇺
-              </SelectItem>
-              <SelectItem
-                value="JPY"
-                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
-              >
-                JPY - Yen 🇯🇵
-              </SelectItem>
-              <SelectItem
-                value="SGD"
-                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
-              >
-                SGD - Dollar 🇸🇬
-              </SelectItem>
-              <SelectItem
-                value="MYR"
-                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
-              >
-                MYR - Ringgit 🇲🇾
-              </SelectItem>
-              <SelectItem
-                value="SAR"
-                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
-              >
-                SAR - Riyal 🇸🇦
-              </SelectItem>
-              <SelectItem
-                value="GBP"
-                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
-              >
-                GBP - Pound 🇬🇧
-              </SelectItem>
-              <SelectItem
-                value="AUD"
-                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
-              >
-                AUD - Dollar 🇦🇺
-              </SelectItem>
-              <SelectItem
-                value="KRW"
-                className="focus:bg-yellow-outlook/10 py-2 text-[11px] font-bold"
-              >
-                KRW - Won 🇰🇷
-              </SelectItem>
-            </SelectContent>
-          </Select>
+          />
         </div>
 
         {currencyFormat !== 'IDR' && exchangeRate && (
-          <div className="flex items-center justify-between rounded-xl border border-amber-50 bg-white/50 p-2.5">
-            <span className="text-[9px] font-bold tracking-tight text-slate-400 uppercase">
-              Kurs Realtime (vs IDR)
-            </span>
-            <span className="text-yellow-outlook text-[10px] font-black">
-              1 {currencyFormat} ={' '}
-              {new Intl.NumberFormat('id-ID', {
-                maximumFractionDigits: 2,
-              }).format(1 / exchangeRate)}{' '}
-              IDR
-            </span>
+          <div className="relative overflow-hidden rounded-xl border border-amber-50 bg-amber-50/30 p-3 shadow-inner shadow-amber-200/20">
+            <div className="absolute top-0 right-0 p-1 opacity-20">
+              <Coins className="size-8 text-amber-500" />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <span className="text-[9px] font-black tracking-widest text-amber-600/60 uppercase italic">
+                Sovereign Exchange Node 🌐
+              </span>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-sm font-black text-slate-800">
+                  1 {currencyFormat}
+                </span>
+                <span className="text-[10px] font-bold text-slate-400">=</span>
+                <span className="text-yellow-outlook text-sm font-black">
+                  {new Intl.NumberFormat('id-ID', {
+                    maximumFractionDigits: 2,
+                  }).format(1 / exchangeRate)}
+                </span>
+                <span className="text-[10px] font-black text-slate-800">
+                  IDR
+                </span>
+              </div>
+              <p className="text-[8px] font-bold text-slate-400">
+                Data diperbarui secara realtime untuk akurasi maksimal.
+              </p>
+            </div>
           </div>
         )}
       </div>

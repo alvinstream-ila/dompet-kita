@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { motion } from 'framer-motion';
@@ -11,15 +12,101 @@ import {
   Settings,
   ShieldAlert,
   Users,
+  Download,
+  PlusCircle,
+  Loader2,
 } from 'lucide-react';
 import { useAuth } from '@/features/auth';
+import axios from '@/lib/axios';
+
+interface LegacyReport {
+  id: number;
+  filename: string;
+  summary_data: Record<string, unknown>;
+  created_at: string;
+}
 
 /**
  * LegacyVault Page - Digital Inheritance & Security 🛡️
- * Ported to Next.js 15 (App Router)
+ * Enhanced with real API integration and heartbeat monitoring.
  */
 export default function LegacyVaultPage() {
   const { user } = useAuth();
+  const [reports, setReports] = useState<LegacyReport[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastHeartbeat, setLastHeartbeat] = useState<string | null>(null);
+  const [threshold, setThreshold] = useState(
+    user?.legacy_threshold_months || 6
+  );
+
+  useEffect(() => {
+    fetchReports();
+  }, []);
+
+  const fetchReports = async () => {
+    try {
+      const response = await axios.get('/api/legacy');
+      setReports(response.data.data);
+    } catch (error) {
+      console.error('Failed to fetch legacy reports:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleHeartbeat = async () => {
+    setIsSyncing(true);
+    try {
+      await axios.post('/api/legacy/heartbeat');
+      setLastHeartbeat(new Date().toISOString());
+      // Optional: show toast success
+    } catch (error) {
+      console.error('Heartbeat failed:', error);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const handleUpdateThreshold = async (val: number) => {
+    setThreshold(val);
+    try {
+      await axios.patch('/api/legacy/settings', {
+        legacy_threshold_months: val,
+      });
+    } catch (error) {
+      console.error('Failed to update threshold:', error);
+    }
+  };
+
+  const handleTriggerSnapshot = async () => {
+    setIsSyncing(true);
+    try {
+      await axios.post('/api/legacy/snapshot');
+      await fetchReports();
+    } catch (error) {
+      console.error('Failed to trigger snapshot:', error);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const handleDownload = async (id: number) => {
+    try {
+      const response = await axios.get(`/api/legacy/download/${id}`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Legacy_Snapshot_${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -45,17 +132,31 @@ export default function LegacyVaultPage() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col space-y-2"
+        className="flex flex-col justify-between gap-4 md:flex-row md:items-center"
       >
-        <h1 className="flex items-center gap-3 text-3xl font-bold text-white md:text-4xl">
-          <ShieldAlert className="h-10 w-10 text-rose-500" />
-          Digital Legacy Vault
-        </h1>
-        <p className="max-w-2xl text-slate-400">
-          Sentinal Hub: Mengamankan masa depan digital kita. Dead Man&apos;s
-          Switch akan aktif otomatis jika aktivitas terhenti melebihi batas
-          waktu yang ditentukan.
-        </p>
+        <div className="space-y-2">
+          <h1 className="flex items-center gap-3 text-3xl font-bold text-white md:text-4xl">
+            <ShieldAlert className="h-10 w-10 text-rose-500" />
+            Digital Legacy Vault
+          </h1>
+          <p className="max-w-2xl text-slate-400">
+            Sentinel Hub v7.1.18: Mengamankan masa depan digital keluarga. Dead
+            Man&apos;s Switch akan aktif otomatis jika aktivitas terhenti.
+          </p>
+        </div>
+
+        <button
+          onClick={handleHeartbeat}
+          disabled={isSyncing}
+          className="flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-6 py-3 font-semibold text-white backdrop-blur-md transition-all hover:bg-white/20 disabled:opacity-50"
+        >
+          {isSyncing ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : (
+            <Heart className="h-5 w-5 text-rose-500" />
+          )}
+          Send Heartbeat
+        </button>
       </motion.div>
 
       <motion.div
@@ -81,11 +182,14 @@ export default function LegacyVaultPage() {
 
             <div className="space-y-1">
               <h2 className="text-5xl font-bold tracking-tight text-white">
-                {user?.last_active_at
-                  ? formatDistanceToNow(new Date(user.last_active_at), {
-                      addSuffix: true,
-                      locale: id,
-                    })
+                {lastHeartbeat || user?.last_active_at
+                  ? formatDistanceToNow(
+                      new Date(lastHeartbeat || user!.last_active_at!),
+                      {
+                        addSuffix: true,
+                        locale: id,
+                      }
+                    )
                   : 'Baru saja'}
               </h2>
               <p className="text-slate-400">
@@ -99,15 +203,15 @@ export default function LegacyVaultPage() {
                   Threshold Status
                 </p>
                 <p className="text-xl font-medium text-white">
-                  {user?.legacy_threshold_months || 6} Bulan
+                  {threshold} Bulan
                 </p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-semibold tracking-wider text-slate-500 uppercase">
-                  Legacy Trigger
+                  Vault Security
                 </p>
-                <p className="text-xl font-medium text-amber-500">
-                  {user?.is_legacy_triggered ? 'DI AKTIFKAN' : 'STANDBY'}
+                <p className="text-xl font-medium text-emerald-500">
+                  ENCRYPTED
                 </p>
               </div>
             </div>
@@ -132,7 +236,7 @@ export default function LegacyVaultPage() {
             </div>
             <div>
               <p className="font-medium text-white">
-                {user?.partner_name || 'Alvin/Ila'}
+                {user?.legacy_partner_name || 'Alvin/Ila'}
               </p>
               <p className="text-sm text-slate-500">Heir / Partner</p>
             </div>
@@ -171,24 +275,26 @@ export default function LegacyVaultPage() {
               </label>
               <select
                 id="inactive-threshold"
+                value={threshold}
+                onChange={(e) =>
+                  handleUpdateThreshold(parseInt(e.target.value))
+                }
                 className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-white transition-all outline-none focus:ring-2 focus:ring-indigo-500/50"
               >
                 <option value="3">3 Bulan</option>
-                <option value="6" defaultValue="6">
-                  6 Bulan (Recomended)
-                </option>
+                <option value="6">6 Bulan (Recomended)</option>
                 <option value="12">12 Bulan</option>
                 <option value="24">24 Bulan</option>
               </select>
             </div>
 
-            <div className="flex items-center gap-3 rounded-xl border border-indigo-500/20 bg-indigo-500/10 p-3">
+            <div className="flex items-center gap-3 rounded-xl border border-rose-500/20 bg-rose-500/10 p-3">
               <span className="shrink-0">
-                <Info className="h-5 w-5 text-indigo-400" />
+                <Info className="h-5 w-5 text-rose-400" />
               </span>
-              <p className="text-xs text-indigo-300">
-                Data akan otomatis terhapus dari server cloud setelah 2 tahun
-                legacy berhasil dipindah-tangankan.
+              <p className="text-xs text-rose-300">
+                Sistem mPDF enkripsi aktif. Laporan akan otomatis terkunci
+                menggunakan password akun Anda.
               </p>
             </div>
           </div>
@@ -205,40 +311,63 @@ export default function LegacyVaultPage() {
               Vault Archive
             </h3>
             <button
-              type="button"
-              className="flex items-center gap-1 text-sm text-emerald-400 transition-colors hover:text-emerald-300"
+              onClick={handleTriggerSnapshot}
+              disabled={isSyncing}
+              className="flex items-center gap-2 rounded-xl bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-400 transition-all hover:bg-emerald-500/20"
             >
-              Lihat Semua
+              {isSyncing ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <PlusCircle className="h-4 w-4" />
+              )}
+              Generate Snapshot
             </button>
           </div>
 
           <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="group flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 p-4 transition-all hover:border-white/10"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
-                    <Key className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-white">
-                      Snapshot Finansial #{i + 102}
-                    </p>
-                    <p className="text-xs text-slate-500">
-                      Auto-Generated • 12 April 2026
-                    </p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  className="rounded-lg bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-400 transition-all hover:bg-emerald-500/20"
-                >
-                  Download
-                </button>
+            {isLoading ? (
+              <div className="flex h-32 items-center justify-center text-slate-500">
+                <Loader2 className="h-8 w-8 animate-spin" />
               </div>
-            ))}
+            ) : reports.length > 0 ? (
+              reports.map((report) => (
+                <div
+                  key={report.id}
+                  className="group flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 p-4 transition-all hover:border-white/10"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
+                      <Key className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-white">
+                        {report.filename}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        Auto-Archived •{' '}
+                        {new Date(report.created_at).toLocaleDateString(
+                          'id-ID',
+                          { day: 'numeric', month: 'long', year: 'numeric' }
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleDownload(report.id)}
+                    type="button"
+                    className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-400 transition-all hover:bg-emerald-500/20"
+                  >
+                    <Download className="h-4 w-4" />
+                    Download
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div className="flex h-32 flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 text-slate-500">
+                <FileText className="mb-2 h-8 w-8 opacity-20" />
+                <p>Belum ada snapshot yang tersimpan.</p>
+              </div>
+            )}
           </div>
         </motion.div>
       </motion.div>

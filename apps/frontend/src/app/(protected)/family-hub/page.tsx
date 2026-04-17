@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { LogOut, User as UserIcon } from 'lucide-react';
+import { LogOut, RefreshCw, Settings, User as UserIcon } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 import { toast } from 'sonner';
@@ -23,6 +23,13 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/features/auth';
 import { unlinkPartnerAction } from '@/features/family/actions/partner';
 import { InvitePartnerDialog } from '@/features/family/components/InvitePartnerDialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import api from '@/lib/axios';
 import { useFormatting } from '@/lib/hooks/useFormatting';
 
@@ -38,13 +45,64 @@ export default function FamilyHubPage() {
   const [isUnlinkOpen, setIsUnlinkOpen] = React.useState(false);
 
   // Fetch Tax Estimate
-  const { data: taxData, isLoading: isTaxLoading } = useQuery({
+  const {
+    data: taxData,
+    isLoading: isTaxLoading,
+    refetch: refetchTax,
+  } = useQuery({
     queryKey: ['tax-estimate'],
     queryFn: async () => {
       const res = await api.get('/ai/tax/estimate');
       return res.data.data;
     },
   });
+
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const [isUpdatingProfile, setIsUpdatingProfile] = React.useState(false);
+
+  // Tax Profile State
+  const [taxProfile, setTaxProfile] = React.useState({
+    status: user?.tax_status || 'TK/0',
+    dependents: user?.dependents_count || 0,
+    sector: user?.industry_sector || '',
+  });
+
+  // Sync profile when user changes
+  React.useEffect(() => {
+    if (user) {
+      setTaxProfile({
+        status: user.tax_status || 'TK/0',
+        dependents: user.dependents_count || 0,
+        sector: user.industry_sector || '',
+      });
+    }
+  }, [user]);
+
+  const handleManualRefresh = async () => {
+    setIsRefreshing(true);
+    // Dramatic pause for AI "thinking" effect
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await refetchTax();
+    setIsRefreshing(false);
+    toast.success('Pajak Genius Sayang sudah selesai berpikir! ✨');
+  };
+
+  const handleUpdateTaxProfile = async () => {
+    setIsUpdatingProfile(true);
+    try {
+      await api.put('/user/profile', {
+        tax_status: taxProfile.status,
+        dependents_count: Number(taxProfile.dependents),
+        industry_sector: taxProfile.sector,
+      });
+      toast.success('Profil pajak berhasil diperbarui! ❤️');
+      refetchTax();
+    } catch {
+      toast.error('Gagal memperbarui profil pajak 🥺');
+    } finally {
+      setIsUpdatingProfile(false);
+    }
+  };
 
   // Fetch Legacy Report
   useQuery({
@@ -77,6 +135,40 @@ export default function FamilyHubPage() {
     } finally {
       setIsUpdatingThreshold(false);
       setNewThreshold('');
+    }
+  };
+
+  const [isGeneratingLegacy, setIsGeneratingLegacy] = React.useState(false);
+
+  const handleGenerateLegacyPDF = async () => {
+    setIsGeneratingLegacy(true);
+    toast.info('Mempersiapkan Laporan Warisan Digital... ✨');
+
+    try {
+      const response = await api.get('/ai/legacy/report', {
+        responseType: 'blob',
+      });
+
+      const file = new Blob([response.data], { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      const link = document.createElement('a');
+      link.href = fileURL;
+      link.setAttribute(
+        'download',
+        `Legacy_Report_${new Date().toISOString().split('T')[0]}.pdf`
+      );
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      link.remove();
+      URL.revokeObjectURL(fileURL);
+
+      toast.success('Laporan Warisan Digital berhasil di-generate! ❤️');
+    } catch {
+      toast.error('Gagal membangkitkan laporan warisan 🥺');
+    } finally {
+      setIsGeneratingLegacy(false);
     }
   };
 
@@ -238,45 +330,217 @@ export default function FamilyHubPage() {
             />
           </CardHeader>
           <CardContent className="p-8">
-            <CardTitle className="mb-2 text-2xl font-black text-slate-800">
-              Automated Tax
-            </CardTitle>
-            <p className="mb-6 text-sm text-slate-500">
-              Estimasi pajak tahunan otomatis berdasarkan riwayat transaksi
-              kamu.
-            </p>
-            {isTaxLoading ? (
-              <div className="flex h-20 animate-pulse items-center justify-center font-bold text-slate-400">
-                MENGHITUNG...
+            <div className="flex items-start justify-between">
+              <div>
+                <CardTitle className="mb-2 text-2xl font-black text-slate-800">
+                  Automated Tax
+                </CardTitle>
+                <p className="mb-6 text-sm text-slate-500">
+                  Estimasi pajak tahunan 2026 berdasarkan profil kamu.
+                </p>
+              </div>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-10 w-10 rounded-full bg-slate-50 text-slate-400 hover:bg-slate-100"
+                  >
+                    <Settings className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="rounded-3xl sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Profil Pajak (PTKP)</DialogTitle>
+                    <DialogDescription>
+                      Atur status pajak kamu secara manual untuk akurasi
+                      perhitungan.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Status Pernikahan</Label>
+                        <Select
+                          value={taxProfile.status.split('/')[0]}
+                          onValueChange={(v) =>
+                            setTaxProfile({ ...taxProfile, status: v })
+                          }
+                        >
+                          <SelectTrigger className="h-12 rounded-xl">
+                            <SelectValue placeholder="Pilih Status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="TK">Lajang (TK)</SelectItem>
+                            <SelectItem value="K">Menikah (K)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Tanggungan (Maks 3)</Label>
+                        <Select
+                          value={String(taxProfile.dependents)}
+                          onValueChange={(v) =>
+                            setTaxProfile({
+                              ...taxProfile,
+                              dependents: Number(v),
+                            })
+                          }
+                        >
+                          <SelectTrigger className="h-12 rounded-xl">
+                            <SelectValue placeholder="0" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="0">0</SelectItem>
+                            <SelectItem value="1">1</SelectItem>
+                            <SelectItem value="2">2</SelectItem>
+                            <SelectItem value="3">3</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Sektor Industri (Untuk Insentif DTP)</Label>
+                      <Select
+                        value={taxProfile.sector}
+                        onValueChange={(v) =>
+                          setTaxProfile({ ...taxProfile, sector: v })
+                        }
+                      >
+                        <SelectTrigger className="h-12 rounded-xl">
+                          <SelectValue placeholder="Pilih Sektor" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Umum">Umum (Tanpa DTP)</SelectItem>
+                          <SelectItem value="Tekstil">Tekstil</SelectItem>
+                          <SelectItem value="Pakaian Jadi">
+                            Pakaian Jadi
+                          </SelectItem>
+                          <SelectItem value="Alas Kaki">Alas Kaki</SelectItem>
+                          <SelectItem value="Furnitur">Furnitur</SelectItem>
+                          <SelectItem value="Pariwisata">Pariwisata</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="rounded-xl bg-blue-50 p-4 text-[10px] leading-relaxed text-blue-600 italic">
+                      💡 Info: Status{' '}
+                      <b>
+                        {taxProfile.status}/{taxProfile.dependents}
+                      </b>{' '}
+                      digunakan untuk menghitung Penghasilan Tidak Kena Pajak
+                      (PTKP) sesuai UU HPP.
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      onClick={handleUpdateTaxProfile}
+                      disabled={isUpdatingProfile}
+                      className="bg-blue-royal h-12 w-full rounded-2xl font-bold"
+                    >
+                      {isUpdatingProfile
+                        ? 'Menyimpan...'
+                        : 'Update Profil Pajak ✨'}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            {isTaxLoading || isRefreshing ? (
+              <div className="flex flex-col items-center justify-center space-y-4 py-10 text-center">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                  className="bg-yellow-outlook/20 rounded-full p-4"
+                >
+                  <RefreshCw className="text-yellow-outlook h-8 w-8" />
+                </motion.div>
+                <div className="space-y-1">
+                  <span className="block text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                    {isRefreshing ? 'AI Is Thinking...' : 'MENGHITUNG...'}
+                  </span>
+                  <p className="max-w-[180px] text-[11px] text-slate-500 italic">
+                    {isRefreshing
+                      ? '"Sayang, tunggu ya, aku lagi baca regulasi PMK 105/2025... 🧐"'
+                      : 'Mempersiapkan data keuangan kamu...'}
+                  </p>
+                </div>
               </div>
             ) : (
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="border-yellow-outlook/20 bg-yellow-outlook/10 rounded-2xl border p-4">
                     <span className="text-yellow-outlook block text-[10px] font-black tracking-widest uppercase">
-                      Income
+                      Income 2026
                     </span>
                     <span className="text-lg font-bold text-slate-900">
                       {formatAmount(taxData?.total_income || 0)}
                     </span>
                   </div>
-                  <div className="border-blue-royal/20 bg-blue-royal/10 rounded-2xl border p-4">
+                  <div className="border-blue-royal/20 bg-blue-royal/10 relative overflow-hidden rounded-2xl border p-4">
                     <span className="text-blue-royal block text-[10px] font-black tracking-widest uppercase">
                       Est. Tax
                     </span>
                     <span className="text-lg font-bold text-slate-900">
                       {formatAmount(taxData?.estimated_tax || 0)}
                     </span>
+                    {taxData?.is_dtp_active && (
+                      <div className="bg-green-stat absolute top-0 right-0 rounded-bl-lg px-1.5 py-0.5 text-[8px] font-black text-white uppercase">
+                        DTP Active
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <span className="mb-2 block text-[10px] font-black tracking-widest text-slate-400 uppercase">
-                    🤖 Nasihat AI
-                  </span>
-                  <p className="text-[11px] leading-relaxed text-slate-600 italic">
+
+                <div className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-blue-royal/10 flex h-8 w-8 items-center justify-center rounded-lg">
+                      <UserIcon className="text-blue-royal h-4 w-4" />
+                    </div>
+                    <div>
+                      <span className="block text-[8px] font-black tracking-widest text-slate-400 uppercase">
+                        Status PTKP
+                      </span>
+                      <span className="text-xs font-bold text-slate-700">
+                        {taxData?.ptkp_status}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="block text-[8px] font-black tracking-widest text-slate-400 uppercase">
+                      Efektif
+                    </span>
+                    <span className="text-xs font-bold text-slate-700">
+                      {taxData?.effective_rate}%
+                    </span>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl border border-slate-100 bg-slate-50/50 p-5">
+                  <div className="mb-2 flex items-center gap-2">
+                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-800 text-[10px] text-white">
+                      ✨
+                    </div>
+                    <span className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                      Nasihat Pajak Genius
+                    </span>
+                  </div>
+                  <p className="text-[11px] leading-relaxed text-slate-600">
                     &quot;{taxData?.ai_advice}&quot;
                   </p>
                 </div>
+
+                <Button
+                  onClick={handleManualRefresh}
+                  disabled={isRefreshing}
+                  className="bg-yellow-outlook shadow-yellow-outlook/20 hover:bg-yellow-outlook/90 flex h-12 w-full items-center justify-center gap-2 rounded-2xl font-bold text-slate-900 shadow-lg"
+                >
+                  <RefreshCw
+                    className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`}
+                  />
+                  Refresh AI Advice
+                </Button>
               </div>
             )}
           </CardContent>
@@ -303,12 +567,13 @@ export default function FamilyHubPage() {
             </p>
             <div className="space-y-4">
               <Button
-                onClick={() =>
-                  toast.success('Tunggu ya sayang, laporan lagi disiapin! ✨')
-                }
+                onClick={handleGenerateLegacyPDF}
+                disabled={isGeneratingLegacy}
                 className="bg-pink-primary shadow-pink-primary/20 hover:bg-pink-primary/90 h-12 w-full rounded-2xl font-bold shadow-lg"
               >
-                Generate Legacy PDF
+                {isGeneratingLegacy
+                  ? 'Generating... ✨'
+                  : 'Generate Legacy PDF'}
               </Button>
               <Button
                 variant="outline"

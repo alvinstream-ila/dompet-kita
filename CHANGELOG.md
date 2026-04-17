@@ -4,6 +4,47 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.2.8] - 2026-04-16 (Digital Inheritance Hub)
+
+### Added
+- **Digital Inheritance Hub**: Launched a professional legacy planning system with **secure PDF certificate generation** and **Sovereign AI Directives**.
+- **Dead Man's Switch**: Implemented an automated inactivity monitor set to a **6-month threshold**, with secure partner notifications via the `legacy:check-inactivity` command.
+- **Inheritance Dashboard**: Integrated a premium frontend interface for legacy planning with loading states and authenticated file downloads.
+
+### Fixed
+- **PostgreSQL Boolean Logic**: Resolved strict type-casting errors in backend query monitoring for boolean flags.
+- **Frontend Syntax Cleanup**: Optimized node removal logic by switching from `removeChild` to the modern `remove()` method as per linter standards.
+
+## [7.2.7] - 2026-04-16 (Sovereign Tax Intelligence)
+
+### Added
+- **Tax Intelligence 2026**: Upgraded the tax engine to support **TER (Tarif Efektif Rata-Rata)** and **PMK 105/2025** DTP incentives for 2026.
+- **Manual Tax Profile**: Introduced manual controls for PTKP status, dependents, and industry sector directly within the Tax Card.
+- **AI Thinking Experience**: Implemented a dramatic "AI Thinking" animation and manual refresh mechanism for tax advice.
+
+### Changed
+- **AI Persona Accuracy**: Refined the "Pajak Genius Sayang" prompt to fix PTKP definition hallucinations and provide high-fidelity 2026 tax planning insights.
+- **Tax UI Redesign**: Overhauled the Family Hub Tax Card with a professional settings dialog and persistent profile synchronization.
+
+### Fixed
+- **Type Safety Alignment**: Resolved frontend `User` type mismatches for new tax-specific fields.
+- **Code Style Refinement**: Synchronized `CalculateTaxAction` with linting standards (missing curly braces).
+
+## [7.2.6] - 2026-04-16 (Sovereign UI/UX Singularity)
+
+### Added
+- **Sovereign Currency Picker (2026 Standard)**: Launched an AI-guided Bento-Search currency selector with high-density metadata and SVG flag integration.
+- **Jump Navigation Calendar**: Implemented a multi-level (Day-Month-Year) recursive navigation system for the financial report period picker.
+- **Asset Precision Formatting**: Introduced accounting-grade numeric inputs with real-time Indonesian locale formatting (dot for thousands, comma for decimals).
+
+### Changed
+- **Calendar Contextualization**: Refactored the `Calendar` component to use a `CalendarContext` architecture, resolving nested component warnings and improving state predictability.
+- **Exchange Node Visualization**: Upgraded the realtime exchange rate display to a high-transparency dashboard component.
+
+### Security
+- **UI Logic Sovereignty**: Reached **Zero-Warning status** across all newly implemented UI components, satisfying strict linter rules and Biome v4 standards.
+- **Precision Integrity**: Verified that the frontend numeric parser maintains 100% accuracy for backend-bound financial data, preventing floating-point errors.
+
 ## [7.2.5] - 2026-04-16 (Sovereign Deep Scan & A11y Singularity)
 
 ### Added

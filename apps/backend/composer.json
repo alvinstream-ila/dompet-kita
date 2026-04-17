@@ -18,13 +18,16 @@
         "laravel/socialite": "^5.25",
         "laravel/tinker": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.0",
+        "mpdf/mpdf": "^8.3",
+        "sabberworm/php-css-parser": "^9.3",
         "sentry/sentry-laravel": "^4.22",
         "spatie/laravel-activitylog": "^5.0",
         "spatie/laravel-honeypot": "^4.7",
         "symfony/google-mailer": "^8.0",
         "symfony/http-client": "^8.0",
         "symfony/mailer": "^8.0",
-        "symfony/mime": "^8.0"
+        "symfony/mime": "^8.0",
+        "thecodingmachine/safe": "^3.4"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.7",
@@ -108,16 +111,21 @@
     "extra": {
         "laravel": {
             "dont-discover": []
+        },
+        "discovery": {
+            "psr/http-client-implementation": "Symfony\\Component\\HttpClient\\Psr18Client",
+            "psr/http-factory-implementation": "Nyholm\\Psr7\\Factory\\Psr17Factory"
         }
     },
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
+        "process-timeout": 2000,
         "sort-packages": true,
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": false
         },
         "platform": {
             "php": "8.4.0"

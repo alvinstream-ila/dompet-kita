@@ -30,25 +30,13 @@ class CalculateTaxAction extends BaseAction
 
     /**
      * PTKP (Penghasilan Tidak Kena Pajak) - Single person basic: 54,000,000 IDR
-     * Note: For Alvin & Ila (Married status might change this).
      */
     private float $ptkpBase = 54000000;
 
-    private float $ptkpExtraMarried = 4500000;
+    private float $ptkpExtra = 4500000; // Extra for Married and for each dependent
 
     /**
      * Calculate taxable income and estimated tax for a given year.
-     *
-     * @return array{
-     *     year: int,
-     *     total_income: float,
-     *     ptkp: float,
-     *     taxable_income: float,
-     *     estimated_tax: float,
-     *     effective_rate: float,
-     *     ptkp_status: string,
-     *     ptkp_value: float
-     * }
      */
     public function execute(User $user, int $year): array
     {
@@ -56,23 +44,36 @@ class CalculateTaxAction extends BaseAction
         $endOfYear = Carbon::create($year, 12, 31)?->endOfDay() ?? throw new \InvalidArgumentException("Invalid year: {$year}");
 
         // Sum income (Income type transactions)
-        /** @var float|int $sumAmount */
-        $sumAmount = Transaction::where('user_id', $user->id)
+        $totalIncome = (float) Transaction::where('user_id', $user->id)
             ->where('type', TransactionType::INCOME)
             ->whereBetween('date', [$startOfYear, $endOfYear])
             ->sum('amount');
-        $totalIncome = (float) $sumAmount;
 
-        // Apply PTKP
+        // Apply PTKP Logic (Upped for 2026 Sovereign Standards)
         $ptkp = $this->ptkpBase;
-        if ($user->partner_id) { // changed from partner_name to partner_id based on later logic
-            $ptkp += $this->ptkpExtraMarried;
+        $isMarried = str_starts_with($user->tax_status ?? 'TK', 'K');
+
+        if ($isMarried) {
+            $ptkp += $this->ptkpExtra;
         }
+
+        // Dependents (Max 3)
+        $dependents = min(3, $user->dependents_count ?? 0);
+        $ptkp += ($dependents * $this->ptkpExtra);
 
         $taxableIncome = max(0, $totalIncome - $ptkp);
         $taxPayable = $this->calculateProgressiveTax($taxableIncome);
 
-        $effectiveRate = $totalIncome > 0 ? $taxPayable / $totalIncome * 100 : 0;
+        // 2026 DTP (Pajak Ditanggung Pemerintah) Logic - PMK 105/2025
+        $isDtpEligible = $this->checkDtpEligibility($user, $totalIncome);
+        $appliedIncentive = 0;
+
+        if ($isDtpEligible) {
+            $appliedIncentive = $taxPayable; // DTP covers 100% for eligible sectors in 2026
+            $taxPayable = 0;
+        }
+
+        $effectiveRate = $totalIncome > 0 ? ($taxPayable + $appliedIncentive) / $totalIncome * 100 : 0;
 
         return [
             'year' => $year,
@@ -80,11 +81,24 @@ class CalculateTaxAction extends BaseAction
             'ptkp' => $ptkp,
             'taxable_income' => $taxableIncome,
             'estimated_tax' => $taxPayable,
+            'applied_incentive' => $appliedIncentive,
+            'is_dtp_active' => $isDtpEligible,
             'effective_rate' => round($effectiveRate, 2),
-            // Extra metadata for AI advice
-            'ptkp_status' => $user->partner_id ? 'Status K/1 (Menikah/Ada Tanggungan)' : 'Status TK/0 (Lajang/Tidak Ada Tanggungan)',
+            'ptkp_status' => $user->tax_status.'/'.$dependents,
             'ptkp_value' => $ptkp,
         ];
+    }
+
+    /**
+     * Check for PMK 105/2025 eligibility.
+     */
+    private function checkDtpEligibility(User $user, float $totalIncome): bool
+    {
+        $eligibleSectors = ['Tekstil', 'Pakaian Jadi', 'Alas Kaki', 'Furnitur', 'Kulit', 'Pariwisata'];
+        $isEligibleSector = in_array($user->industry_sector, $eligibleSectors);
+
+        // PPh 21 DTP 2026 is for monthly gross < 10m. Annual simplified to < 120m.
+        return $isEligibleSector && $totalIncome > 0 && ($totalIncome / 12) <= 10000000;
     }
 
     /**
@@ -97,7 +111,6 @@ class CalculateTaxAction extends BaseAction
         $previousLimit = 0;
 
         foreach ($this->brackets as $bracket) {
-            /** @var array{limit: float, rate: float} $bracket */
             $rangeAmount = $bracket['limit'] - $previousLimit;
             $amountInBracket = min($remainingIncome, $rangeAmount);
 

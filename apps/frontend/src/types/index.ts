@@ -98,6 +98,12 @@ export interface User {
   legacy_threshold_months?: number;
   is_legacy_triggered?: boolean;
   two_factor_enabled?: boolean;
+  tax_status?: string;
+  dependents_count?: number;
+  legacy_grace_start_at?: string | null;
+  legacy_partner_name?: string | null;
+  legacy_partner_email?: string | null;
+  industry_sector?: string | null;
 }
 
 export interface ApiError {

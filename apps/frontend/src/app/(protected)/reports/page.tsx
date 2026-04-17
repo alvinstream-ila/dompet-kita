@@ -88,13 +88,6 @@ export default function ReportsPage() {
     'Desember',
   ];
 
-  const currentYear = new Date().getFullYear();
-  const baseYear = 2024;
-  const years = Array.from(
-    { length: currentYear + 1 - baseYear + 1 },
-    (_, i) => currentYear + 1 - i
-  );
-
   const totalIncome = transactions
     .filter((t) => t.type === 'income')
     .reduce((acc, curr) => acc + curr.amount, 0);
@@ -291,7 +284,6 @@ export default function ReportsPage() {
             setIsPickerOpen(false);
           }}
           months={months}
-          years={years}
         />
 
         <div className="flex w-full items-center gap-4 md:w-auto">

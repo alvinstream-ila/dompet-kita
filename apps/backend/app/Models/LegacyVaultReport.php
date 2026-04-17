@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class LegacyVaultReport extends Model
+{
+    protected $fillable = [
+        'user_id',
+        'filename',
+        'storage_path',
+        'disk',
+        'summary_data',
+        'is_claimed',
+        'claimed_at',
+        'purge_at',
+    ];
+
+    protected $casts = [
+        'summary_data' => 'array',
+        'is_claimed' => 'boolean',
+        'claimed_at' => 'datetime',
+        'purge_at' => 'datetime',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}

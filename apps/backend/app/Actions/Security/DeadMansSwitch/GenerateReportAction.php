@@ -6,12 +6,14 @@ use App\Actions\AI\GetLegacyAdviceAction;
 use App\Actions\BaseAction;
 use App\Models\Asset;
 use App\Models\Goal;
+use App\Models\LegacyVaultReport;
 use App\Models\Loan;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Mpdf\Laravel\Facades\Pdf;
 
 class GenerateReportAction extends BaseAction
 {
@@ -20,21 +22,14 @@ class GenerateReportAction extends BaseAction
     ) {}
 
     /**
-     * Generate a comprehensive financial snapshot (Legacy Report).
-     *
-     * @return array{
-     *     report_date: string,
-     *     user: array{name: string, email: string},
-     *     financial_summary: array{total_assets: float|int, total_loans: float|int, total_goals: float|int},
-     *     asset_details: Collection<int, Asset>,
-     *     active_loans: Collection<int, Loan>,
-     *     recommendations: array<int, string>
-     * }
+     * Generate a comprehensive financial snapshot (Legacy Report PDF).
      */
-    public function execute(User $user): array
+    public function execute(User $user, ?string $password = null): string
     {
+        Log::info("Initiating Legacy PDF generation for user {$user->id}");
+
         $data = [
-            'report_date' => Carbon::now()->toDateTimeString(),
+            'report_date' => Carbon::now()->format('d F Y, H:i'),
             'user' => [
                 'name' => $user->name,
                 'email' => $user->email,
@@ -44,17 +39,15 @@ class GenerateReportAction extends BaseAction
                 'total_loans' => (float) Loan::where('user_id', $user->id)->where('is_paid', false)->sum('amount'),
                 'total_goals' => (float) Goal::where('user_id', $user->id)->where('is_completed', false)->sum('target_amount'),
             ],
-            'asset_details' => Asset::where('user_id', $user->id)->get(['name', 'value']),
-            'active_loans' => Loan::where('user_id', $user->id)->where('is_paid', false)->get(['debtor', 'amount', 'due_date']),
+            'asset_details' => Asset::where('user_id', $user->id)->get(['name', 'value'])->toArray(),
+            'active_loans' => Loan::where('user_id', $user->id)->where('is_paid', false)->get(['debtor', 'amount', 'due_date'])->toArray(),
         ];
 
         // AI Advice
         $partner = $user->partner()->first();
-        $partnerName = $partner instanceof User ? (string) $partner->name : 'belum dihubungkan';
+        $partnerName = $partner instanceof User ? (string) $partner->name : ($user->legacy_partner_name ?? 'belum dihubungkan');
 
-        /** @var array{report_date: string, user: array{name: string, email: string}, financial_summary: array{total_assets: float|int, total_loans: float|int, total_goals: float|int}, asset_details: Collection<int, Asset>, active_loans: Collection<int, Loan>} $adviceData */
-        $adviceData = $data;
-        $aiAdvice = $this->getLegacyAdviceAction->execute($user, $adviceData);
+        $aiAdvice = $this->getLegacyAdviceAction->execute($user, $data);
 
         $data['recommendations'] = [
             (string) $aiAdvice,
@@ -63,11 +56,33 @@ class GenerateReportAction extends BaseAction
             "Pastikan pasangan Anda ({$partnerName}) mengetahui lokasi penyimpanan ini.",
         ];
 
-        $filename = 'legacy/report_'.$user->id.'_'.date('Y_m_d').'.json';
-        Storage::disk('local')->put($filename, json_encode($data, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
+        // Generate PDF using mPDF
+        $pdf = Pdf::loadView('reports.legacy', $data);
 
-        Log::info("Legacy report generated for user {$user->id}");
+        // Apply Encryption if password is provided
+        // Use a fallback (e.g. email or specialized token) if automated
+        $encryptionKey = $password ?? $user->email;
 
-        return $data;
+        $pdf->getMpdf()->SetProtection(['copy', 'print'], $encryptionKey, $encryptionKey);
+
+        $timestamp = date('Y_m_d_His');
+        $random = Str::random(8);
+        $filename = "legacy/vault_{$user->id}_{$timestamp}_{$random}.pdf";
+
+        // Save to Storj (Sovereign Cloud)
+        Storage::disk('storj')->put($filename, $pdf->output());
+
+        // Record in database archive
+        LegacyVaultReport::create([
+            'user_id' => $user->id,
+            'filename' => 'Snapshot Finansial #'.(LegacyVaultReport::where('user_id', $user->id)->count() + 101),
+            'storage_path' => $filename,
+            'disk' => 'storj',
+            'summary_data' => $data['financial_summary'],
+        ]);
+
+        Log::info("Legacy PDF report successfully archived to Storj for user {$user->id}");
+
+        return $filename;
     }
 }

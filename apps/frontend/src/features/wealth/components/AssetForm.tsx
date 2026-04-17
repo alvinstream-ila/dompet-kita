@@ -10,6 +10,37 @@ import type { Asset, AssetType } from '@/types';
 import { AssetTypeSelector } from './AssetTypeSelector';
 import { PremiumAssetIcon } from './PremiumAssetIcon';
 
+/**
+ * Sovereign Utility: Formatting numbers for Premium UX
+ * Ensures long numbers like 100.000.000 are readable.
+ */
+const formatNumeric = (value: string | number) => {
+  if (!value && value !== 0) return '';
+
+  // Clean input but keep dots (internal decimal) or commas (user input)
+  let stringValue = value.toString().replaceAll(/[^\d,.]/g, '');
+
+  // Normalize: if user typed comma, treat as decimal point
+  stringValue = stringValue.replaceAll(',', '.');
+
+  const parts = stringValue.split('.');
+  const integer = parts[0] || '0';
+  const fraction = parts.length > 1 ? parts[1] : undefined;
+
+  // Format integer with dots for thousands
+  const formattedInteger = integer.replaceAll(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+  // Return with comma for decimal if fraction exists
+  return fraction === undefined
+    ? formattedInteger
+    : `${formattedInteger},${fraction}`;
+};
+
+const parseNumeric = (value: string) => {
+  // Convert Indonesian display (1.000,50) to standard float string (1000.50)
+  return value.replaceAll('.', '').replaceAll(',', '.');
+};
+
 interface AssetFormProps {
   initialData?: Asset | null;
   onSubmit: (data: Partial<Asset>) => void;
@@ -217,16 +248,19 @@ export const AssetForm: React.FC<AssetFormProps> = ({
                     })()}
                   </Label>
                   <Input
-                    type="number"
-                    step="any"
-                    value={
+                    type="text"
+                    inputMode="numeric"
+                    value={formatNumeric(
                       formData.type === 'stock' ? stockLots : formData.quantity
-                    }
-                    onChange={(e) =>
-                      formData.type === 'stock'
-                        ? handleStockLotChange(e.target.value)
-                        : setFormData({ ...formData, quantity: e.target.value })
-                    }
+                    )}
+                    onChange={(e) => {
+                      const raw = parseNumeric(e.target.value);
+                      if (formData.type === 'stock') {
+                        handleStockLotChange(raw);
+                      } else {
+                        setFormData({ ...formData, quantity: raw });
+                      }
+                    }}
                     placeholder={
                       formData.type === 'mutual_fund' ? '0.0000' : '0'
                     }
@@ -249,15 +283,17 @@ export const AssetForm: React.FC<AssetFormProps> = ({
                     })()}
                   </Label>
                   <Input
-                    type="number"
-                    value={formData.invested_capital}
-                    onChange={(e) =>
+                    type="text"
+                    inputMode="numeric"
+                    value={formatNumeric(formData.invested_capital)}
+                    onChange={(e) => {
+                      const raw = parseNumeric(e.target.value);
                       setFormData({
                         ...formData,
-                        invested_capital: e.target.value,
-                        value: e.target.value,
-                      })
-                    }
+                        invested_capital: raw,
+                        value: raw,
+                      });
+                    }}
                     className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 px-6 font-bold text-slate-700"
                     placeholder={
                       formData.type === 'mutual_fund'

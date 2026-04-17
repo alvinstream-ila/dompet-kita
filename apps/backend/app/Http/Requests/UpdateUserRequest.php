@@ -52,6 +52,10 @@ class UpdateUserRequest extends FormRequest
             'exchange_rate' => ['sometimes', 'numeric', 'min:0'],
             'monthly_budget_limit' => ['sometimes', 'numeric', 'min:0'],
             'two_factor_enabled' => ['sometimes', 'boolean'],
+            'large_expense_threshold' => ['sometimes', 'numeric', 'min:0'],
+            'tax_status' => ['sometimes', 'string', 'max:10'],
+            'dependents_count' => ['sometimes', 'integer', 'min:0', 'max:10'],
+            'industry_sector' => ['sometimes', 'nullable', 'string', 'max:255'],
         ];
     }
 }
