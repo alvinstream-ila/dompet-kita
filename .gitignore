@@ -18,11 +18,9 @@ stats.html
 # Environment (CRITICAL)
 **/.env
 **/.env.*
-!**/.env.example
-**/*.local
-**/frontend/.env.local
 **/backend/.env
 **/backend/.env.*
+!**/.env.example
 **/mcp-server/.env
 
 # Editor & IDE
