@@ -1,5 +1,5 @@
-# 💰 Dompet Kita (Sovereign Singularity & Wealth Intelligence - v7.2.5)
-The **Sovereign Financial Fortress** for **Alvin & Ila**. Managed by the Council of Agents (COA) under the **v7.2.5 protocol**.
+# 💰 Dompet Kita (Sovereign Singularity & Wealth Intelligence - v7.5.0)
+The **Sovereign Financial Fortress** for **Alvin & Ila**. Managed by the Council of Agents (COA) under the **v7.5.0 protocol**.
 
 ---
 
@@ -43,8 +43,9 @@ Dompet Kita is designed with **Defense-in-Depth** — 10+ layers of primary prot
 4. **Honeypot Radar**: Real-time visual bot attack monitoring for API endpoints.
 5. **Sudo Mode (v7.1)**: Progressive re-authentication for high-risk financial configurations.
 6. **Digital Inheritance**: Encrypted legacy audit snapshots for financial continuity.
-7. **Security Gates**: Certified **Zero-Error Status** under PHPStan Level 9 (v7.2.5).
+7. **Security Gates**: Mandatory **GitGuardian** secret scan blocking (Pre-commit) and certified **Zero-Error Status** under PHPStan Level 9 (v7.5.0).
 8. **A11y Fortress**: 100% compliant with modern accessibility standards (UI/UX Inclusivity).
+9. **History Hardening**: PRISTINE historical baseline under the **Sovereign Clean Slate** protocol (Zero-leak verified).
 
 ---
 
@@ -97,4 +98,4 @@ This project is optimized for deployment on Vercel (Frontend) and Railway (Backe
 
 ---
 
-_Managed autonomously by **Antigravity AI (Sentient Core v7.2.5)** for the legacy of Alvin & Ila._
+_Managed autonomously by **Antigravity AI (Sentient Core v7.5.0)** for the legacy of Alvin & Ila._

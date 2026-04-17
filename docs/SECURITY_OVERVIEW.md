@@ -1,7 +1,13 @@
-# 🛡️ SECURITY OVERVIEW (Dompet Kita v6.3)
+# 🛡️ SECURITY OVERVIEW (Dompet Kita v7.5.0)
 
 ## 🏢 ARCHITECTURE: THE FORTRESS
 Dompet Kita follows a "Defense-in-Depth" strategy, combining infrastructure-level hardening with application-level sentience.
+
+### 🌑 LAYER 0: DEVELOPMENT SOVEREIGNTY (Sovereign Purge)
+- **Secret Detection:** Real-time **GitGuardian (ggshield)** integration with a standalone binary validator.
+- **Blocking Gates:** Automated **Husky pre-commit hooks** block any commit containing leaked credentials.
+- **History Hardening:** The "Sovereign Clean Slate" protocol (v7.5.0) has erased all 87 historical commits, ensuring a zero-leak baseline for the repository history.
+- **Scan Domain:** Recursive monorepo scanning covers `apps/`, `infra/`, and `services/`.
 
 ### 🌑 LAYER 1: NETWORK (Cloud Perimeter)
 - **Rate-Limiting:** `throttle:5,1` on sensitive endpoints.
@@ -27,4 +33,4 @@ Dompet Kita follows a "Defense-in-Depth" strategy, combining infrastructure-leve
 - **Legacy Vault:** Automated "Dead Man's Switch" for digital inheritance.
 
 ---
-*Maintained by Antigravity v6.3 Sentient Core | Phase 6 Singularity Ready.*
+*Maintained by Antigravity v7.5.0 Sentient Core | Sovereign Purge Singularity READY.*

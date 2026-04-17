@@ -1,4 +1,4 @@
-# 🛡️ DOMPET KITA: THE SOVEREIGN FINANCIAL FORTRESS (v7.2.9 SOVEREIGN AUDIT SINGULARITY)
+# 🛡️ DOMPET KITA: THE SOVEREIGN FINANCIAL FORTRESS (v7.5.0 SOVEREIGN AUDIT SINGULARITY)
 Sistem Finansial Premium & Wealth Intelligence Otonom untuk **Alvin & Ila**.
 
 ---
@@ -67,7 +67,8 @@ Premium PPh 21 tax engine optimized for **2026 Regulations (TER & PMK 105/2025 D
 1. **Zero-Trust Logic**: Every data access must be validated via Supabase RLS and Laravel Gatekeepers.
 2. **PII Masking**: Sensitive variables (Actual wealth, account numbers) are masked at the edge.
 3. **HoneyPot Radar**: Active visual bot attack radar integrated into the activity logs.
-4. **Security Gates**: Mandatory deep security scans (`php artisan security:gate`) before any production promote.
+4. **Security Gates**: Mandatory **GitGuardian** secret scan blocking (Pre-commit) and certified **Zero-Error Status** under PHPStan Level 9 (v7.5.0).
+5. **Clean Slate Protocol**: Historical baseline hardened by the **Sovereign Purge** (v7.5.0).
 
 ---
 
@@ -79,7 +80,7 @@ Premium PPh 21 tax engine optimized for **2026 Regulations (TER & PMK 105/2025 D
 
 ---
 
-_Amended by Antigravity v7.2.0 | Global System Hardening Active._
+_Amended by Antigravity v7.5.0 | Global System Hardening Active._
 - `/session-cleanup` : Protokol Pemurnian Sesi, Zero-Waste, & Auto-Git Sync (v6.3).
 - `php artisan maintenance:verify` : Unified Deep Audit Suite.
 - `php artisan maintenance:repair` : AI Autopilot: Self-Healing & Log Recovery.
@@ -102,9 +103,10 @@ The central nervous system of Antigravity AI is divided into these local memory 
 
 ## 🛡️ 5. THE ARMOR (Security Multi-Layer)
 1. **RLS (Row Level Security)**: Isolasi data level database antar pengguna (Supabase).
-2. **Snyk Sentinel (v6.3)**: Automated deep dependency & infrastructure vulnerability scan.
+2. **GitGuardian Sentinel (v7.5.0)**: Standalone binary-driven secret detection & blocking at the development edge.
 3. **PMA Immunity**: Sistem belajar dari bug masa lalu untuk mencegah pengulangan (Post-Mortem).
-5. **Sudo Mode (v6.3)**: Re-autentikasi password wajib untuk aksi berisiko tinggi (Profil, Password, Digital Legacy).
+4. **Sovereign Purge**: Historical hardening (Clean Slate) ensuring zero-leak legacy data.
+5. **Sudo Mode (v7.1)**: Re-autentikasi password wajib untuk aksi berisiko tinggi (Profil, Password, Digital Legacy).
 6. **Hardened Backups**: Enkripsi AES-256-CBC otomatis sebelum upload ke Storj.
 
 ---
@@ -116,4 +118,4 @@ The central nervous system of Antigravity AI is divided into these local memory 
 
 ---
 
-_"Managed autonomously by **Antigravity AI (Sentient Core v7.2.6)** for the bright future of Alvin & Ila."_
+_"Managed autonomously by **Antigravity AI (Sentient Core v7.5.0)** for the bright future of Alvin & Ila."_
