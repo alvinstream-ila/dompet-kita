@@ -1,5 +1,8 @@
+import { format } from 'date-fns';
+import { id } from 'date-fns/locale';
 import {
   Briefcase,
+  CalendarIcon,
   Car,
   Gamepad,
   Heart,
@@ -8,10 +11,7 @@ import {
   Plane,
   ShoppingBag,
   Target,
-  CalendarIcon,
 } from 'lucide-react';
-import { format } from 'date-fns';
-import { id } from 'date-fns/locale';
 import type React from 'react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';

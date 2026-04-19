@@ -1,23 +1,23 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import {
+  CheckCircle2,
   ChevronDown,
   LogOut,
   Settings,
   ShieldCheck,
-  CheckCircle2,
 } from 'lucide-react';
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
 import { useAuth } from '@/features/auth';
 import { AccountSettingsModal } from '@/features/settings';
+import { cn } from '@/lib/utils';
 
 export const UserNavDropdown = React.memo(() => {
   const { user, logout } = useAuth();

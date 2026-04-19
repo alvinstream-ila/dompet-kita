@@ -1,13 +1,14 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Loader2, Lock } from 'lucide-react';
-import React, { useState } from 'react';
+import { isAxiosError } from 'axios';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Loader2, Lock, ShieldCheck } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import api from '@/lib/axios';
-import { isAxiosError } from 'axios';
 
 interface SudoConfirmDialogProps {
   isOpen: boolean;
