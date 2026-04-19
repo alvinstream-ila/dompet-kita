@@ -81,8 +81,22 @@ export async function getFinancialSummaryAction(
   if (budgetCycleStart !== undefined)
     params.set('budget_cycle_start', budgetCycleStart.toString());
 
-  const response = await serverApi(
-    `/transactions/summary?${params.toString()}`
-  );
-  return response.data;
+  try {
+    const response = await serverApi(
+      `/transactions/summary?${params.toString()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch financial summary:', error);
+    return {
+      total_balance: 0,
+      monthly_income: 0,
+      monthly_expense: 0,
+      monthly_savings: 0,
+      budget_usage_percentage: 0,
+      recent_transactions: [],
+      income_analysis: [],
+      expense_analysis: [],
+    };
+  }
 }

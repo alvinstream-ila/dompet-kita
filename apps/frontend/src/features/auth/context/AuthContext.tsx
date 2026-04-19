@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             Cookies.set('user_verified', 'true', {
               expires: 7,
               sameSite: 'lax',
-              secure: true,
+              secure: process.env.NODE_ENV === 'production',
             });
           } else {
             Cookies.remove('user_verified');
@@ -56,7 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     Cookies.set('auth_token', token, {
       expires: 7,
       sameSite: 'lax',
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
     });
 
     // 🛡️ Set verification status for middleware
@@ -64,7 +64,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       Cookies.set('user_verified', 'true', {
         expires: 7,
         sameSite: 'lax',
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
       });
     } else {
       Cookies.remove('user_verified');

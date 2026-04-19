@@ -46,12 +46,27 @@ export default function GlobalError({
         </div>
 
         <h1 className="mb-2 text-2xl font-bold text-slate-900">
-          Gagal Memuat Transaksi
+          {error.message.includes('401') ||
+          error.message.includes('Unauthorized')
+            ? 'Sesi Telah Berakhir'
+            : 'Aduh, Ada Kendala 🥺'}
         </h1>
-        <p className="mb-8 leading-relaxed text-slate-500">
-          Terjadi kesalahan tak terduga saat mencoba sinkronisasi dompet Anda.
-          Sistem telah mencatat kejanggalan ini untuk audit.
+        <p className="mb-4 leading-relaxed text-slate-500">
+          {error.message.includes('401') ||
+          error.message.includes('Unauthorized')
+            ? 'Sesi Anda telah berakhir demi keamanan. Silakan masuk kembali untuk melanjutkan.'
+            : 'Terjadi kesalahan tak terduga saat mencoba sinkronisasi dompet Anda. Jangan khawatir, data Anda tetap aman.'}
         </p>
+
+        {/* Diagnostic info for developers */}
+        {(process.env.NODE_ENV === 'development' ||
+          error.message.length < 100) && (
+          <div className="mb-8 rounded-xl bg-slate-900/5 p-3 text-left">
+            <p className="line-clamp-3 font-mono text-[11px] font-medium text-slate-600">
+              Error: {error.message}
+            </p>
+          </div>
+        )}
 
         <div className="space-y-3">
           <button
@@ -62,13 +77,24 @@ export default function GlobalError({
             Coba Sinkron Ulang
           </button>
 
-          <button
-            type="button"
-            onClick={() => (globalThis.location.href = '/')}
-            className="w-full rounded-2xl border border-white/50 bg-white/40 py-3 font-medium text-slate-600 transition-all hover:bg-white/60"
-          >
-            Kembali ke Dashboard
-          </button>
+          {error.message.includes('401') ||
+          error.message.includes('Unauthorized') ? (
+            <button
+              type="button"
+              onClick={() => (globalThis.location.href = '/auth/login')}
+              className="bg-emerald-stat shadow-emerald-stat/20 w-full rounded-2xl py-4 font-semibold text-white shadow-xl transition-all hover:brightness-110 active:scale-95"
+            >
+              Masuk Kembali
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => (globalThis.location.href = '/')}
+              className="w-full rounded-2xl border border-white/50 bg-white/40 py-3 font-medium text-slate-600 transition-all hover:bg-white/60"
+            >
+              Kembali ke Dashboard
+            </button>
+          )}
         </div>
 
         {error.digest && (

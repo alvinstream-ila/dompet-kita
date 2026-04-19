@@ -99,6 +99,7 @@ export default function LoginPage() {
           code: twoFactorCode,
         });
         setAuthData(data.access_token, data.user);
+        router.push('/');
       } else {
         const { data } = await api.post('/login', { email, password });
         if (data.two_factor_required) {
@@ -106,6 +107,7 @@ export default function LoginPage() {
           setSuccessMessage(data.message);
         } else {
           setAuthData(data.access_token, data.user);
+          router.push('/');
         }
       }
     } catch (error: unknown) {
