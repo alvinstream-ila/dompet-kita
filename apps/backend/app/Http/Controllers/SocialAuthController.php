@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Exception;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -22,7 +21,9 @@ class SocialAuthController extends Controller
         if (empty(config("services.{$provider}.client_id"))) {
             Log::error("SocialAuth: Missing configuration for {$provider}. Check GOOGLE_CLIENT_ID in .env");
 
-            return redirect()->away((string) config('app.frontend_url').'/auth/login?error=missing_config');
+            $loginUrl = rtrim((string) config('app.frontend_url'), '/').'/auth/login?error=missing_config';
+
+            return redirect()->away($loginUrl);
         }
 
         /** @var AbstractProvider $driver */
@@ -34,18 +35,19 @@ class SocialAuthController extends Controller
     /**
      * Handle provider authentication callback.
      */
-    public function handleProviderCallback(string $provider): RedirectResponse|JsonResponse
+    public function handleProviderCallback(string $provider): RedirectResponse
     {
+        $frontendUrl = rtrim((string) config('app.frontend_url'), '/');
+
         try {
             /** @var AbstractProvider $driver */
             $driver = Socialite::driver($provider);
             $socialUser = $driver->stateless()->user();
             $user = User::where('email', $socialUser->getEmail())->first();
         } catch (Exception $e) {
-            return \response()->json([
-                'status' => 'error',
-                'message' => 'Gagal login lewat '.ucfirst($provider).' nih sayang, coba lagi ya? 🥺',
-            ], 400);
+            Log::error("SocialAuth: Driver fetch failed for {$provider}: ".$e->getMessage());
+
+            return redirect()->away($frontendUrl.'/auth/login?error=driver_fetch_failed');
         }
 
         try {
@@ -86,21 +88,17 @@ class SocialAuthController extends Controller
             $token = $user->createToken('auth_token')->plainTextToken;
 
             // Redirect to Frontend callback route
-            $frontendUrl = (string) config('app.frontend_url', 'http://localhost:3000');
-            $callbackUrl = rtrim($frontendUrl, '/').'/auth/callback?token='.$token.($isNewUser ? '&is_new=1' : '');
+            $callbackUrl = $frontendUrl.'/auth/callback?token='.urlencode($token).($isNewUser ? '&is_new=1' : '');
 
             Log::info("SocialAuth: Login SUCCESS for {$user->email} via {$provider}");
 
-            return \redirect()->away($callbackUrl);
+            return redirect()->away($callbackUrl);
         } catch (Exception $e) {
             Log::error("SocialAuth: FAIL during callback logic for {$provider}: ".$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return \response()->json([
-                'status' => 'error',
-                'message' => 'Waduh, ada masalah teknis pas nyimpen data kamu nih sayang. 🥺 '.$e->getMessage(),
-            ], 500);
+            return redirect()->away($frontendUrl.'/auth/login?error=callback_failed');
         }
     }
 

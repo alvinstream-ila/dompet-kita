@@ -132,10 +132,13 @@ return [
         */
         'lfi' => [
             'methods' => ['get', 'post', 'put', 'patch', 'delete'],
-            'routes' => ['only' => [], 'except' => []],
             'inputs' => [
                 'only' => [],
                 'except' => ['password', 'password_confirmation', 'current_password'],
+            ],
+            'routes' => [
+                'only' => [],
+                'except' => ['api/auth/*'],
             ],
             'patterns' => [
                 '#\.\./#is',
@@ -168,10 +171,13 @@ return [
         */
         'php' => [
             'methods' => ['get', 'post', 'put', 'patch', 'delete'],
-            'routes' => ['only' => [], 'except' => []],
             'inputs' => [
                 'only' => [],
                 'except' => ['password', 'password_confirmation', 'current_password'],
+            ],
+            'routes' => [
+                'only' => [],
+                'except' => ['api/auth/*'],
             ],
             'patterns' => [
                 'bzip2://',
@@ -213,10 +219,13 @@ return [
         */
         'rfi' => [
             'methods' => ['get', 'post', 'put', 'patch', 'delete'],
-            'routes' => ['only' => [], 'except' => []],
             'inputs' => [
                 'only' => [],
                 'except' => ['password', 'password_confirmation', 'current_password', 'photo', 'avatar'],
+            ],
+            'routes' => [
+                'only' => [],
+                'except' => ['api/auth/*'],
             ],
             'patterns' => [
                 '#(http|ftp){1,1}(s){0,1}://.*#i',
@@ -253,10 +262,13 @@ return [
         */
         'sqli' => [
             'methods' => ['get', 'post', 'put', 'patch', 'delete'],
-            'routes' => ['only' => [], 'except' => []],
             'inputs' => [
                 'only' => [],
                 'except' => ['password', 'password_confirmation', 'current_password'],
+            ],
+            'routes' => [
+                'only' => [],
+                'except' => ['api/auth/*'],
             ],
             'patterns' => [
                 '#[\d\W](union select|union join|union distinct)[\d\W]#is',
@@ -308,10 +320,13 @@ return [
         */
         'xss' => [
             'methods' => ['post', 'put', 'patch'],
-            'routes' => ['only' => [], 'except' => []],
             'inputs' => [
                 'only' => [],
                 'except' => ['password', 'password_confirmation', 'current_password', 'description', 'notes'],
+            ],
+            'routes' => [
+                'only' => [],
+                'except' => ['api/auth/*'],
             ],
             'patterns' => [
                 // Evil starting attributes

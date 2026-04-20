@@ -3,9 +3,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCircle, Loader2, Lock, LogIn, Mail, User } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import type React from 'react';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth';
 import api from '@/lib/axios';
@@ -59,9 +58,31 @@ const FacebookLogo = () => (
 export default function LoginPage() {
   const router = useRouter();
   const { login: setAuthData } = useAuth();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+
+  // Handle URL Errors & Success Messages
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (error) {
+      const errorMap: Record<string, string> = {
+        driver_fetch_failed:
+          'Gagal mengambil data dari Google, Sayang. Coba lagi ya? ❤️',
+        callback_failed: 'Gagal memproses login sosial kamu, Sayang. ❤️',
+        missing_config:
+          'Waduh, konfigurasi login sosial belum siap di server nih. 🥺',
+        unauthorized: 'Sesi login kamu tidak valid, silakan login ulang ya? ❤️',
+      };
+
+      const message = errorMap[error] || 'Terjadi kesalahan sistem, Sayang. ❤️';
+      alert(message);
+
+      // Clear the error from URL to prevent re-alerting on refresh
+      router.replace('/auth/login');
+    }
+  }, [searchParams, router]);
 
   // Form States
   const [name, setName] = useState('');
