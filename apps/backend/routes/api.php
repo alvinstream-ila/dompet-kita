@@ -113,6 +113,7 @@ Route::middleware('firewall.all')->group(function () {
         Route::apiResource('assets', AssetController::class);
 
         // Loans
+        Route::get('loans/report', [LoanController::class, 'report']);
         Route::apiResource('loans', LoanController::class);
 
         // Goals

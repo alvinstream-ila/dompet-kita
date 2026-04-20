@@ -13,6 +13,18 @@ export function useLoans() {
   });
 }
 
+export function useLoanReport(month?: number, year?: number) {
+  return useQuery({
+    queryKey: ['loans', 'report', month, year],
+    queryFn: async () => {
+      const { data } = await api.get('/loans/report', {
+        params: { month, year },
+      });
+      return data.data;
+    },
+  });
+}
+
 export function useAddLoan() {
   const queryClient = useQueryClient();
 

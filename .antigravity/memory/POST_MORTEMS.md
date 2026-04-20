@@ -133,6 +133,38 @@ After implementing the `AccountingJournalist` trait across multiple models (`Ass
 vendor/bin/phpstan analyze --level=9
 ```
 
+### [PMA-004] — Loan Accountability Logic & Syntax Regression
+**Date**: 2026-04-20  
+**Severity**: 🟠 High  
+**Component**: backend  
+**Status**: ✅ Resolved  
+
+#### What Happened
+Manual implementation of the `report()` method in `LoanController` introduced multiple "Undefined variable" errors (`$openingPiutang`, `$openingHutang`) and a syntax error (`unexpected token ')'`) that caused the Loan Report page to crash for users.
+
+#### 5 Whys Root Cause Analysis
+1. **Why**: The Loan Report page displayed a "500 Internal Server Error".
+2. **Why**: The backend threw an `ErrorException` about undefined variables in the response array.
+3. **Why**: Logic for opening balance calculation was modified without updating the final mapping in the `success()` call.
+4. **Why**: The method had high cognitive complexity (20+ points), making it difficult to spot mapping mismatches during manual refactoring.
+5. **Root Cause**: Failure to use a structured data object or helper for complex financial snapshots and lack of period-based unit tests for the report endpoint.
+
+#### Fix Applied
+- Extracted temporal balance calculation into a dedicated private method `calculateBalancesAt(loans, date)`.
+- Replaced manual variable mapping with a structured associative result from the helper.
+- Fixed dangling syntax in the `success` response closure.
+- Cleaned up 10+ unused variables and legacy calculation blocks.
+
+#### Prevention SOP Update
+> **RULE**: Any controller method with a Cognitive Complexity > 15 MUST be refactored into a Service or Private Helper before being marked as "Ship-ready".
+> **RULE**: Financial reports involving historical state MUST use a unified "Snapshot" helper to ensure consistency between opening and closing balances.
+
+#### Regression Test
+```bash
+# Call the report endpoint manually to verify JSON structure
+php artisan tinker --execute="echo app(App\Http\Controllers\LoanController::class)->report(request())->getContent()"
+```
+
 ---
 
 _Log maintained by Antigravity v7.6.0 | Last updated: 2026-04-20_

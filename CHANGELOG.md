@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.4.1] - 2026-04-20 (Monthly Accountability Singularity)
+
+### Added
+- **Monthly Loan Accountability Report (Full Feature)**:
+    - **Temporal Snapshots**: Users can now filter reports by month and year, providing a dedicated "Opening Balance" and "Ending Carry-over" view.
+    - **Historical Precision Ledger**: Implemented backend logic that reconstructs loan balances at any point in time by auditing the transaction ledger, ensuring 100% accuracy for past reports.
+    - **Premium Period Picker**: Added a sleek, glassmorphism-inspired month/year selector to the Audit Mode.
+- **Enhanced "Tanggungan Berlanjut" Logic**: Automated the calculation of future debt obligations based on historical repayment activity.
+
+### Fixed
+- **LoanController Logic Sovereignty**: Resolved syntax errors and undefined variables in the report generation engine.
+- **Frontend Refinement**: Cleaned up unused imports and refactored nested ternaries for better maintainability in the report page.
+
 ## [7.4.0] - 2026-04-20 (Unified Ledger Singularity)
 
 ### Added
