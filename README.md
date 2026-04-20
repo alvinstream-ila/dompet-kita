@@ -46,6 +46,7 @@ Dompet Kita is designed with **Defense-in-Depth** — 10+ layers of primary prot
 7. **Security Gates**: Mandatory **GitGuardian** secret scan blocking (Pre-commit) and certified **Zero-Error Status** under PHPStan Level 9 (v7.5.0).
 8. **A11y Fortress**: 100% compliant with modern accessibility standards (UI/UX Inclusivity).
 9. **History Hardening**: PRISTINE historical baseline under the **Sovereign Clean Slate** protocol (Zero-leak verified).
+10. **2FA User Liability**: Users are strictly responsible for maintaining access to their 2FA backup codes and applications (See `SECURITY.md`).
 
 ---
 
