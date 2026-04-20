@@ -28,7 +28,7 @@ class CheckSessionTimeout
             /** @var PersonalAccessToken|null $token */
             $token = $user->currentAccessToken();
 
-            if (! ($token instanceof PersonalAccessToken)) {
+            if (!($token instanceof PersonalAccessToken)) {
                 return $next($request);
             }
 
