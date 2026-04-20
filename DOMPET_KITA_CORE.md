@@ -109,6 +109,7 @@ The central nervous system of Antigravity AI is divided into these local memory 
 5. **Sudo Mode (v7.1)**: Re-autentikasi password wajib untuk aksi berisiko tinggi (Profil, Password, Digital Legacy).
 6. **Hardened Backups**: Enkripsi AES-256-CBC otomatis sebelum upload ke Storj.
 7. **2FA Sole Responsibility**: Otentikasi dua langkah (2FA) adalah tanggung jawab penuh pada sisi *User*. Kehilangan akses karena hilangnya *backup codes* tidak menjadi tanggung jawab platform (Silakan merujuk pada `SECURITY.md`).
+8. **Build Fortification**: Kompilasi *production* dipatri via `classmap-authoritative` & `event:cache` (Backend), serta pembersihan jejak log *strip console* & penutupan `SourceMap` (Frontend) untuk latensi $O(1)$ yang instan dan anti-intip.
 
 ---
 

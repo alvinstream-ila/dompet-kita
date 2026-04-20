@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
 	},
 	reactCompiler: true,
 	cacheComponents: true,
+	compiler: {
+		removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
+	},
+	productionBrowserSourceMaps: false,
 	experimental: {
 		taint: true,
 	},
