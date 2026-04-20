@@ -7,6 +7,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Carbon;
 
 class CheckSessionTimeout
 {
@@ -25,29 +26,31 @@ class CheckSessionTimeout
             /** @var PersonalAccessToken|null $token */
             $token = $user->currentAccessToken();
 
-            if (! $token) {
+            if (! ($token instanceof PersonalAccessToken)) {
                 return $next($request);
             }
 
             // 1. Absolute Timeout (Default: 24 Jam / 1440 Menit)
-            $absoluteTimeout = config('sanctum.absolute_expiration', 1440);
+            $absoluteTimeout = (int) config('sanctum.absolute_expiration', 1440);
             $createdAt = $token->created_at;
 
-            if ($createdAt->addMinutes($absoluteTimeout)->isPast()) {
-                $token->delete();
-                throw new AuthenticationException('Aduh Sayang, sesi kamu sudah berakhir setelah 24 jam. Demi keamanan, login ulang dulu ya! ✨');
+            if ($createdAt instanceof Carbon) {
+                // Carbon is mutable/immutable depending on version/config, copy() is safer
+                if ($createdAt->copy()->addMinutes($absoluteTimeout)->isPast()) {
+                    $token->delete();
+                    throw new AuthenticationException('Aduh Sayang, sesi kamu sudah berakhir setelah 24 jam. Demi keamanan, login ulang dulu ya! ✨');
+                }
             }
 
             // 2. Idle Timeout / Sliding Window (Default: 30 Menit)
-            $idleTimeout = config('sanctum.idle_expiration', 30);
-
-            // Sanctum secara otomatis mengupdate last_used_at pada Guard::handle
-            // Kita mengecek nilai sebelum request ini diproses lebih lanjut
+            $idleTimeout = (int) config('sanctum.idle_expiration', 30);
             $lastUsedAt = $token->last_used_at ?? $createdAt;
 
-            if ($lastUsedAt->addMinutes($idleTimeout)->isPast()) {
-                $token->delete();
-                throw new AuthenticationException('Sayang, kamu tadi ketiduran ya? Sesi kamu habis karena kelamaan nggak ada aktivitas. Login lagi yuk! 🌸');
+            if ($lastUsedAt instanceof Carbon) {
+                if ($lastUsedAt->copy()->addMinutes($idleTimeout)->isPast()) {
+                    $token->delete();
+                    throw new AuthenticationException('Sayang, kamu tadi ketiduran ya? Sesi kamu habis karena kelamaan nggak ada aktivitas. Login lagi yuk! 🌸');
+                }
             }
         }
 
