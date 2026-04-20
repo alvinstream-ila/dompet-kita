@@ -7,7 +7,6 @@ import { Loan } from '@/types';
 
 interface LoanAccountabilityViewProps {
   loans: Loan[];
-  isLoading?: boolean;
 }
 
 export const LoanAccountabilityView: React.FC<LoanAccountabilityViewProps> = ({
@@ -55,7 +54,7 @@ export const LoanAccountabilityView: React.FC<LoanAccountabilityViewProps> = ({
           <Button
             variant="outline"
             className="rounded-xl border-slate-200 font-bold hover:bg-slate-50"
-            onClick={() => window.print()}
+            onClick={() => globalThis.print()}
           >
             <Printer className="mr-2 size-4" /> Cetak Laporan
           </Button>
