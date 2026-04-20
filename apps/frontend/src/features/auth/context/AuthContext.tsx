@@ -1,6 +1,7 @@
 import Cookies from 'js-cookie';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import api from '@/lib/axios';
+import { useSettingsStore } from '@/features/settings';
 
 export type { User } from '@/types';
 
@@ -30,6 +31,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         try {
           const { data } = await api.get('/user');
           setUser(data);
+
+          // 🛡️ Centralized Settings Sync (Essential for Social Auth & Page Refresh)
+          await useSettingsStore.getState().syncWithUser(data);
+
           // 🛡️ Sync verification status for middleware
           if (data.email_verified_at) {
             Cookies.set('user_verified', 'true', {
@@ -71,6 +76,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     setUser(user);
+
+    // 🛡️ Centralized Settings Sync (Essential for Manual Login)
+    useSettingsStore.getState().syncWithUser(user);
   }, []);
 
   const logout = React.useCallback(async () => {
