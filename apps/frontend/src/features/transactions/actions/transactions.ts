@@ -87,16 +87,16 @@ export async function getFinancialSummaryAction(
     );
     return response.data;
   } catch (error) {
-    console.error('Failed to fetch financial summary:', error);
+    console.error('[Action] Failed to fetch financial summary:', error);
     return {
-      total_balance: 0,
-      monthly_income: 0,
-      monthly_expense: 0,
-      monthly_savings: 0,
-      budget_usage_percentage: 0,
-      recent_transactions: [],
-      income_analysis: [],
-      expense_analysis: [],
+      income: 0,
+      expense: 0,
+      balance: 0,
+      transactions: [],
+      period: {
+        start: new Date().toISOString(),
+        end: new Date().toISOString(),
+      },
     };
   }
 }

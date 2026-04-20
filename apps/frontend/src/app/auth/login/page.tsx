@@ -8,6 +8,7 @@ import type React from 'react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth';
+import { useSettingsStore } from '@/features/settings';
 import api from '@/lib/axios';
 import { cn } from '@/lib/utils';
 
@@ -107,6 +108,10 @@ export default function LoginPage() {
           setSuccessMessage(data.message);
         } else {
           setAuthData(data.access_token, data.user);
+
+          // Critical: Sync settings store immediately so dashboard has correct cycle start/currency
+          await useSettingsStore.getState().syncWithUser(data.user);
+
           router.push('/');
         }
       }

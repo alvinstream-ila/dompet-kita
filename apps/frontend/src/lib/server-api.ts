@@ -27,9 +27,18 @@ export async function serverApi(endpoint: string, options: RequestInit = {}) {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(
-      errorData.message || `HTTP error! status: ${response.status}`
-    );
+    const message =
+      errorData.message ||
+      errorData.error ||
+      `Backend Error (${response.status}): Terjadi kesalahan sistem. 🥺`;
+
+    if (response.status !== 401) {
+      console.error(
+        `[ServerApi] Request failed: ${response.status} - ${message}`
+      );
+    }
+
+    throw new Error(message);
   }
 
   return response.json();

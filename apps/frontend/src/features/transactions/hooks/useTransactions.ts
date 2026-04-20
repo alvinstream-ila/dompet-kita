@@ -29,9 +29,12 @@ export function useTransactions(month?: number, year?: number) {
           limit: 20,
         },
       });
-      return data.data as Transaction[];
+
+      // Laravel Paginated Response: { success: true, data: { data: Transaction[], ... } }
+      return data.data.data as Transaction[];
     },
     getNextPageParam: (lastPage, allPages) => {
+      // If we got exactly 20 items, there's likely more pages
       return lastPage.length === 20 ? allPages.length + 1 : undefined;
     },
   });
