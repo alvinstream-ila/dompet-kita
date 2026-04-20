@@ -1,4 +1,4 @@
-# 🛡️ DOMPET KITA: THE SOVEREIGN FINANCIAL FORTRESS (v7.5.0 SOVEREIGN AUDIT SINGULARITY)
+# 🛡️ DOMPET KITA: THE SOVEREIGN FINANCIAL FORTRESS (v7.6.0 UNIFIED LEDGER SINGULARITY)
 Sistem Finansial Premium & Wealth Intelligence Otonom untuk **Alvin & Ila**.
 
 ---
@@ -60,6 +60,9 @@ High-fidelity partner synchronization for shared financial visibility between Al
 ### 4. 🧮 TAX ASSISTANT AI (PHASE 4)
 Premium PPh 21 tax engine optimized for **2026 Regulations (TER & PMK 105/2025 DTP)**. Features manual PTKP profile controls and dynamic AI tax planning insights.
 
+### 5. 📑 UNIFIED FINANCIAL LEDGER (SINGULARITY)
+Automated accounting engine powered by the `AccountingJournalist` trait. Synchronizes every movement in Assets, Loans, Goals, and Holidays into a high-fidelity "Hot Money" ledger on the Dashboard. Features professional **Loan Accountability Reporting** for audit-ready physical documentation.
+
 ---
 
 ## 🛡️ THE FORTRESS PROTOCOL (SECURITY)
@@ -80,7 +83,7 @@ Premium PPh 21 tax engine optimized for **2026 Regulations (TER & PMK 105/2025 D
 
 ---
 
-_Amended by Antigravity v7.5.0 | Global System Hardening Active._
+_Amended by Antigravity v7.6.0 | Global System Hardening Active._
 - `/session-cleanup` : Protokol Pemurnian Sesi, Zero-Waste, & Auto-Git Sync (v6.3).
 - `php artisan maintenance:verify` : Unified Deep Audit Suite.
 - `php artisan maintenance:repair` : AI Autopilot: Self-Healing & Log Recovery.

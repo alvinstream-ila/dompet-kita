@@ -103,6 +103,36 @@ Running `php artisan test` failed with exit code 1 but provided no clear output 
 php artisan test --env=testing --no-coverage
 ```
 
+### [PMA-003] — PHPStan Level 9 & Magic Property Strictness
+**Date**: 2026-04-20  
+**Severity**: 🟡 Medium  
+**Component**: backend  
+**Status**: ✅ Resolved  
+
+#### What Happened
+After implementing the `AccountingJournalist` trait across multiple models (`Asset`, `Loan`, `GoalTransaction`, `HolidayTransaction`), the CI/CD pipeline and local PHPStan check failed with 15+ "Property accessed on unknown type" and "Null-safety" errors.
+
+#### 5 Whys Root Cause Analysis
+1. **Why**: `AccountingJournalist::recordJournal()` was accessing `$this->user->name` and `$this->id`.
+2. **Why**: PHPStan could not guarantee that the Model using the trait would have a `user` relationship or an `id` property.
+3. **Why**: Laravel models often rely on magic `__get` which PHPStan cannot statically analyze without help.
+4. **Why**: Relationship properties like `$asset->user` were implicitly defined but not explicitly declared in Class-level PHPDoc.
+5. **Root Cause**: Violation of strictly typed contract expectations in Traits. PHPStan Level 9 requires all magic or dynamic properties to be explicitly defined via `@property` annotations in the Model's docblock.
+
+#### Fix Applied
+- Updated `Asset`, `Loan`, `Goal`, `GoalTransaction`, `Holiday`, and `HolidayTransaction` with comprehensive `@property` annotations.
+- Refactored `AccountingJournalist` docblock to specify requirements (`@property int $user_id`).
+- Fixed case-sensitive import issues in `LoanStats.tsx`.
+
+#### Prevention SOP Update
+> **RULE**: When creating a Trait intended for Models, ALWAYS add a `@property` definition in the Trait's PHPDoc for any property it accesses from the "host" object.
+> **RULE**: Every Laravel Model MUST contain a full `@property` list for both database columns AND relationships to satisfy Level 9 analysis.
+
+#### Regression Test
+```bash
+vendor/bin/phpstan analyze --level=9
+```
+
 ---
 
-_Log maintained by Antigravity v7.3.0 | Last updated: 2026-04-17_
+_Log maintained by Antigravity v7.6.0 | Last updated: 2026-04-20_
