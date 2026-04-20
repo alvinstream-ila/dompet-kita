@@ -21,6 +21,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth';
 import api from '@/lib/axios';
+import type { ApiError } from '@/types';
 
 interface LegacyReport {
   id: number;
@@ -91,7 +92,7 @@ export default function LegacyVaultPage() {
     try {
       await action();
     } catch (error: unknown) {
-      if (!(error as any).response?.data?.sudo_required) {
+      if (!(error as ApiError).response?.data?.sudo_required) {
         console.error('Failed to update threshold:', error);
         toast.error('Gagal memperbarui threshold 🥺');
       }
@@ -113,7 +114,7 @@ export default function LegacyVaultPage() {
     try {
       await action();
     } catch (error: unknown) {
-      if (!(error as any).response?.data?.sudo_required) {
+      if (!(error as ApiError).response?.data?.sudo_required) {
         console.error('Failed to trigger snapshot:', error);
         toast.error('Gagal membangkitkan snapshot 🥺');
       }

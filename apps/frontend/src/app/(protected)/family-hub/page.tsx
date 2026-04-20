@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAuth } from '@/features/auth';
+import type { ApiError } from '@/types';
 import { unlinkPartnerAction } from '@/features/family/actions/partner';
 import { InvitePartnerDialog } from '@/features/family/components/InvitePartnerDialog';
 import api from '@/lib/axios';
@@ -110,7 +111,7 @@ export default function FamilyHubPage() {
     try {
       await action();
     } catch (error: unknown) {
-      if (!(error as any).response?.data?.sudo_required) {
+      if (!(error as ApiError).response?.data?.sudo_required) {
         toast.error('Gagal memperbarui profil pajak 🥺');
       }
     } finally {
@@ -149,7 +150,7 @@ export default function FamilyHubPage() {
     try {
       await action();
     } catch (error: unknown) {
-      if (!(error as any).response?.data?.sudo_required) {
+      if (!(error as ApiError).response?.data?.sudo_required) {
         toast.error('Gagal mengubah batas notifikasi 🥺');
       }
     } finally {
@@ -186,7 +187,7 @@ export default function FamilyHubPage() {
     try {
       await action();
     } catch (error: unknown) {
-      if (!(error as any).response?.data?.sudo_required) {
+      if (!(error as ApiError).response?.data?.sudo_required) {
         toast.error('Gagal membangkitkan laporan warisan 🥺');
       }
     } finally {
@@ -209,7 +210,7 @@ export default function FamilyHubPage() {
     try {
       await action();
     } catch (error: unknown) {
-      if (!(error as any).response?.data?.sudo_required) {
+      if (!(error as ApiError).response?.data?.sudo_required) {
         toast.error('Gagal menyimpan pengaturan Digital Vault 🥺');
       }
     } finally {
