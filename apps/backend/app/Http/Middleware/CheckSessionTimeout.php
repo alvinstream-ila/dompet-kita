@@ -5,9 +5,9 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Carbon;
 
 class CheckSessionTimeout
 {
@@ -22,7 +22,9 @@ class CheckSessionTimeout
     {
         $user = $request->user();
 
-        if ($user && method_exists($user, 'currentAccessToken')) {
+        // CheckSessionTimeout is usually behind auth:sanctum, so user should exist.
+        // PHPStan Level 9: User model (App\Models\User) already has currentAccessToken via HasApiTokens.
+        if ($user) {
             /** @var PersonalAccessToken|null $token */
             $token = $user->currentAccessToken();
 
