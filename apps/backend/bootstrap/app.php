@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CheckSessionTimeout;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SudoMode;
 use App\Http\Middleware\UnkeyMiddleware;
@@ -32,6 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Moderate Rate Limiting for API (60 req/min)
         $middleware->api(prepend: [
+            CheckSessionTimeout::class,
             ThrottleRequests::class.':api',
         ]);
     })

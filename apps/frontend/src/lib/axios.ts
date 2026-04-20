@@ -17,7 +17,7 @@ const api = axios.create({
   withCredentials: true, // Required for Sanctum CSRF protection
 });
 
-// Interceptor for Authentication
+// Interceptor for Authentication (Inject Token)
 api.interceptors.request.use((config) => {
   const token = Cookies.get('auth_token');
   if (token) {
@@ -25,5 +25,25 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Interceptor for Authentication Errors (Handle 401)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Sovereign Force Logout: Jika server menolak token, hapus jejak lokal
+      Cookies.remove('auth_token');
+      Cookies.remove('user_verified');
+
+      if (
+        globalThis.window !== undefined &&
+        !globalThis.window.location.pathname.includes('/login')
+      ) {
+        globalThis.window.location.href = '/login?expired=true';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;

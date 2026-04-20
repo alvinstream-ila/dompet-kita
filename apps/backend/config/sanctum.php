@@ -54,6 +54,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Sovereign Session Management
+    |--------------------------------------------------------------------------
+    |
+    | 'idle_expiration' (minutes): The time of inactivity before a session
+    | is considered expired (sliding window).
+    |
+    | 'absolute_expiration' (minutes): The maximum life of a session
+    | regardless of activity.
+    |
+    */
+
+    'idle_expiration' => (int) env('SANCTUM_IDLE_EXPIRATION', 30),
+
+    'absolute_expiration' => (int) env('SANCTUM_ABSOLUTE_EXPIRATION', 1440),
+
+    /*
+    |--------------------------------------------------------------------------
     | Token Prefix
     |--------------------------------------------------------------------------
     |

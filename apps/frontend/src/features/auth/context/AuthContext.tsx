@@ -2,6 +2,7 @@ import Cookies from 'js-cookie';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import api from '@/lib/axios';
 import { useSettingsStore } from '@/features/settings';
+import { SessionMonitor } from '../components/SessionMonitor';
 
 export type { User } from '@/types';
 
@@ -106,7 +107,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   return (
-    <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={authValue}>
+      {children}
+      <SessionMonitor />
+    </AuthContext.Provider>
   );
 };
 
