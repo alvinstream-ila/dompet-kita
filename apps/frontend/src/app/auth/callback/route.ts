@@ -1,27 +1,23 @@
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { NextRequest, NextResponse } from 'next/server';
 import { serverApi } from '@/lib/server-api';
 
 /**
- * Auth Callback Page - Server Side Handler 🚀
- *
- * This version performs all token validation and session initialization
- * on the server, eliminating the client-side loading waterfall.
+ * Auth Callback Route Handler 🚀
+ * Handles server-side session initialization and redirects.
+ * Replaces page.tsx to avoid cookie modification errors in RSC.
  */
-export default async function AuthCallbackPage(props: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const searchParams = await props.searchParams;
-  const token =
-    typeof searchParams.token === 'string' ? searchParams.token : null;
-  const isNew = searchParams.is_new === '1';
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const token = searchParams.get('token');
+  const isNew = searchParams.get('is_new') === '1';
 
   if (!token) {
-    redirect('/auth/login');
+    return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
   try {
-    // 1. Initialize session in cookies immediately for subsequent server-side calls
+    // 1. Initialize session in cookies
     const cookieStore = await cookies();
     cookieStore.set('auth_token', token, {
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
@@ -30,7 +26,8 @@ export default async function AuthCallbackPage(props: {
       path: '/',
     });
 
-    // 2. Validate token and fetch user profile on the server
+    // 2. Validate token and fetch user profile
+    // Note: serverApi reads from cookies() which we just set
     const user = await serverApi('/user');
 
     if (!user) {
@@ -46,11 +43,16 @@ export default async function AuthCallbackPage(props: {
     }
 
     // 4. Instant redirect to dashboard
-    redirect('/');
+    return NextResponse.redirect(new URL('/', request.url));
   } catch (error) {
     console.error('Server-side callback error:', error);
+
+    // Attempt to clear session on failure
     const cookieStore = await cookies();
     cookieStore.delete('auth_token');
-    redirect('/auth/login?error=callback_failed');
+
+    return NextResponse.redirect(
+      new URL('/auth/login?error=callback_failed', request.url)
+    );
   }
 }
