@@ -87,7 +87,7 @@ class LoanManage extends Command
 
         $this->info('### 🏦 Active Loans');
         foreach ($loans as $loan) {
-            $this->line("- [{$loan->id}] {$loan->contact_name}: Rp ".number_format((float) $loan->amount, 0, ',', '.')." ({$loan->status})");
+            $this->line("- [{$loan->id}] {$loan->contact_name}: Rp ".number_format((float) $loan->amount, 0, ',', '.')." ({$loan->status->value})");
         }
 
         return 0;

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\AssetType;
+use App\Traits\AccountingJournalist;
 use App\Traits\HasUserScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -27,7 +28,7 @@ use Spatie\Activitylog\Support\LogOptions;
  */
 class Asset extends Model
 {
-    use HasUserScope, LogsActivity;
+    use AccountingJournalist, HasUserScope, LogsActivity;
 
     protected $fillable = [
         'user_id',

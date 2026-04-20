@@ -2,7 +2,15 @@
 
 namespace App\Providers;
 
+use App\Models\Asset;
+use App\Models\GoalTransaction;
+use App\Models\HolidayTransaction;
+use App\Models\Loan;
 use App\Models\Transaction;
+use App\Observers\AssetObserver;
+use App\Observers\GoalTransactionObserver;
+use App\Observers\HolidayTransactionObserver;
+use App\Observers\LoanObserver;
 use App\Observers\TransactionObserver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -56,6 +64,10 @@ class AppServiceProvider extends ServiceProvider
     private function bootObservers(): void
     {
         Transaction::observe(TransactionObserver::class);
+        Asset::observe(AssetObserver::class);
+        Loan::observe(LoanObserver::class);
+        GoalTransaction::observe(GoalTransactionObserver::class);
+        HolidayTransaction::observe(HolidayTransactionObserver::class);
     }
 
     /**

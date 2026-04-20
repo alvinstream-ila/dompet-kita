@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\LoanStatus;
 use App\Enums\LoanType;
+use App\Traits\AccountingJournalist;
 use App\Traits\HasUserScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -14,20 +15,20 @@ use Spatie\Activitylog\Support\LogOptions;
 /**
  * @property int $id
  * @property int $user_id
- * @property string $type
+ * @property LoanType $type
  * @property float $amount
  * @property float $remaining_amount
  * @property string|null $description
  * @property string $contact_name
  * @property Carbon|null $due_date
- * @property string $status
+ * @property LoanStatus $status
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property float $total // Dynamic field
  */
 class Loan extends Model
 {
-    use HasUserScope, LogsActivity;
+    use AccountingJournalist, HasUserScope, LogsActivity;
 
     /**
      * @var list<string>

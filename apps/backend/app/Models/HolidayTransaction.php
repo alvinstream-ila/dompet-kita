@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\AccountingJournalist;
 use App\Traits\HasUserScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -20,10 +21,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon $transaction_date
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ * @property-read Holiday $holiday
+ * @property-read Asset|null $asset
  */
 class HolidayTransaction extends Model
 {
-    use HasUserScope;
+    use AccountingJournalist, HasUserScope;
 
     protected $fillable = [
         'user_id',

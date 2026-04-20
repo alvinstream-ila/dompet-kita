@@ -11,7 +11,8 @@ import { StatCard } from '@/components/ui/StatCard';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth';
 import { useFinancialSummary } from '@/features/transactions';
-import { AlertCircle, RefreshCcw } from 'lucide-react';
+import { useLoans } from '@/features/loans';
+import { AlertCircle, RefreshCcw, HandCoins } from 'lucide-react';
 import { useFormatting } from '@/lib/hooks/useFormatting';
 import {
   AnalyticsSkeleton,
@@ -81,6 +82,19 @@ export function DashboardView() {
     refetch,
     transactions,
   } = useFinancialSummary();
+
+  const { data: loans = [] } = useLoans();
+
+  const activeLoansSummary = React.useMemo(() => {
+    const active = loans.filter((l) => l.status === 'active');
+    const piutang = active
+      .filter((l) => l.type === 'piutang')
+      .reduce((acc, l) => acc + l.remaining_amount, 0);
+    const utang = active
+      .filter((l) => l.type === 'utang')
+      .reduce((acc, l) => acc + l.remaining_amount, 0);
+    return { piutang, utang, net: piutang - utang };
+  }, [loans]);
 
   const healthPercentage = React.useMemo(() => {
     if (totalIncome > 0) {
@@ -204,6 +218,44 @@ export function DashboardView() {
                     imageSrc="/icons/3d/expense.webp"
                     variant="expense"
                   />
+                </div>
+              )}
+
+              {/* Amanah Summary Row */}
+              {!isLoading && (
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-8">
+                  <Card className="glass-premium flex items-center justify-between overflow-hidden rounded-[32px] border-none bg-white p-6 shadow-xl shadow-slate-100/50">
+                    <div className="flex items-center gap-4">
+                      <div className="rounded-2xl bg-emerald-50 p-3 text-emerald-600">
+                        <HandCoins className="size-6" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                          Amanah Keluar (Piutang)
+                        </p>
+                        <p className="text-lg font-black text-slate-800">
+                          {formatAmount(activeLoansSummary.piutang)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="h-10 w-1 rounded-full bg-emerald-200" />
+                  </Card>
+                  <Card className="glass-premium flex items-center justify-between overflow-hidden rounded-[32px] border-none bg-white p-6 shadow-xl shadow-slate-100/50">
+                    <div className="flex items-center gap-4">
+                      <div className="rounded-2xl bg-rose-50 p-3 text-rose-600">
+                        <HandCoins className="size-6" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                          Amanah Masuk (Hutang)
+                        </p>
+                        <p className="text-lg font-black text-slate-800">
+                          {formatAmount(activeLoansSummary.utang)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="h-10 w-1 rounded-full bg-rose-200" />
+                  </Card>
                 </div>
               )}
 

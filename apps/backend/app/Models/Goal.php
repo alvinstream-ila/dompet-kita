@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\AccountingJournalist;
 use App\Traits\HasUserScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Goal extends Model
 {
-    use HasUserScope;
+    use AccountingJournalist, HasUserScope;
 
     /**
      * @var list<string>
