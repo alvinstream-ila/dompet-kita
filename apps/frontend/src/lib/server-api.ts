@@ -10,7 +10,7 @@ export async function serverApi(endpoint: string, options: RequestInit = {}) {
   try {
     const cookieStore = await cookies();
     token = cookieStore.get('auth_token')?.value;
-  } catch (error) {
+  } catch {
     // During build/prerendering, cookies() might reject.
     // We treat this as no token available to prevent hanging promise crashes.
     token = undefined;
