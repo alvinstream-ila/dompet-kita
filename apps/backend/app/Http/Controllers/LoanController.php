@@ -125,7 +125,11 @@ class LoanController extends Controller
             ->whereBetween('date', [$startDate, $endDate])
             ->whereNotNull('metadata')
             ->get()
-            ->filter(fn ($t) => ($t->metadata['source_type'] ?? null) === Loan::class);
+            ->filter(function (Transaction $t) {
+                $metadata = $t->metadata;
+
+                return is_array($metadata) && ($metadata['source_type'] ?? null) === Loan::class;
+            });
 
         // 3. Calculate Opening Balances (Snapshot at start of month)
         $opening = $this->calculateBalancesAt($loans, $startDate->copy()->subDay());
