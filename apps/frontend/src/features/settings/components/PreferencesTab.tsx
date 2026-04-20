@@ -5,6 +5,7 @@ import {
   Settings2,
   ShieldCheck,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import type React from 'react';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -24,7 +25,7 @@ interface PreferencesTabProps {
   isPrivacyMode: boolean;
   currencyFormat: string;
   exchangeRate?: number;
-  updateSettings: (settings: Partial<UserSettings>) => void;
+  updateSettings: (settings: Partial<UserSettings>) => Promise<void>;
 }
 
 export const PreferencesTab: React.FC<PreferencesTabProps> = ({
@@ -35,6 +36,13 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
   exchangeRate,
   updateSettings,
 }) => {
+  const router = useRouter();
+
+  const handleUpdate = async (settings: Partial<UserSettings>) => {
+    await updateSettings(settings);
+    router.refresh();
+  };
+
   return (
     <div className="animate-in slide-in-from-right-2 m-0 space-y-6 duration-300">
       <div className="space-y-3 rounded-2xl border border-slate-100 bg-slate-50 p-4">
@@ -60,7 +68,7 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
             value={new Intl.NumberFormat('id-ID').format(monthlyBudgetLimit)}
             onChange={(e) => {
               const val = e.target.value.replaceAll(/\D/g, '');
-              updateSettings({ monthlyBudgetLimit: Number(val) || 0 });
+              handleUpdate({ monthlyBudgetLimit: Number(val) || 0 });
             }}
             className="h-10 rounded-xl border-slate-200 bg-white pl-9 text-sm font-bold"
           />
@@ -93,7 +101,7 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
         <select
           value={budgetCycleStart}
           onChange={(e) =>
-            updateSettings({
+            handleUpdate({
               budgetCycleStart: Number.parseInt(e.target.value, 10),
             })
           }
@@ -124,7 +132,7 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
         <Switch
           checked={isPrivacyMode}
           onCheckedChange={(checked) =>
-            updateSettings({ isPrivacyMode: checked })
+            handleUpdate({ isPrivacyMode: checked })
           }
         />
       </div>
@@ -146,7 +154,7 @@ export const PreferencesTab: React.FC<PreferencesTabProps> = ({
           </div>
           <SovereignCurrencyPicker
             value={currencyFormat}
-            onValueChange={(value) => updateSettings({ currencyFormat: value })}
+            onValueChange={(value) => handleUpdate({ currencyFormat: value })}
           />
         </div>
 

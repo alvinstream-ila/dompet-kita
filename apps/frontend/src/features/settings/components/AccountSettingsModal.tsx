@@ -1,4 +1,5 @@
 import { CheckCircle2, ShieldCheck } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import {
@@ -43,6 +44,7 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({
     updateSettings,
   } = useSettings();
 
+  const router = useRouter();
   const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [loading, setLoading] = useState(false);
@@ -105,6 +107,7 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({
       // Updating basic name via api.put as well just in case SettingsContext doesn't handle 'name' column
       await api.put('/user/profile', { name: displayName });
 
+      router.refresh();
       showSuccess('Profil berhasil diupdate! ✨');
     } catch (error: unknown) {
       const axiosError = error as ApiError;
@@ -143,6 +146,8 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({
     try {
       await api.put('/user/profile', { two_factor_enabled: enabled });
       setTwoFactorEnabled(enabled);
+
+      router.refresh();
       showSuccess(`2FA berhasil ${enabled ? 'diaktifkan' : 'dimatikan'}! ✨`);
     } catch (error: unknown) {
       let errorMsg = 'Gagal mengubah pengaturan 2FA';

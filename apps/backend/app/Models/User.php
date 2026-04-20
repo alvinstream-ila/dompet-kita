@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\VerifyEmailNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Collection;
@@ -63,6 +64,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'tax_status',
         'dependents_count',
         'industry_sector',
+        'email_verification_code',
+        'email_verification_expires_at',
     ];
 
     /**
@@ -138,5 +141,20 @@ class User extends Authenticatable implements MustVerifyEmail
     public function reports(): HasMany
     {
         return $this->hasMany(LegacyVaultReport::class);
+    }
+
+    /**
+     * Send the email verification notification overriding Laravel default.
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $code = (string) random_int(100000, 999999);
+
+        $this->update([
+            'email_verification_code' => $code,
+            'email_verification_expires_at' => now()->addMinutes(60),
+        ]);
+
+        $this->notify(new VerifyEmailNotification($code));
     }
 }
