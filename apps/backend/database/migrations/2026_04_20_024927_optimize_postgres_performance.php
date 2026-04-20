@@ -68,12 +68,21 @@ return new class extends Migration
             'goals' => 'user_exclusive_access',
             'loans' => 'user_exclusive_access',
             'wealth_histories' => 'user_exclusive_access',
+        ];
+
+        $policiesToCreateWithCheck = [
             'goal_transactions' => 'user_exclusive_access',
             'legacy_vault_reports' => 'user_exclusive_access',
         ];
 
         foreach ($policiesToUpdateWithCheck as $table => $policy) {
             DB::statement("ALTER POLICY \"{$policy}\" ON {$table} USING (((user_id)::text = ((select auth.uid()))::text)) WITH CHECK (((user_id)::text = ((select auth.uid()))::text))");
+        }
+
+        foreach ($policiesToCreateWithCheck as $table => $policy) {
+            DB::statement("ALTER TABLE {$table} ENABLE ROW LEVEL SECURITY");
+            DB::statement("DROP POLICY IF EXISTS \"{$policy}\" ON {$table}");
+            DB::statement("CREATE POLICY \"{$policy}\" ON {$table} USING (((user_id)::text = ((select auth.uid()))::text)) WITH CHECK (((user_id)::text = ((select auth.uid()))::text))");
         }
 
         // Special cases that don't have WITH CHECK or use varying columns
@@ -83,7 +92,10 @@ return new class extends Migration
         DB::statement('ALTER POLICY "user_exclusive_access" ON activity_log USING (((causer_id)::text = ((select auth.uid()))::text))');
 
         DB::statement('ALTER POLICY "users_self_access" ON users USING ((((select auth.uid()))::text = (id)::text))');
-        DB::statement('ALTER POLICY "inviter_exclusive_access" ON partner_invitations USING (((inviter_id)::text = ((select auth.uid()))::text)) WITH CHECK (((inviter_id)::text = ((select auth.uid()))::text))');
+        
+        DB::statement('ALTER TABLE partner_invitations ENABLE ROW LEVEL SECURITY');
+        DB::statement('DROP POLICY IF EXISTS "inviter_exclusive_access" ON partner_invitations');
+        DB::statement('CREATE POLICY "inviter_exclusive_access" ON partner_invitations USING (((inviter_id)::text = ((select auth.uid()))::text)) WITH CHECK (((inviter_id)::text = ((select auth.uid()))::text))');
         DB::statement('ALTER POLICY "Users can manage their own budgets" ON budgets USING ((((select auth.uid()))::text = (user_id)::text))');
         DB::statement('ALTER POLICY "holiday_transactions_isolation_policy" ON holiday_transactions USING (((user_id)::text = ((select auth.uid()))::text)) WITH CHECK (((user_id)::text = ((select auth.uid()))::text))');
 
