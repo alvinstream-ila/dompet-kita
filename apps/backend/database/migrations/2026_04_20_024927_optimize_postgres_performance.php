@@ -92,7 +92,7 @@ return new class extends Migration
         DB::statement('ALTER POLICY "user_exclusive_access" ON activity_log USING (((causer_id)::text = ((select auth.uid()))::text))');
 
         DB::statement('ALTER POLICY "users_self_access" ON users USING ((((select auth.uid()))::text = (id)::text))');
-        
+
         DB::statement('ALTER TABLE partner_invitations ENABLE ROW LEVEL SECURITY');
         DB::statement('DROP POLICY IF EXISTS "inviter_exclusive_access" ON partner_invitations');
         DB::statement('CREATE POLICY "inviter_exclusive_access" ON partner_invitations USING (((inviter_id)::text = ((select auth.uid()))::text)) WITH CHECK (((inviter_id)::text = ((select auth.uid()))::text))');
