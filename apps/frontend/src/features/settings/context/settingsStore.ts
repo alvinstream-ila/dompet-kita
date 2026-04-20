@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import api from '@/lib/axios';
-import type { ApiError, User } from '@/types';
+import type { User } from '@/types';
 
 export interface SettingsState {
   budgetCycleStart: number;
@@ -71,12 +71,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
       });
       set(finalSettings);
     } catch (error: unknown) {
-      let message = 'Gagal memperbarui pengaturan';
-      const axiosError = error as ApiError;
-      if (axiosError.response?.data?.message) {
-        message = axiosError.response.data.message;
-      }
-      alert(message);
+      console.error('Sovereign Settings: Failed to update settings', error);
       throw error;
     }
   },

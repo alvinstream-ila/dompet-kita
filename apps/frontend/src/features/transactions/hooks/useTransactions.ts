@@ -31,11 +31,12 @@ export function useTransactions(month?: number, year?: number) {
       });
 
       // Laravel Paginated Response: { success: true, data: { data: Transaction[], ... } }
-      return data.data.data as Transaction[];
+      // Safely access data or fallback to empty array
+      return (data?.data?.data || []) as Transaction[];
     },
     getNextPageParam: (lastPage, allPages) => {
-      // If we got exactly 20 items, there's likely more pages
-      return lastPage.length === 20 ? allPages.length + 1 : undefined;
+      // Safely check length to avoid 'Cannot read properties of undefined'
+      return lastPage?.length === 20 ? allPages.length + 1 : undefined;
     },
   });
 }

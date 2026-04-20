@@ -104,7 +104,12 @@ const StrategicAdvice: React.FC<StrategicAdviceProps> = ({
   rebalance,
   isCrisis,
 }) => {
-  if (!rebalance || rebalance.length === 0 || rebalance[0].action === 'HOLD')
+  if (
+    !rebalance ||
+    !Array.isArray(rebalance) ||
+    rebalance.length === 0 ||
+    rebalance[0].action === 'HOLD'
+  )
     return null;
 
   return (

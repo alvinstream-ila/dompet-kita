@@ -85,17 +85,22 @@ export async function getFinancialSummaryAction(
     const response = await serverApi(
       `/transactions/summary?${params.toString()}`
     );
-    return response.data;
+    return { success: true, data: response.data };
   } catch (error) {
     console.error('[Action] Failed to fetch financial summary:', error);
     return {
-      income: 0,
-      expense: 0,
-      balance: 0,
-      transactions: [],
-      period: {
-        start: new Date().toISOString(),
-        end: new Date().toISOString(),
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Gagal memuat ringkasan 🥺',
+      data: {
+        income: 0,
+        expense: 0,
+        balance: 0,
+        transactions: [],
+        period: {
+          start: new Date().toISOString(),
+          end: new Date().toISOString(),
+        },
       },
     };
   }

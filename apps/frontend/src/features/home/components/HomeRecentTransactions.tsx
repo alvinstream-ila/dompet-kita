@@ -113,7 +113,7 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
           </div>
 
           <div className="ml-5 flex items-center gap-3 sm:ml-0">
-            {transactions.length > 5 && (
+            {transactions?.length > 5 && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -140,7 +140,7 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
 
         {/* Inner Content Area with Contrast */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {transactions.slice(0, 5).length > 0 ? (
+          {(transactions?.slice(0, 5)?.length ?? 0) > 0 ? (
             transactions.slice(0, 5).map((t: Transaction, idx: number) => (
               <motion.div
                 key={t.id}

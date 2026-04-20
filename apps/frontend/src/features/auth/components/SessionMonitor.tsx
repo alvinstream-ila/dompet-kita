@@ -56,8 +56,8 @@ export const SessionMonitor = () => {
   useEffect(() => {
     if (!isAuthenticated || !user) return;
 
-    // browser-only guard for build-time safety
-    if (typeof window === 'undefined') return;
+    // Use direct undefined check as recommended by Biome for globalThis properties
+    if (globalThis.window === undefined) return;
 
     const events = [
       'mousemove',
@@ -74,8 +74,9 @@ export const SessionMonitor = () => {
       }
     };
 
+    const win = globalThis.window;
     for (const event of events) {
-      window.addEventListener(event, throttledReset);
+      win.addEventListener(event, throttledReset);
     }
 
     const checkInterval = setInterval(() => {
@@ -115,7 +116,7 @@ export const SessionMonitor = () => {
 
     return () => {
       for (const event of events) {
-        window.removeEventListener(event, throttledReset);
+        win.removeEventListener(event, throttledReset);
       }
       clearInterval(checkInterval);
     };

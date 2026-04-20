@@ -2,6 +2,7 @@ import { CheckCircle2, ShieldCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogContent,
@@ -110,8 +111,13 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({
       router.refresh();
       showSuccess('Profil berhasil diupdate! ✨');
     } catch (error: unknown) {
-      const axiosError = error as ApiError;
-      alert(axiosError.response?.data?.message || 'Terjadi kesalahan');
+      console.error('Sovereign Settings: Profile update failed', error);
+      // Only show toast if it's not a sudo_required error (which is handled by global modal)
+      if (!(error as ApiError).response?.data?.sudo_required) {
+        toast.error(
+          (error as ApiError).response?.data?.message || 'Terjadi kesalahan'
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -125,12 +131,11 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({
         'Link ganti password sudah dikirim ke email kamu, Sayang! ✨'
       );
     } catch (error: unknown) {
-      let errorMsg = 'Gagal mengirim email, coba lagi ya sayang?';
       const axiosError = error as ApiError;
-      if (axiosError.response?.data?.message) {
-        errorMsg = axiosError.response.data.message;
-      }
-      alert(errorMsg);
+      toast.error(
+        axiosError.response?.data?.message ||
+          'Gagal mengirim email, coba lagi ya sayang?'
+      );
     } finally {
       setLoading(false);
     }
@@ -150,12 +155,12 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({
       router.refresh();
       showSuccess(`2FA berhasil ${enabled ? 'diaktifkan' : 'dimatikan'}! ✨`);
     } catch (error: unknown) {
-      let errorMsg = 'Gagal mengubah pengaturan 2FA';
       const axiosError = error as ApiError;
-      if (axiosError.response?.data?.message) {
-        errorMsg = axiosError.response.data.message;
+      if (!axiosError.response?.data?.sudo_required) {
+        toast.error(
+          axiosError.response?.data?.message || 'Gagal mengubah pengaturan 2FA'
+        );
       }
-      alert(errorMsg);
     } finally {
       setLoading(false);
     }

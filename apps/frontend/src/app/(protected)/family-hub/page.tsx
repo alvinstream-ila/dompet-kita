@@ -1,7 +1,6 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { isAxiosError } from 'axios';
 import { motion } from 'framer-motion';
 import { LogOut, RefreshCw, Settings, User as UserIcon } from 'lucide-react';
 import Image from 'next/image';
@@ -22,7 +21,6 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { SudoConfirmDialog } from '@/components/ui/SudoConfirmDialog';
 import {
   Select,
   SelectContent,
@@ -46,7 +44,6 @@ export default function FamilyHubPage() {
   const [newThreshold, setNewThreshold] = React.useState<string>('');
   const [isUpdatingThreshold, setIsUpdatingThreshold] = React.useState(false);
   const [isUnlinkOpen, setIsUnlinkOpen] = React.useState(false);
-  const [isSudoOpen, setIsSudoOpen] = React.useState(false);
   const [isLegacySettingsOpen, setIsLegacySettingsOpen] = React.useState(false);
   const [legacyConfig, setLegacyConfig] = React.useState({
     threshold: user?.legacy_threshold_months || 6,
@@ -54,7 +51,6 @@ export default function FamilyHubPage() {
     partnerEmail: user?.legacy_partner_email || '',
   });
   const [isUpdatingLegacy, setIsUpdatingLegacy] = React.useState(false);
-  const pendingAction = React.useRef<(() => Promise<void>) | null>(null);
 
   // Fetch Tax Estimate
   const {
@@ -114,14 +110,7 @@ export default function FamilyHubPage() {
     try {
       await action();
     } catch (error: unknown) {
-      if (
-        isAxiosError(error) &&
-        error.response?.status === 403 &&
-        error.response?.data?.sudo_required
-      ) {
-        pendingAction.current = action;
-        setIsSudoOpen(true);
-      } else {
+      if (!(error as any).response?.data?.sudo_required) {
         toast.error('Gagal memperbarui profil pajak 🥺');
       }
     } finally {
@@ -160,14 +149,7 @@ export default function FamilyHubPage() {
     try {
       await action();
     } catch (error: unknown) {
-      if (
-        isAxiosError(error) &&
-        error.response?.status === 403 &&
-        error.response?.data?.sudo_required
-      ) {
-        pendingAction.current = action;
-        setIsSudoOpen(true);
-      } else {
+      if (!(error as any).response?.data?.sudo_required) {
         toast.error('Gagal mengubah batas notifikasi 🥺');
       }
     } finally {
@@ -204,14 +186,7 @@ export default function FamilyHubPage() {
     try {
       await action();
     } catch (error: unknown) {
-      if (
-        isAxiosError(error) &&
-        error.response?.status === 403 &&
-        error.response?.data?.sudo_required
-      ) {
-        pendingAction.current = action;
-        setIsSudoOpen(true);
-      } else {
+      if (!(error as any).response?.data?.sudo_required) {
         toast.error('Gagal membangkitkan laporan warisan 🥺');
       }
     } finally {
@@ -234,14 +209,7 @@ export default function FamilyHubPage() {
     try {
       await action();
     } catch (error: unknown) {
-      if (
-        isAxiosError(error) &&
-        error.response?.status === 403 &&
-        error.response?.data?.sudo_required
-      ) {
-        pendingAction.current = action;
-        setIsSudoOpen(true);
-      } else {
+      if (!(error as any).response?.data?.sudo_required) {
         toast.error('Gagal menyimpan pengaturan Digital Vault 🥺');
       }
     } finally {
@@ -758,20 +726,6 @@ export default function FamilyHubPage() {
           </CardContent>
         </Card>
       </div>
-
-      <SudoConfirmDialog
-        isOpen={isSudoOpen}
-        onClose={() => {
-          setIsSudoOpen(false);
-          pendingAction.current = null;
-        }}
-        onSuccess={async () => {
-          if (pendingAction.current) {
-            await pendingAction.current();
-            pendingAction.current = null;
-          }
-        }}
-      />
     </div>
   );
 }

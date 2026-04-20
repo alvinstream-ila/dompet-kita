@@ -1,6 +1,5 @@
 'use client';
 
-import { isAxiosError } from 'axios';
 import { formatDistanceToNow } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { motion } from 'framer-motion';
@@ -17,10 +16,9 @@ import {
   ShieldAlert,
   Users,
 } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { SudoConfirmDialog } from '@/components/ui/SudoConfirmDialog';
 import { useAuth } from '@/features/auth';
 import api from '@/lib/axios';
 
@@ -44,8 +42,6 @@ export default function LegacyVaultPage() {
   const [threshold, setThreshold] = useState(
     user?.legacy_threshold_months || 6
   );
-  const [isSudoOpen, setIsSudoOpen] = useState(false);
-  const pendingAction = useRef<(() => Promise<void>) | null>(null);
 
   // Sync threshold when user data loads
   useEffect(() => {
@@ -95,14 +91,7 @@ export default function LegacyVaultPage() {
     try {
       await action();
     } catch (error: unknown) {
-      if (
-        isAxiosError(error) &&
-        error.response?.status === 403 &&
-        error.response?.data?.sudo_required
-      ) {
-        pendingAction.current = action;
-        setIsSudoOpen(true);
-      } else {
+      if (!(error as any).response?.data?.sudo_required) {
         console.error('Failed to update threshold:', error);
         toast.error('Gagal memperbarui threshold 🥺');
       }
@@ -124,14 +113,7 @@ export default function LegacyVaultPage() {
     try {
       await action();
     } catch (error: unknown) {
-      if (
-        isAxiosError(error) &&
-        error.response?.status === 403 &&
-        error.response?.data?.sudo_required
-      ) {
-        pendingAction.current = action;
-        setIsSudoOpen(true);
-      } else {
+      if (!(error as any).response?.data?.sudo_required) {
         console.error('Failed to trigger snapshot:', error);
         toast.error('Gagal membangkitkan snapshot 🥺');
       }
@@ -445,21 +427,6 @@ export default function LegacyVaultPage() {
           </motion.div>
         </motion.div>
       </div>
-
-      <SudoConfirmDialog
-        isOpen={isSudoOpen}
-        onClose={() => {
-          setIsSudoOpen(false);
-          pendingAction.current = null;
-        }}
-        onSuccess={async () => {
-          setIsSudoOpen(false);
-          if (pendingAction.current) {
-            await pendingAction.current();
-            pendingAction.current = null;
-          }
-        }}
-      />
     </div>
   );
 }

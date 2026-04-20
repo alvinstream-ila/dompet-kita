@@ -110,6 +110,7 @@ export interface ApiError {
   response?: {
     data?: {
       message?: string;
+      sudo_required?: boolean;
     };
   };
 }
