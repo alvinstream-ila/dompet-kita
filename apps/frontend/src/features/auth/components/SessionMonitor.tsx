@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { useAuth } from '../context/AuthContext';
 import api from '@/lib/axios';
+import { useAuth } from '../context/AuthContext';
 
 /**
  * Sovereign Session Monitor
@@ -21,9 +21,8 @@ const ACTIVITY_THROTTLE = 30 * SECONDS;
 export const SessionMonitor = () => {
   const { user, logout, isAuthenticated } = useAuth();
 
-  // Menggunakan state initializer agar Date.now() tidak dipanggil setiap render (Purity rule)
-  const [initialTime] = useState(() => Date.now());
-  const lastActivityRef = useRef<number>(initialTime);
+  // Initialize with 0 and hydrate in useEffect to stay pure during render/prerender
+  const lastActivityRef = useRef<number>(0);
 
   const [isWarningShown, setIsWarningShown] = useState(false);
 
@@ -50,7 +49,15 @@ export const SessionMonitor = () => {
   }, [logout, resetTimer]);
 
   useEffect(() => {
+    // Hydrate the ref on first client-side load
+    lastActivityRef.current = Date.now();
+  }, []);
+
+  useEffect(() => {
     if (!isAuthenticated || !user) return;
+
+    // browser-only guard for build-time safety
+    if (typeof window === 'undefined') return;
 
     const events = [
       'mousemove',
@@ -67,13 +74,16 @@ export const SessionMonitor = () => {
       }
     };
 
-    events.forEach((event) =>
-      globalThis.addEventListener(event, throttledReset)
-    );
+    for (const event of events) {
+      window.addEventListener(event, throttledReset);
+    }
 
     const checkInterval = setInterval(() => {
       const now = Date.now();
       const elapsed = now - lastActivityRef.current;
+
+      // Skip if we haven't hydrated yet
+      if (lastActivityRef.current === 0) return;
 
       // 1. Cek jika sudah benar-benar kadaluwarsa
       if (elapsed >= IDLE_TIMEOUT) {
@@ -104,9 +114,9 @@ export const SessionMonitor = () => {
     }, 10000); // Cek setiap 10 detik
 
     return () => {
-      events.forEach((event) =>
-        globalThis.removeEventListener(event, throttledReset)
-      );
+      for (const event of events) {
+        window.removeEventListener(event, throttledReset);
+      }
       clearInterval(checkInterval);
     };
   }, [

@@ -35,11 +35,11 @@ api.interceptors.response.use(
       Cookies.remove('auth_token');
       Cookies.remove('user_verified');
 
-      if (
-        globalThis.window !== undefined &&
-        !globalThis.window.location.pathname.includes('/login')
-      ) {
-        globalThis.window.location.href = '/login?expired=true';
+      // Gunakan typeof window yang aman untuk SSR/Build environment
+      if (typeof window !== 'undefined' && window.location) {
+        if (!window.location.pathname.includes('/login')) {
+          window.location.href = '/login?expired=true';
+        }
       }
     }
     return Promise.reject(error);
