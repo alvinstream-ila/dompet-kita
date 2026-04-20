@@ -8,17 +8,20 @@ export function useFinancialSummary(month?: number, year?: number) {
   const targetYear = year ?? now.getFullYear();
   const { budgetCycleStart } = useSettings();
 
-  const {
-    data: result,
-    isLoading,
-    refetch,
-  } = useQuery({
+  const { data, isLoading, isError, error, isRefetching, refetch } = useQuery({
     queryKey: ['financial_summary', targetMonth, targetYear, budgetCycleStart],
-    queryFn: () =>
-      getFinancialSummaryAction(targetMonth, targetYear, budgetCycleStart),
+    queryFn: async () => {
+      const result = await getFinancialSummaryAction(
+        targetMonth,
+        targetYear,
+        budgetCycleStart
+      );
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+      return result.data;
+    },
   });
-
-  const data = result?.data;
 
   return {
     income: data?.income ?? 0,
@@ -31,6 +34,14 @@ export function useFinancialSummary(month?: number, year?: number) {
         : [],
     period: data?.period,
     isLoading,
+    isError,
+    error:
+      error instanceof Error
+        ? error.message
+        : isError
+          ? 'Terjadi kesalahan sistem'
+          : null,
+    isRefetching,
     refetch,
   };
 }

@@ -32,23 +32,18 @@ async function HomeContent() {
   const prefetchData = async () => {
     // We launch the user check first as it's critical for the budget cycle logic
     const user = await getUserProfileAction();
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const cycleStart = user?.budget_cycle_start || 1;
 
     // Now prefetch everything else that doesn't strictly depend on waiting for others
     // although financial_summary needs the user's budget cycle, we have it now
     await Promise.all([
       queryClient.prefetchQuery({
-        queryKey: [
-          'financial_summary',
-          undefined,
-          undefined,
-          user?.budget_cycle_start || 1,
-        ],
+        queryKey: ['financial_summary', currentMonth, currentYear, cycleStart],
         queryFn: () =>
-          getFinancialSummaryAction(
-            undefined,
-            undefined,
-            user?.budget_cycle_start || 1
-          ),
+          getFinancialSummaryAction(currentMonth, currentYear, cycleStart),
       }),
       // Add other critical dashboard queries here if needed in parallel
     ]);

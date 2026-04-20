@@ -85,9 +85,21 @@ export async function getFinancialSummaryAction(
     const response = await serverApi(
       `/transactions/summary?${params.toString()}`
     );
+
+    // 🛡️ Sovereign Diagnostic Logging
+    if (!response.data) {
+      console.warn(
+        `[Action] Summary fetch succeeded but returned no data key. Response:`,
+        JSON.stringify(response).substring(0, 200)
+      );
+    }
+
     return { success: true, data: response.data };
   } catch (error) {
-    console.error('[Action] Failed to fetch financial summary:', error);
+    console.error(
+      `[Action] Failed to fetch financial summary for period ${month}/${year}:`,
+      error
+    );
     return {
       success: false,
       error:

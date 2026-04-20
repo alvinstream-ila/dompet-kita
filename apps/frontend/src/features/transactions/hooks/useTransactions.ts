@@ -53,36 +53,56 @@ export function useAddTransaction() {
       return result.data.data;
     },
     onMutate: async (newTransaction) => {
+      // Note: budgetCycleStart is not easily available here without hooks,
+      // so we invalidate by prefix and skip optimistic update if key not found
       await queryClient.cancelQueries({ queryKey: ['financial_summary'] });
-      const previousSummary = queryClient.getQueryData(['financial_summary']);
-      queryClient.setQueryData(
-        ['financial_summary'],
-        (
-          old:
-            | { income?: number; expense?: number; balance?: number }
-            | undefined
-        ) => {
-          if (!old) return old;
-          const amount = Number(newTransaction.amount);
-          const isIncome = newTransaction.type === 'income';
-          return {
-            ...old,
-            income: isIncome ? (old.income || 0) + amount : old.income || 0,
-            expense: isIncome ? old.expense || 0 : (old.expense || 0) + amount,
-            balance: isIncome
-              ? (old.balance || 0) + amount
-              : (old.balance || 0) - amount,
-          };
-        }
-      );
-      return { previousSummary };
+      const queries = queryClient.getQueriesData({
+        queryKey: ['financial_summary'],
+      });
+
+      // Store all previous states for rollback
+      const previousSummaries = queries.map(([key, data]) => ({ key, data }));
+
+      // Optimistically update all matching summaries (prefix match)
+      queries.forEach(([key, oldData]) => {
+        if (!oldData) return;
+
+        queryClient.setQueryData(
+          key as import('@tanstack/react-query').QueryKey,
+          (
+            old:
+              | { income?: number; expense?: number; balance?: number }
+              | undefined
+          ) => {
+            if (!old) return old;
+            const amount = Number(newTransaction.amount);
+            const isIncome = newTransaction.type === 'income';
+            return {
+              ...old,
+              income: isIncome
+                ? (Number(old.income) || 0) + amount
+                : Number(old.income) || 0,
+              expense: isIncome
+                ? Number(old.expense) || 0
+                : (Number(old.expense) || 0) + amount,
+              balance: isIncome
+                ? (Number(old.balance) || 0) + amount
+                : (Number(old.balance) || 0) - amount,
+            };
+          }
+        );
+      });
+
+      return { previousSummaries };
     },
     onError: (_err, _newTx, context) => {
-      if (context?.previousSummary) {
-        queryClient.setQueryData(
-          ['financial_summary'],
-          context.previousSummary
-        );
+      if (context?.previousSummaries) {
+        context.previousSummaries.forEach(({ key, data }) => {
+          queryClient.setQueryData(
+            key as import('@tanstack/react-query').QueryKey,
+            data
+          );
+        });
       }
       toast.error('Gagal Mencatat 🥺', {
         description: 'Tunggu sebentar dan coba lagi ya Sayang.',
