@@ -12,13 +12,7 @@ import { DashboardSkeletons } from '@/features/home/components/DashboardSkeleton
 import { getFinancialSummaryAction } from '@/features/transactions/actions/transactions';
 import { getQueryClient } from '@/lib/get-query-client';
 
-/**
- * Dompet Kita - Protected Home Page (RSC)
- *
- * Leveraging Next.js 16 PPR (Partial Prerendering).
- * The shell renders instantly, while financial data streams in.
- */
-// Removed: export const dynamic = 'force-dynamic';
+import { cookies } from 'next/headers';
 
 export default async function HomePage() {
   return (
@@ -29,6 +23,9 @@ export default async function HomePage() {
 }
 
 async function HomeContent() {
+  // Force dynamic rendering and check session early to satisfy Next.js 15 prerenderer
+  await cookies();
+
   const queryClient = getQueryClient();
 
   // Prefetch critical data on the server in parallel to eliminate waterfalls

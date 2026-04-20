@@ -6,11 +6,7 @@ import { TransactionsView } from '@/features/transactions';
 import { getQueryClient } from '@/lib/get-query-client';
 import { serverApi } from '@/lib/server-api';
 
-/**
- * Transactions Page (RSC)
- * Utilizing Next.js 16 PPR for instant loading of the transaction management interface.
- */
-// Removed: export const dynamic = 'force-dynamic';
+import { cookies } from 'next/headers';
 
 export default async function TransactionsPage() {
   return (
@@ -21,6 +17,9 @@ export default async function TransactionsPage() {
 }
 
 async function TransactionsContent() {
+  // Force dynamic rendering and check session early to satisfy Next.js 15 prerenderer
+  await cookies();
+
   const queryClient = getQueryClient();
 
   const prefetchData = async () => {

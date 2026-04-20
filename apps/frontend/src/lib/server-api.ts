@@ -5,8 +5,16 @@ import { cookies } from 'next/headers';
  * Used in Server Actions and Server Components to talk to the backend.
  */
 export async function serverApi(endpoint: string, options: RequestInit = {}) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('auth_token')?.value;
+  let token: string | undefined;
+
+  try {
+    const cookieStore = await cookies();
+    token = cookieStore.get('auth_token')?.value;
+  } catch (error) {
+    // During build/prerendering, cookies() might reject.
+    // We treat this as no token available to prevent hanging promise crashes.
+    token = undefined;
+  }
 
   const baseUrl =
     process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
