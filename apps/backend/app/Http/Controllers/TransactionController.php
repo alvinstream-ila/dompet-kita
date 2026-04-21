@@ -90,7 +90,7 @@ class TransactionController extends Controller
              *     cumulative_balance: float,
              *     calendar_income: float,
              *     calendar_expense: float,
-             *     recentTransactions: \Illuminate\Database\Eloquent\Collection<int, Transaction>,
+             *     recentTransactions: Collection<int, Transaction>,
              *     period: array{start: string, end: string}
              * }
              */
@@ -182,7 +182,7 @@ class TransactionController extends Controller
      * @return array{
      *   user: User,
      *   summary: array<string, mixed>,
-     *   transactions: \Illuminate\Database\Eloquent\Collection<int, Transaction>,
+     *   transactions: Collection<int, Transaction>,
      *   categories: \Illuminate\Support\Collection<int, mixed>,
      *   period_label: string
      * }
@@ -201,9 +201,10 @@ class TransactionController extends Controller
             ->get();
 
         /** @var \Illuminate\Support\Collection<int, mixed> $categoryBreakdown */
-        $categoryBreakdown = $transactions->groupBy('category')->map(function (\Illuminate\Database\Eloquent\Collection $items, $key) {
+        $categoryBreakdown = $transactions->groupBy('category')->map(function (Collection $items, $key) {
             /** @var Transaction $first */
             $first = $items->first();
+
             return [
                 'category' => $key,
                 'amount' => (float) $items->sum('amount'),
