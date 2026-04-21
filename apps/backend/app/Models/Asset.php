@@ -23,8 +23,10 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property bool $is_market_synced
  * @property float $value
  * @property float $invested_capital
- * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property \Carbon\Carbon|null $last_synced_at
+ * @property-read float $change_24h
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  */
 class Asset extends Model
 {

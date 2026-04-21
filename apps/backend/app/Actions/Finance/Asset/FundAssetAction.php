@@ -14,7 +14,7 @@ class FundAssetAction extends BaseAction
     /**
      * Fund an asset, optionally deducting from a source asset.
      *
-     * @param  array{amount: float|int, source_asset_id?: string|int|null, description?: string}  $data
+     * @param  array{amount: float|int, quantity?: float|int, source_asset_id?: string|int|null, description?: string}  $data
      */
     public function execute(User $user, Asset $asset, array $data): Asset
     {

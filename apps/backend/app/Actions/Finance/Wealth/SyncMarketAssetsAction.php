@@ -36,6 +36,10 @@ class SyncMarketAssetsAction extends BaseAction
         return $stats;
     }
 
+    /**
+     * @param  array<string, mixed>  $market
+     * @param  array{updated: int, alerts: int}  $stats
+     */
     private function syncAsset(Asset $asset, array $market, array &$stats): void
     {
         $oldValue = $asset->value;
@@ -59,6 +63,8 @@ class SyncMarketAssetsAction extends BaseAction
 
     /**
      * Resolve the unit price (price per 1 unit) from market data.
+     *
+     * @param  array<string, mixed>  $market
      */
     private function resolveUnitPrice(Asset $asset, array $market): float
     {
