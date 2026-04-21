@@ -255,6 +255,15 @@ export default function WealthPage() {
               freedomProgress={freedomProgress}
               freedomMessage={freedomMessage}
               formatAmount={formatCurrency}
+              lastSyncedAt={assets.reduce((latest, asset) => {
+                const current = asset.last_synced_at || '';
+                if (!current) return latest;
+                if (!latest) return current;
+                if (current > latest) {
+                  return current;
+                }
+                return latest;
+              }, '')}
             />
           )}
         </div>

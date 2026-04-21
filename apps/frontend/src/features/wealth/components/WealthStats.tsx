@@ -12,6 +12,7 @@ interface WealthStatsProps {
   freedomProgress: number;
   freedomMessage: string;
   formatAmount: (amount: number) => string;
+  lastSyncedAt?: string;
 }
 
 export const WealthStats: React.FC<WealthStatsProps> = ({
@@ -22,6 +23,7 @@ export const WealthStats: React.FC<WealthStatsProps> = ({
   freedomProgress,
   freedomMessage,
   formatAmount,
+  lastSyncedAt,
 }) => {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -34,6 +36,22 @@ export const WealthStats: React.FC<WealthStatsProps> = ({
           <h2 className="mb-5 text-4xl font-black tracking-tighter transition-transform group-hover:translate-x-1">
             {formatAmount(totalWealth)}
           </h2>
+
+          {lastSyncedAt && (
+            <div className="absolute top-8 right-8 flex items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1.5 pr-3 pl-2.5 backdrop-blur-md">
+              <span className="relative flex h-2 w-2">
+                <span className="bg-green-stat absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
+                <span className="bg-green-stat relative inline-flex h-2 w-2 rounded-full"></span>
+              </span>
+              <span className="text-[8px] font-black tracking-widest text-slate-300 uppercase">
+                📡 Live:{' '}
+                {new Date(lastSyncedAt).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </span>
+            </div>
+          )}
 
           <div className="mb-6 grid grid-cols-2 gap-4 border-t border-white/10 pt-6">
             <div>

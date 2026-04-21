@@ -35,6 +35,15 @@ stats.html
 Thumbs.db
 Desktop.ini
 **/infra/bin/
+
+# Temporary Scratch & Reports
+**/scratch/
+**/reports/
+**/*.txt
+!**/CHANGELOG.md
+!**/README.md
+!**/MANIFEST.md
+!**/.env.example
 **/playwright-report/
 **/test-results/
 

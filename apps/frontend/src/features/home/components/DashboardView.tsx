@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth';
 import { useFinancialSummary } from '@/features/transactions';
 import { useLoans } from '@/features/loans';
-import { AlertCircle, RefreshCcw, HandCoins } from 'lucide-react';
+import { AlertCircle, RefreshCcw, HandCoins, PiggyBank } from 'lucide-react';
 import { useFormatting } from '@/lib/hooks/useFormatting';
 import {
   AnalyticsSkeleton,
@@ -202,7 +202,7 @@ export function DashboardView() {
               {isLoading ? (
                 <StatCardSkeleton />
               ) : (
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 md:gap-8">
+                <div className="grid grid-cols-2 gap-5 md:gap-8 lg:grid-cols-4">
                   <StatCard
                     title="Total Saldo"
                     amount={cumulativeBalance}
@@ -220,6 +220,12 @@ export function DashboardView() {
                     amount={calendarExpense}
                     imageSrc="/icons/3d/expense.webp"
                     variant="expense"
+                  />
+                  <StatCard
+                    title="Sisa Bulan Ini"
+                    amount={calendarIncome - calendarExpense}
+                    icon={PiggyBank}
+                    variant="surplus"
                   />
                 </div>
               )}

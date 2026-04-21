@@ -37,7 +37,7 @@ class MarketService
         return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function (): array {
             try {
                 // 1. Forex: Frankfurter (Unlimited/Keyless)
-                $fxResponse = Http::timeout(5)->get('https://api.frankfurter.app/latest?from=USD');
+                $fxResponse = Http::timeout(5)->withoutVerifying()->get('https://api.frankfurter.app/latest?from=USD');
                 $fxData = $fxResponse->successful() ? (array) $fxResponse->json() : [];
                 $currencyRates = $fxData['rates'] ?? ['IDR' => self::FAILOVER_USD_IDR];
                 assert(is_array($currencyRates));
@@ -76,8 +76,19 @@ class MarketService
     {
         return retry(2, function () {
             try {
-                $response = Http::timeout(15)->get('https://www.logammulia.com/id/harga-emas-hari-ini');
-                if ($response->successful() && preg_match('/idr">([0-9.]+)/', $response->body(), $matches)) {
+                $response = Http::timeout(15)->withoutVerifying()->get('https://www.logammulia.com/id/harga-emas-hari-ini');
+                if (! $response->successful()) {
+                    return null;
+                }
+
+                $body = $response->body();
+                // Strategy: Find the "1 gr" row and extract the first numeric value after it (Harga Dasar)
+                if (preg_match('/1 gr\s*<\/td>\s*<td[^>]*>\s*([\d,.]+)/i', $body, $matches)) {
+                    return (float) str_replace(['.', ','], '', $matches[1]);
+                }
+
+                // Fallback for different HTML structures
+                if (preg_match('/idr">([0-9.]+)/', $body, $matches)) {
                     return (float) str_replace('.', '', $matches[1]);
                 }
             } catch (\Exception $e) {
@@ -98,6 +109,14 @@ class MarketService
         $cacheKey = "crypto_price_{$symbol}";
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($symbol) {
+            // Try Local Path First for stability in Indonesia (Indodax)
+            if (str_ends_with($symbol, 'IDR') || str_ends_with($symbol, 'USDT')) {
+                $localPrice = $this->getIndodaxPrice($symbol);
+                if ($localPrice) {
+                    return $localPrice;
+                }
+            }
+
             $endpoints = [
                 "https://api.binance.com/api/v3/ticker/price?symbol={$symbol}",
                 "https://api1.binance.com/api/v3/ticker/price?symbol={$symbol}",
@@ -106,7 +125,7 @@ class MarketService
 
             foreach ($endpoints as $url) {
                 try {
-                    $response = Http::timeout(10)->retry(2, 500)->get($url);
+                    $response = Http::timeout(10)->withoutVerifying()->get($url);
                     if ($response->successful()) {
                         $priceData = $response->json('price');
 
@@ -131,7 +150,7 @@ class MarketService
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($symbol) {
             try {
                 // Yahoo Finance Chart API is more stable than others for public use
-                $response = Http::timeout(5)->get("https://query1.finance.yahoo.com/v8/finance/chart/{$symbol}");
+                $response = Http::timeout(5)->withoutVerifying()->get("https://query1.finance.yahoo.com/v8/finance/chart/{$symbol}");
                 if ($response->successful()) {
                     $priceData = $response->json('chart.result.0.meta.regularMarketPrice');
 
@@ -139,6 +158,33 @@ class MarketService
                 }
             } catch (\Exception $e) {
                 Log::error("Yahoo Finance Fetch Failed for {$symbol}: ".$e->getMessage());
+            }
+
+            return null;
+        });
+    }
+
+    /**
+     * Fetch crypto price from Indodax (Fallback for IDR pairs/ISP blocks).
+     */
+    public function getIndodaxPrice(string $symbol): ?float
+    {
+        // Indodax uses underscore format: btc_idr
+        $pair = strtolower(str_replace(['IDR', 'USDT'], ['_idr', '_usdt'], $symbol));
+        if (! str_contains($pair, '_')) {
+            $pair .= '_idr';
+        }
+
+        return retry(2, function () use ($pair) {
+            try {
+                $response = Http::timeout(10)->withoutVerifying()->get("https://indodax.com/api/ticker/{$pair}");
+                if ($response->successful()) {
+                    $price = $response->json('ticker.last');
+
+                    return is_numeric($price) ? (float) $price : null;
+                }
+            } catch (\Exception $e) {
+                Log::warning("Indodax Fetch Failed for {$pair}: ".$e->getMessage());
             }
 
             return null;

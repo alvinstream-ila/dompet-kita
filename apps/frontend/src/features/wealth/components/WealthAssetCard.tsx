@@ -99,6 +99,19 @@ export const WealthAssetCard: React.FC<WealthAssetCardProps> = ({
                   <span className="ml-1 text-[8px] font-normal text-slate-400 capitalize">
                     /{asset.unit || 'unit'}
                   </span>
+                  {asset.change_24h !== 0 && (
+                    <span
+                      className={cn(
+                        'ml-2 rounded-md px-1.5 py-0.5 text-[8px] font-black',
+                        (asset.change_24h ?? 0) > 0
+                          ? 'bg-green-stat/10 text-green-stat'
+                          : 'bg-red-stat/10 text-red-stat'
+                      )}
+                    >
+                      {(asset.change_24h ?? 0) > 0 ? '↑' : '↓'}{' '}
+                      {Math.abs(asset.change_24h ?? 0)}%
+                    </span>
+                  )}
                 </p>
               </div>
               <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">

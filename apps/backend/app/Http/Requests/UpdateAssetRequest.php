@@ -26,6 +26,9 @@ class UpdateAssetRequest extends FormRequest
             'name' => ['sometimes', 'string', 'max:100'],
             'type' => ['sometimes', 'string', 'max:50'],
             'value' => ['sometimes', 'numeric', 'min:0', 'max:1000000000000'],
+            'quantity' => ['sometimes', 'numeric', 'min:0'],
+            'unit' => ['sometimes', 'nullable', 'string', 'max:50'],
+            'is_market_synced' => ['sometimes', 'boolean'],
         ];
     }
 }

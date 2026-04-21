@@ -1,8 +1,21 @@
-# Changelog - Dompet Kita
-
-All notable changes to this project will be documented in this file.
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [7.4.2] - 2026-04-21 (Wealth Sturdiness Singularity)
+
+### Added
+- **Market Sync Hardening (Sovereign Level)**:
+    - **Real-time Staleness Indicator**: Integrated a "📡 Live" badge with pulsing animations to show the exact timestamp of the last successful market sync.
+    - **Historical Price Tracking**: Launched a dedicated `asset_price_histories` engine that records daily price snapshots for long-term trend analysis.
+    - **24h Trend Intelligence**: Implemented a dynamic trend badge (↑/↓ %) on asset cards, calculating profit/loss based on a 24-hour historical lookback.
+- **Database Fortress Update**: Added `last_synced_at` column to `assets` table for audit-ready data tracking.
+
+### Changed
+- **Logic Refinement**: Optimized `SyncMarketAssetsAction` by refactoring nested ternaries into a clean `switch/variable` structure, ensuring absolute code clarity and maintainability.
+- **Frontend Type Sovereignty**: Aligned core `Asset` interfaces with the new historical data fields.
+
+### Fixed
+- **Linter Zero-Warning Status**: Resolved all remaining TypeScript and PHP lints across the Wealth module.
+
 
 ## [7.4.1] - 2026-04-20 (Monthly Accountability Singularity)
 

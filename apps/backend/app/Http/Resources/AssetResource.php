@@ -28,6 +28,8 @@ class AssetResource extends JsonResource
             'market_price' => $this->quantity > 0 ? (float) ($this->value / $this->quantity) : 0,
             'value' => (float) $this->value,
             'invested_capital' => (float) $this->invested_capital,
+            'last_synced_at' => $this->last_synced_at?->toIso8601String(),
+            'change_24h' => (float) $this->change_24h,
             'profit_amount' => (float) ($this->value - $this->invested_capital),
             'profit_percent' => $this->invested_capital > 0
                 ? round(($this->value - $this->invested_capital) / $this->invested_capital * 100, 2)

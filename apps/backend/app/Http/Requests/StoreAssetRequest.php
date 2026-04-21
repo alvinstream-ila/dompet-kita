@@ -26,6 +26,9 @@ class StoreAssetRequest extends FormRequest
             'name' => ['required', 'string', 'max:100'],
             'type' => ['required', 'string', 'max:50'],
             'value' => ['required', 'numeric', 'min:0', 'max:1000000000000'],
+            'quantity' => ['sometimes', 'numeric', 'min:0'],
+            'unit' => ['sometimes', 'nullable', 'string', 'max:50'],
+            'is_market_synced' => ['sometimes', 'boolean'],
         ];
     }
 }

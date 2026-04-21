@@ -20,6 +20,7 @@ class FundAssetAction extends BaseAction
     {
         return DB::transaction(function () use ($user, $asset, $data): Asset {
             $amount = (float) $data['amount'];
+            $quantityChange = (float) ($data['quantity'] ?? 0.0);
             $sourceAssetId = $data['source_asset_id'] ?? null;
             $description = $data['description'] ?? 'Top up aset';
 
@@ -34,13 +35,20 @@ class FundAssetAction extends BaseAction
                 'transaction_date' => now(),
             ]);
 
-            // 2. Increment Target Asset Value and Invested Capital
+            // 2. Increment Target Asset Value, Invested Capital, and Quantity
             $asset->increment('value', $amount);
             $asset->increment('invested_capital', $amount);
 
-            // 3. Deduct from Source Asset (if provided)
+            if ($quantityChange > 0) {
+                $asset->increment('quantity', $quantityChange);
+            }
+
+            // 3. Deduct from Source Asset & Journaling
+            $journalDescription = "Top up investasi: {$asset->name}";
+
             if ($sourceAssetId) {
                 $sourceAsset = Asset::where('user_id', $user->id)->findOrFail($sourceAssetId);
+                $journalDescription = "Investasi: {$asset->name} (dari {$sourceAsset->name})";
 
                 // We record a withdrawal for the source asset
                 AssetTransaction::create([
@@ -53,20 +61,16 @@ class FundAssetAction extends BaseAction
                 ]);
 
                 $sourceAsset->decrement('value', $amount);
-
-                // For source asset, if it was a bank/cash being "invested",
-                // we treat the deduction as reducing its "value" but usually bank/cash capital is same as value.
-                // To keep it simple: we decrement invested_capital too to keep it synced for basic assets.
                 $sourceAsset->decrement('invested_capital', $amount);
-            } else {
-                // 4. Record as Expense in main ledger (Hot Money) if funded from outside
-                $asset->recordJournal(
-                    $amount,
-                    TransactionType::EXPENSE,
-                    'Investment',
-                    "Top up investasi: {$asset->name}"
-                );
             }
+
+            // 4. Record as Expense in main ledger (Hot Money) for visibility
+            $asset->recordJournal(
+                $amount,
+                TransactionType::EXPENSE,
+                'Investment',
+                $journalDescription
+            );
 
             return $asset->fresh() ?? $asset;
         });

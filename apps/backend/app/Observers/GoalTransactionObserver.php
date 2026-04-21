@@ -22,5 +22,16 @@ class GoalTransactionObserver
                 "Menabung untuk: {$transaction->goal->name}"
             );
         }
+
+        // When a user withdraws money from a dream (Goal), it is recorded as INCOME
+        // in the dashboard because the money is returning to the main "Hot Money" balance.
+        if ($transaction->type === 'withdrawal') {
+            $transaction->recordJournal(
+                (float) $transaction->amount,
+                TransactionType::INCOME,
+                'Impian',
+                "Pencairan dari: {$transaction->goal->name}"
+            );
+        }
     }
 }

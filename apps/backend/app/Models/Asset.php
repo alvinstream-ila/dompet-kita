@@ -37,6 +37,7 @@ class Asset extends Model
         'quantity',
         'unit',
         'is_market_synced',
+        'last_synced_at',
         'value',
         'invested_capital',
     ];
@@ -67,6 +68,16 @@ class Asset extends Model
     }
 
     /**
+     * The price history of this asset.
+     *
+     * @return HasMany<AssetPriceHistory, $this>
+     */
+    public function priceHistories(): HasMany
+    {
+        return $this->hasMany(AssetPriceHistory::class);
+    }
+
+    /**
      * Scope for assets that should be synced with market rates.
      *
      * @param  Builder<Asset>  $query
@@ -75,6 +86,26 @@ class Asset extends Model
     public function scopeMarketSynced($query)
     {
         return $query->whereRaw('is_market_synced IS TRUE');
+    }
+
+    /**
+     * Calculate 24h price trend based on historical data.
+     */
+    public function getChange24hAttribute(): float
+    {
+        $currentPrice = $this->quantity > 0 ? ($this->value / $this->quantity) : 0;
+        
+        // Get the latest history record before today
+        $previousRecord = $this->priceHistories()
+            ->whereDate('recorded_at', '<', now()->toDateString())
+            ->orderByDesc('recorded_at')
+            ->first();
+
+        if (!$previousRecord || $previousRecord->price <= 0) {
+            return 0.0;
+        }
+
+        return round(($currentPrice - $previousRecord->price) / $previousRecord->price * 100, 2);
     }
 
     /**
@@ -90,6 +121,7 @@ class Asset extends Model
             'value' => 'float',
             'quantity' => 'float',
             'is_market_synced' => 'boolean',
+            'last_synced_at' => 'datetime',
             'invested_capital' => 'float',
         ];
     }

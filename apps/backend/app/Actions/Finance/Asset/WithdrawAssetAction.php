@@ -48,9 +48,12 @@ class WithdrawAssetAction extends BaseAction
             $capitalReduction = min($currentCapital, $amount);
             $asset->decrement('invested_capital', $capitalReduction);
 
-            // 3. Increment Recipient Asset (if provided)
+            // 3. Increment Recipient Asset & Journaling
+            $journalDescription = "Pencairan investasi: {$asset->name}";
+
             if ($recipientAssetId) {
                 $recipientAsset = Asset::where('user_id', $user->id)->findOrFail($recipientAssetId);
+                $journalDescription = "Pencairan: {$asset->name} (ke {$recipientAsset->name})";
 
                 // Record a funding for the recipient
                 AssetTransaction::create([
@@ -65,15 +68,15 @@ class WithdrawAssetAction extends BaseAction
 
                 $recipientAsset->increment('value', $amount);
                 $recipientAsset->increment('invested_capital', $amount);
-            } else {
-                // 4. Record as Income in main ledger (Hot Money) if withdrawn to outside
-                $asset->recordJournal(
-                    $amount,
-                    TransactionType::INCOME,
-                    'Investment',
-                    "Pencairan investasi: {$asset->name}"
-                );
             }
+
+            // 4. Record as Income in main ledger (Hot Money) for visibility
+            $asset->recordJournal(
+                $amount,
+                TransactionType::INCOME,
+                'Investment',
+                $journalDescription
+            );
 
             return $asset->fresh() ?? $asset;
         });

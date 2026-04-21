@@ -20,6 +20,8 @@ export interface Asset {
   value: number;
   invested_capital: number;
   market_price: number;
+  last_synced_at?: string;
+  change_24h?: number;
   profit_amount: number;
   profit_percent: number;
   created_at: string;

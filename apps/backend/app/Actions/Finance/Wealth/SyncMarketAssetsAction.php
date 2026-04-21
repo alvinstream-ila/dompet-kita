@@ -36,61 +36,68 @@ class SyncMarketAssetsAction extends BaseAction
         return $stats;
     }
 
-    /**
-     * Synchronize a single asset and handle auditing.
-     *
-     * @param  array<string, mixed>  $market
-     * @param  array{updated: int, alerts: int}  $stats
-     */
     private function syncAsset(Asset $asset, array $market, array &$stats): void
     {
         $oldValue = $asset->value;
-        $newValue = $this->resolvePrice($asset, $market);
+        $unitPrice = $this->resolveUnitPrice($asset, $market);
+        $newValue = $unitPrice * (float) $asset->quantity;
+
+        // 1. Update Asset Value and Sync Timestamp
+        $asset->update([
+            'value' => $newValue,
+            'last_synced_at' => now(),
+        ]);
 
         if ($newValue !== $oldValue) {
-            $asset->update(['value' => $newValue]);
             $stats['updated']++;
-
             $this->logSignificantChange($asset, $oldValue, $newValue, $stats);
         }
+
+        // 2. Record Price History (Once Per Day per Asset)
+        $this->recordDailyHistory($asset, $unitPrice);
     }
 
     /**
-     * Map Asset Class and Symbol to a Market Price.
-     *
-     * @param  array<string, mixed>  $market
+     * Resolve the unit price (price per 1 unit) from market data.
      */
-    private function resolvePrice(Asset $asset, array $market): float
+    private function resolveUnitPrice(Asset $asset, array $market): float
     {
         $symbol = strtoupper((string) ($asset->unit ?? ''));
-        $quantity = (float) $asset->quantity;
+        $price = 0.0;
 
-        return match ($asset->type) {
-            AssetType::INVESTMENT, AssetType::COMMODITY => $symbol === 'GRAM'
-                ? $quantity * (float) ($market['gold_antam_gram'] ?? 0.0)
-                : (float) $asset->value,
+        switch ($asset->type) {
+            case AssetType::INVESTMENT:
+            case AssetType::COMMODITY:
+                $price = $symbol === 'GRAM' ? (float) ($market['gold_antam_gram'] ?? 0.0) : 0.0;
+                break;
 
-            AssetType::CASH => in_array($symbol, ['USD', 'SGD', 'EUR', 'JPY', 'GBP', 'AUD'])
-                ? $quantity * (float) $this->marketService->getRate($symbol, 'IDR')
-                : (float) $asset->value,
+            case AssetType::CASH:
+                if (in_array($symbol, ['USD', 'SGD', 'EUR', 'JPY', 'GBP', 'AUD'])) {
+                    $price = (float) $this->marketService->getRate($symbol, 'IDR');
+                }
+                break;
 
-            AssetType::STOCK => $this->resolveStockPrice($asset, $symbol),
+            case AssetType::STOCK:
+                $price = $this->resolveStockUnitPrice($symbol);
+                break;
 
-            AssetType::CRYPTO => $this->resolveCryptoPrice($asset, $symbol),
-
-            default => (float) $asset->value,
-        };
-    }
-
-    private function resolveStockPrice(Asset $asset, string $symbol): float
-    {
-        if (empty($symbol)) {
-            return (float) $asset->value;
+            case AssetType::CRYPTO:
+                $price = (float) $this->marketService->getCryptoPrice($symbol);
+                break;
         }
 
+        return $price;
+    }
+
+    private function resolveStockUnitPrice(string $symbol): float
+    {
+        if (empty($symbol)) {
+            return 0.0;
+        }
+        
         $price = (float) $this->marketService->getStockPrice($symbol);
-        if ($price <= 0) {
-            return (float) $asset->value;
+        if ($price <= 1.0) {
+            return 0.0;
         }
 
         // International Conversion
@@ -98,26 +105,30 @@ class SyncMarketAssetsAction extends BaseAction
             $price *= (float) $this->marketService->getRate('USD', 'IDR');
         }
 
-        return (float) $asset->quantity * $price;
+        return $price;
     }
 
-    private function resolveCryptoPrice(Asset $asset, string $symbol): float
+    /**
+     * Store price history point (Daily Granularity).
+     */
+    private function recordDailyHistory(Asset $asset, float $unitPrice): void
     {
-        if (empty($symbol)) {
-            return (float) $asset->value;
+        if ($unitPrice <= 0) {
+            return;
         }
 
-        $price = (float) $this->marketService->getCryptoPrice($symbol);
-        if ($price <= 0) {
-            return (float) $asset->value;
-        }
+        // Check if we already have a record for today
+        $existsForToday = $asset->priceHistories()
+            ->whereDate('recorded_at', now()->toDateString())
+            ->exists();
 
-        // USDT Conversion
-        if (str_ends_with($symbol, 'USDT')) {
-            $price *= (float) $this->marketService->getRate('USD', 'IDR');
+        if (! $existsForToday) {
+            $asset->priceHistories()->create([
+                'user_id' => $asset->user_id,
+                'price' => $unitPrice,
+                'recorded_at' => now(),
+            ]);
         }
-
-        return (float) $asset->quantity * $price;
     }
 
     /**

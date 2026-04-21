@@ -12,7 +12,7 @@ interface StatCardProps {
   amount: number;
   icon?: LucideIcon;
   imageSrc?: string;
-  variant?: 'saldo' | 'income' | 'expense';
+  variant?: 'saldo' | 'income' | 'expense' | 'surplus';
   isCurrency?: boolean;
   className?: string;
 }
@@ -44,6 +44,14 @@ export const StatCard = React.memo(
             iconColor: 'text-[var(--color-red-stat)]',
             gradient: 'from-[var(--color-red-stat)]/5 to-transparent',
             shadow: 'shadow-[var(--color-red-stat)]/10',
+          };
+        case 'surplus':
+          return {
+            text: 'text-indigo-600',
+            iconBg: 'bg-indigo-50',
+            iconColor: 'text-indigo-600',
+            gradient: 'from-indigo-500/5 to-transparent',
+            shadow: 'shadow-indigo-100',
           };
         default:
           return {

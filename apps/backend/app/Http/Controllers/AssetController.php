@@ -105,11 +105,12 @@ class AssetController extends Controller
 
         $validated = $request->validate([
             'amount' => 'required|numeric|min:0.01',
+            'quantity' => 'sometimes|numeric|min:0',
             'source_asset_id' => 'sometimes|nullable|exists:assets,id',
             'description' => 'sometimes|nullable|string|max:255',
         ]);
 
-        /** @var array{amount: float|int, source_asset_id?: int|string|null, description?: string} $data */
+        /** @var array{amount: float|int, quantity?: float|int, source_asset_id?: int|string|null, description?: string} $data */
         $data = (array) $validated;
 
         $asset = $action->execute($user, $asset, $data);
