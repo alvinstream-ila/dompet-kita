@@ -29,6 +29,7 @@ class StoreAssetRequest extends FormRequest
             'quantity' => ['sometimes', 'numeric', 'min:0'],
             'unit' => ['sometimes', 'nullable', 'string', 'max:50'],
             'is_market_synced' => ['sometimes', 'boolean'],
+            'invested_capital' => ['sometimes', 'numeric', 'min:0'],
         ];
     }
 }

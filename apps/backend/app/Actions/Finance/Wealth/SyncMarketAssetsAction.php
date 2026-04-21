@@ -90,6 +90,10 @@ class SyncMarketAssetsAction extends BaseAction
             case AssetType::CRYPTO:
                 $price = (float) $this->marketService->getCryptoPrice($symbol);
                 break;
+
+            default:
+                $price = 0.0;
+                break;
         }
 
         return $price;

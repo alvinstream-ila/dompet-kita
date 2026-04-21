@@ -14,11 +14,15 @@ class AssetObserver
     {
         // When a new asset is added, the initial value is recorded as INCOME in the dashboard
         // to acknowledge the presence of this "New Money" in the system's awareness.
-        $asset->recordJournal(
-            (float) ($asset->invested_capital > 0 ? $asset->invested_capital : $asset->value),
-            TransactionType::INCOME,
-            'Aset',
-            "Pencatatan aset baru: {$asset->name}"
-        );
+        try {
+            $asset->recordJournal(
+                (float) ($asset->invested_capital > 0 ? $asset->invested_capital : $asset->value),
+                TransactionType::INCOME,
+                'Aset',
+                "Pencatatan aset baru: {$asset->name}"
+            );
+        } catch (\Exception $e) {
+            \Log::error("Failed to record journal for asset [{$asset->id}]: " . $e->getMessage());
+        }
     }
 }

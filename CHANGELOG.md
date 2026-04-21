@@ -1,220 +1,77 @@
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+# 📝 CHANGELOG — DOMPET KITA
 
-## [7.4.2] - 2026-04-21 (Wealth Sturdiness Singularity)
+---
 
-### Added
-- **Market Sync Hardening (Sovereign Level)**:
-    - **Real-time Staleness Indicator**: Integrated a "📡 Live" badge with pulsing animations to show the exact timestamp of the last successful market sync.
-    - **Historical Price Tracking**: Launched a dedicated `asset_price_histories` engine that records daily price snapshots for long-term trend analysis.
-    - **24h Trend Intelligence**: Implemented a dynamic trend badge (↑/↓ %) on asset cards, calculating profit/loss based on a 24-hour historical lookback.
-- **Database Fortress Update**: Added `last_synced_at` column to `assets` table for audit-ready data tracking.
+## [7.4.2] — 2026-04-21 (Sovereign Database Hardening)
 
-### Changed
-- **Logic Refinement**: Optimized `SyncMarketAssetsAction` by refactoring nested ternaries into a clean `switch/variable` structure, ensuring absolute code clarity and maintainability.
-- **Frontend Type Sovereignty**: Aligned core `Asset` interfaces with the new historical data fields.
+### 🛡️ ARCHITECTURE REVOLUTION
+- **The Household Pattern**: Migrated from simple partner-linking to a scalable **Household/Tenant architecture**, enabling robust group-based RLS.
+- **Unified Identity Mapping**: Synchronized Laravel users with Supabase Auth via `auth_uuid` mapping to eliminate RLS authentication mismatches.
 
-### Fixed
-- **Linter Zero-Warning Status**: Resolved all remaining TypeScript and PHP lints across the Wealth module.
+### 💎 DATA INTEGRITY & PRECISION
+- **Financial Precision v2025**: Upgraded all balance columns to `decimal(19, 4)` for high-precision mid-calculations.
+- **Crypto-Ready Schema**: Implemented `decimal(36, 18)` for asset quantities, supporting Ethereum/EVM-compatible digital tokens.
+- **Soft Deletes**: Native audit trail support for all financial tables (`transactions`, `assets`, `loans`, `goals`, `holidays`).
 
+### 🧩 NORMALIZATION
+- **Normalized Categories**: Transitions from string-based categories to a dedicated, household-scoped `categories` table for centralized management and cleaner analytics.
 
-## [7.4.1] - 2026-04-20 (Monthly Accountability Singularity)
+---
 
-### Added
-- **Monthly Loan Accountability Report (Full Feature)**:
-    - **Temporal Snapshots**: Users can now filter reports by month and year, providing a dedicated "Opening Balance" and "Ending Carry-over" view.
-    - **Historical Precision Ledger**: Implemented backend logic that reconstructs loan balances at any point in time by auditing the transaction ledger, ensuring 100% accuracy for past reports.
-    - **Premium Period Picker**: Added a sleek, glassmorphism-inspired month/year selector to the Audit Mode.
-- **Enhanced "Tanggungan Berlanjut" Logic**: Automated the calculation of future debt obligations based on historical repayment activity.
+## [7.4.1] — 2026-04-21 (Post-Hardening Core Audit)
 
-### Fixed
-- **LoanController Logic Sovereignty**: Resolved syntax errors and undefined variables in the report generation engine.
-- **Frontend Refinement**: Cleaned up unused imports and refactored nested ternaries for better maintainability in the report page.
+### 🛡️ WEALTH HARDENING
+- **Unified Wealth Dashboard**: Finalized the 3-tier financial display logic (Market Price, Modal, Investment Total).
+- **Auto-Sync Reliability**: Implemented failover market data providers (Indodax, Yahoo, Frankfurter) with SSL bypass for high-resiliency market data.
+- **AI Financial Wisdom**: Integrated Gemini-powered daily insights and wealth peramalan (*forecasting*).
 
-## [7.4.0] - 2026-04-20 (Unified Ledger Singularity)
+### 💎 ASSET SYNCHRONIZATION
+- **Type-Safe Assets**: Enforced strict SMALLINT casting for PostgreSQL boolean compatibility in `is_market_synced`.
+- **Sync History**: Added `last_synced_at` and `change_24h` tracking for all market-linked assets.
 
-### Added
-- **Unified Financial Ledger (Backend)**: Launched a fully automated journaling engine powered by the `AccountingJournalist` trait. Every transaction in Assets, Loans, Savings Goals, and Holiday Funds is now automatically recorded to the main dashboard ledger.
-- **Formal Loan Reporting (Frontend)**: Introduced a premium, print-ready `LoanAccountabilityView` that generates professional summaries of all active debts and receivables.
-- **"Amanah" Dashboard Integration**: Added a dedicated summary block for active loans on the main financial overview.
+---
 
-### Changed
-- **Strict Type Sovereignty**: Elevated the entire financial logic engine to **PHPStan Level 9** with zero errors, ensuring absolute mathematical and logical integrity.
-- **Code Style Harmony**: Synchronized backend observers and and models with **Laravel Pint** conventions for pristine code aesthetics.
+## [7.4.0] — 2026-04-20 (The Unified Ledger Release)
 
-### Fixed
-- **PropType Cleanup**: Resolved "unused prop" warnings in the Loan accountability suite.
-- **Global Context Standardization**: Migrated legacy `window.print()` calls to the modern `globalThis.print()` standard.
+### 🛡️ FINANCIAL FORTRESS
+- **Unified Journaling (The Ledger)**: Major architectual shift moving all finance systems (Loans, Goals, Holidays) to a unified journaling mechanism.
+- **Double-Entry Integrity**: All money movements are now recorded as ledger entries, eliminating balance drift across the dashboard.
+- **Security V5 Hardening**: Mandatory security scan integration and RLS reinforcement on core tables.
 
-## [7.3.0] - 2026-04-17 (Sovereign Calendar UX)
+### 📈 WEALTH INTELLIGENCE
+- **The Prophet Engine**: Multi-currency, inflation-adjusted, 12-month foresight.
+- **Wealth History**: Automated nightly snapshots of user net worth.
 
-### Added
-- **Sovereign Jump Navigation Calendar**: Launched a high-velocity, compact date picker with integrated Month and Year selection dropdowns.
-- **Global Calendar Synchronisation**: Propagated the new Calendar component across all core forms:
-  - **Transaction Management**: Enhanced period selection UX.
-  - **Account Preferences**: Modernized Special Day (Anniversary) picker.
-  - **Bill Management**: Premium date selection for recurring due dates.
-  - **Savings Goals**: Accelerated deadline selection with accounting-grade precision.
+---
 
-### Fixed
-- **Deprecation Sanitization**: Removed `initialFocus` across the frontend to align with `react-day-picker` v9 standards.
-- **Import Optimization**: Consolidated `lucide-react` import blocks and resolved multiple "name not found" errors in `GoalForm.tsx`.
-- **Test Environment Sovereignty**: Resolved silent test failures and `BadMethodCallException` by implementing a dedicated `.env.testing` layer and hardening `AppServiceProvider` against environment leakage during full suite runs.
+## [7.3.0] — 2026-04-17 (Calendar UX & Social Release)
 
-## [7.2.9] - 2026-04-17 (Sovereign Audit Singularity)
+### 📅 CALENDAR UX
+- **Timeline View**: Financial movements visualized on a calendar for cashflow prediction.
+- **Budget Guardian**: Monthly budget limits with interactive visual alerts.
 
-### Added
-- **Sovereign Deep Audit Completion**: Reached absolute **Zero-Error status** across the entire monorepo.
-- **A11y & Performance Fortification**: Migrated currency pickers to `next/image` and patched all button accessibility violations.
+### 👥 SOCIAL & PARTNERING
+- **Dompet Kita Connect**: Initial release of partner linkage for shared household tracking.
+- **Threshold Alerts**: Push notifications for large/unexpected partner spending.
 
-### Fixed
-- **Type Safety Reconciliation**: Resolved 20+ PHPStan Level 9 errors including complex array shapes and generics.
-- **Frontend Build Integrity**: Fixed TypeScript Date instantiation and React lifecycle errors in `LegacyVaultPage`.
-- **Backend Sovereignty**: Corrected Spatie Activitylog v5 trait namespaces and enhanced model interfaces.
+---
 
-## [7.2.8] - 2026-04-16 (Digital Inheritance Hub)
-- **Dead Man's Switch**: Implemented an automated inactivity monitor set to a **6-month threshold**, with secure partner notifications via the `legacy:check-inactivity` command.
-- **Inheritance Dashboard**: Integrated a premium frontend interface for legacy planning with loading states and authenticated file downloads.
+## [7.2.0] — 2026-04-12 (Security & Performance Release)
 
-### Fixed
-- **PostgreSQL Boolean Logic**: Resolved strict type-casting errors in backend query monitoring for boolean flags.
-- **Frontend Syntax Cleanup**: Optimized node removal logic by switching from `removeChild` to the modern `remove()` method as per linter standards.
+### 🛡️ SECURITY HARDENING
+- **Two-Factor Authentication**: Native 2FA support for Supabase Auth.
+- **Login History & Activity Log**: Comprehensive tracking of all user actions.
+- **PII Masking**: Integrated privacy guards for sensitive data.
 
-## [7.2.7] - 2026-04-16 (Sovereign Tax Intelligence)
+### ⚡ PERFORMANCE
+- **Postgres Optimization**: Indexed core finance tables for O(log n) dashboard loads.
+- **Real-Time Hydration**: Bypassed stale caches for immediate data reflection.
 
-### Added
-- **Tax Intelligence 2026**: Upgraded the tax engine to support **TER (Tarif Efektif Rata-Rata)** and **PMK 105/2025** DTP incentives for 2026.
-- **Manual Tax Profile**: Introduced manual controls for PTKP status, dependents, and industry sector directly within the Tax Card.
-- **AI Thinking Experience**: Implemented a dramatic "AI Thinking" animation and manual refresh mechanism for tax advice.
+---
 
-### Changed
-- **AI Persona Accuracy**: Refined the "Pajak Genius Sayang" prompt to fix PTKP definition hallucinations and provide high-fidelity 2026 tax planning insights.
-- **Tax UI Redesign**: Overhauled the Family Hub Tax Card with a professional settings dialog and persistent profile synchronization.
+## [7.1.0] — 2026-04-01 (Foundation Release)
 
-### Fixed
-- **Type Safety Alignment**: Resolved frontend `User` type mismatches for new tax-specific fields.
-- **Code Style Refinement**: Synchronized `CalculateTaxAction` with linting standards (missing curly braces).
-
-## [7.2.6] - 2026-04-16 (Sovereign UI/UX Singularity)
-
-### Added
-- **Sovereign Currency Picker (2026 Standard)**: Launched an AI-guided Bento-Search currency selector with high-density metadata and SVG flag integration.
-- **Jump Navigation Calendar**: Implemented a multi-level (Day-Month-Year) recursive navigation system for the financial report period picker.
-- **Asset Precision Formatting**: Introduced accounting-grade numeric inputs with real-time Indonesian locale formatting (dot for thousands, comma for decimals).
-
-### Changed
-- **Calendar Contextualization**: Refactored the `Calendar` component to use a `CalendarContext` architecture, resolving nested component warnings and improving state predictability.
-- **Exchange Node Visualization**: Upgraded the realtime exchange rate display to a high-transparency dashboard component.
-
-### Security
-- **UI Logic Sovereignty**: Reached **Zero-Warning status** across all newly implemented UI components, satisfying strict linter rules and Biome v4 standards.
-- **Precision Integrity**: Verified that the frontend numeric parser maintains 100% accuracy for backend-bound financial data, preventing floating-point errors.
-
-## [7.2.5] - 2026-04-16 (Sovereign Deep Scan & A11y Singularity)
-
-### Added
-- **Sovereign Deep Scan v1.0**: Launched a comprehensive cross-monorepo audit suite with automated reporting.
-- **Penpot Governance**: Introduced `PenpotException` and refactored Penpot actions for high-fidelity error handling.
-- **2GB Analysis Boost**: Optimized PHPStan and Rector pipelines with high-memory allocation for deeper cross-file lineage analysis.
-
-### Changed
-- **A11y Fortress Hardening**: Resolved 112 accessibility warnings across the frontend, enforcing explicit button typing and semantic SVG metadata.
-- **PHP 8.4 Stability Sync**: Refactored backend service logic to resolve `JsonException` conflicts in audit tools under PHP 8.4.
-- **Biome v4 Harmony**: Synchronized the frontend linter with Tailwind CSS v4 directives and oklch color spaces.
-
-### Security
-- **Zero-Error Audit Achievement**: Reached **100% Zero-Error status** under **PHPStan Level 9**, confirming absolute type integrity for the financial logic engine.
-- **Linter-Auditor Harmony**: Refactored return logic in core services to satisfy both IDE style checkers and strict static analysis rules.
-
-## [7.2.0] - 2026-04-14 (Sovereign Performance Modernization)
-
-### Added
-- **Partial Prerendering (PPR)**: Implemented Next.js 16 PPR on Home and Transactions pages for instant shell delivery and seamless data streaming.
-- **React Compiler**: Integrated `babel-plugin-react-compiler` for automated component memoization and rendering optimization.
-- **Dashboard Skeletons**: Enhanced skeleton loading states to support PPR hydration boundaries.
-- **Symfony 8 Components**: Integrated Symfony 8 foundation for peak request handling efficiency in the backend.
-
-### Changed
-- **Next.js 16 Upgrade**: Migrated the frontend from v15 to v16.2.3 for peak runtime efficiency and Turbopack stability.
-- **Laravel 13 Upgrade**: Successfully performed the "Big Jump" from Laravel 12 to **v13.4.0**, leveraging PHP 8.4 optimizations.
-- **Vite 8 & TypeScript 6**: Modernized the root development toolchain to the latest stable major versions.
-- **Middleware to Proxy Migration**: Refactored `middleware.ts` to `proxy.ts` to align with the Next.js 16 networking convention.
-- **Autoloader Optimization**: Rebuilt the backend autoloader with optimized class mapping (43K+ classes indexed) for lightning-fast application booting.
-
-### Security
-- **Hardened Backend Audit**: Achieved zero-error status under **PHPStan Level 9**, ensuring absolute type safety across the logic engine.
-- **Logic Sovereignty Verification**: Conducted a comprehensive audit of **Sudo Mode**, **AI Health**, and **Transaction management** to guarantee alignment with the v7.1.18 Sovereign Singularity standards.
-- **Fortress Hardening**: Verified and patched logical vulnerabilities in higher-order financial modules.
-
-## [7.1.22] - 2026-04-13 (Node Security Singularity)
-
-### Security
-- **NPM Vulnerability Remediation**: Patched `hono`, `@hono/node-server`, and `basic-ftp` to resolve moderate and high severity security advisories.
-- **Node Security Gate Pass**: Confirmed 100/100 security score after patching Node.js dependencies.
-
-## [7.1.21] - 2026-04-13 (Security Patch Singularity)
-
-### Security
-- **CVE-2026-40194 Remediation**: Resolved a variable-time HMAC comparison vulnerability in `phpseclib/phpseclib` by updating to v3.0.51+. This ensures cryptographic integrity for SSH/SFTP operations.
-
-## [7.1.20] - 2026-04-09 (React 19 & Architecture Modernization)
-
-### Changed
-- **React 19 / Next.js 15 Full Alignment**: Successfully migrated all form submission handlers to `React.SubmitEvent` and resolved deprecation warnings across the entire frontend.
-- **Architectural Complexity Reduction**: Extracted core form sub-components (`LoanForm`, `AssetForm`) to drastically improve codebase maintainability and readability.
-- **Modern JS standards Elevation**: Standardized on `replaceAll` and `Number.parseInt` for bulletproof numeric and string handling.
-
-### Fixed
-- **Production Build Integrity**: Resolved hidden prop mismatches in `AddLoanModal.tsx` discovered during production-grade builds.
-- **Hook Lifecycle Verification**: Fixed missing `useEffect` dependencies in `AcceptPartnerModal.tsx` to ensure zero-warning lifecycle execution.
-
-## [7.1.19] - 2026-04-08 (Railway Master Synchronization)
-
-### Added
-- **Railway MCP Protocol Mastery**: Successfully configured and verified the Railway MCP server with absolute path support for Windows environments.
-- **Sovereign Project Link**: Established a persistent link between the local workspace and the production Railway hub (`Dompet kita`).
-
-### Changed
-- **Production Variable Audit**: Executed a comprehensive synchronization audit of all environment variables (Supabase, Railway, Storj, and Core) to ensure zero-mismatch production stability.
-- **Cloud Connection Verification**: Verified and confirmed real-time connectivity for the **Gemini AI Oracle** and **Supabase Database**.
-
-### Security
-- **Production Gate Verification**: Validated the **Security Gate** status (100/100) and verified the **Brand Persona** (Sayang AI) error handling logic.
-
-## [7.1.18] - 2026-04-07 (Sovereign Singularity & COA Protocol)
-
-### Added
-- **Council of Agents (COA) Protocol**: Officially integrated the **Prophet**, **Crafter**, **Guardian**, and **Prosecutor** roles into the core development engine.
-- **Detailed Folder Tree**: Comprehensive source mapping in `README.md` for enhanced modular maintainability.
-- **Sentry v10 Instrumentation**: Modernized error tracking via `instrumentation.ts` for both Node and Edge runtimes.
-- **Digital Inheritance Pillar**: Formalized the **Legacy Audit Hub** as a core domain in the Master Core.
-- **Railway Mastery**: Explicitly documented **Railway** as the primary backend production hub.
-
-### Changed
-- **Tech Stack Harmonization**: Updated core documentation to reflect **Next.js 15 (App Router)** and **Laravel 11 (PHP 8.4)** as the stable baseline.
-- **Modernized .cursorrules**: Realigned frontend development rules with the latest **Tailwind CSS 4 (OKLCH)** and **React 19** standards.
-- **Master Core Elevation**: Reflowed# 🛡️ DOMPET KITA: THE SOVEREIGN FINANCIAL FORTRESS (v7.2.9 SOVEREIGN AUDIT SINGULARITY)
-
-### Security
-- **The Fortress Hardening**: Enhanced **PII masking** and **Supabase RLS** rules documentation in the Master Core.
-
-## [6.3.0] - 2026-04-01 (Sentient Core & Transcendence)
-
-### Added
-- **Stochastic Intelligence**: Monte Carlo engine for financial simulations (P10/P50/P90).
-- **VibeGuard Sentinel**: Automated glassmorphism and modern color space validation for UI components.
-- **Deep Security Scan**: Snyk integration for autonomous backend code patching.
-- **Session Purifier**: Git integrated end-of-session auto cleanup workflow.
-- **Cloud Orchestrator**: Unification of Railway, Supabase, and Storj backups via `cloud:sync`.
-- **E2E Testing Base**: Playwright test suite for unified frontend and backend integration validation.
-- **CI/CD Fixes**:
-    - [Infra] Resolved `google/osv-scanner-action` integration error by transitioning to job-level reusable workflows.
-    - [Infra] Implemented sequential quality gate: `sentinel-gate` now waits for `sentinel-osv` results.
-- [Frontend] Migrated ESLint configuration to native Next.js 16 Flat Config, resolving push-blocking schema validation errors.
-- **Docker Compose**: Pre-configured setup for local PostgreSQL, Redis, and Minio dependencies.
-- **Github Actions**: Automated complete CI/CD pipeline guarding production deployments.
-
-### Changed
-- Standardized `package.json` as an NPM Workspace to govern frontend and backend concurrently.
-
-### Security
-- Automated tracking and encryptions of sensitive assets within the `WealthHistory` modules.
+### ✨ THE SINGULARITY
+- **Initial Release**: The birth of Dompet Kita — Unified Financial Intelligence.
+- **Supabase Integration**: Direct PG access with Row-Level Security.
+- **Vercel/Railway Deployment**: Cloud-native infra setup.
