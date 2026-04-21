@@ -11,9 +11,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $id (UUID)
  * @property string $name
  * @property int $owner_id
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
  */
 class Household extends Model
 {
+    /** @use HasFactory<\Database\Factories\HouseholdFactory> */
     use HasFactory, SoftDeletes;
 
     /**
