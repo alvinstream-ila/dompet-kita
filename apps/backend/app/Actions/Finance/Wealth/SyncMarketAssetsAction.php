@@ -94,7 +94,7 @@ class SyncMarketAssetsAction extends BaseAction
         if (empty($symbol)) {
             return 0.0;
         }
-        
+
         $price = (float) $this->marketService->getStockPrice($symbol);
         if ($price <= 1.0) {
             return 0.0;

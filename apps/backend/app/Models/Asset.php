@@ -94,14 +94,14 @@ class Asset extends Model
     public function getChange24hAttribute(): float
     {
         $currentPrice = $this->quantity > 0 ? ($this->value / $this->quantity) : 0;
-        
+
         // Get the latest history record before today
         $previousRecord = $this->priceHistories()
             ->whereDate('recorded_at', '<', now()->toDateString())
             ->orderByDesc('recorded_at')
             ->first();
 
-        if (!$previousRecord || $previousRecord->price <= 0) {
+        if (! $previousRecord || $previousRecord->price <= 0) {
             return 0.0;
         }
 

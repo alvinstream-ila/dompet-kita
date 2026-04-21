@@ -15,9 +15,11 @@ class TransactionObserver
     public function created(Transaction $transaction): void
     {
         $this->invalidateUserCache($transaction);
-        
+
         $user = $transaction->user;
-        if (! $user) return;
+        if (! $user) {
+            return;
+        }
 
         // Logic check for Large Expense Triggering
         $threshold = $user->large_expense_threshold ?? 1000000;
@@ -52,7 +54,7 @@ class TransactionObserver
     {
         $userId = $transaction->user_id;
         $versionKey = "transaction_summary_version_{$userId}";
-        
+
         // Increment the version to effectively "bust" all cached summaries for this user
         Cache::increment($versionKey);
     }
