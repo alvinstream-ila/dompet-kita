@@ -85,6 +85,7 @@ export interface User {
   full_name?: string | null;
   avatar_url?: string | null;
   partner_id?: string | null;
+  household_id?: string | null;
   partner_name?: string | null;
   partner_email?: string | null;
   large_expense_threshold?: number;

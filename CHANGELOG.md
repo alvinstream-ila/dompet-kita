@@ -2,6 +2,18 @@
 
 ---
 
+## [7.5.0] — 2026-04-21 (Sovereign Sync & Dependency Hardening)
+
+### 📡 REAL-TIME SYNCHRONIZATION
+- **The Sovereign Sync Engine**: Integrated Supabase Realtime with a global React hook (`useRealtimeSync`) for instant UI updates across all devices.
+- **Automated Publication Management**: Implemented Laravel migrations to automatically add core financial tables to the Supabase publication.
+- **Intelligent Invalidation**: Automatic React Query cache invalidation triggered by database-level events.
+
+### 🛡️ INFRASTRUCTURE & SECURITY
+- **Dependency Hardening**: Applied aggressive overrides for `glob`, `rimraf`, and `inflight` to resolve security vulnerabilities and memory leaks.
+- **Monorepo Cleanup**: Modernized the root and workspace dependency trees, purging deprecated utility packages.
+- **Household Sovereignty**: Implemented backend support for the Household architecture, ensuring data isolation and sharing control.
+
 ## [7.4.2] — 2026-04-21 (Sovereign Database Hardening)
 
 ### 🛡️ ARCHITECTURE REVOLUTION

@@ -5,6 +5,7 @@ import { VerificationBanner } from '@/components/auth/VerificationBanner';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { NextProtectedRoute } from '@/components/layout/NextProtectedRoute';
 import { FidgetPet } from '@/components/ui/FidgetPet';
+import { useRealtimeSync } from '@/features/sync/hooks/useRealtimeSync';
 
 /**
  * ProtectedLayout - The "Premium Shell" 🏰
@@ -21,6 +22,9 @@ export default function ProtectedLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // 📡 Activate Sovereign Real-time Sync Engine
+  useRealtimeSync();
+
   return (
     <NextProtectedRoute>
       <div

@@ -28,8 +28,17 @@
     "prepare": "node -e \"if(process.env.NODE_ENV !== 'production' && !process.env.CI && !process.env.VERCEL && require('fs').existsSync('.git')){require('child_process').execSync('husky install')}\" || exit 0"
   },
   "overrides": {
-    "glob": "^9.0.0",
-    "rimraf": "^4.0.0",
+    "glob": "^8.1.0",
+    "rimraf": "^4.4.1",
+    "exceljs": {
+      "archiver": {
+        "glob": "^8.1.0",
+        "rimraf": "^4.4.1"
+      },
+      "unzipper": {
+        "rimraf": "^4.4.1"
+      }
+    },
     "dompurify": "^3.4.0",
     "hono": "^4.12.14",
     "basic-ftp": "5.3.0"

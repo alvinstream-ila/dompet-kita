@@ -59,6 +59,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'legacy_partner_name',
         'legacy_partner_email',
         'partner_id',
+        'household_id',
         'large_expense_threshold',
         'monthly_budget_limit',
         'tax_status',
@@ -93,6 +94,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'is_legacy_triggered' => 'boolean',
             'two_factor_enabled' => 'boolean',
             'two_factor_expires_at' => 'datetime',
+            'household_id' => 'string',
         ];
     }
 
@@ -141,6 +143,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function reports(): HasMany
     {
         return $this->hasMany(LegacyVaultReport::class);
+    }
+
+    /**
+     * @return BelongsTo<Household, $this>
+     */
+    public function household(): BelongsTo
+    {
+        return $this->belongsTo(Household::class);
     }
 
     /**
