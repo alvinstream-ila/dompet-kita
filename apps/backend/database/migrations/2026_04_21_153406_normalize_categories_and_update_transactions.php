@@ -28,7 +28,7 @@ return new class extends Migration
 
         // 2. Update Transactions Table
         Schema::table('transactions', function (Blueprint $table) {
-            if (!Schema::hasColumn('transactions', 'category_id')) {
+            if (! Schema::hasColumn('transactions', 'category_id')) {
                 $table->foreignId('category_id')->nullable()->after('amount')->constrained('categories')->onDelete('set null');
             }
         });
@@ -36,7 +36,7 @@ return new class extends Migration
         // 3. Update Scheduled Transactions if they exist
         if (Schema::hasTable('scheduled_transactions')) {
             Schema::table('scheduled_transactions', function (Blueprint $table) {
-                if (!Schema::hasColumn('scheduled_transactions', 'category_id')) {
+                if (! Schema::hasColumn('scheduled_transactions', 'category_id')) {
                     $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
                 }
             });

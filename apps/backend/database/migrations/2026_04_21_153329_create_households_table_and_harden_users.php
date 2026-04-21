@@ -24,12 +24,12 @@ return new class extends Migration
         // 2. Harden Users Table
         Schema::table('users', function (Blueprint $table) {
             // Mapping column for Supabase RLS
-            if (!Schema::hasColumn('users', 'auth_uuid')) {
+            if (! Schema::hasColumn('users', 'auth_uuid')) {
                 $table->uuid('auth_uuid')->nullable()->unique()->after('id');
             }
 
             // Shared Group Identifier
-            if (!Schema::hasColumn('users', 'household_id')) {
+            if (! Schema::hasColumn('users', 'household_id')) {
                 $table->foreignUuid('household_id')->nullable()->after('auth_uuid')->constrained('households')->onDelete('set null');
             }
         });
@@ -39,7 +39,7 @@ return new class extends Migration
         foreach ($financeTables as $tableName) {
             if (Schema::hasTable($tableName)) {
                 Schema::table($tableName, function (Blueprint $table) use ($tableName) {
-                    if (!Schema::hasColumn($tableName, 'household_id')) {
+                    if (! Schema::hasColumn($tableName, 'household_id')) {
                         $table->foreignUuid('household_id')->nullable()->constrained('households')->onDelete('cascade');
                     }
                 });

@@ -22,7 +22,7 @@ class AssetObserver
                 "Pencatatan aset baru: {$asset->name}"
             );
         } catch (\Exception $e) {
-            \Log::error("Failed to record journal for asset [{$asset->id}]: " . $e->getMessage());
+            \Log::error("Failed to record journal for asset [{$asset->id}]: ".$e->getMessage());
         }
     }
 }

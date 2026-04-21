@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -22,7 +22,7 @@ return new class extends Migration
 
         // 2. Add Missing Column to Transactions
         Schema::table('transactions', function (Blueprint $table) {
-            if (!Schema::hasColumn('transactions', 'is_ai_generated')) {
+            if (! Schema::hasColumn('transactions', 'is_ai_generated')) {
                 $table->boolean('is_ai_generated')->default(false)->after('metadata');
             }
         });

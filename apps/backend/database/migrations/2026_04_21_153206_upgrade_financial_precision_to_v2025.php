@@ -15,7 +15,7 @@ return new class extends Migration
         // 1. Transactions Precision & Soft Deletes
         Schema::table('transactions', function (Blueprint $table) {
             $table->decimal('amount', 19, 4)->change();
-            if (!Schema::hasColumn('transactions', 'deleted_at')) {
+            if (! Schema::hasColumn('transactions', 'deleted_at')) {
                 $table->softDeletes();
             }
         });
@@ -23,13 +23,13 @@ return new class extends Migration
         // 2. Assets Hardening (Value, Quantity, Unit)
         Schema::table('assets', function (Blueprint $table) {
             $table->decimal('value', 19, 4)->change();
-            if (!Schema::hasColumn('assets', 'quantity')) {
+            if (! Schema::hasColumn('assets', 'quantity')) {
                 $table->decimal('quantity', 36, 18)->default(0)->after('value');
             }
-            if (!Schema::hasColumn('assets', 'unit')) {
+            if (! Schema::hasColumn('assets', 'unit')) {
                 $table->string('unit')->default('IDR')->after('quantity'); // Gram, Lot, BTC, etc.
             }
-            if (!Schema::hasColumn('assets', 'deleted_at')) {
+            if (! Schema::hasColumn('assets', 'deleted_at')) {
                 $table->softDeletes();
             }
         });
@@ -38,10 +38,10 @@ return new class extends Migration
         if (Schema::hasTable('asset_transactions')) {
             Schema::table('asset_transactions', function (Blueprint $table) {
                 $table->decimal('amount', 19, 4)->change();
-                if (!Schema::hasColumn('asset_transactions', 'quantity')) {
+                if (! Schema::hasColumn('asset_transactions', 'quantity')) {
                     $table->decimal('quantity', 36, 18)->default(0)->after('amount');
                 }
-                if (!Schema::hasColumn('asset_transactions', 'deleted_at')) {
+                if (! Schema::hasColumn('asset_transactions', 'deleted_at')) {
                     $table->softDeletes();
                 }
             });
@@ -51,20 +51,20 @@ return new class extends Migration
         Schema::table('loans', function (Blueprint $table) {
             $table->decimal('amount', 19, 4)->change();
             $table->decimal('remaining_amount', 19, 4)->change();
-            if (!Schema::hasColumn('loans', 'deleted_at')) {
+            if (! Schema::hasColumn('loans', 'deleted_at')) {
                 $table->softDeletes();
             }
         });
 
         // 5. Goals & Holidays Soft Deletes
         Schema::table('goals', function (Blueprint $table) {
-            if (!Schema::hasColumn('goals', 'deleted_at')) {
+            if (! Schema::hasColumn('goals', 'deleted_at')) {
                 $table->softDeletes();
             }
         });
 
         Schema::table('holidays', function (Blueprint $table) {
-            if (!Schema::hasColumn('holidays', 'deleted_at')) {
+            if (! Schema::hasColumn('holidays', 'deleted_at')) {
                 $table->softDeletes();
             }
         });
