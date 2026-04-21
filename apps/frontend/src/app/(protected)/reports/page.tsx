@@ -10,9 +10,10 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
-import { FileSpreadsheet, FileText } from 'lucide-react';
+import { FileSpreadsheet, FileText, Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
+import api from '@/lib/axios';
 import { Button } from '@/components/ui/button';
 import { ReportHeader, ReportPeriodPicker } from '@/features/reports';
 import {
@@ -235,29 +236,30 @@ export default function ReportsPage() {
   };
 
   /**
-   * Export to PDF — dynamic import to keep the bundle lean.
-   * Safe under 'use client'.
+   * Export to PDF via Backend — providing a "Private Bank Statement" look.
    */
   const exportToPDF = async () => {
     setIsExporting(true);
     try {
-      const { default: jsPDF } = await import('jspdf');
-      const { default: autoTable } = await import('jspdf-autotable');
-      const doc = new jsPDF();
-      doc.text('LAPORAN KEUANGAN DOMPET KITA ✨', 15, 15);
-      doc.text(`Periode: ${months[selectedMonth]} ${selectedYear}`, 15, 25);
-      autoTable(doc, {
-        startY: 35,
-        head: [['Tanggal', 'Kategori', 'Keterangan', 'Aksi', 'Nominal']],
-        body: transactions.map((t) => [
-          new Date(t.date).toLocaleDateString('id-ID'),
-          t.category,
-          t.description || '-',
-          t.type,
-          `Rp ${t.amount.toLocaleString('id-ID')}`,
-        ]),
+      const response = await api.get('/transactions/report/pdf', {
+        params: {
+          month: selectedMonth + 1, // backend (1-12), frontend (0-11)
+          year: selectedYear,
+        },
+        responseType: 'blob',
       });
-      doc.save(`Report_${months[selectedMonth]}_${selectedYear}.pdf`);
+
+      const url = globalThis.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute(
+        'download',
+        `Monthly_Statement_${selectedYear}_${selectedMonth + 1}.pdf`
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      globalThis.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('PDF export failed:', error);
     } finally {
@@ -301,7 +303,12 @@ export default function ReportsPage() {
             disabled={isExporting || transactions.length === 0}
             className="flex h-14 flex-1 items-center justify-center gap-3 rounded-2xl border-none bg-rose-50 px-8 text-[10px] font-black tracking-widest text-rose-600 uppercase shadow-sm transition-all hover:-translate-y-0.5 hover:bg-rose-100 active:scale-95 disabled:opacity-50 md:flex-none"
           >
-            <FileText className="h-4 w-4" strokeWidth={3} /> Ekspor PDF
+            {isExporting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <FileText className="h-4 w-4" strokeWidth={3} />
+            )}
+            Ekspor PDF
           </Button>
         </div>
       </div>

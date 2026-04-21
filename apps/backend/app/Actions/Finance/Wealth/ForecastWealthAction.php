@@ -38,7 +38,6 @@ class ForecastWealthAction extends BaseAction
     public function execute(User $user, int $months = 12): array
     {
         $currentAssets = (float) Asset::where('user_id', $user->id)
-            ->where('type', AssetType::INVESTMENT)
             ->sum('value');
 
         // Zero loans for investment projection focus

@@ -16,7 +16,9 @@ use App\Traits\HasApiResponses;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Mpdf\Mpdf;
 
 /**
  * Class TransactionController
@@ -86,6 +88,9 @@ class TransactionController extends Controller
                 'income' => $data['income'],
                 'expense' => $data['expense'],
                 'balance' => $data['balance'],
+                'cumulative_balance' => $data['cumulative_balance'],
+                'calendar_income' => $data['calendar_income'],
+                'calendar_expense' => $data['calendar_expense'],
                 'transactions' => TransactionResource::collection($data['recentTransactions']),
                 'period' => $data['period'],
             ], 'Summary terhitung rapi ya Sayang! 📊');
@@ -126,6 +131,81 @@ class TransactionController extends Controller
         $transaction = $action->execute($user, $transaction, $request->validated());
 
         return $this->success(new TransactionResource($transaction), 'Catatan transaksinya sudah aku update ya! ✨');
+    }
+
+    public function exportPdf(Request $request, GetTransactionSummaryAction $action): Response
+    {
+        /** @var User $user */
+        $user = $request->user();
+        if (! $user instanceof User) {
+            abort(401);
+        }
+
+        $month = $request->filled('month') ? (int) $request->integer('month') : (int) date('m');
+        $year = $request->filled('year') ? (int) $request->integer('year') : (int) date('Y');
+        $budgetCycleStart = (int) ($request->integer('budget_cycle_start') ?: 1);
+
+        $viewData = $this->prepareTransactionReportData($user, $month, $year, $budgetCycleStart, $action);
+
+        $html = view('reports.financial_monthly', $viewData)->render();
+
+        $mpdf = new Mpdf([
+            'tempDir' => storage_path('app/mpdf'),
+            'margin_left' => 0,
+            'margin_right' => 0,
+            'margin_top' => 0,
+            'margin_bottom' => 0,
+        ]);
+
+        $mpdf->WriteHTML($html);
+
+        $fileName = "Monthly_Statement_{$year}_{$month}.pdf";
+
+        return response($mpdf->Output($fileName, 'S'), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => "inline; filename=\"{$fileName}\"",
+        ]);
+    }
+
+    /**
+     * Prepare the core data for the transaction report.
+     *
+     * @return array{
+     *   user: User,
+     *   summary: array,
+     *   transactions: \Illuminate\Database\Eloquent\Collection,
+     *   categories: \Illuminate\Support\Collection,
+     *   period_label: string
+     * }
+     */
+    private function prepareTransactionReportData(User $user, int $month, int $year, int $budgetCycleStart, GetTransactionSummaryAction $action): array
+    {
+        /** @var array $summaryData */
+        $summaryData = $action->execute($user->id, $month, $year, $budgetCycleStart);
+
+        /** @var array{start: \Carbon\Carbon, end: \Carbon\Carbon} $period */
+        $period = $this->budgetService->getBudgetCycleDates($month, $year, $budgetCycleStart);
+        
+        $transactions = Transaction::where('user_id', $user->id)
+            ->whereBetween('date', [$period['start'], $period['end']])
+            ->orderBy('date', 'desc')
+            ->get();
+
+        $categoryBreakdown = $transactions->groupBy('category')->map(function ($items, $key) {
+            return [
+                'category' => $key,
+                'amount' => $items->sum('amount'),
+                'type' => $items->first()?->type ?? 'expense',
+            ];
+        })->values()->sortByDesc('amount');
+
+        return [
+            'user' => $user,
+            'summary' => $summaryData,
+            'transactions' => $transactions,
+            'categories' => $categoryBreakdown,
+            'period_label' => $period['start']->translatedFormat('F Y'),
+        ];
     }
 
     /**

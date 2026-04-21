@@ -88,22 +88,48 @@ export const WealthAssetCard: React.FC<WealthAssetCardProps> = ({
             </div>
           </div>
 
-          <div className="mb-6 grid grid-cols-2 gap-4">
-            <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-              <p className="mb-1 text-[8px] font-black tracking-widest text-slate-400 uppercase">
-                Nilai Pasar
-              </p>
-              <p className="text-lg leading-none font-black tracking-tight text-slate-900">
-                {formatAmount(asset.value)}
-              </p>
+          <div className="mb-6 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                <p className="mb-1 text-[8px] font-black tracking-widest text-slate-400 uppercase">
+                  Harga Pasar Real-time
+                </p>
+                <p className="text-base leading-none font-black tracking-tight text-slate-900">
+                  {formatAmount(asset.market_price)}
+                  <span className="ml-1 text-[8px] font-normal text-slate-400 capitalize">
+                    /{asset.unit || 'unit'}
+                  </span>
+                </p>
+              </div>
+              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                <p className="mb-1 text-[8px] font-black tracking-widest text-slate-400 uppercase">
+                  Modal (Total Spent)
+                </p>
+                <p className="text-base leading-none font-bold tracking-tight text-slate-600">
+                  {formatAmount(asset.invested_capital)}
+                </p>
+              </div>
             </div>
-            <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-              <p className="mb-1 text-[8px] font-black tracking-widest text-slate-400 uppercase">
-                Modal (Invested)
-              </p>
-              <p className="text-base leading-none font-bold tracking-tight text-slate-600">
-                {formatAmount(asset.invested_capital)}
-              </p>
+
+            <div className="border-blue-royal/10 bg-blue-royal/5 rounded-2xl border-2 p-4 shadow-inner">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-royal/70 mb-1 text-[8px] font-black tracking-widest uppercase">
+                    Total Nilai Investasi
+                  </p>
+                  <p className="text-blue-royal text-xl leading-none font-black tracking-tighter">
+                    {formatAmount(asset.value)}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="mb-1 text-[8px] font-black tracking-widest text-slate-400 uppercase">
+                    Kepemilikan
+                  </p>
+                  <p className="text-[11px] font-black text-slate-600">
+                    {asset.quantity} {asset.unit || 'Unit'}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 

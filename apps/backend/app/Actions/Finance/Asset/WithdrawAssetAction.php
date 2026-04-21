@@ -22,6 +22,11 @@ class WithdrawAssetAction extends BaseAction
             $recipientAssetId = $data['recipient_asset_id'] ?? null;
             $description = $data['description'] ?? 'Pencairan aset';
 
+            // 0. Safety Guard: Prevent over-withdrawal
+            if ($amount > $asset->value) {
+                throw new \Exception("Maaf Sayang, saldo aset {$asset->name} kamu tidak cukup untuk dicairkan sebesar Rp " . number_format($amount, 0, ',', '.') . ". Nilai saat ini: Rp " . number_format($asset->value, 0, ',', '.'));
+            }
+
             // 1. Create Transaction for the Source Asset
             AssetTransaction::create([
                 'user_id' => $user->id,
@@ -59,6 +64,14 @@ class WithdrawAssetAction extends BaseAction
 
                 $recipientAsset->increment('value', $amount);
                 $recipientAsset->increment('invested_capital', $amount);
+            } else {
+                // 4. Record as Income in main ledger (Hot Money) if withdrawn to outside
+                $asset->recordJournal(
+                    $amount,
+                    \App\Enums\TransactionType::INCOME,
+                    'Investment',
+                    "Pencairan investasi: {$asset->name}"
+                );
             }
 
             return $asset->fresh() ?? $asset;

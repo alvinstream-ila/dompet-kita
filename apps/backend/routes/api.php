@@ -102,6 +102,7 @@ Route::middleware('firewall.all')->group(function () {
 
         // Transactions
         Route::get('/transactions/summary', [TransactionController::class, 'summary']);
+        Route::get('/transactions/report/pdf', [TransactionController::class, 'exportPdf']);
         Route::apiResource('transactions', TransactionController::class);
 
         // Assets

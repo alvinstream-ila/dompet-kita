@@ -19,6 +19,7 @@ export interface Asset {
   is_market_synced: boolean;
   value: number;
   invested_capital: number;
+  market_price: number;
   profit_amount: number;
   profit_percent: number;
   created_at: string;

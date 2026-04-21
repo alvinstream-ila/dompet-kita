@@ -25,27 +25,33 @@ class UnkeyMiddleware
             $response = $this->errorResponse('Sayang, kunci gerbangnya mana? (API Key missing) 🌸', 401);
         } else {
             try {
-                $unkeyRes = Http::withHeaders(['Content-Type' => 'application/json'])
-                    ->post('https://api.unkey.dev/v1/keys.verifyKey', [
-                        'key' => $key,
-                        'apiId' => config('services.unkey.api_id'),
-                    ]);
+                $cacheKey = 'unkey_verify_'.md5($key);
+                $data = \Illuminate\Support\Facades\Cache::remember($cacheKey, 300, function () use ($key) {
+                    $unkeyRes = Http::withHeaders(['Content-Type' => 'application/json'])
+                        ->post('https://api.unkey.dev/v1/keys.verifyKey', [
+                            'key' => $key,
+                            'apiId' => config('services.unkey.api_id'),
+                        ]);
 
-                if ($unkeyRes->failed()) {
-                    Log::error('UNKEY_VERIFICATION_FAILED', ['status' => $unkeyRes->status()]);
-                    $response = $this->errorResponse('Aduh, kunci gerbangnya macet nih. Coba lagi ya! 🥺', 500);
-                } else {
-                    $data = $unkeyRes->json();
-                    if (! ($data['valid'] ?? false)) {
-                        $response = $this->errorResponse(
-                            'Waduh Sayang, kunci kamu nggak cocok nih.. 🔐',
-                            401,
-                            (string) ($data['code'] ?? 'INVALID_KEY')
-                        );
-                    } else {
-                        $request->merge(['unkey_meta' => $data['meta'] ?? []]);
-                        $response = $next($request);
+                    if ($unkeyRes->failed()) {
+                        return ['error' => true, 'status' => $unkeyRes->status()];
                     }
+
+                    return $unkeyRes->json();
+                });
+
+                if (isset($data['error'])) {
+                    Log::error('UNKEY_VERIFICATION_FAILED', ['status' => $data['status']]);
+                    $response = $this->errorResponse('Aduh, kunci gerbangnya macet nih. Coba lagi ya! 🥺', 500);
+                } elseif (! ($data['valid'] ?? false)) {
+                    $response = $this->errorResponse(
+                        'Waduh Sayang, kunci kamu nggak cocok nih.. 🔐',
+                        401,
+                        (string) ($data['code'] ?? 'INVALID_KEY')
+                    );
+                } else {
+                    $request->merge(['unkey_meta' => $data['meta'] ?? []]);
+                    $response = $next($request);
                 }
             } catch (\Exception $e) {
                 Log::critical('UNKEY_CRITICAL_ERROR', ['error' => $e->getMessage()]);

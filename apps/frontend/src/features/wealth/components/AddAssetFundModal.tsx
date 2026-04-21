@@ -29,12 +29,13 @@ export const AddAssetFundModal: React.FC<AddAssetFundModalProps> = ({
     targetAsset.id as unknown as number
   );
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.BaseSyntheticEvent) => {
     e.preventDefault();
-    if (!amount || Number.isNaN(Number(amount))) return;
+    const numericAmount = Number(amount.replaceAll(/\D/g, ''));
+    if (!numericAmount || Number.isNaN(numericAmount)) return;
 
     await fund({
-      amount: Number(amount),
+      amount: numericAmount,
       source_asset_id: sourceAssetId,
       description,
     });
@@ -111,9 +112,18 @@ export const AddAssetFundModal: React.FC<AddAssetFundModalProps> = ({
                   </span>
                   <input
                     id="fund-amount"
-                    type="number"
+                    type="text"
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value.replaceAll(/\D/g, '');
+                      if (val === '') {
+                        setAmount('');
+                        return;
+                      }
+                      setAmount(
+                        new Intl.NumberFormat('id-ID').format(Number(val))
+                      );
+                    }}
                     placeholder="0"
                     className="focus:border-blue-royal w-full rounded-2xl border-2 border-slate-100 bg-slate-50 py-4 pr-4 pl-12 text-xl font-black text-slate-900 transition-all outline-none focus:bg-white"
                     required
@@ -139,7 +149,7 @@ export const AddAssetFundModal: React.FC<AddAssetFundModalProps> = ({
                     }
                     className="focus:border-blue-royal w-full appearance-none rounded-2xl border-2 border-slate-100 bg-slate-50 p-4 text-sm font-bold text-slate-700 transition-all outline-none focus:bg-white"
                   >
-                    <option value="">Saldo Luar (Manual)</option>
+                    <option value="">Uang Utama (Dashboard)</option>
                     {sourceOptions.map((asset) => (
                       <option key={asset.id} value={asset.id}>
                         {asset.name} ({formatAmount(asset.value)})

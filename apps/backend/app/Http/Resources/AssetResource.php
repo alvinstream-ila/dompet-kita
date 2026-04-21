@@ -24,6 +24,8 @@ class AssetResource extends JsonResource
             'type' => $this->type,
             'unit' => $this->unit,
             'is_market_synced' => $this->is_market_synced,
+            'quantity' => (float) $this->quantity,
+            'market_price' => $this->quantity > 0 ? (float) ($this->value / $this->quantity) : 0,
             'value' => (float) $this->value,
             'invested_capital' => (float) $this->invested_capital,
             'profit_amount' => (float) ($this->value - $this->invested_capital),

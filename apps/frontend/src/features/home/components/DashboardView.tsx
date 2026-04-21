@@ -72,9 +72,9 @@ export function DashboardView() {
   const { user } = useAuth();
 
   const {
-    income: totalIncome,
-    expense: totalExpense,
-    balance: totalBalance,
+    cumulativeBalance,
+    calendarIncome,
+    calendarExpense,
     isLoading,
     isError,
     error,
@@ -97,11 +97,14 @@ export function DashboardView() {
   }, [loans]);
 
   const healthPercentage = React.useMemo(() => {
-    if (totalIncome > 0) {
-      return Math.max(0, ((totalIncome - totalExpense) / totalIncome) * 100);
+    if (calendarIncome > 0) {
+      return Math.max(
+        0,
+        ((calendarIncome - calendarExpense) / calendarIncome) * 100
+      );
     }
-    return totalExpense > 0 ? 0 : 100;
-  }, [totalIncome, totalExpense]);
+    return calendarExpense > 0 ? 0 : 100;
+  }, [calendarIncome, calendarExpense]);
 
   // Premium Welcome Toast for New Social Users
   useEffect(() => {
@@ -202,19 +205,19 @@ export function DashboardView() {
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 md:gap-8">
                   <StatCard
                     title="Total Saldo"
-                    amount={totalBalance}
+                    amount={cumulativeBalance}
                     imageSrc="/icons/3d/wallet.webp"
                     variant="saldo"
                   />
                   <StatCard
                     title="Pemasukan"
-                    amount={totalIncome}
+                    amount={calendarIncome}
                     imageSrc="/icons/3d/income.webp"
                     variant="income"
                   />
                   <StatCard
                     title="Pengeluaran"
-                    amount={totalExpense}
+                    amount={calendarExpense}
                     imageSrc="/icons/3d/expense.webp"
                     variant="expense"
                   />

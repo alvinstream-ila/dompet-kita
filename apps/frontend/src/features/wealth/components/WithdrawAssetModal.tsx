@@ -29,12 +29,13 @@ export const WithdrawAssetModal: React.FC<WithdrawAssetModalProps> = ({
     asset.id as unknown as number
   );
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.BaseSyntheticEvent) => {
     e.preventDefault();
-    if (!amount || Number.isNaN(Number(amount))) return;
+    const numericAmount = Number(amount.replaceAll(/\D/g, ''));
+    if (!numericAmount || Number.isNaN(numericAmount)) return;
 
     await withdraw({
-      amount: Number(amount),
+      amount: numericAmount,
       recipient_asset_id: recipientAssetId,
       description,
     });
@@ -111,11 +112,19 @@ export const WithdrawAssetModal: React.FC<WithdrawAssetModalProps> = ({
                   </span>
                   <input
                     id="withdraw-amount"
-                    type="number"
+                    type="text"
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value.replaceAll(/\D/g, '');
+                      if (val === '') {
+                        setAmount('');
+                        return;
+                      }
+                      setAmount(
+                        new Intl.NumberFormat('id-ID').format(Number(val))
+                      );
+                    }}
                     placeholder="0"
-                    max={asset.value}
                     className="w-full rounded-2xl border-2 border-slate-100 bg-slate-50 py-4 pr-4 pl-12 text-xl font-black text-slate-900 transition-all outline-none focus:border-rose-500 focus:bg-white"
                     required
                   />
@@ -140,7 +149,7 @@ export const WithdrawAssetModal: React.FC<WithdrawAssetModalProps> = ({
                     }
                     className="w-full appearance-none rounded-2xl border-2 border-slate-100 bg-slate-50 p-4 text-sm font-bold text-slate-700 transition-all outline-none focus:border-rose-500 focus:bg-white"
                   >
-                    <option value="">Saldo Luar (Keluar Sistem)</option>
+                    <option value="">Uang Utama (Dashboard)</option>
                     {recipientOptions.map((opt) => (
                       <option key={opt.id} value={opt.id}>
                         {opt.name} ({formatAmount(opt.value)})

@@ -27,31 +27,30 @@ async function HomeContent() {
   await cookies();
 
   const queryClient = getQueryClient();
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
 
-  // Prefetch critical data on the server in parallel to eliminate waterfalls
-  const prefetchData = async () => {
-    // We launch the user check first as it's critical for the budget cycle logic
-    const user = await getUserProfileAction();
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-    const cycleStart = user?.budget_cycle_start || 1;
-
-    // Now prefetch everything else that doesn't strictly depend on waiting for others
-    // although financial_summary needs the user's budget cycle, we have it now
-    await Promise.all([
-      queryClient.prefetchQuery({
-        queryKey: ['financial_summary', currentMonth, currentYear, cycleStart],
-        queryFn: () =>
-          getFinancialSummaryAction(currentMonth, currentYear, cycleStart),
-      }),
-      // Add other critical dashboard queries here if needed in parallel
-    ]);
-
-    return user;
-  };
-
-  await prefetchData();
+  /**
+   * ⚡ PREFETCH SURGE: Parallelizing all critical dashboard data.
+   * We no longer wait for the user profile before starting the financial summary.
+   * We fetch the user profile in parallel and use its default settings if available.
+   */
+  const [user] = await Promise.all([
+    getUserProfileAction(),
+    queryClient.prefetchQuery({
+      queryKey: ['financial_summary', currentMonth, currentYear],
+      queryFn: async () => {
+        // We fetch the user profile parallelly, so we might need to get cycleStart inside or use a default
+        const profile = await getUserProfileAction();
+        return getFinancialSummaryAction(
+          currentMonth,
+          currentYear,
+          profile?.budget_cycle_start || 1
+        );
+      },
+    }),
+  ]);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

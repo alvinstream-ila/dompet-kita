@@ -57,6 +57,14 @@ class FundAssetAction extends BaseAction
                 // we treat the deduction as reducing its "value" but usually bank/cash capital is same as value.
                 // To keep it simple: we decrement invested_capital too to keep it synced for basic assets.
                 $sourceAsset->decrement('invested_capital', $amount);
+            } else {
+                // 4. Record as Expense in main ledger (Hot Money) if funded from outside
+                $asset->recordJournal(
+                    $amount,
+                    \App\Enums\TransactionType::EXPENSE,
+                    'Investment',
+                    "Top up investasi: {$asset->name}"
+                );
             }
 
             return $asset->fresh() ?? $asset;

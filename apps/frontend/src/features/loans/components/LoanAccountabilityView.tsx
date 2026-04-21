@@ -4,12 +4,14 @@ import {
   ArrowRight,
   TrendingUp,
   TrendingDown,
+  Loader2,
 } from 'lucide-react';
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Loan, Transaction } from '@/types';
+import api from '@/lib/axios';
 
 interface LoanReportData {
   period: {
@@ -56,6 +58,38 @@ export const LoanAccountabilityView: React.FC<LoanAccountabilityViewProps> = ({
   const netClosing = carry_over.total_piutang - carry_over.total_hutang;
   const isBetterThanOpening = netClosing >= summary.opening_net;
 
+  const [isExporting, setIsExporting] = React.useState(false);
+
+  const handleExportPdf = async () => {
+    setIsExporting(true);
+    try {
+      const response = await api.get('/loans/report', {
+        params: {
+          month: period.month,
+          year: period.year,
+          format: 'pdf',
+        },
+        responseType: 'blob',
+      });
+
+      const url = globalThis.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute(
+        'download',
+        `Laporan_Akuntabilitas_${period.year}_${period.month}.pdf`
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      globalThis.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to export PDF:', error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="space-y-12 print:p-0">
       {/* Formal Header Section */}
@@ -80,9 +114,15 @@ export const LoanAccountabilityView: React.FC<LoanAccountabilityViewProps> = ({
           <Button
             variant="outline"
             className="rounded-xl border-slate-200 font-bold hover:bg-slate-50"
-            onClick={() => globalThis.print()}
+            onClick={handleExportPdf}
+            disabled={isExporting}
           >
-            <Printer className="mr-2 size-4" /> Cetak Laporan
+            {isExporting ? (
+              <Loader2 className="mr-2 size-4 animate-spin" />
+            ) : (
+              <Printer className="mr-2 size-4" />
+            )}
+            Cetak Laporan
           </Button>
         </div>
       </div>

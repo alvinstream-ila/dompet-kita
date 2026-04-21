@@ -13,7 +13,9 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
+use Mpdf\Mpdf;
 
 class LoanController extends Controller
 {
@@ -98,8 +100,9 @@ class LoanController extends Controller
     /**
      * Generate a loan accountability report for a specific period.
      */
-    public function report(Request $request): JsonResponse
+    public function report(Request $request): JsonResponse|Response
     {
+        /** @var User $user */
         $user = $request->user();
         if (! $user instanceof User) {
             abort(401);
@@ -108,6 +111,46 @@ class LoanController extends Controller
         $month = $request->integer('month', now()->month);
         $year = $request->integer('year', now()->year);
 
+        $reportData = $this->prepareReportData($user, $month, $year);
+
+        // Handle PDF Format
+        if ($request->query('format') === 'pdf') {
+            $viewData = array_merge($reportData, ['user' => $user]);
+            $html = view('reports.loan_accountability', $viewData)->render();
+
+            $mpdf = new Mpdf([
+                'tempDir' => storage_path('app/mpdf'),
+                'margin_left' => 0,
+                'margin_right' => 0,
+                'margin_top' => 0,
+                'margin_bottom' => 0,
+            ]);
+
+            $mpdf->WriteHTML($html);
+
+            $fileName = "Loan_Accountability_Report_{$year}_{$month}.pdf";
+
+            return response($mpdf->Output($fileName, 'S'), 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => "inline; filename=\"{$fileName}\"",
+            ]);
+        }
+
+        return $this->success($reportData, 'Laporan akuntabilitas periode ini sudah siap diverifikasi.');
+    }
+
+    /**
+     * Prepare the core data for the loan report.
+     *
+     * @return array{
+     *   period: array{month: int, year: int, label: string},
+     *   summary: array{opening_piutang: float, opening_hutang: float, opening_net: float, new_piutang: float, new_hutang: float, total_repayments: float},
+     *   activity: array{new_loans: AnonymousResourceCollection, transactions: Collection},
+     *   carry_over: array{items: array, total_piutang: float, total_hutang: float}
+     * }
+     */
+    private function prepareReportData(User $user, int $month, int $year): array
+    {
         $startDate = Carbon::create($year, $month, 1)?->startOfMonth() ?? now()->startOfMonth();
         $endDate = $startDate->copy()->endOfMonth();
 
@@ -126,6 +169,7 @@ class LoanController extends Controller
             ->whereNotNull('metadata')
             ->get()
             ->filter(function (Transaction $t) {
+                /** @var array|null $metadata */
                 $metadata = $t->metadata;
 
                 return is_array($metadata) && ($metadata['source_type'] ?? null) === Loan::class;
@@ -140,7 +184,7 @@ class LoanController extends Controller
         // 5. Carry-over details (Ending Balance Snapshot)
         $carryOver = $this->calculateBalancesAt($loans, $endDate);
 
-        return $this->success([
+        return [
             'period' => [
                 'month' => $month,
                 'year' => $year,
@@ -163,7 +207,7 @@ class LoanController extends Controller
                 'total_piutang' => $carryOver['total_piutang'],
                 'total_hutang' => $carryOver['total_hutang'],
             ],
-        ], 'Laporan akuntabilitas periode ini sudah siap diverifikasi.');
+        ];
     }
 
     /**

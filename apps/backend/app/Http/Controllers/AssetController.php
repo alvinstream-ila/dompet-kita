@@ -137,9 +137,12 @@ class AssetController extends Controller
         /** @var array{amount: float|int, recipient_asset_id?: int|string|null, description?: string} $data */
         $data = (array) $validated;
 
-        $asset = $action->execute($user, $asset, $data);
-
-        return $this->success(new AssetResource($asset), 'Pencairan aset berhasil! Uangnya sudah berpindah posisi. 💸');
+        try {
+            $asset = $action->execute($user, $asset, $data);
+            return $this->success(new AssetResource($asset), 'Pencairan aset berhasil! Uangnya sudah berpindah posisi. 💸');
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 422);
+        }
     }
 
     /**
