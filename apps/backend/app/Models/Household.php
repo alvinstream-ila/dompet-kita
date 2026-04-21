@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Database\Factories\HouseholdFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,11 +13,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $id (UUID)
  * @property string $name
  * @property int $owner_id
- * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
+ * @property-read Collection<int, User> $users
  */
 class Household extends Model
 {
-    /** @use HasFactory<\Database\Factories\HouseholdFactory> */
+    /** @use HasFactory<HouseholdFactory> */
     use HasFactory, SoftDeletes;
 
     /**
