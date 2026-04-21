@@ -82,7 +82,18 @@ class TransactionController extends Controller
             $year = $request->filled('year') ? (int) $request->integer('year') : null;
             $budgetCycleStart = (int) ($request->integer('budget_cycle_start') ?: 1);
 
-            /** @var array{income: float|int, expense: float|int, balance: float|int, recentTransactions: Collection<int, Transaction>, period: string} $data */
+            /**
+             * @return array{
+             *     income: float,
+             *     expense: float,
+             *     balance: float,
+             *     cumulative_balance: float,
+             *     calendar_income: float,
+             *     calendar_expense: float,
+             *     recentTransactions: \Illuminate\Database\Eloquent\Collection<int, Transaction>,
+             *     period: array{start: string, end: string}
+             * }
+             */
             $data = $action->execute($user->id, $month, $year, $budgetCycleStart);
 
             return $this->success([
@@ -134,15 +145,12 @@ class TransactionController extends Controller
         return $this->success(new TransactionResource($transaction), 'Catatan transaksinya sudah aku update ya! ✨');
     }
 
-    public function exportPdf(Request $request, GetTransactionSummaryAction $action): Response
+    public function monthlyStatement(Request $request, GetTransactionSummaryAction $action): JsonResponse|Response
     {
         /** @var User $user */
         $user = $request->user();
-        if (! $user instanceof User) {
-            abort(401);
-        }
 
-        $month = $request->filled('month') ? (int) $request->integer('month') : (int) date('m');
+        $month = $request->integer('month', now()->month);
         $year = $request->filled('year') ? (int) $request->integer('year') : (int) date('Y');
         $budgetCycleStart = (int) ($request->integer('budget_cycle_start') ?: 1);
 
@@ -173,15 +181,15 @@ class TransactionController extends Controller
      *
      * @return array{
      *   user: User,
-     *   summary: array,
-     *   transactions: Collection,
-     *   categories: \Illuminate\Support\Collection,
+     *   summary: array<string, mixed>,
+     *   transactions: \Illuminate\Database\Eloquent\Collection<int, Transaction>,
+     *   categories: \Illuminate\Support\Collection<int, mixed>,
      *   period_label: string
      * }
      */
     private function prepareTransactionReportData(User $user, int $month, int $year, int $budgetCycleStart, GetTransactionSummaryAction $action): array
     {
-        /** @var array $summaryData */
+        /** @var array<string, mixed> $summaryData */
         $summaryData = $action->execute($user->id, $month, $year, $budgetCycleStart);
 
         /** @var array{start: Carbon, end: Carbon} $period */
@@ -192,11 +200,14 @@ class TransactionController extends Controller
             ->orderBy('date', 'desc')
             ->get();
 
-        $categoryBreakdown = $transactions->groupBy('category')->map(function ($items, $key) {
+        /** @var \Illuminate\Support\Collection<int, mixed> $categoryBreakdown */
+        $categoryBreakdown = $transactions->groupBy('category')->map(function (\Illuminate\Database\Eloquent\Collection $items, $key) {
+            /** @var Transaction $first */
+            $first = $items->first();
             return [
                 'category' => $key,
-                'amount' => $items->sum('amount'),
-                'type' => $items->first()?->type ?? 'expense',
+                'amount' => (float) $items->sum('amount'),
+                'type' => $first->type->value,
             ];
         })->values()->sortByDesc('amount');
 
