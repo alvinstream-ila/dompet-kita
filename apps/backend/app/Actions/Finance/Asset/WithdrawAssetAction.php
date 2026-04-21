@@ -3,6 +3,7 @@
 namespace App\Actions\Finance\Asset;
 
 use App\Actions\BaseAction;
+use App\Enums\TransactionType;
 use App\Models\Asset;
 use App\Models\AssetTransaction;
 use App\Models\User;
@@ -24,7 +25,7 @@ class WithdrawAssetAction extends BaseAction
 
             // 0. Safety Guard: Prevent over-withdrawal
             if ($amount > $asset->value) {
-                throw new \Exception("Maaf Sayang, saldo aset {$asset->name} kamu tidak cukup untuk dicairkan sebesar Rp " . number_format($amount, 0, ',', '.') . ". Nilai saat ini: Rp " . number_format($asset->value, 0, ',', '.'));
+                throw new \Exception("Maaf Sayang, saldo aset {$asset->name} kamu tidak cukup untuk dicairkan sebesar Rp ".number_format($amount, 0, ',', '.').'. Nilai saat ini: Rp '.number_format($asset->value, 0, ',', '.'));
             }
 
             // 1. Create Transaction for the Source Asset
@@ -68,7 +69,7 @@ class WithdrawAssetAction extends BaseAction
                 // 4. Record as Income in main ledger (Hot Money) if withdrawn to outside
                 $asset->recordJournal(
                     $amount,
-                    \App\Enums\TransactionType::INCOME,
+                    TransactionType::INCOME,
                     'Investment',
                     "Pencairan investasi: {$asset->name}"
                 );

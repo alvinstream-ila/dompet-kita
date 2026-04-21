@@ -4,7 +4,6 @@ namespace App\Actions\Finance\Wealth;
 
 use App\Actions\AI\GetWealthAdviceAction;
 use App\Actions\BaseAction;
-use App\Enums\AssetType;
 use App\Models\Asset;
 use App\Models\User;
 use App\Services\MarketService;

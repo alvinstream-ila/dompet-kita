@@ -20,6 +20,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 /**
  * @mixin Loan
+ *
  * @method __construct(\App\Models\Loan $resource)
  */
 class LoanResource extends JsonResource

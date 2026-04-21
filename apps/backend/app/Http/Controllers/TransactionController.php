@@ -13,6 +13,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Services\BudgetService;
 use App\Traits\HasApiResponses;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -173,7 +174,7 @@ class TransactionController extends Controller
      * @return array{
      *   user: User,
      *   summary: array,
-     *   transactions: \Illuminate\Database\Eloquent\Collection,
+     *   transactions: Collection,
      *   categories: \Illuminate\Support\Collection,
      *   period_label: string
      * }
@@ -183,9 +184,9 @@ class TransactionController extends Controller
         /** @var array $summaryData */
         $summaryData = $action->execute($user->id, $month, $year, $budgetCycleStart);
 
-        /** @var array{start: \Carbon\Carbon, end: \Carbon\Carbon} $period */
+        /** @var array{start: Carbon, end: Carbon} $period */
         $period = $this->budgetService->getBudgetCycleDates($month, $year, $budgetCycleStart);
-        
+
         $transactions = Transaction::where('user_id', $user->id)
             ->whereBetween('date', [$period['start'], $period['end']])
             ->orderBy('date', 'desc')

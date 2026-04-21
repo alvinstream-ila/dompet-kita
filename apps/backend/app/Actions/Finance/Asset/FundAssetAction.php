@@ -3,6 +3,7 @@
 namespace App\Actions\Finance\Asset;
 
 use App\Actions\BaseAction;
+use App\Enums\TransactionType;
 use App\Models\Asset;
 use App\Models\AssetTransaction;
 use App\Models\User;
@@ -61,7 +62,7 @@ class FundAssetAction extends BaseAction
                 // 4. Record as Expense in main ledger (Hot Money) if funded from outside
                 $asset->recordJournal(
                     $amount,
-                    \App\Enums\TransactionType::EXPENSE,
+                    TransactionType::EXPENSE,
                     'Investment',
                     "Top up investasi: {$asset->name}"
                 );

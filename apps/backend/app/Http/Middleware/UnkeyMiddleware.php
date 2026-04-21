@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +27,7 @@ class UnkeyMiddleware
         } else {
             try {
                 $cacheKey = 'unkey_verify_'.md5($key);
-                $data = \Illuminate\Support\Facades\Cache::remember($cacheKey, 300, function () use ($key) {
+                $data = Cache::remember($cacheKey, 300, function () use ($key) {
                     $unkeyRes = Http::withHeaders(['Content-Type' => 'application/json'])
                         ->post('https://api.unkey.dev/v1/keys.verifyKey', [
                             'key' => $key,

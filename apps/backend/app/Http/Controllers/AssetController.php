@@ -139,6 +139,7 @@ class AssetController extends Controller
 
         try {
             $asset = $action->execute($user, $asset, $data);
+
             return $this->success(new AssetResource($asset), 'Pencairan aset berhasil! Uangnya sudah berpindah posisi. 💸');
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 422);
