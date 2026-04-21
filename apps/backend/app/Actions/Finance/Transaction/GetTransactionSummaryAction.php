@@ -34,7 +34,8 @@ class GetTransactionSummaryAction extends BaseAction
             $selectSum = DB::raw('SUM(amount) as total');
 
             // Helper to extract amount from summary collection
-            $extractAmount = function ($collection, TransactionType $type) {
+            $extractAmount = function (\Illuminate\Support\Collection $collection, TransactionType $type): float {
+                /** @var Transaction|null $model */
                 $model = $collection->firstWhere('type', $type) ?? $collection->firstWhere('type', $type->value);
 
                 return $model ? (float) $model->total : 0.0;
