@@ -13,7 +13,7 @@ return new class extends Migration
     {
         // Supabase uses 'supabase_realtime' as the default publication for their Listeners.
         // We add our core tables to this publication so any change triggers a WS event.
-        
+
         $tables = [
             'transactions',
             'assets',
@@ -23,7 +23,7 @@ return new class extends Migration
             'households',
             'asset_transactions',
             'goal_transactions',
-            'holiday_transactions'
+            'holiday_transactions',
         ];
 
         foreach ($tables as $table) {
@@ -31,10 +31,10 @@ return new class extends Migration
             // and allows the 'auto-refresh' feature to work globally.
             try {
                 DB::statement("ALTER PUBLICATION supabase_realtime ADD TABLE {$table}");
-            } catch (\Exception $e) {
-                // If it already exists or publication is missing, we catch it 
+            } catch (Exception $e) {
+                // If it already exists or publication is missing, we catch it
                 // to avoid blocking the deployment.
-                \Log::warning("Could not add table [{$table}] to supabase_realtime publication: " . $e->getMessage());
+                Log::warning("Could not add table [{$table}] to supabase_realtime publication: ".$e->getMessage());
             }
         }
     }
@@ -53,14 +53,14 @@ return new class extends Migration
             'households',
             'asset_transactions',
             'goal_transactions',
-            'holiday_transactions'
+            'holiday_transactions',
         ];
 
         foreach ($tables as $table) {
             try {
                 DB::statement("ALTER PUBLICATION supabase_realtime DROP TABLE {$table}");
-            } catch (\Exception $e) {
-                \Log::warning("Could not drop table [{$table}] from supabase_realtime publication: " . $e->getMessage());
+            } catch (Exception $e) {
+                Log::warning("Could not drop table [{$table}] from supabase_realtime publication: ".$e->getMessage());
             }
         }
     }
