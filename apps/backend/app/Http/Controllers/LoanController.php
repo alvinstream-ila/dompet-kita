@@ -104,9 +104,6 @@ class LoanController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
-        if (! $user instanceof User) {
-            abort(401);
-        }
 
         $month = $request->integer('month', now()->month);
         $year = $request->integer('year', now()->year);
@@ -145,8 +142,8 @@ class LoanController extends Controller
      * @return array{
      *   period: array{month: int, year: int, label: string},
      *   summary: array{opening_piutang: float, opening_hutang: float, opening_net: float, new_piutang: float, new_hutang: float, total_repayments: float},
-     *   activity: array{new_loans: AnonymousResourceCollection, transactions: Collection},
-     *   carry_over: array{items: array, total_piutang: float, total_hutang: float}
+     *   activity: array{new_loans: AnonymousResourceCollection, transactions: Collection<int, Transaction>},
+     *   carry_over: array{items: array<int, array<string, mixed>>, total_piutang: float, total_hutang: float}
      * }
      */
     private function prepareReportData(User $user, int $month, int $year): array
@@ -169,7 +166,7 @@ class LoanController extends Controller
             ->whereNotNull('metadata')
             ->get()
             ->filter(function (Transaction $t) {
-                /** @var array|null $metadata */
+                /** @var array<string, mixed>|null $metadata */
                 $metadata = $t->metadata;
 
                 return is_array($metadata) && ($metadata['source_type'] ?? null) === Loan::class;
