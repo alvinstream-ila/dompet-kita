@@ -36,7 +36,7 @@ async function HomeContent() {
    * We no longer wait for the user profile before starting the financial summary.
    * We fetch the user profile in parallel and use its default settings if available.
    */
-  const [user] = await Promise.all([
+  await Promise.all([
     getUserProfileAction(),
     queryClient.prefetchQuery({
       queryKey: ['financial_summary', currentMonth, currentYear],

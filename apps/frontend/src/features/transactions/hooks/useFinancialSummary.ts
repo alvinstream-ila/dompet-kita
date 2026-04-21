@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useSettings } from '@/features/settings';
 import { getFinancialSummaryAction } from '../actions/transactions';
 
+import { Transaction } from '@/types';
+
 export function useFinancialSummary(month?: number, year?: number) {
   const now = new Date();
   const targetMonth = month ?? now.getMonth();
@@ -41,7 +43,7 @@ export function useFinancialSummary(month?: number, year?: number) {
    */
 
   // 1. Resolve transactions array from different possible backend formats
-  let transactions: any[] = [];
+  let transactions: Transaction[] = [];
   if (Array.isArray(data?.transactions)) {
     transactions = data.transactions;
   } else if (
