@@ -62,7 +62,6 @@ class Transaction extends Model
             ->dontLogEmptyChanges();
     }
 
-
     /**
      * @return BelongsTo<Asset, $this>
      */

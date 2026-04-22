@@ -6,7 +6,6 @@ use App\Enums\TransactionType;
 use App\Models\Transaction;
 use App\Notifications\LargeExpenseNotification;
 use App\Traits\ClearsFinancialCache;
-use Illuminate\Support\Facades\Cache;
 
 class TransactionObserver
 {

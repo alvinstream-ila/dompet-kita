@@ -16,13 +16,13 @@ return new class extends Migration
             'budgets',
             'wealth_histories',
             'transaction_insights',
-            'scheduled_transactions'
+            'scheduled_transactions',
         ];
 
         foreach ($tables as $tableName) {
             if (Schema::hasTable($tableName)) {
                 Schema::table($tableName, function (Blueprint $table) use ($tableName) {
-                    if (!Schema::hasColumn($tableName, 'household_id')) {
+                    if (! Schema::hasColumn($tableName, 'household_id')) {
                         $table->foreignUuid('household_id')
                             ->nullable()
                             ->after('user_id')
@@ -43,7 +43,7 @@ return new class extends Migration
             'budgets',
             'wealth_histories',
             'transaction_insights',
-            'scheduled_transactions'
+            'scheduled_transactions',
         ];
 
         foreach ($tables as $tableName) {

@@ -52,7 +52,6 @@ class GoalController extends Controller
             abort(401);
         }
 
-
         $goal = Goal::create($validated);
 
         return $this->success(new GoalResource($goal), 'Target tabungan baru sudah aku buatkan ya Sayang! Semangat! 🎯', 201);

@@ -5,7 +5,6 @@ namespace App\Actions\Finance\Transaction;
 use App\Actions\BaseAction;
 use App\Models\Transaction;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class DeleteTransactionAction extends BaseAction

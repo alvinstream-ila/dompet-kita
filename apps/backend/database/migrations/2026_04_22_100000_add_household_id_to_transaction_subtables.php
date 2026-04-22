@@ -13,11 +13,11 @@ return new class extends Migration
     public function up(): void
     {
         $tables = ['goal_transactions', 'holiday_transactions'];
-        
+
         foreach ($tables as $tableName) {
             if (Schema::hasTable($tableName)) {
                 Schema::table($tableName, function (Blueprint $table) use ($tableName) {
-                    if (!Schema::hasColumn($tableName, 'household_id')) {
+                    if (! Schema::hasColumn($tableName, 'household_id')) {
                         $table->foreignUuid('household_id')->nullable()->constrained('households')->onDelete('cascade');
                     }
                 });
@@ -31,7 +31,7 @@ return new class extends Migration
     public function down(): void
     {
         $tables = ['goal_transactions', 'holiday_transactions'];
-        
+
         foreach ($tables as $tableName) {
             if (Schema::hasTable($tableName)) {
                 Schema::table($tableName, function (Blueprint $table) {

@@ -3,8 +3,8 @@
 namespace App\Observers;
 
 use App\Enums\TransactionType;
-use App\Traits\ClearsFinancialCache;
 use App\Models\Asset;
+use App\Traits\ClearsFinancialCache;
 
 class AssetObserver
 {

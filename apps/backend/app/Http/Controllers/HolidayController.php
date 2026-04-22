@@ -45,7 +45,6 @@ class HolidayController extends Controller
             abort(401);
         }
 
-
         // Auto-generate image if not provided
         if (empty($validated['image_url'])) {
             $validated['image_url'] = $this->generateImageUrl((string) $request->string('destination'));

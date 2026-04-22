@@ -31,7 +31,7 @@ class GetTransactionSummaryAction extends BaseAction
         $version = (int) Cache::get("transaction_summary_version_{$userId}", 1);
         $cacheKey = "transaction_summary_{$userId}_".($month ?? 'all').'_'.($year ?? 'all')."_{$budgetCycleStart}_v{$version}";
 
-        return Cache::remember($cacheKey, 600, function () use ($userId, $month, $year, $budgetCycleStart) {
+        return Cache::remember($cacheKey, 600, function () use ($month, $year, $budgetCycleStart) {
             $selectSum = DB::raw('SUM(amount) as total');
 
             // Helper to extract amount from summary collection

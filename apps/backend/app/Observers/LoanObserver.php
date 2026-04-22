@@ -5,8 +5,8 @@ namespace App\Observers;
 use App\Enums\LoanStatus;
 use App\Enums\LoanType;
 use App\Enums\TransactionType;
-use App\Traits\ClearsFinancialCache;
 use App\Models\Loan;
+use App\Traits\ClearsFinancialCache;
 
 class LoanObserver
 {

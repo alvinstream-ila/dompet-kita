@@ -8,7 +8,6 @@ use App\Traits\AccountingJournalist;
 use App\Traits\HasHouseholdScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 

@@ -43,7 +43,9 @@ trait ClearsFinancialCache
     private function bumpUserCacheVersion(int $userId): void
     {
         $user = User::find($userId);
-        if (!$user) return;
+        if (! $user) {
+            return;
+        }
 
         $versionKey = "transaction_summary_version_{$userId}";
 

@@ -44,14 +44,14 @@ trait HasHouseholdScope
         static::creating(function ($model) {
             if (Auth::check()) {
                 $user = Auth::user();
-                
+
                 // 1. Ensure user_id is set
-                if (!$model->user_id) {
+                if (! $model->user_id) {
                     $model->user_id = $user->id;
                 }
 
                 // 2. Ensure household_id is set from the user's current household
-                if (!$model->household_id && $user->household_id) {
+                if (! $model->household_id && $user->household_id) {
                     $model->household_id = $user->household_id;
                 }
             }

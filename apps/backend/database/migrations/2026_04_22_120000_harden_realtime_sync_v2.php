@@ -25,7 +25,7 @@ return new class extends Migration
         foreach ($tables as $table) {
             try {
                 DB::statement("ALTER TABLE {$table} REPLICA IDENTITY FULL");
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::warning("Could not set REPLICA IDENTITY FULL for [{$table}]: ".$e->getMessage());
             }
         }
@@ -49,7 +49,7 @@ return new class extends Migration
         foreach ($tables as $table) {
             try {
                 DB::statement("ALTER TABLE {$table} REPLICA IDENTITY DEFAULT");
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::warning("Could not reset REPLICA IDENTITY for [{$table}]: ".$e->getMessage());
             }
         }

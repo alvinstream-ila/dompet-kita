@@ -3,7 +3,6 @@
 namespace App\Actions\Finance\Transaction;
 
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 trait ClearsTransactionCache

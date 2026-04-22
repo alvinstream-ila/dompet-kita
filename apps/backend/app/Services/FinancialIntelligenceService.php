@@ -26,7 +26,7 @@ class FinancialIntelligenceService
      */
     public function predictLiquidityCrisis(User $user, bool $includePartner = true): array
     {
-        // Logic: Since we use HasHouseholdScope, all queries are automatically 
+        // Logic: Since we use HasHouseholdScope, all queries are automatically
         // scoped to the household if the user is in one.
         // The $includePartner flag is now mostly for backward compatibility or explicit override.
 

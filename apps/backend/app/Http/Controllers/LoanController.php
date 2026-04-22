@@ -57,7 +57,6 @@ class LoanController extends Controller
             abort(401);
         }
 
-
         $loan = Loan::create($validated);
 
         return $this->success(new LoanResource($loan), 'Catatan utang/piutang baru sudah aku simpan ya! ✍️', 201);

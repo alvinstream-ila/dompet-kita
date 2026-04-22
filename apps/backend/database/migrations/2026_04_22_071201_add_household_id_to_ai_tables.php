@@ -18,7 +18,7 @@ return new class extends Migration
 
         foreach ($tables as $tableName) {
             Schema::table($tableName, function (Blueprint $table) use ($tableName) {
-                if (!Schema::hasColumn($tableName, 'household_id')) {
+                if (! Schema::hasColumn($tableName, 'household_id')) {
                     $table->foreignUuid('household_id')
                         ->nullable()
                         ->after('user_id')
