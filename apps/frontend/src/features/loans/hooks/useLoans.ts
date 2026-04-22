@@ -41,7 +41,7 @@ export function useAddLoan() {
           ...newLoan,
           id: `temp-${Date.now()}`,
           created_at: new Date().toISOString(),
-          status: 'pending',
+          status: 'active',
         } as Loan;
         return old ? [...old, optimisticLoan] : [optimisticLoan];
       });
