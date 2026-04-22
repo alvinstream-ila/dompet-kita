@@ -17,7 +17,8 @@ trait ClearsTransactionCache
         }
 
         foreach ($userIds as $id) {
-            Cache::increment("transaction_summary_version_{$id}");
+            $stringId = (string) $id;
+            Cache::increment("transaction_summary_version_{$stringId}");
         }
 
         // Clear household-level AI insights

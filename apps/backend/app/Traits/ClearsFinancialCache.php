@@ -25,16 +25,24 @@ trait ClearsFinancialCache
             return;
         }
 
-        $userIds = [$user->id];
+        $singleId = (int) $user->id;
 
         // 🏠 Sovereign Household Sync: If in a household, invalidate for everyone.
         if ($user->household_id) {
-            $userIds = User::where('household_id', $user->household_id)->pluck('id')->toArray();
+            /** @var array<int> $householdIds */
+            $householdIds = User::where('household_id', $user->household_id)
+                ->pluck('id')
+                ->map(fn (mixed $id): int => (int) $id)
+                ->all();
+
+            foreach ($householdIds as $id) {
+                $this->bumpUserCacheVersion((int) $id);
+            }
+
+            return;
         }
 
-        foreach ($userIds as $id) {
-            $this->bumpUserCacheVersion($id);
-        }
+        $this->bumpUserCacheVersion($singleId);
     }
 
     /**

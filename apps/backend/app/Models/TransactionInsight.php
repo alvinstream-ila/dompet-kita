@@ -6,6 +6,17 @@ use App\Traits\HasHouseholdScope;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $id
+ * @property int $user_id
+ * @property string|null $household_id
+ * @property string $type
+ * @property string $title
+ * @property string $content
+ * @property string|null $status
+ * @property string|null $action_url
+ * @property array<string, mixed>|null $metadata
+ */
 class TransactionInsight extends Model
 {
     use HasHouseholdScope, HasUuids;

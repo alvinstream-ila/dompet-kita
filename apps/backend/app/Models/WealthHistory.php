@@ -21,6 +21,9 @@ class WealthHistory extends Model
         'total_value',
     ];
 
+    /**
+     * @phpstan-return BelongsTo<User, covariant WealthHistory>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
