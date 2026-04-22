@@ -23,7 +23,7 @@ class SecurityHeaders
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), browsing-topics=()');
         $response->headers->set('X-Permitted-Cross-Domain-Policies', 'none');
-        $csp = "default-src 'self'; script-src 'self' https://m.stripe.network; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https:";
+        $csp = "default-src 'self'; script-src 'self' https://m.stripe.network; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https: wss:";
 
         if (app()->isLocal()) {
             $csp .= ' http://localhost:8000 ws://localhost:5173 http://localhost:5173';
