@@ -16,7 +16,7 @@ class AssetObserver
         // to reflect that the funds were taken from the dashboard balance (cash) to acquire this asset.
         try {
             $amount = (float) ($asset->invested_capital > 0 ? $asset->invested_capital : $asset->value);
-            
+
             if ($amount > 0) {
                 $asset->recordJournal(
                     $amount,
