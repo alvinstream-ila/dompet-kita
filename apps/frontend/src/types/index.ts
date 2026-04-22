@@ -126,3 +126,9 @@ export interface WealthHistoryItem {
   year: number;
   total_value: number;
 }
+
+export interface FinancialSummary {
+  income: number;
+  expense: number;
+  balance: number;
+}

@@ -1,4 +1,5 @@
 import {
+  InfiniteData,
   useInfiniteQuery,
   useMutation,
   useQueryClient,
@@ -6,7 +7,7 @@ import {
 import { toast } from 'sonner';
 import { useSettings } from '@/features/settings';
 import api from '@/lib/axios';
-import type { Transaction } from '@/types';
+import type { FinancialSummary, Transaction } from '@/types';
 import {
   addTransactionAction,
   deleteTransactionAction,
@@ -64,29 +65,32 @@ export function useAddTransaction() {
       });
 
       // 3. Optimistically update the transactions list (Infinite Query)
-      queryClient.setQueriesData({ queryKey: ['transactions'] }, (old: any) => {
-        if (!old) return old;
+      queryClient.setQueriesData<InfiniteData<Transaction[]>>(
+        { queryKey: ['transactions'] },
+        (old) => {
+          if (!old) return old;
 
-        const optimisticTx = {
-          ...newTransaction,
-          id: `temp-${Date.now()}`,
-          created_at: new Date().toISOString(),
-        } as Transaction;
+          const optimisticTx = {
+            ...newTransaction,
+            id: `temp-${Date.now()}`,
+            created_at: new Date().toISOString(),
+          } as Transaction;
 
-        return {
-          ...old,
-          pages: old.pages.map((page: Transaction[], index: number) => {
-            if (index === 0) {
-              return [optimisticTx, ...page];
-            }
-            return page;
-          }),
-        };
-      });
+          return {
+            ...old,
+            pages: old.pages.map((page: Transaction[], index: number) => {
+              if (index === 0) {
+                return [optimisticTx, ...page];
+              }
+              return page;
+            }),
+          };
+        }
+      );
 
       // 4. Optimistically update financial summaries
       previousSummaries.forEach(([key]) => {
-        queryClient.setQueryData(key, (old: any) => {
+        queryClient.setQueryData<FinancialSummary>(key, (old) => {
           if (!old) return old;
           const amount = Number(newTransaction.amount);
           const isIncome = newTransaction.type === 'income';
@@ -154,17 +158,20 @@ export function useUpdateTransaction() {
       await queryClient.cancelQueries({ queryKey: ['transactions'] });
       const previousTransactions = queryClient.getQueryData(['transactions']);
 
-      queryClient.setQueriesData({ queryKey: ['transactions'] }, (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page: Transaction[]) =>
-            page.map((tx) =>
-              tx.id === updatedTx.id ? { ...tx, ...updatedTx } : tx
-            )
-          ),
-        };
-      });
+      queryClient.setQueriesData<InfiniteData<Transaction[]>>(
+        { queryKey: ['transactions'] },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            pages: old.pages.map((page: Transaction[]) =>
+              page.map((tx) =>
+                tx.id === updatedTx.id ? { ...tx, ...updatedTx } : tx
+              )
+            ),
+          };
+        }
+      );
 
       return { previousTransactions };
     },
@@ -200,15 +207,18 @@ export function useDeleteTransaction() {
       await queryClient.cancelQueries({ queryKey: ['transactions'] });
       const previousTransactions = queryClient.getQueryData(['transactions']);
 
-      queryClient.setQueriesData({ queryKey: ['transactions'] }, (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page: Transaction[]) =>
-            page.filter((tx) => tx.id !== id)
-          ),
-        };
-      });
+      queryClient.setQueriesData<InfiniteData<Transaction[]>>(
+        { queryKey: ['transactions'] },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            pages: old.pages.map((page: Transaction[]) =>
+              page.filter((tx) => tx.id !== id)
+            ),
+          };
+        }
+      );
 
       return { previousTransactions };
     },
