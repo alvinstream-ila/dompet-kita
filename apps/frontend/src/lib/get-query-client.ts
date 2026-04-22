@@ -8,7 +8,9 @@ function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 60 * 1000,
+        staleTime: 5 * 1000, // 5 seconds (Reduced from 60s for better real-time feel)
+        refetchOnWindowFocus: true,
+        retry: 2,
       },
       dehydrate: {
         // include pending queries by default

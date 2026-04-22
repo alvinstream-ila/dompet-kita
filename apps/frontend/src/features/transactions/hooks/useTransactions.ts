@@ -53,68 +53,81 @@ export function useAddTransaction() {
       return result.data.data;
     },
     onMutate: async (newTransaction) => {
-      // Note: budgetCycleStart is not easily available here without hooks,
-      // so we invalidate by prefix and skip optimistic update if key not found
+      // 1. Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries({ queryKey: ['transactions'] });
       await queryClient.cancelQueries({ queryKey: ['financial_summary'] });
-      const queries = queryClient.getQueriesData({
+
+      // 2. Snapshot the previous values
+      const previousTransactions = queryClient.getQueryData(['transactions']);
+      const previousSummaries = queryClient.getQueriesData({
         queryKey: ['financial_summary'],
       });
 
-      // Store all previous states for rollback
-      const previousSummaries = queries.map(([key, data]) => ({ key, data }));
+      // 3. Optimistically update the transactions list (Infinite Query)
+      queryClient.setQueriesData({ queryKey: ['transactions'] }, (old: any) => {
+        if (!old) return old;
 
-      // Optimistically update all matching summaries (prefix match)
-      queries.forEach(([key, oldData]) => {
-        if (!oldData) return;
+        const optimisticTx = {
+          ...newTransaction,
+          id: `temp-${Date.now()}`,
+          created_at: new Date().toISOString(),
+        } as Transaction;
 
-        queryClient.setQueryData(
-          key as import('@tanstack/react-query').QueryKey,
-          (
-            old:
-              | { income?: number; expense?: number; balance?: number }
-              | undefined
-          ) => {
-            if (!old) return old;
-            const amount = Number(newTransaction.amount);
-            const isIncome = newTransaction.type === 'income';
-            return {
-              ...old,
-              income: isIncome
-                ? (Number(old.income) || 0) + amount
-                : Number(old.income) || 0,
-              expense: isIncome
-                ? Number(old.expense) || 0
-                : (Number(old.expense) || 0) + amount,
-              balance: isIncome
-                ? (Number(old.balance) || 0) + amount
-                : (Number(old.balance) || 0) - amount,
-            };
-          }
-        );
+        return {
+          ...old,
+          pages: old.pages.map((page: Transaction[], index: number) => {
+            if (index === 0) {
+              return [optimisticTx, ...page];
+            }
+            return page;
+          }),
+        };
       });
 
-      return { previousSummaries };
+      // 4. Optimistically update financial summaries
+      previousSummaries.forEach(([key]) => {
+        queryClient.setQueryData(key, (old: any) => {
+          if (!old) return old;
+          const amount = Number(newTransaction.amount);
+          const isIncome = newTransaction.type === 'income';
+          return {
+            ...old,
+            income: isIncome ? (Number(old.income) || 0) + amount : old.income,
+            expense: !isIncome
+              ? (Number(old.expense) || 0) + amount
+              : old.expense,
+            balance: isIncome
+              ? (Number(old.balance) || 0) + amount
+              : (Number(old.balance) || 0) - amount,
+          };
+        });
+      });
+
+      return { previousTransactions, previousSummaries };
     },
     onError: (_err, _newTx, context) => {
+      if (context?.previousTransactions) {
+        queryClient.setQueriesData(
+          { queryKey: ['transactions'] },
+          context.previousTransactions
+        );
+      }
       if (context?.previousSummaries) {
-        context.previousSummaries.forEach(({ key, data }) => {
-          queryClient.setQueryData(
-            key as import('@tanstack/react-query').QueryKey,
-            data
-          );
+        context.previousSummaries.forEach(([key, data]) => {
+          queryClient.setQueryData(key, data);
         });
       }
       toast.error('Gagal Mencatat 🥺', {
-        description: 'Tunggu sebentar dan coba lagi ya Sayang.',
+        description: 'Tenang Sayang, datanya aman. Coba lagi sebentar ya.',
       });
     },
-    onSuccess: (transaction) => {
+    onSettled: () => {
+      // Always refetch after error or success to make sure we are in sync with the server
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
-      queryClient.invalidateQueries({ queryKey: ['ai_insights'] });
-      queryClient.invalidateQueries({ queryKey: ['ai_guardian'] });
       queryClient.invalidateQueries({ queryKey: ['assets'] });
-
+    },
+    onSuccess: (transaction) => {
       const isIncome = transaction.type === 'income';
       toast.success(isIncome ? 'Uang Masuk! 💰' : 'Pengeluaran Dicatat 💸', {
         description: isIncome
@@ -137,21 +150,40 @@ export function useUpdateTransaction() {
       if (!result.success) throw new Error(result.error);
       return result.data.data;
     },
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['ai_insights'] });
+    onMutate: async (updatedTx) => {
+      await queryClient.cancelQueries({ queryKey: ['transactions'] });
+      const previousTransactions = queryClient.getQueryData(['transactions']);
+
+      queryClient.setQueriesData({ queryKey: ['transactions'] }, (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: Transaction[]) =>
+            page.map((tx) =>
+              tx.id === updatedTx.id ? { ...tx, ...updatedTx } : tx
+            )
+          ),
+        };
+      });
+
+      return { previousTransactions };
+    },
+    onError: (_err, _variables, context) => {
+      if (context?.previousTransactions) {
+        queryClient.setQueriesData(
+          { queryKey: ['transactions'] },
+          context.previousTransactions
+        );
+      }
+      toast.error('Gagal Update 🥺');
     },
     onSuccess: (transaction) => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
-      queryClient.invalidateQueries({ queryKey: ['ai_insights'] });
-      queryClient.invalidateQueries({ queryKey: ['ai_guardian'] });
       queryClient.invalidateQueries({ queryKey: ['assets'] });
       toast.success('Berhasil Diupdate! ✨', {
         description: `Transaksi "${transaction.description}" sudah aku perbarui ya Sayang! ❤️`,
       });
-    },
-    onError: () => {
-      toast.error('Gagal Update 🥺');
     },
   });
 }
@@ -164,18 +196,35 @@ export function useDeleteTransaction() {
       const result = await deleteTransactionAction(id);
       if (!result.success) throw new Error(result.error);
     },
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['ai_insights'] });
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ['transactions'] });
+      const previousTransactions = queryClient.getQueryData(['transactions']);
+
+      queryClient.setQueriesData({ queryKey: ['transactions'] }, (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: Transaction[]) =>
+            page.filter((tx) => tx.id !== id)
+          ),
+        };
+      });
+
+      return { previousTransactions };
+    },
+    onError: (_err, _id, context) => {
+      if (context?.previousTransactions) {
+        queryClient.setQueriesData(
+          { queryKey: ['transactions'] },
+          context.previousTransactions
+        );
+      }
+      toast.error('Gagal Menghapus 🥺');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
-      queryClient.invalidateQueries({ queryKey: ['ai_insights'] });
-      queryClient.invalidateQueries({ queryKey: ['ai_guardian'] });
       toast.info('Transaksi Dihapus 🗑️');
-    },
-    onError: () => {
-      toast.error('Gagal Menghapus 🥺');
     },
   });
 }

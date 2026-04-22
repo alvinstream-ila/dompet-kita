@@ -24,9 +24,10 @@ export function useRealtimeSync() {
 
     console.log('🛡️ Starting Sovereign Sync for Household:', householdId);
 
-    // 1. Subscribe to Transaction changes
+    // 1. Unified Sovereign Sync Channel
     const channel = supabase
-      .channel('sovereign_sync_all')
+      .channel('sovereign_sync_master')
+      // Transactions & Summaries
       .on(
         'postgres_changes',
         {
@@ -39,8 +40,10 @@ export function useRealtimeSync() {
           queryClient.invalidateQueries({ queryKey: ['transactions'] });
           queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
           queryClient.invalidateQueries({ queryKey: ['ai_insights'] });
+          queryClient.invalidateQueries({ queryKey: ['assets'] }); // Assets often change with transactions
         }
       )
+      // Assets & Wealth
       .on(
         'postgres_changes',
         {
@@ -52,8 +55,19 @@ export function useRealtimeSync() {
         () => {
           queryClient.invalidateQueries({ queryKey: ['assets'] });
           queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
+          queryClient.invalidateQueries({ queryKey: ['wealth_history'] });
         }
       )
+      // Asset Transactions (Specific logs)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'asset_transactions' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['asset_transactions'] });
+          queryClient.invalidateQueries({ queryKey: ['assets'] });
+        }
+      )
+      // Loans
       .on(
         'postgres_changes',
         {
@@ -67,6 +81,7 @@ export function useRealtimeSync() {
           queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
         }
       )
+      // Goals & Milestones
       .on(
         'postgres_changes',
         {
@@ -77,10 +92,36 @@ export function useRealtimeSync() {
         },
         () => {
           queryClient.invalidateQueries({ queryKey: ['goals'] });
+          queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'goal_transactions' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['goals'] });
           queryClient.invalidateQueries({ queryKey: ['goal_transactions'] });
         }
       )
-      .subscribe();
+      // Household changes (Members, Settings)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'households',
+          filter: householdId ? `id=eq.${householdId}` : undefined,
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['user'] });
+          queryClient.invalidateQueries({ queryKey: ['household'] });
+        }
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('🚀 Sovereign Sync: Online');
+        }
+      });
 
     return () => {
       supabase.removeChannel(channel);

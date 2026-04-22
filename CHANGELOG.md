@@ -2,6 +2,21 @@
 
 ---
 
+## [7.5.2] — 2026-04-22 (Instant CRUD & Sovereign Sync)
+
+### ⚡ USER EXPERIENCE
+- **Instant CRUD Engine**: Full optimistic updates for Transactions, Assets, Goals, and Loans. UI now updates at 0ms latency.
+- **Sovereign Sync v7.5**: Refined Supabase Realtime synchronization with broader table coverage (Households, Asset Transactions).
+- **High-Precision Tuning**: React Query optimization (staleTime reduced to 5s, refetchOnWindowFocus enabled).
+
+## [7.5.1] — 2026-04-22 (Build Resiliency)
+
+### 🚀 CI/CD & DEPLOYMENT
+- **Tailwind v4 Oxide Hardening**: Explicitly added Linux and Windows native bindings to `optionalDependencies` to resolve Vercel build failures caused by npm's optional dependency bug (#4828).
+- **Lockfile Consolidation**: Purged redundant nested lockfiles in the frontend workspace to enforce single-source-of-truth dependency resolution at the monorepo root.
+
+---
+
 ## [7.5.0] — 2026-04-21 (Sovereign Sync & Dependency Hardening)
 
 ### 📡 REAL-TIME SYNCHRONIZATION

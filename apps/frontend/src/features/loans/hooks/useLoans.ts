@@ -33,13 +33,35 @@ export function useAddLoan() {
       const { data } = await api.post('/loans', newLoan);
       return data.data;
     },
-    onSuccess: (loan) => {
+    onMutate: async (newLoan) => {
+      await queryClient.cancelQueries({ queryKey: ['loans'] });
+      const previousLoans = queryClient.getQueryData(['loans']);
+      queryClient.setQueryData(['loans'], (old: Loan[] | undefined) => {
+        const optimisticLoan = {
+          ...newLoan,
+          id: `temp-${Date.now()}`,
+          created_at: new Date().toISOString(),
+          status: 'pending',
+        } as Loan;
+        return old ? [...old, optimisticLoan] : [optimisticLoan];
+      });
+      return { previousLoans };
+    },
+    onError: (_err, _variables, context) => {
+      if (context?.previousLoans) {
+        queryClient.setQueryData(['loans'], context.previousLoans);
+      }
+      toast.error('Gagal Menyimpan 🥺');
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['loans'] });
+      queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
+    },
+    onSuccess: (loan) => {
       toast.success('Pinjaman Dicatat! 📝', {
         description: `Sudah aku bantu catat ya, pinjaman dari ${loan.debtor} kita simpan rapi. ❤️`,
       });
     },
-    onError: () => toast.error('Gagal Menyimpan 🥺'),
   });
 }
 
@@ -51,8 +73,27 @@ export function useUpdateLoan() {
       const { data } = await api.put(`/loans/${id}`, updates);
       return data.data;
     },
-    onSuccess: (loan) => {
+    onMutate: async (updatedLoan) => {
+      await queryClient.cancelQueries({ queryKey: ['loans'] });
+      const previousLoans = queryClient.getQueryData(['loans']);
+      queryClient.setQueryData(['loans'], (old: Loan[] | undefined) => {
+        return old?.map((loan) =>
+          loan.id === updatedLoan.id ? { ...loan, ...updatedLoan } : loan
+        );
+      });
+      return { previousLoans };
+    },
+    onError: (_err, _variables, context) => {
+      if (context?.previousLoans) {
+        queryClient.setQueryData(['loans'], context.previousLoans);
+      }
+      toast.error('Gagal Update 🥺');
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['loans'] });
+      queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
+    },
+    onSuccess: (loan) => {
       if (loan.status === 'paid') {
         toast.success('ALHAMDULILLAH LUNAS! 🎉', {
           description: `Pinjaman dari ${loan.debtor} sudah diselesaikan! Lega ya Sayang! ✨❤️`,
@@ -63,7 +104,6 @@ export function useUpdateLoan() {
         });
       }
     },
-    onError: () => toast.error('Gagal Update 🥺'),
   });
 }
 
@@ -74,10 +114,26 @@ export function useDeleteLoan() {
     mutationFn: async (id: string) => {
       await api.delete(`/loans/${id}`);
     },
-    onSuccess: () => {
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ['loans'] });
+      const previousLoans = queryClient.getQueryData(['loans']);
+      queryClient.setQueryData(['loans'], (old: Loan[] | undefined) => {
+        return old?.filter((loan) => loan.id !== id);
+      });
+      return { previousLoans };
+    },
+    onError: (_err, _id, context) => {
+      if (context?.previousLoans) {
+        queryClient.setQueryData(['loans'], context.previousLoans);
+      }
+      toast.error('Gagal Menghapus 🥺');
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['loans'] });
+      queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
+    },
+    onSuccess: () => {
       toast.info('Data Dihapus 🗑️');
     },
-    onError: () => toast.error('Gagal Menghapus 🥺'),
   });
 }
