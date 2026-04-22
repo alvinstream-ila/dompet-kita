@@ -2,6 +2,12 @@
 
 ---
 
+## [7.5.3] — 2026-04-22 (Next.js SWC Resiliency)
+
+### 🚀 CI/CD & DEPLOYMENT
+- **SWC Binary Hardening**: Resolved persistent Next.js warnings by explicitly declaring platform-specific SWC binaries (`@next/swc-win32-x64-msvc`, etc.) in `optionalDependencies` to prevent lockfile patching failures in monorepos.
+- **Next.js Lifecycle Audit**: Upgraded Next.js to `16.2.4` and synchronized workspace dependencies to ensure native compiler compatibility across development and CI environments.
+
 ## [7.5.2] — 2026-04-22 (Instant CRUD & Sovereign Sync)
 
 ### ⚡ USER EXPERIENCE
