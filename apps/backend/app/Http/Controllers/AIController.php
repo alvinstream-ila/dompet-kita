@@ -81,44 +81,9 @@ class AIController extends Controller
         }
 
         try {
-            $transactions = Transaction::where('date', '>=', now()->subDays(90))
-                ->orderBy('date', 'desc')
-                ->get();
+            $data = $this->buildDashboardInsightData($user);
 
-            if ($transactions->isEmpty()) {
-                return $this->success([
-                    'title' => 'Sayang AI ✨',
-                    'insight' => 'Waktunya mulai petualangan baru kita, Sayang! Yuk, mulai catat pengeluaran pertama kita biar impian kita makin dekat? ❤️',
-                ]);
-            }
-
-            $totalIncome = (float) $transactions->filter(fn ($t) => $t->type === TransactionType::INCOME)->sum('amount');
-            $totalExpense = (float) $transactions->filter(fn ($t) => $t->type === TransactionType::EXPENSE)->sum('amount');
-            $savings = (float) ($totalIncome - $totalExpense);
-
-            $summaryText = $transactions->take(20)->map(function ($t) {
-                /** @var Transaction $t */
-                $typeStr = $t->type->value;
-
-                return "{$t->date}: {$typeStr} Rp ".number_format((float) $t->amount)." ({$t->category})";
-            })->implode("\n");
-
-            $scopeId = $user->household_id ?? $user->id;
-            $cacheKey = "ai_insight_{$scopeId}";
-
-            $data = Cache::remember($cacheKey, 3600 * 4, function () use ($totalIncome, $totalExpense, $savings, $summaryText) {
-                return $this->generateInsightAction->execute(
-                    (string) number_format((float) $totalIncome),
-                    (string) number_format((float) $totalExpense),
-                    (string) number_format((float) $savings),
-                    $summaryText
-                );
-            });
-
-            return $this->success([
-                'title' => $data['title'],
-                'insight' => $data['insight'],
-            ]);
+            return $this->success($data);
         } catch (\Throwable $e) {
             Log::error('AI_DASHBOARD_INSIGHT_ERROR: '.$e->getMessage());
 
@@ -127,6 +92,54 @@ class AIController extends Controller
                 'insight' => 'Aku lagi cek catatannya sebentar ya sayang. Nanti aku kabarin lagi update keuangannya. ❤️',
             ]);
         }
+    }
+
+    /**
+     * Build the insight payload; throws on error so the controller can catch it.
+     *
+     * @return array{title: string, insight: string}
+     */
+    private function buildDashboardInsightData(User $user): array
+    {
+        $transactions = Transaction::where('date', '>=', now()->subDays(90))
+            ->orderBy('date', 'desc')
+            ->get();
+
+        if ($transactions->isEmpty()) {
+            return [
+                'title' => 'Sayang AI ✨',
+                'insight' => 'Waktunya mulai petualangan baru kita, Sayang! Yuk, mulai catat pengeluaran pertama kita biar impian kita makin dekat? ❤️',
+            ];
+        }
+
+        $totalIncome = (float) $transactions->filter(fn ($t) => $t->type === TransactionType::INCOME)->sum('amount');
+        $totalExpense = (float) $transactions->filter(fn ($t) => $t->type === TransactionType::EXPENSE)->sum('amount');
+        $savings = (float) ($totalIncome - $totalExpense);
+
+        $summaryText = $transactions->take(20)->map(function ($t) {
+            /** @var Transaction $t */
+            $typeStr = $t->type->value;
+
+            return "{$t->date}: {$typeStr} Rp ".number_format((float) $t->amount)." ({$t->category})";
+        })->implode("\n");
+
+        $scopeId = $user->household_id ?? $user->id;
+        $cacheKey = "ai_insight_{$scopeId}";
+
+        /** @var array{title: string, insight: string} $data */
+        $data = Cache::remember($cacheKey, 3600 * 4, function () use ($totalIncome, $totalExpense, $savings, $summaryText) {
+            return $this->generateInsightAction->execute(
+                (string) number_format((float) $totalIncome),
+                (string) number_format((float) $totalExpense),
+                (string) number_format((float) $savings),
+                $summaryText
+            );
+        });
+
+        return [
+            'title' => $data['title'],
+            'insight' => $data['insight'],
+        ];
     }
 
     /**

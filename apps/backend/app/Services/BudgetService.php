@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Budget;
 use App\Models\Transaction;
-use App\Models\User;
 use Illuminate\Support\Carbon;
 
 /**
@@ -61,13 +60,13 @@ class BudgetService
      *
      * @return array<int, array{id: string, category: string, limit: float, used: float, remaining: float, percentage: float, status: string}>
      */
-    public function getBudgetUsage(User $user): array
+    public function getBudgetUsage(): array
     {
         $cycle = $this->getCurrentCycleDates();
         $budgets = Budget::get();
 
         /** @var array<int, array{id: string, category: string, limit: float, used: float, remaining: float, percentage: float, status: string}> $usage */
-        $usage = $budgets->map(function (Budget $budget) use ($cycle) {
+        return $budgets->map(function (Budget $budget) use ($cycle) {
             $used = (float) Transaction::where('category', $budget->category)
                 ->whereBetween('date', [$cycle['start'], $cycle['end']])
                 ->where('type', 'expense')
@@ -87,8 +86,6 @@ class BudgetService
                 'status' => $this->getUsageStatus((float) $percentage),
             ];
         })->all();
-
-        return $usage;
     }
 
     /**

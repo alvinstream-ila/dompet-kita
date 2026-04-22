@@ -62,10 +62,18 @@ class GetSystemStatusAction extends BaseAction
         $targets = $goalsQuery->get()->map(function ($goal) {
             $percent = $goal->target_amount > 0 ? (float) $goal->current_amount / (float) $goal->target_amount * 100 : 0;
 
+            if ($percent >= 100) {
+                $statusIcon = '✅';
+            } elseif ($percent >= 50) {
+                $statusIcon = '🔥';
+            } else {
+                $statusIcon = '⏳';
+            }
+
             return [
                 'name' => (string) $goal->name,
                 'percentage' => (float) $percent,
-                'status_icon' => $percent >= 100 ? '✅' : ($percent >= 50 ? '🔥' : '⏳'),
+                'status_icon' => $statusIcon,
             ];
         })->toArray();
 

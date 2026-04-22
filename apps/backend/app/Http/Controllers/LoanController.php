@@ -105,7 +105,7 @@ class LoanController extends Controller
         $month = $request->integer('month', now()->month);
         $year = $request->integer('year', now()->year);
 
-        $reportData = $this->prepareReportData($user, $month, $year);
+        $reportData = $this->prepareReportData($month, $year);
 
         // Handle PDF Format
         if ($request->query('format') === 'pdf') {
@@ -143,7 +143,7 @@ class LoanController extends Controller
      *   carry_over: array{items: array<int, array<string, mixed>>, total_piutang: float, total_hutang: float}
      * }
      */
-    private function prepareReportData(User $user, int $month, int $year): array
+    private function prepareReportData(int $month, int $year): array
     {
         $startDate = Carbon::create($year, $month, 1)?->startOfMonth() ?? now()->startOfMonth();
         $endDate = $startDate->copy()->endOfMonth();

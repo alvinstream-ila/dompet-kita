@@ -124,7 +124,7 @@ class QuantumInsightEngine
               \"type\": \"leak|optimization|trend|achievement\",
               \"title\": \"Short catchy title\",
               \"content\": \"Detailed SENTIENT explanation in Indonesian. Mention specific Rp amounts.\",
-              \"impact_value\": 50000, 
+              \"impact_value\": 50000,
               \"action_url\": \"/transactions\"
             }
           ]

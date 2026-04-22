@@ -35,7 +35,7 @@ class ProcessChatAction
             ->reverse();
 
         // 2. Prepare Context (Current Financial Status)
-        $summary = $this->getFinancialSummaryContext($user);
+        $summary = $this->getFinancialSummaryContext();
 
         // 3. Detect Simulation Intent (Simple Regex for Amount)
         $simulationContext = '';
@@ -66,7 +66,7 @@ class ProcessChatAction
         return $aiResponse;
     }
 
-    private function getFinancialSummaryContext(User $user): string
+    private function getFinancialSummaryContext(): string
     {
         // Scoped to household automatically via HasHouseholdScope
         $transactions = Transaction::where('date', '>=', now()->subDays(30))
