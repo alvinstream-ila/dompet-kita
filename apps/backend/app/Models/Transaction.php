@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Enums\TransactionType;
 use App\Services\BudgetService;
-use App\Traits\HasUserScope;
+use App\Traits\HasHouseholdScope;
 use Carbon\Carbon;
 use Database\Factories\TransactionFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,6 +17,7 @@ use Spatie\Activitylog\Support\LogOptions;
 /**
  * @property int $id
  * @property int $user_id
+ * @property string|null $household_id
  * @property Carbon $date
  * @property float $amount
  * @property string $category
@@ -33,13 +34,14 @@ use Spatie\Activitylog\Support\LogOptions;
 class Transaction extends Model
 {
     /** @use HasFactory<TransactionFactory> */
-    use HasFactory, HasUserScope, LogsActivity;
+    use HasFactory, HasHouseholdScope, LogsActivity;
 
     /**
      * @var list<string>
      */
     protected $fillable = [
         'user_id',
+        'household_id',
         'amount',
         'type',
         'category',
@@ -60,13 +62,6 @@ class Transaction extends Model
             ->dontLogEmptyChanges();
     }
 
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 
     /**
      * @return BelongsTo<Asset, $this>

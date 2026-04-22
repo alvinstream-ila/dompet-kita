@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
-use App\Traits\HasUserScope;
+use App\Traits\HasHouseholdScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AssetTransaction extends Model
 {
-    use HasUserScope;
+    use HasHouseholdScope;
 
     protected $fillable = [
         'user_id',
+        'household_id',
         'asset_id',
         'source_asset_id',
         'amount',
@@ -41,14 +42,5 @@ class AssetTransaction extends Model
     public function sourceAsset(): BelongsTo
     {
         return $this->belongsTo(Asset::class, 'source_asset_id');
-    }
-
-    /**
-     * The user who owns this transaction.
-     */
-    /** @return BelongsTo<User, $this> */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 }

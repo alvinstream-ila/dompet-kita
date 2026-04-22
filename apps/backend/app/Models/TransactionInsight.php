@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use App\Traits\HasUserScope;
+use App\Traits\HasHouseholdScope;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TransactionInsight extends Model
 {
-    use HasUserScope, HasUuids;
+    use HasHouseholdScope, HasUuids;
 
     /**
      * The attributes that are mass assignable.
@@ -18,6 +18,7 @@ class TransactionInsight extends Model
      */
     protected $fillable = [
         'user_id',
+        'household_id',
         'type',
         'title',
         'content',
@@ -26,16 +27,6 @@ class TransactionInsight extends Model
         'action_url',
         'metadata',
     ];
-
-    /**
-     * Get the user that owns the insight.
-     *
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 
     /**
      * Get the attributes that should be cast.

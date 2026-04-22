@@ -33,10 +33,6 @@ class GetWealthStatusAction extends BaseAction
         $txQuery = Transaction::whereMonth('date', $now->month)
             ->whereYear('date', $now->year);
 
-        if ($user instanceof User) {
-            $txQuery->where('user_id', $user->id);
-        }
-
         $txs = $txQuery->get();
         $income = (float) ($txs->where('type', 'income')->sum('amount') ?: 0.0);
         $expense = (float) ($txs->where('type', 'expense')->sum('amount') ?: 0.0);
@@ -45,25 +41,14 @@ class GetWealthStatusAction extends BaseAction
         $assetQuery = Asset::query();
         $goalQuery = Goal::query();
 
-        if ($user instanceof User) {
-            $assetQuery->where('user_id', $user->id);
-            $goalQuery->where('user_id', $user->id);
-        }
-
         $totalAssets = (float) $assetQuery->sum('value');
         $totalGoals = (float) $goalQuery->sum('current_amount');
 
         $holidayQuery = Holiday::query();
-        if ($user instanceof User) {
-            $holidayQuery->where('user_id', $user->id);
-        }
         $totalHolidayFunds = (float) $holidayQuery->sum('funded_amount');
 
         // 3. Loans & Debts
         $loanQuery = Loan::query();
-        if ($user instanceof User) {
-            $loanQuery->where('user_id', $user->id);
-        }
 
         $loans = $loanQuery->get();
         $debts = (float) ($loans->where('type', 'utang')->sum('remaining_amount') ?: 0.0);

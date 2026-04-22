@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Enums\LoanStatus;
 use App\Enums\LoanType;
 use App\Traits\AccountingJournalist;
-use App\Traits\HasUserScope;
+use App\Traits\HasHouseholdScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,6 +15,7 @@ use Spatie\Activitylog\Support\LogOptions;
 /**
  * @property int $id
  * @property int $user_id
+ * @property string|null $household_id
  * @property LoanType $type
  * @property float $amount
  * @property float $remaining_amount
@@ -28,13 +29,14 @@ use Spatie\Activitylog\Support\LogOptions;
  */
 class Loan extends Model
 {
-    use AccountingJournalist, HasUserScope, LogsActivity;
+    use AccountingJournalist, HasHouseholdScope, LogsActivity;
 
     /**
      * @var list<string>
      */
     protected $fillable = [
         'user_id',
+        'household_id',
         'type',
         'amount',
         'remaining_amount',
@@ -50,16 +52,6 @@ class Loan extends Model
             ->logOnly(['type', 'amount', 'remaining_amount', 'contact_name', 'due_date'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
-    }
-
-    /**
-     * Get the user that owns the loan.
-     *
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 
     /**

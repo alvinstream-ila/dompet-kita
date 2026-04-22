@@ -31,10 +31,6 @@ class GetFinancialReportAction extends BaseAction
         $query = Transaction::whereMonth('date', $month->month)
             ->whereYear('date', $month->year);
 
-        if ($user) {
-            $query->where('user_id', $user->id);
-        }
-
         $txs = $query->get();
 
         $income = $txs->where('type', TransactionType::INCOME)->sum(fn (Transaction $t) => (float) $t->amount);

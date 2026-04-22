@@ -29,9 +29,7 @@ class QuantumInsightEngine
         $endDate = Carbon::now();
         $startDate = Carbon::now()->subDays(30);
 
-        $transactions = Transaction::withoutGlobalScopes()
-            ->where('user_id', $user->id)
-            ->whereBetween('date', [$startDate, $endDate])
+        $transactions = Transaction::whereBetween('date', [$startDate, $endDate])
             ->orderBy('date', 'desc')
             ->get();
 
@@ -92,7 +90,7 @@ class QuantumInsightEngine
             if (isset($insights['findings'])) {
                 Log::info('Quantum Insight Engine: Found '.count($insights['findings']).' findings.');
                 foreach ($insights['findings'] as $finding) {
-                    $this->persistInsight((string) $user->id, $finding);
+                    $this->persistInsight($user, $finding);
                 }
             } else {
                 Log::info('Quantum Insight Engine: No findings key in AI response.');
@@ -138,18 +136,17 @@ class QuantumInsightEngine
     /**
      * @param  array<string, mixed>  $finding
      */
-    protected function persistInsight(string $userId, array $finding): void
+    protected function persistInsight(User $user, array $finding): void
     {
         // Avoid duplicate active insights with same title in last 7 days
-        $exists = TransactionInsight::withoutGlobalScopes()
-            ->where('user_id', $userId)
-            ->where('title', $finding['title'])
+        $exists = TransactionInsight::where('title', $finding['title'])
             ->where('created_at', '>=', now()->subDays(7))
             ->exists();
 
         if (! $exists) {
             TransactionInsight::create([
-                'user_id' => $userId,
+                'user_id' => $user->id,
+                'household_id' => $user->household_id,
                 'type' => $finding['type'] ?? 'trend',
                 'title' => $finding['title'],
                 'content' => $finding['content'],

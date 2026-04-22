@@ -35,9 +35,6 @@ class GetSystemStatusAction extends BaseAction
     {
         // 1. Balance Summary
         $txQuery = Transaction::query();
-        if ($user) {
-            $txQuery->where('user_id', $user->id);
-        }
 
         $income = (float) $txQuery->clone()->where('type', TransactionType::INCOME)->sum('amount');
         $expense = (float) $txQuery->clone()->where('type', TransactionType::EXPENSE)->sum('amount');
@@ -46,10 +43,6 @@ class GetSystemStatusAction extends BaseAction
         // 2. Assets & Loans
         $assetQuery = Asset::query();
         $loanQuery = Loan::query();
-        if ($user) {
-            $assetQuery->where('user_id', $user->id);
-            $loanQuery->where('user_id', $user->id);
-        }
 
         $assets = (float) $assetQuery->sum('value');
         $loans = (float) $loanQuery->where('status', '!=', 'paid')->sum('amount');
@@ -64,9 +57,6 @@ class GetSystemStatusAction extends BaseAction
 
         // 5. Targets
         $goalsQuery = Goal::where('status', 'active')->orderBy('target_amount', 'desc')->take(2);
-        if ($user) {
-            $goalsQuery->where('user_id', $user->id);
-        }
 
         /** @var array<int, array{name: string, percentage: float, status_icon: string}> $targets */
         $targets = $goalsQuery->get()->map(function ($goal) {

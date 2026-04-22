@@ -81,8 +81,7 @@ class AIController extends Controller
         }
 
         try {
-            $transactions = Transaction::where('user_id', $user->id)
-                ->where('date', '>=', now()->subDays(90))
+            $transactions = Transaction::where('date', '>=', now()->subDays(90))
                 ->orderBy('date', 'desc')
                 ->get();
 
@@ -104,7 +103,8 @@ class AIController extends Controller
                 return "{$t->date}: {$typeStr} Rp ".number_format((float) $t->amount)." ({$t->category})";
             })->implode("\n");
 
-            $cacheKey = "ai_insight_{$user->id}";
+            $scopeId = $user->household_id ?? $user->id;
+            $cacheKey = "ai_insight_{$scopeId}";
 
             $data = Cache::remember($cacheKey, 3600 * 4, function () use ($totalIncome, $totalExpense, $savings, $summaryText) {
                 return $this->generateInsightAction->execute(
@@ -192,8 +192,8 @@ class AIController extends Controller
                 return $this->error('Unauthorized', 401);
             }
 
-            $wisdom = $this->getLatestWisdomAction->execute($user);
-            $unread = $this->getUnreadWisdomsAction->execute($user);
+            $wisdom = $this->getLatestWisdomAction->execute();
+            $unread = $this->getUnreadWisdomsAction->execute();
 
             return $this->success([
                 'latest' => $wisdom,

@@ -20,7 +20,9 @@ class TransactionPolicy
      */
     public function view(User $user, Transaction $transaction): bool
     {
-        return $user->id === $transaction->user_id;
+        return $transaction->household_id && $user->household_id
+            ? $user->household_id === $transaction->household_id
+            : $user->id === $transaction->user_id;
     }
 
     /**
@@ -36,7 +38,9 @@ class TransactionPolicy
      */
     public function update(User $user, Transaction $transaction): bool
     {
-        return $user->id === $transaction->user_id;
+        return $transaction->household_id && $user->household_id
+            ? $user->household_id === $transaction->household_id
+            : $user->id === $transaction->user_id;
     }
 
     /**
@@ -44,6 +48,8 @@ class TransactionPolicy
      */
     public function delete(User $user, Transaction $transaction): bool
     {
-        return $user->id === $transaction->user_id;
+        return $transaction->household_id && $user->household_id
+            ? $user->household_id === $transaction->household_id
+            : $user->id === $transaction->user_id;
     }
 }

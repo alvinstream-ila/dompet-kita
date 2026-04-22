@@ -2,29 +2,25 @@
 
 namespace App\Models;
 
-use App\Traits\HasUserScope;
+use App\Traits\HasHouseholdScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WealthHistory extends Model
 {
-    use HasUserScope;
+    use HasHouseholdScope;
 
     /**
      * @var list<string>
      */
     protected $fillable = [
         'user_id',
+        'household_id',
         'month',
         'year',
         'total_value',
     ];
 
-    /**
-     * Get the user that owns the wealth history.
-     *
-     * @return BelongsTo<User, $this>
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

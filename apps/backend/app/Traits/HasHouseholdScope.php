@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Traits;
+
+use App\Models\Household;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
+
+/**
+ * Trait HasHouseholdScope
+ * The "Sovereign Multi-Tenant" anchor.
+ * Ensures that Alvin & Ila share the same financial reality based on their Household.
+ */
+trait HasHouseholdScope
+{
+    /**
+     * Define the user relationship.
+     * Every record still belongs to a specific user as the "creator".
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Define the household relationship.
+     *
+     * @return BelongsTo<Household, $this>
+     */
+    public function household(): BelongsTo
+    {
+        return $this->belongsTo(Household::class);
+    }
+
+    /**
+     * Boot the trait to automatically handle household-based isolation and population.
+     */
+    protected static function bootHasHouseholdScope(): void
+    {
+        static::creating(function ($model) {
+            if (Auth::check()) {
+                $user = Auth::user();
+                
+                // 1. Ensure user_id is set
+                if (!$model->user_id) {
+                    $model->user_id = $user->id;
+                }
+
+                // 2. Ensure household_id is set from the user's current household
+                if (!$model->household_id && $user->household_id) {
+                    $model->household_id = $user->household_id;
+                }
+            }
+        });
+
+        // 🛡️ The Sovereign Scope: Alvin & Ila see everything in the same household.
+        static::addGlobalScope('household_scope', function (Builder $builder) {
+            if (Auth::check()) {
+                $user = Auth::user();
+                if ($user->household_id) {
+                    $builder->where('household_id', $user->household_id);
+                } else {
+                    // Fallback to personal scope if not in a household
+                    $builder->where('user_id', $user->id);
+                }
+            }
+        });
+    }
+}

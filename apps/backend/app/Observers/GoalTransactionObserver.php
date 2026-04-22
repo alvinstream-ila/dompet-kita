@@ -3,10 +3,13 @@
 namespace App\Observers;
 
 use App\Enums\TransactionType;
+use App\Traits\ClearsFinancialCache;
 use App\Models\GoalTransaction;
 
 class GoalTransactionObserver
 {
+    use ClearsFinancialCache;
+
     /**
      * Handle the GoalTransaction "created" event.
      */
@@ -33,5 +36,23 @@ class GoalTransactionObserver
                 "Pencairan dari: {$transaction->goal->name}"
             );
         }
+
+        $this->invalidateFinancialCache($transaction->user_id);
+    }
+
+    /**
+     * Handle the GoalTransaction "updated" event.
+     */
+    public function updated(GoalTransaction $transaction): void
+    {
+        $this->invalidateFinancialCache($transaction->user_id);
+    }
+
+    /**
+     * Handle the GoalTransaction "deleted" event.
+     */
+    public function deleted(GoalTransaction $transaction): void
+    {
+        $this->invalidateFinancialCache($transaction->user_id);
     }
 }

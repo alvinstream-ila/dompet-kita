@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Enums\AssetType;
 use App\Traits\AccountingJournalist;
-use App\Traits\HasUserScope;
+use App\Traits\HasHouseholdScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +16,7 @@ use Spatie\Activitylog\Support\LogOptions;
 /**
  * @property int $id
  * @property int $user_id
+ * @property string $household_id
  * @property string $name
  * @property AssetType $type
  * @property float $quantity
@@ -30,10 +31,11 @@ use Spatie\Activitylog\Support\LogOptions;
  */
 class Asset extends Model
 {
-    use AccountingJournalist, HasUserScope, LogsActivity;
+    use AccountingJournalist, HasHouseholdScope, LogsActivity;
 
     protected $fillable = [
         'user_id',
+        'household_id',
         'name',
         'type',
         'quantity',

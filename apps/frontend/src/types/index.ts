@@ -131,4 +131,8 @@ export interface FinancialSummary {
   income: number;
   expense: number;
   balance: number;
+  cumulative_balance: number;
+  calendar_income: number;
+  calendar_expense: number;
+  transactions?: Transaction[];
 }

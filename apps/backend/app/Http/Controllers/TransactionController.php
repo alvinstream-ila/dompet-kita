@@ -46,7 +46,6 @@ class TransactionController extends Controller
             }
 
             $query = Transaction::query()
-                ->where('user_id', $user->id)
                 ->filterByPeriod(
                     $request->filled('month') ? (int) $request->integer('month') : null,
                     $request->filled('year') ? (int) $request->integer('year') : null,
@@ -195,7 +194,7 @@ class TransactionController extends Controller
         /** @var array{start: Carbon, end: Carbon} $period */
         $period = $this->budgetService->getBudgetCycleDates($month, $year, $budgetCycleStart);
 
-        $transactions = Transaction::where('user_id', $user->id)
+        $transactions = Transaction::query()
             ->whereBetween('date', [$period['start'], $period['end']])
             ->orderBy('date', 'desc')
             ->get();

@@ -5,10 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+use App\Traits\HasHouseholdScope;
+
 class ChatHistory extends Model
 {
+    use HasHouseholdScope;
+
     protected $fillable = [
         'user_id',
+        'household_id',
         'role',
         'content',
         'metadata',

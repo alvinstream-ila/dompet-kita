@@ -2,6 +2,15 @@
 
 ---
 
+## [7.5.4] — 2026-04-22 (Transaction Hook Refactoring)
+
+### 🛠️ CODE QUALITY & REFACTORING
+- **`useTransactions.ts` Hardening**: Refactored the core transaction hook to resolve linting errors and warnings.
+    - **Type Safety**: Explicitly typed `queryClient` to eliminate "untyped function" errors.
+    - **Cognitive Complexity**: Extracted nested logic into `updateInfiniteTransactions` and `removeInfiniteTransaction` helper functions.
+    - **Logic Cleanup**: Replaced negated conditions with positive checks for improved readability and reduced branching complexity.
+- **Backend Cleanup**: Removed unused parameters (`$user`, `$date`) from AI and Transaction actions to streamline the "Sovereign Multi-Tenant" architecture.
+
 ## [7.5.3] — 2026-04-22 (Next.js SWC Resiliency)
 
 ### 🚀 CI/CD & DEPLOYMENT

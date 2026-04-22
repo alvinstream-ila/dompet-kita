@@ -5,10 +5,13 @@ namespace App\Observers;
 use App\Enums\LoanStatus;
 use App\Enums\LoanType;
 use App\Enums\TransactionType;
+use App\Traits\ClearsFinancialCache;
 use App\Models\Loan;
 
 class LoanObserver
 {
+    use ClearsFinancialCache;
+
     /**
      * Handle the Loan "created" event.
      */
@@ -26,6 +29,8 @@ class LoanObserver
             'Pinjaman',
             "Pencatatan {$label} baru dari/ke: {$loan->contact_name}"
         );
+
+        $this->invalidateFinancialCache($loan->user_id);
     }
 
     /**
@@ -48,5 +53,15 @@ class LoanObserver
                 "{$label} dari/ke: {$loan->contact_name}"
             );
         }
+
+        $this->invalidateFinancialCache($loan->user_id);
+    }
+
+    /**
+     * Handle the Loan "deleted" event.
+     */
+    public function deleted(Loan $loan): void
+    {
+        $this->invalidateFinancialCache($loan->user_id);
     }
 }

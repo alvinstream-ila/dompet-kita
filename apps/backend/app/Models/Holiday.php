@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\HasUserScope;
+use App\Traits\HasHouseholdScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property int $id
  * @property int $user_id
+ * @property string|null $household_id
  * @property string $destination
  * @property float $budget
  * @property float $funded_amount
@@ -25,13 +26,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Holiday extends Model
 {
-    use HasUserScope;
+    use HasHouseholdScope;
 
     /**
      * @var list<string>
      */
     protected $fillable = [
         'user_id',
+        'household_id',
         'destination',
         'budget',
         'funded_amount',
@@ -42,16 +44,6 @@ class Holiday extends Model
         'itinerary',
         'image_url',
     ];
-
-    /**
-     * Get the user that owns the holiday.
-     *
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 
     /**
      * Get the transactions for the holiday.

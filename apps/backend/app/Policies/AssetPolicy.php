@@ -20,7 +20,9 @@ class AssetPolicy
      */
     public function view(User $user, Asset $asset): bool
     {
-        return $user->id === $asset->user_id;
+        return $asset->household_id && $user->household_id
+            ? $user->household_id === $asset->household_id
+            : $user->id === $asset->user_id;
     }
 
     /**
@@ -36,7 +38,9 @@ class AssetPolicy
      */
     public function update(User $user, Asset $asset): bool
     {
-        return $user->id === $asset->user_id;
+        return $asset->household_id && $user->household_id
+            ? $user->household_id === $asset->household_id
+            : $user->id === $asset->user_id;
     }
 
     /**
@@ -44,6 +48,8 @@ class AssetPolicy
      */
     public function delete(User $user, Asset $asset): bool
     {
-        return $user->id === $asset->user_id;
+        return $asset->household_id && $user->household_id
+            ? $user->household_id === $asset->household_id
+            : $user->id === $asset->user_id;
     }
 }

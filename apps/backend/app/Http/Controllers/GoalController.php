@@ -26,8 +26,7 @@ class GoalController extends Controller
             abort(401);
         }
 
-        $goals = Goal::where('user_id', $user->id)
-            ->orderBy('deadline', 'asc')
+        $goals = Goal::orderBy('deadline', 'asc')
             ->get();
 
         return GoalResource::collection($goals);
@@ -53,7 +52,6 @@ class GoalController extends Controller
             abort(401);
         }
 
-        $validated['user_id'] = $user->id;
 
         $goal = Goal::create($validated);
 

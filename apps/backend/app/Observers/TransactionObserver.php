@@ -5,16 +5,19 @@ namespace App\Observers;
 use App\Enums\TransactionType;
 use App\Models\Transaction;
 use App\Notifications\LargeExpenseNotification;
+use App\Traits\ClearsFinancialCache;
 use Illuminate\Support\Facades\Cache;
 
 class TransactionObserver
 {
+    use ClearsFinancialCache;
+
     /**
      * Handle the Transaction "created" event.
      */
     public function created(Transaction $transaction): void
     {
-        $this->invalidateUserCache($transaction);
+        $this->invalidateFinancialCache($transaction->user_id);
 
         $user = $transaction->user;
         if (! $user) {
@@ -36,7 +39,7 @@ class TransactionObserver
      */
     public function updated(Transaction $transaction): void
     {
-        $this->invalidateUserCache($transaction);
+        $this->invalidateFinancialCache($transaction->user_id);
     }
 
     /**
@@ -44,18 +47,6 @@ class TransactionObserver
      */
     public function deleted(Transaction $transaction): void
     {
-        $this->invalidateUserCache($transaction);
-    }
-
-    /**
-     * Invalidate the user dashboard summary cache by incrementing the version.
-     */
-    private function invalidateUserCache(Transaction $transaction): void
-    {
-        $userId = $transaction->user_id;
-        $versionKey = "transaction_summary_version_{$userId}";
-
-        // Increment the version to effectively "bust" all cached summaries for this user
-        Cache::increment($versionKey);
+        $this->invalidateFinancialCache($transaction->user_id);
     }
 }

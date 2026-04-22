@@ -20,7 +20,9 @@ class GoalPolicy
      */
     public function view(User $user, Goal $goal): bool
     {
-        return $user->id === $goal->user_id;
+        return $goal->household_id && $user->household_id
+            ? $user->household_id === $goal->household_id
+            : $user->id === $goal->user_id;
     }
 
     /**
@@ -36,7 +38,9 @@ class GoalPolicy
      */
     public function update(User $user, Goal $goal): bool
     {
-        return $user->id === $goal->user_id;
+        return $goal->household_id && $user->household_id
+            ? $user->household_id === $goal->household_id
+            : $user->id === $goal->user_id;
     }
 
     /**
@@ -44,6 +48,8 @@ class GoalPolicy
      */
     public function delete(User $user, Goal $goal): bool
     {
-        return $user->id === $goal->user_id;
+        return $goal->household_id && $user->household_id
+            ? $user->household_id === $goal->household_id
+            : $user->id === $goal->user_id;
     }
 }

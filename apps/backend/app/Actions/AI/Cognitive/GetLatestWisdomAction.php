@@ -3,17 +3,15 @@
 namespace App\Actions\AI\Cognitive;
 
 use App\Models\FinancialWisdom;
-use App\Models\User;
 
 class GetLatestWisdomAction
 {
     /**
-     * Get the latest wisdom for a user.
+     * Get the latest wisdom for the current household.
      */
-    public function execute(User $user): ?FinancialWisdom
+    public function execute(): ?FinancialWisdom
     {
-        return FinancialWisdom::where('user_id', $user->id)
-            ->latest()
+        return FinancialWisdom::latest()
             ->first();
     }
 }

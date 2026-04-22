@@ -65,6 +65,7 @@ export function useRealtimeSync() {
         () => {
           queryClient.invalidateQueries({ queryKey: ['asset_transactions'] });
           queryClient.invalidateQueries({ queryKey: ['assets'] });
+          queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
         }
       )
       // Loans
@@ -101,6 +102,29 @@ export function useRealtimeSync() {
         () => {
           queryClient.invalidateQueries({ queryKey: ['goals'] });
           queryClient.invalidateQueries({ queryKey: ['goal_transactions'] });
+          queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
+        }
+      )
+      // Holidays
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'holidays',
+          filter: householdId ? `household_id=eq.${householdId}` : undefined,
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['holidays'] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'holiday_transactions' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['holidays'] });
+          queryClient.invalidateQueries({ queryKey: ['holiday_transactions'] });
+          queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
         }
       )
       // Household changes (Members, Settings)
@@ -115,6 +139,31 @@ export function useRealtimeSync() {
         () => {
           queryClient.invalidateQueries({ queryKey: ['user'] });
           queryClient.invalidateQueries({ queryKey: ['household'] });
+        }
+      )
+      // 🤖 AI Cognitive Sync (Chat & Wisdom)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'chat_histories',
+          filter: householdId ? `household_id=eq.${householdId}` : undefined,
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['chat_history'] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'financial_wisdoms',
+          filter: householdId ? `household_id=eq.${householdId}` : undefined,
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['financial_wisdoms'] });
         }
       )
       .subscribe((status) => {

@@ -3,10 +3,13 @@
 namespace App\Observers;
 
 use App\Enums\TransactionType;
+use App\Traits\ClearsFinancialCache;
 use App\Models\HolidayTransaction;
 
 class HolidayTransactionObserver
 {
+    use ClearsFinancialCache;
+
     /**
      * Handle the HolidayTransaction "created" event.
      */
@@ -26,5 +29,23 @@ class HolidayTransactionObserver
         // Note: 'expense' or 'spending' types inside this module are NOT recorded
         // in the main dashboard ledger because the money was already deducted
         // during the funding phase (pre-paid logic).
+
+        $this->invalidateFinancialCache($transaction->user_id);
+    }
+
+    /**
+     * Handle the HolidayTransaction "updated" event.
+     */
+    public function updated(HolidayTransaction $transaction): void
+    {
+        $this->invalidateFinancialCache($transaction->user_id);
+    }
+
+    /**
+     * Handle the HolidayTransaction "deleted" event.
+     */
+    public function deleted(HolidayTransaction $transaction): void
+    {
+        $this->invalidateFinancialCache($transaction->user_id);
     }
 }

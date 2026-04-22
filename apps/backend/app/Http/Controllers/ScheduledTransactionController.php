@@ -25,8 +25,7 @@ class ScheduledTransactionController extends Controller
             abort(401);
         }
 
-        $scheduled = ScheduledTransaction::where('user_id', $user->id)
-            ->latest()
+        $scheduled = ScheduledTransaction::latest()
             ->get();
 
         return ScheduledTransactionResource::collection($scheduled);
@@ -52,7 +51,6 @@ class ScheduledTransactionController extends Controller
             abort(401);
         }
 
-        $validated['user_id'] = $user->id;
         $validated['status'] = 'active';
 
         $scheduled = ScheduledTransaction::create($validated);

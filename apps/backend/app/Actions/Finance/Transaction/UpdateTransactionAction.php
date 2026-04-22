@@ -18,15 +18,12 @@ class UpdateTransactionAction extends BaseAction
     public function execute(User $user, Transaction $transaction, array $data): Transaction
     {
         return DB::transaction(function () use ($user, $transaction, $data) {
-            $oldDateVal = $transaction->getOriginal('date') ?? $transaction->date;
-            $oldDate = Carbon::parse((string) $oldDateVal);
-            $this->clearTransactionCache($user, $oldDate);
+            $this->clearTransactionCache($user);
 
             $transaction->update($data);
             $transaction->refresh();
 
-            $newDate = Carbon::parse((string) $transaction->date);
-            $this->clearTransactionCache($user, $newDate);
+            $this->clearTransactionCache($user);
 
             return $transaction;
         });

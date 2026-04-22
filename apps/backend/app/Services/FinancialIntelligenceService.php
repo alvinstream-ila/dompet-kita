@@ -24,27 +24,22 @@ class FinancialIntelligenceService
      * @param  bool  $includePartner  Whether to include the partner's assets in the calculation
      * @return array{status: string, days_remaining: float, current_cash: float, burn_rate: float, message: string}
      */
-    public function predictLiquidityCrisis(User $user, bool $includePartner = false): array
+    public function predictLiquidityCrisis(User $user, bool $includePartner = true): array
     {
-        // 1. Determine User IDs for calculation
-        $userIds = [$user->id];
-        $partner = $user->partner;
-        if ($includePartner && $partner instanceof User) {
-            $userIds[] = $partner->id;
-        }
+        // Logic: Since we use HasHouseholdScope, all queries are automatically 
+        // scoped to the household if the user is in one.
+        // The $includePartner flag is now mostly for backward compatibility or explicit override.
 
         // 2. Determine Budget Cycle (Current Month)
         $startOfMonth = Carbon::now()->startOfMonth();
         $endOfMonth = Carbon::now()->endOfMonth();
 
         // 3. Calculate Total Income & Expense for this month
-        $monthlyIncome = Transaction::whereIn('user_id', $userIds)
-            ->where('type', TransactionType::INCOME)
+        $monthlyIncome = Transaction::where('type', TransactionType::INCOME)
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->sum('amount');
 
-        $monthlyExpense = Transaction::whereIn('user_id', $userIds)
-            ->where('type', TransactionType::EXPENSE)
+        $monthlyExpense = Transaction::where('type', TransactionType::EXPENSE)
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->sum('amount');
 
@@ -55,8 +50,7 @@ class FinancialIntelligenceService
         $thirtyDaysAgo = Carbon::now()->subDays(self::CALCULATION_DAYS);
 
         // Calculate days since first transaction in the 30-day window to avoid 30-day dilution for new users
-        $firstTxDate = Transaction::whereIn('user_id', $userIds)
-            ->where('type', TransactionType::EXPENSE)
+        $firstTxDate = Transaction::where('type', TransactionType::EXPENSE)
             ->where('date', '>=', $thirtyDaysAgo)
             ->min('date');
 
@@ -64,8 +58,7 @@ class FinancialIntelligenceService
             ? max(1, min(self::CALCULATION_DAYS, (int) Carbon::parse($firstTxDate)->diffInDays(Carbon::now()) + 1))
             : self::CALCULATION_DAYS;
 
-        $totalHistoryExpense = Transaction::whereIn('user_id', $userIds)
-            ->where('type', TransactionType::EXPENSE)
+        $totalHistoryExpense = Transaction::where('type', TransactionType::EXPENSE)
             ->where('date', '>=', $thirtyDaysAgo)
             ->sum('amount');
 

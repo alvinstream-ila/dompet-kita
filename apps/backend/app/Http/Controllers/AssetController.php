@@ -38,8 +38,7 @@ class AssetController extends Controller
             abort(401);
         }
 
-        $assets = Asset::where('user_id', $user->id)
-            ->orderBy('type')
+        $assets = Asset::orderBy('type')
             ->get();
 
         return AssetResource::collection($assets);

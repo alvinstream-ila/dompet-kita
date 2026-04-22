@@ -31,8 +31,7 @@ class LoanController extends Controller
             abort(401);
         }
 
-        $loans = Loan::where('user_id', $user->id)
-            ->orderBy('created_at', 'desc')
+        $loans = Loan::orderBy('created_at', 'desc')
             ->get();
 
         return LoanResource::collection($loans);
@@ -58,7 +57,6 @@ class LoanController extends Controller
             abort(401);
         }
 
-        $validated['user_id'] = $user->id;
 
         $loan = Loan::create($validated);
 
@@ -152,8 +150,7 @@ class LoanController extends Controller
         $endDate = $startDate->copy()->endOfMonth();
 
         // 1. Fetch loans active during or before this month
-        $loans = Loan::where('user_id', $user->id)
-            ->where('created_at', '<=', $endDate)
+        $loans = Loan::where('created_at', '<=', $endDate)
             ->where(function ($query) use ($startDate) {
                 $query->where('status', 'active')
                     ->orWhere('updated_at', '>=', $startDate);
@@ -161,8 +158,7 @@ class LoanController extends Controller
             ->get();
 
         // 2. Fetch all transactions linked to loans in this month
-        $transactions = Transaction::where('user_id', $user->id)
-            ->whereBetween('date', [$startDate, $endDate])
+        $transactions = Transaction::whereBetween('date', [$startDate, $endDate])
             ->whereNotNull('metadata')
             ->get()
             ->filter(function (Transaction $t) {
@@ -227,7 +223,7 @@ class LoanController extends Controller
 
             // Calculate payments recorded on or before this date
             // Note: We use metadata->loan_id since it's indexed and reliable
-            $repayments = Transaction::where('user_id', $loan->user_id)
+            $repayments = Transaction::query()
                 ->where('metadata->source_type', Loan::class)
                 ->where('metadata->loan_id', $loan->id)
                 ->where('date', '<=', $date->toDateString())

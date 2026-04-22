@@ -20,7 +20,9 @@ class LoanPolicy
      */
     public function view(User $user, Loan $loan): bool
     {
-        return $user->id === $loan->user_id;
+        return $loan->household_id && $user->household_id
+            ? $user->household_id === $loan->household_id
+            : $user->id === $loan->user_id;
     }
 
     /**
@@ -36,7 +38,9 @@ class LoanPolicy
      */
     public function update(User $user, Loan $loan): bool
     {
-        return $user->id === $loan->user_id;
+        return $loan->household_id && $user->household_id
+            ? $user->household_id === $loan->household_id
+            : $user->id === $loan->user_id;
     }
 
     /**
@@ -44,6 +48,8 @@ class LoanPolicy
      */
     public function delete(User $user, Loan $loan): bool
     {
-        return $user->id === $loan->user_id;
+        return $loan->household_id && $user->household_id
+            ? $user->household_id === $loan->household_id
+            : $user->id === $loan->user_id;
     }
 }

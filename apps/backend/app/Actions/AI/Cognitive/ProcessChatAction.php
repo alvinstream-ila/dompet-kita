@@ -28,8 +28,8 @@ class ProcessChatAction
     public function execute(User $user, string $userMessage): string
     {
         // 1. Get Conversation History (Last 10 turns for context)
-        $history = ChatHistory::where('user_id', $user->id)
-            ->orderBy('created_at', 'desc')
+        // Scoped to household automatically via HasHouseholdScope
+        $history = ChatHistory::orderBy('created_at', 'desc')
             ->limit(10)
             ->get()
             ->reverse();
@@ -68,8 +68,8 @@ class ProcessChatAction
 
     private function getFinancialSummaryContext(User $user): string
     {
-        $transactions = Transaction::where('user_id', $user->id)
-            ->where('date', '>=', now()->subDays(30))
+        // Scoped to household automatically via HasHouseholdScope
+        $transactions = Transaction::where('date', '>=', now()->subDays(30))
             ->orderBy('date', 'desc')
             ->get();
 
@@ -77,7 +77,8 @@ class ProcessChatAction
         $totalExpense = (float) $transactions->filter(fn ($t) => $t->type === TransactionType::EXPENSE)->sum('amount');
         $savings = $totalIncome - $totalExpense;
 
-        $goals = Goal::where('user_id', $user->id)->get();
+        // Scoped to household automatically via HasHouseholdScope
+        $goals = Goal::get();
 
         $ctx = 'Pemasukan: Rp '.number_format($totalIncome)."\n";
         $ctx .= 'Pengeluaran: Rp '.number_format($totalExpense)."\n";

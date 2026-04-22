@@ -40,9 +40,7 @@ class InsightController extends Controller
             abort(401);
         }
 
-        // HasUserScope handles the owner filtering
-        return TransactionInsight::where('user_id', $user->id)
-            ->where('status', '!=', 'archived')
+        return TransactionInsight::where('status', '!=', 'archived')
             ->latest()
             ->get();
     }
@@ -52,10 +50,7 @@ class InsightController extends Controller
      */
     public function update(Request $request, TransactionInsight $insight)
     {
-        $user = $request->user();
-        if (! $user instanceof User || $insight->user_id !== $user->id) {
-            abort(403);
-        }
+        $this->authorize('update', $insight);
 
         $validated = $request->validate([
             'status' => 'required|in:new,read,archived',
@@ -71,10 +66,7 @@ class InsightController extends Controller
      */
     public function destroy(Request $request, TransactionInsight $insight)
     {
-        $user = $request->user();
-        if (! $user instanceof User || $insight->user_id !== $user->id) {
-            abort(403);
-        }
+        $this->authorize('delete', $insight);
 
         $insight->delete();
 

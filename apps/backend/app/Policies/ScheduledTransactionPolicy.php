@@ -20,7 +20,9 @@ class ScheduledTransactionPolicy
      */
     public function view(User $user, ScheduledTransaction $scheduledTransaction): bool
     {
-        return $user->id === $scheduledTransaction->user_id;
+        return $scheduledTransaction->household_id && $user->household_id
+            ? $user->household_id === $scheduledTransaction->household_id
+            : $user->id === $scheduledTransaction->user_id;
     }
 
     /**
@@ -36,7 +38,9 @@ class ScheduledTransactionPolicy
      */
     public function update(User $user, ScheduledTransaction $scheduledTransaction): bool
     {
-        return $user->id === $scheduledTransaction->user_id;
+        return $scheduledTransaction->household_id && $user->household_id
+            ? $user->household_id === $scheduledTransaction->household_id
+            : $user->id === $scheduledTransaction->user_id;
     }
 
     /**
@@ -44,6 +48,8 @@ class ScheduledTransactionPolicy
      */
     public function delete(User $user, ScheduledTransaction $scheduledTransaction): bool
     {
-        return $user->id === $scheduledTransaction->user_id;
+        return $scheduledTransaction->household_id && $user->household_id
+            ? $user->household_id === $scheduledTransaction->household_id
+            : $user->id === $scheduledTransaction->user_id;
     }
 }

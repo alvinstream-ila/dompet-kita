@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Enums\RecurrenceFrequency;
 use App\Enums\ScheduleStatus;
 use App\Enums\TransactionType;
-use App\Traits\HasUserScope;
+use App\Traits\HasHouseholdScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property string $id
  * @property int $user_id
+ * @property string|null $household_id
  * @property string $description
  * @property float $amount
  * @property TransactionType $type
@@ -33,13 +34,14 @@ use Illuminate\Support\Carbon;
  */
 class ScheduledTransaction extends Model
 {
-    use HasUserScope, HasUuids;
+    use HasHouseholdScope, HasUuids;
 
     /**
      * @var list<string>
      */
     protected $fillable = [
         'user_id',
+        'household_id',
         'description',
         'amount',
         'type',
@@ -50,14 +52,6 @@ class ScheduledTransaction extends Model
         'is_auto_execute',
         'last_executed_at',
     ];
-
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 
     /**
      * @param  Builder<ScheduledTransaction>  $query

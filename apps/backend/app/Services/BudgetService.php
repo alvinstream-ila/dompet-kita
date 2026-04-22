@@ -64,12 +64,11 @@ class BudgetService
     public function getBudgetUsage(User $user): array
     {
         $cycle = $this->getCurrentCycleDates();
-        $budgets = Budget::where('user_id', $user->id)->get();
+        $budgets = Budget::get();
 
         /** @var array<int, array{id: string, category: string, limit: float, used: float, remaining: float, percentage: float, status: string}> $usage */
         $usage = $budgets->map(function (Budget $budget) use ($cycle) {
-            $used = (float) Transaction::where('user_id', $budget->user_id)
-                ->where('category', $budget->category)
+            $used = (float) Transaction::where('category', $budget->category)
                 ->whereBetween('date', [$cycle['start'], $cycle['end']])
                 ->where('type', 'expense')
                 ->sum('amount');

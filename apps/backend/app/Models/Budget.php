@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasHouseholdScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Budget extends Model
 {
-    // No factory locally available
+    use HasHouseholdScope;
 
     /**
      * The attributes that are mass assignable.
@@ -16,6 +17,7 @@ class Budget extends Model
      */
     protected $fillable = [
         'user_id',
+        'household_id',
         'category',
         'limit',
     ];

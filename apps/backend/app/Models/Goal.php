@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Traits\AccountingJournalist;
-use App\Traits\HasUserScope;
+use App\Traits\HasHouseholdScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $user_id
+ * @property string|null $household_id
  * @property string $name
  * @property float $target_amount
  * @property float $current_amount
@@ -21,13 +22,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Goal extends Model
 {
-    use AccountingJournalist, HasUserScope;
+    use AccountingJournalist, HasHouseholdScope;
 
     /**
      * @var list<string>
      */
     protected $fillable = [
         'user_id',
+        'household_id',
         'name',
         'target_amount',
         'current_amount',
@@ -36,16 +38,6 @@ class Goal extends Model
         'status',
         'icon',
     ];
-
-    /**
-     * Get the user that owns the goal.
-     *
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 
     /**
      * Get the transactions for this goal.

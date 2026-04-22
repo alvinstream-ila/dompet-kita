@@ -3,10 +3,13 @@
 namespace App\Observers;
 
 use App\Enums\TransactionType;
+use App\Traits\ClearsFinancialCache;
 use App\Models\Asset;
 
 class AssetObserver
 {
+    use ClearsFinancialCache;
+
     /**
      * Handle the Asset "created" event.
      */
@@ -28,5 +31,23 @@ class AssetObserver
         } catch (\Exception $e) {
             \Log::error("Failed to record journal for asset [{$asset->id}]: ".$e->getMessage());
         }
+
+        $this->invalidateFinancialCache($asset->user_id);
+    }
+
+    /**
+     * Handle the Asset "updated" event.
+     */
+    public function updated(Asset $asset): void
+    {
+        $this->invalidateFinancialCache($asset->user_id);
+    }
+
+    /**
+     * Handle the Asset "deleted" event.
+     */
+    public function deleted(Asset $asset): void
+    {
+        $this->invalidateFinancialCache($asset->user_id);
     }
 }

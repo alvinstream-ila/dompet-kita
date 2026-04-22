@@ -22,7 +22,7 @@ class StoreTransactionAction extends BaseAction
         return DB::transaction(function () use ($user, $data) {
             $transaction = Transaction::create($data);
 
-            $this->clearTransactionCache($user, Carbon::parse($transaction->date));
+            $this->clearTransactionCache($user);
 
             return $transaction;
         });

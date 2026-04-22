@@ -47,7 +47,7 @@ class GetTransactionSummaryAction extends BaseAction
             $startDate = $dates['start'];
             $endDate = $dates['end'];
 
-            $summary = Transaction::where('user_id', $userId)
+            $summary = Transaction::query()
                 ->whereBetween('date', [$startDate, $endDate])
                 ->select('type', $selectSum)
                 ->groupBy('type')
@@ -58,7 +58,7 @@ class GetTransactionSummaryAction extends BaseAction
 
             // 2. Calendar Month Dates (Strict 1st to end-of-month for general monitoring)
             $calendarDates = $this->budgetService->getBudgetCycleDates($month, $year, 1);
-            $calendarSummary = Transaction::where('user_id', $userId)
+            $calendarSummary = Transaction::query()
                 ->whereBetween('date', [$calendarDates['start'], $calendarDates['end']])
                 ->select('type', $selectSum)
                 ->groupBy('type')
@@ -68,7 +68,7 @@ class GetTransactionSummaryAction extends BaseAction
             $calExpense = $extractAmount($calendarSummary, TransactionType::EXPENSE);
 
             // 3. Cumulative Balance (All-time Net Worth calculation)
-            $cumulativeSummary = Transaction::where('user_id', $userId)
+            $cumulativeSummary = Transaction::query()
                 ->select('type', $selectSum)
                 ->groupBy('type')
                 ->get();
@@ -76,7 +76,7 @@ class GetTransactionSummaryAction extends BaseAction
             $totalIncome = $extractAmount($cumulativeSummary, TransactionType::INCOME);
             $totalExpense = $extractAmount($cumulativeSummary, TransactionType::EXPENSE);
 
-            $recentTransactions = Transaction::where('user_id', $userId)
+            $recentTransactions = Transaction::query()
                 ->whereBetween('date', [$startDate, $endDate])
                 ->orderBy('date', 'desc')
                 ->limit(5)
