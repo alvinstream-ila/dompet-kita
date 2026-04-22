@@ -65,7 +65,6 @@ class BudgetService
         $cycle = $this->getCurrentCycleDates();
         $budgets = Budget::get();
 
-        /** @var array<int, array{id: string, category: string, limit: float, used: float, remaining: float, percentage: float, status: string}> $usage */
         return $budgets->map(function (Budget $budget) use ($cycle) {
             $used = (float) Transaction::where('category', $budget->category)
                 ->whereBetween('date', [$cycle['start'], $cycle['end']])
