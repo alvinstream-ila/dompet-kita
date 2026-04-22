@@ -199,14 +199,23 @@ export function useDeleteTransaction() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: string) => {
-      const result = await deleteTransactionAction(id);
+    mutationFn: async (transaction: Transaction) => {
+      const result = await deleteTransactionAction(transaction.id);
       if (!result.success) throw new Error(result.error);
+      return transaction;
     },
-    onMutate: async (id) => {
+    onMutate: async (deletedTx) => {
+      // 1. Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['transactions'] });
-      const previousTransactions = queryClient.getQueryData(['transactions']);
+      await queryClient.cancelQueries({ queryKey: ['financial_summary'] });
 
+      // 2. Snapshot previous state
+      const previousTransactions = queryClient.getQueryData(['transactions']);
+      const previousSummaries = queryClient.getQueriesData({
+        queryKey: ['financial_summary'],
+      });
+
+      // 3. Optimistically remove from transaction list
       queryClient.setQueriesData<InfiniteData<Transaction[]>>(
         { queryKey: ['transactions'] },
         (old) => {
@@ -214,26 +223,54 @@ export function useDeleteTransaction() {
           return {
             ...old,
             pages: old.pages.map((page: Transaction[]) =>
-              page.filter((tx) => tx.id !== id)
+              page.filter((tx) => tx.id !== deletedTx.id)
             ),
           };
         }
       );
 
-      return { previousTransactions };
+      // 4. Optimistically update financial summaries (Reverse the transaction effect)
+      previousSummaries.forEach(([key]) => {
+        queryClient.setQueryData<FinancialSummary>(key, (old) => {
+          if (!old) return old;
+          const amount = Number(deletedTx.amount);
+          const isIncome = deletedTx.type === 'income';
+
+          return {
+            ...old,
+            income: isIncome ? (Number(old.income) || 0) - amount : old.income,
+            expense: !isIncome
+              ? (Number(old.expense) || 0) - amount
+              : old.expense,
+            balance: isIncome
+              ? (Number(old.balance) || 0) - amount
+              : (Number(old.balance) || 0) + amount,
+          };
+        });
+      });
+
+      return { previousTransactions, previousSummaries };
     },
-    onError: (_err, _id, context) => {
+    onError: (_err, _variables, context) => {
       if (context?.previousTransactions) {
         queryClient.setQueriesData(
           { queryKey: ['transactions'] },
           context.previousTransactions
         );
       }
+      if (context?.previousSummaries) {
+        context.previousSummaries.forEach(([key, data]) => {
+          queryClient.setQueryData(key, data);
+        });
+      }
       toast.error('Gagal Menghapus 🥺');
     },
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['financial_summary'] });
+      queryClient.invalidateQueries({ queryKey: ['assets'] });
+    },
+    onSuccess: () => {
       toast.info('Transaksi Dihapus 🗑️');
     },
   });

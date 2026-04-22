@@ -38,7 +38,7 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
   const handleDelete = async () => {
     if (!transaction) return;
     try {
-      await deleteMutation.mutateAsync(transaction.id);
+      await deleteMutation.mutateAsync(transaction);
       onSuccess();
       onClose();
     } catch (error) {

@@ -11,10 +11,9 @@ import { PageLoader } from '@/components/ui/PageLoader';
 import { CategoryManagementModal } from '@/features/settings';
 import { useFormatting } from '@/lib/hooks/useFormatting';
 import type { Transaction } from '@/types';
-import { deleteTransactionAction } from './actions/transactions';
 
 import { EditTransactionModal } from './EditTransactionModal';
-import { useTransactions } from './hooks/useTransactions';
+import { useDeleteTransaction, useTransactions } from './hooks/useTransactions';
 import { TransactionFilters } from './TransactionFilters';
 import { TransactionItem } from './TransactionItem';
 
@@ -26,13 +25,14 @@ export function TransactionsView() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-  const [transactionToDelete, setTransactionToDelete] = useState<string | null>(
-    null
-  );
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [transactionToDelete, setTransactionToDelete] =
+    useState<Transaction | null>(null);
 
   const { data, isLoading, isFetching, refetch, hasNextPage, fetchNextPage } =
     useTransactions();
+
+  const { mutateAsync: deleteTransaction, isPending: isDeleting } =
+    useDeleteTransaction();
 
   const transactions = data?.pages.flat() || [];
   const { formatAmount } = useFormatting();
@@ -52,27 +52,22 @@ export function TransactionsView() {
     ...Array.from(new Set(transactions.map((t: Transaction) => t.category))),
   ];
 
-  const handleDelete = (id: string) => {
-    setTransactionToDelete(id);
+  const handleDelete = (transaction: Transaction) => {
+    setTransactionToDelete(transaction);
     setIsDeleteConfirmOpen(true);
   };
 
   const confirmDelete = async () => {
     if (!transactionToDelete) return;
 
-    setIsDeleting(true);
-    const result = await deleteTransactionAction(transactionToDelete);
-    setIsDeleting(false);
-
-    if (result.success) {
-      toast.info('Transaksi Dihapus 🗑️');
-      refetch();
-    } else {
-      toast.error(result.error);
+    try {
+      await deleteTransaction(transactionToDelete);
+    } catch (error) {
+      // Error handled by hook toast
+    } finally {
+      setTransactionToDelete(null);
+      setIsDeleteConfirmOpen(false);
     }
-
-    setTransactionToDelete(null);
-    setIsDeleteConfirmOpen(false);
   };
 
   if (isLoading && transactions.length === 0) {
@@ -163,7 +158,7 @@ export function TransactionsView() {
               setSelectedTransaction(trans);
               setIsEditModalOpen(true);
             }}
-            onDelete={handleDelete}
+            onDelete={() => handleDelete(t)}
           />
         ))}
 
