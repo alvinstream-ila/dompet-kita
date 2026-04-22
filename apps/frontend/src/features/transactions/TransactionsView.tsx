@@ -3,7 +3,6 @@
 import { ReceiptText } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
-import { toast } from 'sonner';
 import { UserNavDropdown } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
@@ -62,7 +61,7 @@ export function TransactionsView() {
 
     try {
       await deleteTransaction(transactionToDelete);
-    } catch (error) {
+    } catch {
       // Error handled by hook toast
     } finally {
       setTransactionToDelete(null);
