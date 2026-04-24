@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -18,10 +18,10 @@ return new class extends Migration
         Schema::table('wealth_histories', function (Blueprint $table) {
             // Drop old unique constraint
             $table->dropUnique(['user_id', 'month', 'year']);
-            
+
             // Add new unique constraint for household
             $table->unique(['household_id', 'month', 'year']);
-            
+
             // Make household_id non-nullable
             $table->uuid('household_id')->nullable(false)->change();
         });

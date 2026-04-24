@@ -20,11 +20,12 @@ class ClearChatHistoryAction extends BaseAction
             // Scoped to household automatically via HasHouseholdScope
             $deletedCount = ChatHistory::where('user_id', $user->id)->delete();
 
-            Log::info("Chat history cleared for user {$user->id}. Deleted " . (string) $deletedCount . " records.");
+            Log::info("Chat history cleared for user {$user->id}. Deleted ".(string) $deletedCount.' records.');
 
             return true;
         } catch (\Exception $e) {
-            Log::error("Failed to clear chat history: " . $e->getMessage());
+            Log::error('Failed to clear chat history: '.$e->getMessage());
+
             return false;
         }
     }

@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Enums\AssetType;
 use App\Enums\TransactionType;
+use App\Models\Asset;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Carbon;
@@ -19,7 +21,6 @@ class FinancialIntelligenceService
 
     private const HIGH_INCOME_THRESHOLD = 10000000;
 
-
     /**
      * Prediction of when liquidity (Cash) will run out based on average spending.
      * Includes option to toggle partner's cash into the calculation.
@@ -31,7 +32,7 @@ class FinancialIntelligenceService
     {
         // 1. Calculate Total Liquid Cash from Assets (Cash & Bank)
         // Scoped to household automatically via HasHouseholdScope
-        $liquidAssets = \App\Models\Asset::whereIn('type', [\App\Enums\AssetType::CASH, \App\Enums\AssetType::BANK])
+        $liquidAssets = Asset::whereIn('type', [AssetType::CASH, AssetType::BANK])
             ->sum('value');
 
         // 2. Determine Budget Cycle (Current Month)
@@ -82,16 +83,16 @@ class FinancialIntelligenceService
 
         // High Income Adjustment (Strategic CFO Perspective)
         $isHighIncome = $monthlyIncome >= 10000000;
-        
+
         $status = 'safe';
         $message = 'Parameter likuiditas terpantau stabil. Strategi alokasi modal saat ini dapat dipertahankan.';
 
         if ($daysRemaining <= self::CRITICAL_THRESHOLD_DAYS) {
             $status = 'CRITICAL';
-            $message = 'RISIKO LIKUIDITAS KRITIS: Dana operasional diprediksi habis dalam ' . round($daysRemaining, 1) . ' hari. Diperlukan penundaan pengeluaran non-esensial segera.';
+            $message = 'RISIKO LIKUIDITAS KRITIS: Dana operasional diprediksi habis dalam '.round($daysRemaining, 1).' hari. Diperlukan penundaan pengeluaran non-esensial segera.';
         } elseif ($daysRemaining <= self::WARNING_THRESHOLD_DAYS) {
             $status = 'WARNING';
-            $message = 'PERINGATAN DEFISIT: Ketahanan kas di bawah ' . self::WARNING_THRESHOLD_DAYS . ' hari. Evaluasi ulang pengeluaran variabel untuk menjaga solvabilitas.';
+            $message = 'PERINGATAN DEFISIT: Ketahanan kas di bawah '.self::WARNING_THRESHOLD_DAYS.' hari. Evaluasi ulang pengeluaran variabel untuk menjaga solvabilitas.';
         } elseif ($daysRemaining < self::SAFETY_THRESHOLD_DAYS) {
             $status = 'CAUTION';
             $message = 'ATENSI MANAJEMEN KAS: Cadangan likuiditas mulai menipis. Pertimbangkan efisiensi biaya operasional harian.';
@@ -131,7 +132,7 @@ class FinancialIntelligenceService
             $advice[] = [
                 'action' => 'INVEST',
                 'amount' => (float) $surplus,
-                'reason' => 'Terdeteksi surplus likuiditas sebesar Rp ' . number_format($surplus) . '. Rekomendasi alokasi ke instrumen pasar uang atau aset produktif untuk optimalisasi return.',
+                'reason' => 'Terdeteksi surplus likuiditas sebesar Rp '.number_format($surplus).'. Rekomendasi alokasi ke instrumen pasar uang atau aset produktif untuk optimalisasi return.',
             ];
         } elseif ($actualCash < $monthlyNeed * 0.5) {
             $advice[] = [
@@ -194,7 +195,7 @@ class FinancialIntelligenceService
 
     /**
      * Calculate historical volatility and advanced sovereign metrics.
-     * 
+     *
      * @return array{
      *   income_volatility: float,
      *   expense_volatility: float,
@@ -233,12 +234,12 @@ class FinancialIntelligenceService
 
         $avgIncome = count(array_filter($incomes)) > 0 ? array_sum($incomes) / count(array_filter($incomes)) : 0;
         $avgExpense = count(array_filter($expenses)) > 0 ? array_sum($expenses) / count(array_filter($expenses)) : 0;
-        
+
         $savingsRate = $avgIncome > 0 ? (($avgIncome - $avgExpense) / $avgIncome) * 100 : 0;
 
-        $liquidAssets = (float) \App\Models\Asset::whereIn('type', [\App\Enums\AssetType::CASH, \App\Enums\AssetType::BANK])
+        $liquidAssets = (float) Asset::whereIn('type', [AssetType::CASH, AssetType::BANK])
             ->sum('value');
-        
+
         $liquidityRatio = $avgExpense > 0 ? $liquidAssets / $avgExpense : 99.0;
 
         $isHighIncome = $avgIncome >= self::HIGH_INCOME_THRESHOLD;
@@ -268,16 +269,20 @@ class FinancialIntelligenceService
     /**
      * Calculate Standard Deviation relative to the mean (Coefficient of Variation).
      *
-     * @param float[] $values
+     * @param  float[]  $values
      */
     private function calculateRelativeStdDev(array $values): float
     {
         $filtered = array_filter($values);
         $count = count($filtered);
-        if ($count < 2) return 0.0;
+        if ($count < 2) {
+            return 0.0;
+        }
 
         $mean = array_sum($filtered) / $count;
-        if ($mean <= 0) return 0.0;
+        if ($mean <= 0) {
+            return 0.0;
+        }
 
         $variance = 0.0;
         foreach ($filtered as $v) {
@@ -288,4 +293,3 @@ class FinancialIntelligenceService
         return $stdDev / $mean;
     }
 }
-

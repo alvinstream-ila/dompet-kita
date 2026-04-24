@@ -83,17 +83,17 @@ class ProcessChatAction
         // 4. Advanced Sovereign Metrics
         $sovereign = $this->intelService->getSovereignMetrics($user);
 
-        $ctx = '--- DATA KEUANGAN (30 HARI) ---' . "\n";
+        $ctx = '--- DATA KEUANGAN (30 HARI) ---'."\n";
         $ctx .= 'Total Pemasukan: Rp '.number_format($totalIncome)."\n";
         $ctx .= 'Total Pengeluaran: Rp '.number_format($totalExpense)."\n";
         $ctx .= 'Net Cashflow: Rp '.number_format($savings)."\n";
-        
-        $ctx .= "\n" . '--- METRIK SOVEREIGN (HISTORIS 6 BULAN) ---' . "\n";
-        $ctx .= "Income Volatility: " . ($sovereign['income_volatility'] * 100) . "%\n";
-        $ctx .= "Expense Volatility: " . ($sovereign['expense_volatility'] * 100) . "%\n";
-        $ctx .= "Savings Rate: " . $sovereign['savings_rate'] . "%\n";
-        $ctx .= "Liquidity Ratio: " . $sovereign['liquidity_ratio'] . "x (Ketahanan Kas)\n";
-        $ctx .= "Framework Analisis: " . $sovereign['recommendation_framework'] . "\n";
+
+        $ctx .= "\n".'--- METRIK SOVEREIGN (HISTORIS 6 BULAN) ---'."\n";
+        $ctx .= 'Income Volatility: '.($sovereign['income_volatility'] * 100)."%\n";
+        $ctx .= 'Expense Volatility: '.($sovereign['expense_volatility'] * 100)."%\n";
+        $ctx .= 'Savings Rate: '.$sovereign['savings_rate']."%\n";
+        $ctx .= 'Liquidity Ratio: '.$sovereign['liquidity_ratio']."x (Ketahanan Kas)\n";
+        $ctx .= 'Framework Analisis: '.$sovereign['recommendation_framework']."\n";
 
         if ($goals->isNotEmpty()) {
             $ctx .= "\nGoals Strategis:\n";
@@ -104,7 +104,6 @@ class ProcessChatAction
 
         return $ctx;
     }
-
 
     /**
      * @param  array{simulated_cash: float, impact_on_liquidity_days: int|float, days_remaining_simulated: int|float, is_risky: bool}  $sim

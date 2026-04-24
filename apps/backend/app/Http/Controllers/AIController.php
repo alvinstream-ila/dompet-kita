@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Actions\AI\AnalyzeReceiptAction;
+use App\Actions\AI\ClearChatHistoryAction;
 use App\Actions\AI\Cognitive\GenerateWisdomAction;
 use App\Actions\AI\Cognitive\GetLatestWisdomAction;
 use App\Actions\AI\Cognitive\GetUnreadWisdomsAction;
 use App\Actions\AI\Cognitive\ProcessChatAction;
-use App\Actions\AI\ClearChatHistoryAction;
 use App\Actions\AI\GenerateInsightAction;
 use App\Actions\Finance\Wealth\SimulateMonteCarloAction;
 use App\Enums\TransactionType;

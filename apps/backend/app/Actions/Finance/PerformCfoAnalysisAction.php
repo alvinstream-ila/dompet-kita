@@ -84,12 +84,12 @@ class PerformCfoAnalysisAction extends BaseAction
 
             METRIK UTAMA:
             - Target Analisis: {$month}
-            - Permanent Income (6-mo avg): Rp ".number_format($permanentIncome)."
-            - Income Volatility: ".round($volatility * 100, 2)."% (CV)
-            - Current Month Income: Rp ".number_format($monthlyData[$month]['income'] ?? 0)."
-            - Current Month Expense: Rp ".number_format($monthlyData[$month]['expense'] ?? 0)."
-            - Financial Runway (Liquid): ".round($runway, 1)." bulan
-            - Total Wealth: Rp ".number_format($totalAssets)."
+            - Permanent Income (6-mo avg): Rp ".number_format($permanentIncome).'
+            - Income Volatility: '.round($volatility * 100, 2).'% (CV)
+            - Current Month Income: Rp '.number_format($monthlyData[$month]['income'] ?? 0).'
+            - Current Month Expense: Rp '.number_format($monthlyData[$month]['expense'] ?? 0).'
+            - Financial Runway (Liquid): '.round($runway, 1).' bulan
+            - Total Wealth: Rp '.number_format($totalAssets)."
             - Detail Kategori ({$month}): ".json_encode($categories)."
 
             INSTRUKSI KHUSUS:

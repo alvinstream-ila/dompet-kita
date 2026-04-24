@@ -22,11 +22,11 @@ class UpdateWealthSnapshotAction extends BaseAction
             [
                 'household_id' => $householdId,
                 'month' => $month,
-                'year' => $year
+                'year' => $year,
             ],
             [
                 'total_value' => (float) $total,
-                'user_id' => $user->id // Track who performed the latest update
+                'user_id' => $user->id, // Track who performed the latest update
             ]
         );
     }

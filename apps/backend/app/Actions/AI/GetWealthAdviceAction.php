@@ -5,6 +5,7 @@ namespace App\Actions\AI;
 use App\Actions\BaseAction;
 use App\Models\User;
 use App\Services\AI\AiProviderManager;
+use App\Services\FinancialIntelligenceService;
 use App\Services\Security\PrivacyFilter;
 use Exception;
 
@@ -13,9 +14,8 @@ class GetWealthAdviceAction extends BaseAction
     public function __construct(
         protected AiProviderManager $manager,
         protected PrivacyFilter $filter,
-        protected \App\Services\FinancialIntelligenceService $intelService
+        protected FinancialIntelligenceService $intelService
     ) {}
-
 
     /**
      * @param  array{netWorth: float|int, savings: float|int, projected: float|int}  $data
@@ -30,13 +30,13 @@ class GetWealthAdviceAction extends BaseAction
             Snapshot Kekayaan (Proyeksi 12 Bulan):
             - Net Worth Sekarang: Rp ".number_format($data['netWorth'], 0, ',', '.').'
             - Rata-rata Tabungan: Rp '.number_format($data['savings'], 0, ',', '.').'
-            - Estimasi Net Worth (Final): Rp '.number_format($data['projected'], 0, ',', '.')."
+            - Estimasi Net Worth (Final): Rp '.number_format($data['projected'], 0, ',', '.').'
             
             Metrik Sovereign (Intelejen Historis):
-            - Income Volatility: " . ($sovereign['income_volatility'] * 100) . "%
-            - Expense Volatility: " . ($sovereign['expense_volatility'] * 100) . "%
-            - Liquidity Ratio: " . $sovereign['liquidity_ratio'] . "x
-            - Recommendation Framework: " . $sovereign['recommendation_framework'] . "
+            - Income Volatility: '.($sovereign['income_volatility'] * 100).'%
+            - Expense Volatility: '.($sovereign['expense_volatility'] * 100).'%
+            - Liquidity Ratio: '.$sovereign['liquidity_ratio'].'x
+            - Recommendation Framework: '.$sovereign['recommendation_framework']."
             
             Prinsip Strategis:
             1. Integritas Ekonomi: Gunakan logika dari Modigliani Life-Cycle Hypothesis (smoothing konsumsi) dan Modern Portfolio Theory (diversifikasi aset).
@@ -47,7 +47,6 @@ class GetWealthAdviceAction extends BaseAction
             Instructions:
             1. Respond in Indonesian, formal, and analytical.
             2. Maksimal 2 paragraf singkat. Langsung ke inti.";
-
 
         try {
             return trim($this->manager->generateText($prompt));

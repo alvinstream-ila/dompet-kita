@@ -3,7 +3,9 @@
 namespace App\Actions\AI;
 
 use App\Actions\BaseAction;
+use App\Models\User;
 use App\Services\AI\AiProviderManager;
+use App\Services\FinancialIntelligenceService;
 use App\Services\Security\PrivacyFilter;
 use Illuminate\Support\Facades\Log;
 
@@ -12,9 +14,8 @@ class GenerateInsightAction extends BaseAction
     public function __construct(
         protected AiProviderManager $manager,
         protected PrivacyFilter $filter,
-        protected \App\Services\FinancialIntelligenceService $intelService
+        protected FinancialIntelligenceService $intelService
     ) {}
-
 
     /**
      * @return array{title: string, insight: string}
@@ -22,11 +23,10 @@ class GenerateInsightAction extends BaseAction
     public function execute(string $incomeStr, string $expenseStr, string $savingsStr, string $summaryText): array
     {
         $user = auth()->user();
-        if (!$user instanceof \App\Models\User) {
-            $user = \App\Models\User::firstOrFail();
+        if (! $user instanceof User) {
+            $user = User::firstOrFail();
         }
         $sovereign = $this->intelService->getSovereignMetrics($user);
-
 
         $prompt = <<<PROMPT
 Role: Sovereign CFO Partner (Elite Institutional Strategist).
@@ -47,7 +47,6 @@ OUTPUT INSTRUCTIONS:
 1. Output MUST be valid JSON: {"title": "Strategic CFO Audit", "insight": "Analysis & tactical advice (Max 3 concise sentences)"}
 2. NO EMOJIS. NO casual language. NO "Sayang".
 PROMPT;
-
 
         try {
             $jsonText = $this->manager->generateText($prompt);
