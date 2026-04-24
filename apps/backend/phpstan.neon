@@ -19,6 +19,7 @@ parameters:
     ignoreErrors:
         - '#Cannot access offset .* on mixed#'
         - '#Cannot cast mixed to (int|string|float|bool)#'
+        - '#Call to an undefined method Pest\\PendingCalls\\TestCall::.*#'
 
     excludePaths:
         - ./*/*/FileToBeExcluded.php
