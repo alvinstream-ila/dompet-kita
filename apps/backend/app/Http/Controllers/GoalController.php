@@ -54,7 +54,7 @@ class GoalController extends Controller
 
         $goal = Goal::create($validated);
 
-        return $this->success(new GoalResource($goal), 'Target tabungan baru sudah aku buatkan ya Sayang! Semangat! 🎯', 201);
+        return $this->success(new GoalResource($goal), 'Objektif finansial strategis baru telah diinisialisasi.', 201);
     }
 
     /**
@@ -76,7 +76,7 @@ class GoalController extends Controller
 
         $goal->update($validated);
 
-        return $this->success(new GoalResource($goal), 'Targetnya sudah aku update ya! ✨');
+        return $this->success(new GoalResource($goal), 'Parameter objektif finansial telah diperbarui.');
     }
 
     /**
@@ -121,7 +121,7 @@ class GoalController extends Controller
 
             return $this->success(
                 new GoalResource($goal->load('transactions')),
-                'Mimpi kita selangkah lebih dekat, Sayang! Semangat nabungnya ya! ❤️'
+                'Alokasi modal ke instrumen objektif telah berhasil direkonsiliasi.'
             );
         });
     }
@@ -149,6 +149,6 @@ class GoalController extends Controller
 
         $goal->delete();
 
-        return $this->success(null, 'Target sudah dihapus. Mari buat target baru yang lebih keren! 👍', 204);
+        return $this->success(null, 'Objektif finansial telah dihapus dari sistem.', 204);
     }
 }

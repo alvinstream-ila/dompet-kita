@@ -77,7 +77,7 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return \response()->json([
-            'message' => 'Registrasi sukses! Langsung kita verifikasi ya, Sayang! ❤️',
+            'message' => 'Registrasi akun berhasil. Instruksi verifikasi email telah dikirimkan.',
             'access_token' => $token,
             'token_type' => 'Bearer',
             'user' => $user,
@@ -124,13 +124,13 @@ class AuthController extends Controller
             ]);
 
             $this->sentinel->notify(
-                "Gagal login buat: `{$request->string('email')}`\nIP: `{$request->ip()}`\nDevice: `{$request->userAgent()}`",
+                "Percobaan akses gagal terdeteksi untuk entitas: `{$request->string('email')}`\nIP: `{$request->ip()}`\nDevice: `{$request->userAgent()}`",
                 'warning',
-                ['title' => 'Curi Data? 🕵️']
+                ['title' => 'Security: Authentication Failure']
             );
 
             throw ValidationException::withMessages([
-                'email' => ['Kredensial yang Anda berikan salah, Sayang.'],
+                'email' => ['Kredensial yang Anda berikan tidak valid.'],
             ]);
         }
 
@@ -144,9 +144,9 @@ class AuthController extends Controller
         ]);
 
         $this->sentinel->notify(
-            "Halo Alvin/Ila! Login sukses dari IP: `{$request->ip()}`\nUdah siap kelola harta karun hari ini?",
+            "Akses authorized. Sentinel mengonfirmasi integritas sesi dari IP: `{$request->ip()}`.",
             'info',
-            ['title' => 'Welcome Home! 🛡️']
+            ['title' => 'Security: Access Authorized']
         );
 
         // 🛡️ Check for Two-Factor Authentication
@@ -159,9 +159,9 @@ class AuthController extends Controller
 
             // 💌 Send 2FA Code via Email
             try {
-                Mail::raw("Halo Sayang! ❤️\n\nIni kode verifikasi login kamu: {$code}\nKode ini cuma berlaku 10 menit ya. Jangan kasih tahu siapa-siapa, cukup kita aja yang tahu. 😉\n\nSelamat mengelola keuangan bareng!", function ($message) use ($user) {
+                Mail::raw("Protokol Keamanan Dompet Kita\n\nKode verifikasi login Anda: {$code}\nKode ini berlaku selama 10 menit. Pastikan kerahasiaan kode ini untuk menjaga keamanan aset Anda.", function ($message) use ($user) {
                     $message->to($user->email)
-                        ->subject('🛡️ Kode Keamanan Dompet Kita');
+                        ->subject('Keamanan: Kode Verifikasi 2FA');
                 });
             } catch (\Exception $e) {
                 // Silently log error, but still require 2FA
@@ -171,7 +171,7 @@ class AuthController extends Controller
             return \response()->json([
                 'two_factor_required' => true,
                 'email' => $user->email,
-                'message' => 'Kode keamanan sudah dikirim ke email kamu, Sayang! ❤️',
+                'message' => 'Otentikasi dua faktor (2FA) diperlukan. Kode verifikasi telah dikirimkan.',
             ]);
         }
 
@@ -213,13 +213,13 @@ class AuthController extends Controller
 
         $user = $request->user();
         if (! $user instanceof User) {
-            return \response()->json(['message' => 'Silakan login dulu ya, Sayang!'], 401);
+            return \response()->json(['message' => 'Sesi tidak valid atau telah berakhir.'], 401);
         }
 
         if ($user->email_verification_code !== (string) $request->string('code') ||
             ($user->email_verification_expires_at !== null && now()->isAfter($user->email_verification_expires_at))) {
             return \response()->json([
-                'message' => 'Kode salah atau sudah kedaluwarsa, Sayang. Cek email lagi ya! ❤️',
+                'message' => 'Kode verifikasi tidak valid atau telah kedaluwarsa. Silakan periksa kembali email Anda.',
             ], 422);
         }
 
@@ -233,7 +233,7 @@ class AuthController extends Controller
         }
 
         return \response()->json([
-            'message' => 'Email berhasil diverifikasi! Selamat datang di Dompet Kita, Sayang! ✨❤️',
+            'message' => 'Integritas email terverifikasi. Akses platform penuh telah dibuka.',
             'user' => $user,
         ]);
     }
@@ -271,7 +271,7 @@ class AuthController extends Controller
 
         if (! $user instanceof User) {
             return \response()->json([
-                'message' => 'Kode salah atau sudah kedaluwarsa, Sayang. Coba lagi ya! ❤️',
+                'message' => 'Kode 2FA tidak valid atau telah kedaluwarsa. Silakan coba lagi.',
             ], 401);
         }
 
@@ -315,7 +315,7 @@ class AuthController extends Controller
         $user->currentAccessToken()->delete();
 
         return \response()->json([
-            'message' => 'Sampai jumpa lagi, Sayang! ❤️',
+            'message' => 'Sesi diakhiri secara aman.',
         ]);
     }
 
@@ -335,13 +335,13 @@ class AuthController extends Controller
 
         if (! Hash::check((string) $request->string('password'), (string) $user->password)) {
             $this->sentinel->notify(
-                "Gagal verifikasi Sudo Mode dari IP: `{$request->ip()}`",
+                "Pelanggaran protokol Sudo terdeteksi: Kegagalan otentikasi kata sandi dari IP: `{$request->ip()}`",
                 'critical',
-                ['title' => 'SUDO FAILED 🚨']
+                ['title' => 'Security: Sudo Verification Failed']
             );
 
             return \response()->json([
-                'message' => 'Password salah sayang. Gagal masuk mode Sudo. 🥺',
+                'message' => 'Verifikasi gagal. Hak akses administratif ditolak.',
             ], 401);
         }
 
@@ -349,13 +349,13 @@ class AuthController extends Controller
         Cache::put("sudo_mode_{$userId}", now(), now()->addMinutes(15));
 
         $this->sentinel->notify(
-            "Sudo Mode diaktifkan buat 15 menit ke depan oleh IP: `{$request->ip()}`",
+            "Protokol Sudo diaktifkan. Jendela otoritas tinggi terbuka selama 15 menit oleh IP: `{$request->ip()}`",
             'warning',
-            ['title' => 'SUDO ACTIVE 🛡️']
+            ['title' => 'Security: Sudo Authority Active']
         );
 
         return \response()->json([
-            'message' => 'Hore! Kamu sekarang di mode Sudo buat 15 menit ke depan sayang! ❤️',
+            'message' => 'Akses Sudo dikonfirmasi. Otoritas administratif diberikan sementara.',
         ]);
     }
 }

@@ -7,6 +7,7 @@ use App\Actions\AI\Cognitive\GenerateWisdomAction;
 use App\Actions\AI\Cognitive\GetLatestWisdomAction;
 use App\Actions\AI\Cognitive\GetUnreadWisdomsAction;
 use App\Actions\AI\Cognitive\ProcessChatAction;
+use App\Actions\AI\ClearChatHistoryAction;
 use App\Actions\AI\GenerateInsightAction;
 use App\Actions\Finance\Wealth\SimulateMonteCarloAction;
 use App\Enums\TransactionType;
@@ -38,7 +39,8 @@ class AIController extends Controller
         protected GetLatestWisdomAction $getLatestWisdomAction,
         protected GetUnreadWisdomsAction $getUnreadWisdomsAction,
         protected SimulateMonteCarloAction $simulateMonteCarloAction,
-        protected StorageService $storageService
+        protected StorageService $storageService,
+        protected ClearChatHistoryAction $clearChatHistoryAction
     ) {}
 
     /**
@@ -62,7 +64,7 @@ class AIController extends Controller
                 'merchant' => (string) ($result['merchant'] ?? 'Unknown'),
                 'category' => (string) ($result['category'] ?? 'Other'),
                 'message' => (string) ($result['message'] ?? ''),
-            ], 'Struk berhasil diproses! ✨');
+            ], 'Pemindaian instrumen keuangan selesai.');
         } catch (\Throwable $e) {
             Log::error('AI_RECEIPT_SCAN_ERROR: '.$e->getMessage());
 
@@ -88,8 +90,8 @@ class AIController extends Controller
             Log::error('AI_DASHBOARD_INSIGHT_ERROR: '.$e->getMessage());
 
             return $this->success([
-                'title' => 'Sayang Lagi Fokus ✨',
-                'insight' => 'Aku lagi cek catatannya sebentar ya sayang. Nanti aku kabarin lagi update keuangannya. ❤️',
+                'title' => 'Analisis Sedang Berjalan',
+                'insight' => 'Sistem sedang melakukan sinkronisasi data dan perhitungan metrik. Insight akan tersedia sesaat lagi.',
             ]);
         }
     }
@@ -107,8 +109,8 @@ class AIController extends Controller
 
         if ($transactions->isEmpty()) {
             return [
-                'title' => 'Sayang AI ✨',
-                'insight' => 'Waktunya mulai petualangan baru kita, Sayang! Yuk, mulai catat pengeluaran pertama kita biar impian kita makin dekat? ❤️',
+                'title' => 'CFO Intelligence Ready',
+                'insight' => 'Sistem siap menganalisis keuangan Anda. Mulailah mencatat transaksi untuk mendapatkan proyeksi dan rekomendasi strategis.',
             ];
         }
 
@@ -161,11 +163,11 @@ class AIController extends Controller
         try {
             $response = $this->processChatAction->execute($user, (string) $request->string('message'));
 
-            return $this->success($response, 'Asisten AI menjawab pesanmu! 💬');
+            return $this->success($response, 'Analisis intelijen keuangan selesai.');
         } catch (\Throwable $e) {
             Log::error('AI_CHAT_GENIUS_ERROR: '.$e->getMessage());
 
-            return $this->error('Maaf sayang, asisten lagi istirahat bentar ya.. 🙏❤️', 500);
+            return $this->error('Layanan AI asisten saat ini sedang tidak tersedia. Silakan coba beberapa saat lagi.', 500);
         }
     }
 
@@ -211,7 +213,7 @@ class AIController extends Controller
             return $this->success([
                 'latest' => $wisdom,
                 'unread_count' => $unread->count(),
-            ], 'Wisdom berhasil diambil! ✨');
+            ], 'Wawasan strategis berhasil dimuat.');
         } catch (\Exception $e) {
             Log::error('AI_WISDOM_ERROR: '.$e->getMessage());
 
@@ -232,7 +234,7 @@ class AIController extends Controller
         try {
             $wisdom = $this->generateWisdomAction->execute($user);
 
-            return $this->success($wisdom, 'Wisdom baru telah dibuat untukmu! 🧠');
+            return $this->success($wisdom, 'Wawasan strategis baru telah diformulasikan.');
         } catch (\Exception $e) {
             Log::error('AI_WISDOM_GENERATE_ERROR: '.$e->getMessage());
 
@@ -259,6 +261,27 @@ class AIController extends Controller
             Log::error('AI_WEALTH_SIMULATION_ERROR: '.$e->getMessage());
 
             return $this->error('Gagal melakukan simulasi proyeksi kekayaan.', 500);
+        }
+    }
+
+    /**
+     * Clear chat history for the current session/household.
+     */
+    public function clearChat(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        if (! $user instanceof User) {
+            return $this->error('Unauthorized', 401);
+        }
+
+        try {
+            $this->clearChatHistoryAction->execute($user);
+
+            return $this->success(null, 'Protokol pembersihan sesi selesai. Seluruh memori percakapan telah dihapus.');
+        } catch (\Throwable $e) {
+            Log::error('AI_CHAT_CLEAR_ERROR: '.$e->getMessage());
+
+            return $this->error('Gagal membersihkan riwayat chat.', 500);
         }
     }
 }

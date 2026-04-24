@@ -52,7 +52,7 @@ class LegacyTriggerNotification extends Notification
             ->line("- **Total Hutang/Pinjaman Aktif:** Rp {$totalLoans}")
             ->action('Lihat Detail Warisan Digital', url('/ai/legacy/vault'))
             ->line('Pesan ini dikirim secara otomatis untuk memastikan keamanan finansial orang-orang tercinta.')
-            ->line('Tetap semangat dan jaga kesehatan ya, Sayang! ❤️');
+            ->line('Pemberitahuan ini merupakan bagian dari protokol manajemen risiko aset digital Anda.');
     }
 
     /**

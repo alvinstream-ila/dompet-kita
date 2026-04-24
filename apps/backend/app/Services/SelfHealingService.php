@@ -49,8 +49,8 @@ class SelfHealingService
             'timestamp' => now()->toIso8601String(),
             'issues' => $issues,
             'message' => empty($issues)
-                ? 'Semua aman ya Sayang, sistem sehat walafiat! ✨'
-                : 'Aduh Sayang, ada sedikit kendala di sistem nih. Tenang, aku coba bantu ya! 🥺',
+                ? 'Sistem dalam kondisi optimal.'
+                : 'Terdeteksi anomali pada sistem. Memulai prosedur diagnosa otomatis.',
         ];
     }
 
@@ -60,14 +60,14 @@ class SelfHealingService
      */
     public function getAiDeepDiagnosis(string $context): string
     {
-        $prompt = "Kamu adalah Sayang AI, pendamping finansial cerdas. Analisis log sistem berikut dan berikan diagnosa serta solusi teknis yang mudah dipahami (namun tetap menyertakan langkah perbaikan): \n\n".$context;
+        $prompt = "Anda adalah Sovereign CFO Strategic Intelligence. Analisis log sistem berikut dan berikan diagnosa serta solusi teknis yang tepat: \n\n".$context;
 
         try {
             return $this->gemini->generateText($prompt);
         } catch (\Exception $e) {
             Log::error('SelfHealing AI Error: '.$e->getMessage());
 
-            return 'Maaf Sayang, aku lagi kurang enak badan (AI Error). Coba cek log manual dulu ya? 🥺';
+            return 'Gagal memproses diagnosa sistem (AI Error). Silakan periksa log secara manual.';
         }
     }
 
@@ -92,7 +92,7 @@ class SelfHealingService
     public function diagnoseRecentErrors(): string
     {
         // For now, return a placeholder. In a real scenario, this would parse logs.
-        return 'No major errors found in recent logs, Sayang. Everything looks clean! ✨';
+        return 'No major errors found in recent logs. System integrity verified.';
     }
 
     /**

@@ -130,6 +130,7 @@ Route::middleware('firewall.all')->group(function () {
         Route::get('/ai/insights', [AIController::class, 'getDashboardInsight'])->middleware('throttle:ai-insight');
         Route::get('/ai/guardian', [AIController::class, 'getGuardianStatus'])->middleware('throttle:ai-insight');
         Route::post('/ai/chat', [AIController::class, 'chat'])->middleware('throttle:ai-chat');
+        Route::post('/ai/chat/clear', [AIController::class, 'clearChat']);
         Route::post('/ai/analyze-receipt', [AIController::class, 'analyzeReceipt'])->middleware('throttle:ai-scan');
         Route::get('/ai/wisdom', [AIController::class, 'getWisdom'])->middleware('throttle:ai-insight');
         Route::post('/ai/wisdom/generate', [AIController::class, 'generateWisdom'])->middleware('throttle:ai-insight');

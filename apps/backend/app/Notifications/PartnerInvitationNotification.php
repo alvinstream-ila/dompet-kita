@@ -38,13 +38,13 @@ class PartnerInvitationNotification extends Notification
         $acceptUrl = $frontendUrl.'/accept-invite?token='.$this->token;
 
         return (new MailMessage)
-            ->subject('💌 Ssst! Ada Undangan Spesial dari '.$this->inviter->name)
-            ->greeting('Halo Sayang! ❤️')
-            ->line($this->inviter->name.' baru saja mengundang kamu untuk menghubungkan akun di Dompet Kita.')
-            ->line('Dengan sinkronisasi ini, kalian bisa saling memantau pengeluaran besar dan mengatur masa depan bersama jadi lebih terencana.')
-            ->line('Gak perlu khawatir, data harianmu tetap pribadi kok! Ini cuma buat kita tetap kompak.')
-            ->action('Terima Undangan ✨', $acceptUrl)
-            ->line('Tetap semangat membangun mimpi bareng ya! ✨');
+            ->subject('Undangan Sinkronisasi Partner Finansial dari '.$this->inviter->name)
+            ->greeting('Pemberitahuan Aktivasi Partner Finansial')
+            ->line($this->inviter->name.' mengundang Anda untuk menghubungkan akun pada platform Dompet Kita.')
+            ->line('Melalui sinkronisasi ini, Anda dapat berkolaborasi dalam pemantauan aset dan perencanaan finansial strategis.')
+            ->line('Keamanan data tetap terjaga; hanya informasi ringkasan tertentu yang akan dibagikan kepada partner.')
+            ->action('Konfirmasi Sinkronisasi 🛡️', $acceptUrl)
+            ->line('Pemberitahuan ini dikirim secara otomatis oleh sistem manajemen finansial Dompet Kita.');
     }
 
     /**
@@ -58,7 +58,7 @@ class PartnerInvitationNotification extends Notification
             'type' => 'partner_invitation',
             'inviter_name' => $this->inviter->name,
             'token' => $this->token,
-            'message' => $this->inviter->name.' mengundang kamu jadi partner keuangan! 💖',
+            'message' => $this->inviter->name.' mengundang Anda sebagai partner manajemen finansial.',
         ];
     }
 }

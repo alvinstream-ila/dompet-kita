@@ -107,30 +107,27 @@ class QuantumInsightEngine
     {
         $jsonSummary = json_encode($summary);
 
-        return "You are the CFO AI Sentinel for Dompet Kita. Analyze this 30-day financial summary for {$userName}:
-        
-        DATA:
-        {$jsonSummary}
-        
-        TASK:
-        1. Hunt for 'Financial Leakages' (micro-spending like small recurring expenses, overspending in non-essential categories).
-        2. Identify 'Optimization Opportunities' (how to save Rp 100k - Rp 500k based on patterns).
-        3. Spot 'Positive Trends' (achievements in saving or income growth).
-        
-        OUTPUT FORMAT: Strict JSON only.
-        {
-          \"findings\": [
-            {
-              \"type\": \"leak|optimization|trend|achievement\",
-              \"title\": \"Short catchy title\",
-              \"content\": \"Detailed SENTIENT explanation in Indonesian. Mention specific Rp amounts.\",
-              \"impact_value\": 50000,
-              \"action_url\": \"/transactions\"
-            }
-          ]
-        }
-        
-        Note: Speak in a professional yet loving tone (sentient persona).";
+        return "Anda adalah Sovereign CFO Strategic Intelligence untuk {$userName}. " .
+               "Gunakan prinsip ekonomi makro dan manajemen kekayaan institusional untuk menganalisis data berikut: " . $jsonSummary .
+               "\n\nInstruksi Analisis Strategis:" .
+               "\n1. Liquidity Layering: Evaluasi cadangan kas berdasarkan model 3-layer (Short-term buffer, Medium-term tax/obligations, Long-term wealth)." .
+               "\n2. Decoupling Analysis: Jika terdapat volatilitas cashflow tinggi dengan income besar (seperti >10jt), jangan memberikan penilaian 'buruk' secara dangkal. Analisis apakah volatility ini bersifat sistemik atau strategis. Sarankan model 'Fixed Salary' dari 'Variable Surplus' untuk menstabilkan gaya hidup." .
+               "\n3. Stress-Testing: Lakukan simulasi terhadap skenario 'Worst Case' (penurunan income 30-50%) dan apakah struktur biaya saat ini masih resilien." .
+               "\n4. Capital Efficiency: Identifikasi 'Idle Cash' yang bisa dioptimalkan menjadi aset produktif dengan mempertimbangkan Opportunity Cost." .
+               "\n5. Tax & Leverage: Berikan saran mengenai efisiensi pajak dan penggunaan leverage (hutang) yang strategis." .
+               "\n\nOUTPUT FORMAT: Strict JSON only." .
+               "\n{" .
+               "\n  \"findings\": [" .
+               "\n    {" .
+               "\n      \"type\": \"leak|optimization|trend|achievement\"," .
+               "\n      \"title\": \"Judul strategis dan profesional\"," .
+               "\n      \"content\": \"Penjelasan mendalam dalam Bahasa Indonesia formal. Hubungkan dengan prinsip ekonomi.\"," .
+               "\n      \"impact_value\": 0," .
+               "\n      \"action_url\": \"/transactions\"" .
+               "\n    }" .
+               "\n  ]" .
+               "\n}" .
+               "\n\nNote: Gunakan nada bicara elit, tenang, dan data-driven. DILARANG menggunakan kata 'Sayang' atau emoji.";
     }
 
     /**

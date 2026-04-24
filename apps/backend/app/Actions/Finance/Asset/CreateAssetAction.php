@@ -18,16 +18,19 @@ class CreateAssetAction extends BaseAction
      */
     public function execute(User $user, array $data): Asset
     {
-        $data['user_id'] = $user->id;
+        return \DB::transaction(function () use ($user, $data) {
+            $data['user_id'] = $user->id;
+            $data['household_id'] = $user->household_id;
 
-        if (! isset($data['invested_capital'])) {
-            $data['invested_capital'] = $data['value'];
-        }
+            if (! isset($data['invested_capital'])) {
+                $data['invested_capital'] = $data['value'] ?? 0;
+            }
 
-        $asset = Asset::create($data);
+            $asset = Asset::create($data);
 
-        $this->updateWealthSnapshotAction->execute($user);
+            $this->updateWealthSnapshotAction->execute($user);
 
-        return $asset;
+            return $asset;
+        });
     }
 }

@@ -20,7 +20,7 @@ class PasswordResetController extends Controller
 
         if (! $user) {
             // Secure approach: still return success to hide user existence
-            return response()->json(['message' => 'Link reset password sudah dikirim ke email kamu, Sayang! ❤️']);
+            return response()->json(['message' => 'Tautan pemulihan kata sandi telah dikirim ke alamat email Anda.']);
         }
 
         // The sendPasswordResetNotification was already overridden in User model
@@ -29,7 +29,7 @@ class PasswordResetController extends Controller
 
         Log::info('Sent Premium OTP Reset to: '.(string) $request->string('email'));
 
-        return response()->json(['message' => 'Kode reset password sudah meluncur ke email kamu, Sayang! ❤️']);
+        return response()->json(['message' => 'Kode pemulihan kata sandi telah dikirim ke alamat email Anda.']);
     }
 
     public function reset(Request $request): JsonResponse
@@ -47,7 +47,7 @@ class PasswordResetController extends Controller
         $expiresAt = $user?->otp_reset_expires_at;
         if (! $user || ! $expiresAt || now()->greaterThan($expiresAt)) {
             return response()->json([
-                'message' => 'Kode reset nggak pas atau sudah basi nih sayang, coba minta lagi ya? 🥺',
+                'message' => 'Kode pemulihan tidak valid atau telah kedaluwarsa. Silakan ajukan permintaan baru.',
             ], 400);
         }
 
@@ -62,6 +62,6 @@ class PasswordResetController extends Controller
 
         event(new PasswordReset($user));
 
-        return response()->json(['message' => 'Password kamu sudah berhasil diganti! Sekarang coba login ya sayang! ✨']);
+        return response()->json(['message' => 'Kata sandi Anda berhasil diperbarui. Silakan login kembali dengan kata sandi baru.']);
     }
 }

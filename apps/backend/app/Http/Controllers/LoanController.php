@@ -59,7 +59,7 @@ class LoanController extends Controller
 
         $loan = Loan::create($validated);
 
-        return $this->success(new LoanResource($loan), 'Catatan utang/piutang baru sudah aku simpan ya! ✍️', 201);
+        return $this->success(new LoanResource($loan), 'Instrumen kewajiban/piutang baru telah diarsip.', 201);
     }
 
     /**
@@ -69,7 +69,7 @@ class LoanController extends Controller
     {
         $this->authorize('view', $loan);
 
-        return $this->success(new LoanResource($loan), 'Ini detail pinjamannya ya Sayang.');
+        return $this->success(new LoanResource($loan), 'Detail ekposur pinjaman berhasil dimuat.');
     }
 
     /**
@@ -91,7 +91,7 @@ class LoanController extends Controller
 
         $loan->update($validated);
 
-        return $this->success(new LoanResource($loan), 'Data pinjamannya sudah diupdate! ✨');
+        return $this->success(new LoanResource($loan), 'Parameter instrumen pinjaman telah diperbarui.');
     }
 
     /**
@@ -130,7 +130,7 @@ class LoanController extends Controller
             ]);
         }
 
-        return $this->success($reportData, 'Laporan akuntabilitas periode ini sudah siap diverifikasi.');
+        return $this->success($reportData, 'Laporan akuntabilitas periode ini telah diverifikasi dan siap ditinjau.');
     }
 
     /**
@@ -272,6 +272,6 @@ class LoanController extends Controller
 
         $loan->delete();
 
-        return $this->success(null, 'Pinjaman sudah dihapus dari daftar ya. 👍', 204);
+        return $this->success(null, 'Instrumen pinjaman telah dihapus dari sistem.', 204);
     }
 }

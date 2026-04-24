@@ -1,21 +1,21 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Cat,
-  Ghost,
-  Heart,
-  MessageCircleHeart,
-  Rabbit,
+  Activity,
+  Bot,
+  Cpu,
+  Shield,
+  ShieldCheck,
   Send,
-  Sparkles,
-  Star,
+  Zap,
+  Target,
   X,
 } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { useAIChat } from '@/features/home';
+import { useAIChat, useClearChat } from '@/features/home';
 import { cn } from '@/lib/utils';
 
-type PetType = 'rabbit' | 'cat' | 'ghost';
+type PetType = 'bot' | 'shield' | 'activity';
 
 interface Particle {
   id: string;
@@ -34,7 +34,7 @@ interface Message {
 export const FidgetPet: React.FC = () => {
   const constraintsRef = useRef(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [petType, setPetType] = useState<PetType>('rabbit');
+  const [petType, setPetType] = useState<PetType>('bot');
   const [isHappy, setIsHappy] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -44,11 +44,26 @@ export const FidgetPet: React.FC = () => {
       id: 'init-msg',
       role: 'assistant',
       content:
-        'Halo Sayang! Ada yang bisa aku bantu seputar keuangan kita hari ini? ❤️',
+        'Sovereign CFO Partner aktif. Sistem siap melakukan analisis volatilitas dan smoothing konsumsi. Apa instruksi strategis Anda hari ini?',
     },
   ]);
 
   const { mutate: sendMessage, isPending } = useAIChat();
+  const { mutate: clearChat } = useClearChat();
+
+  const handleCloseChat = () => {
+    setIsChatOpen(false);
+    clearChat();
+    // Reset local messages to initial state
+    setMessages([
+      {
+        id: 'init-msg',
+        role: 'assistant',
+        content:
+          'Sovereign CFO Partner aktif. Sistem siap melakukan analisis volatilitas dan smoothing konsumsi. Apa instruksi strategis Anda hari ini?',
+      },
+    ]);
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -57,7 +72,7 @@ export const FidgetPet: React.FC = () => {
   }, []);
 
   const togglePet = () => {
-    const types: PetType[] = ['rabbit', 'cat', 'ghost'];
+    const types: PetType[] = ['bot', 'shield', 'activity'];
     const nextIndex = (types.indexOf(petType) + 1) % types.length;
     setPetType(types[nextIndex]);
     triggerHappiness();
@@ -104,7 +119,7 @@ export const FidgetPet: React.FC = () => {
             id: crypto.randomUUID(),
             role: 'assistant',
             content:
-              'Duh maaf ya sayang, aku lagi pusing dengerin angkanya. Coba lagi nanti ya! 🥺',
+              'Terjadi gangguan pada protokol intelijen. Mohon coba beberapa saat lagi.',
           },
         ]);
       },
@@ -113,23 +128,23 @@ export const FidgetPet: React.FC = () => {
 
   const getPetIcon = () => {
     switch (petType) {
-      case 'rabbit':
-        return <Rabbit className="h-8 w-8" />;
-      case 'cat':
-        return <Cat className="h-8 w-8" />;
-      case 'ghost':
-        return <Ghost className="h-8 w-8" />;
+      case 'bot':
+        return <Bot className="h-8 w-8" />;
+      case 'shield':
+        return <Shield className="h-8 w-8" />;
+      case 'activity':
+        return <Activity className="h-8 w-8" />;
     }
   };
 
   const getPetColor = () => {
     switch (petType) {
-      case 'rabbit':
-        return 'from-pink-400 to-rose-400';
-      case 'cat':
-        return 'from-amber-400 to-orange-400';
-      case 'ghost':
-        return 'from-blue-300 to-indigo-300';
+      case 'bot':
+        return 'from-slate-600 to-slate-800';
+      case 'shield':
+        return 'from-emerald-600 to-teal-800';
+      case 'activity':
+        return 'from-blue-600 to-indigo-800';
     }
   };
 
@@ -157,20 +172,20 @@ export const FidgetPet: React.FC = () => {
               >
                 <div className="flex items-center gap-2">
                   <div className="rounded-full bg-white/20 p-1.5">
-                    <MessageCircleHeart className="h-4 w-4" />
+                    <ShieldCheck className="h-4 w-4" />
                   </div>
                   <div>
                     <h5 className="text-sm font-black tracking-tight">
-                      Asisten Sayang ✨
+                      Sovereign CFO Partner
                     </h5>
                     <p className="text-[10px] font-medium tracking-widest uppercase opacity-80">
-                      Financial Partner
+                      Strategic Intelligence
                     </p>
                   </div>
                 </div>
                 <button
                   type="button"
-                  onClick={() => setIsChatOpen(false)}
+                  onClick={handleCloseChat}
                   className="rounded-full p-1.5 transition-colors hover:bg-black/10"
                   aria-label="Close Chat"
                 >
@@ -192,7 +207,7 @@ export const FidgetPet: React.FC = () => {
                     className={cn(
                       'max-w-[85%] rounded-2xl p-3 text-sm font-medium shadow-sm',
                       msg.role === 'user'
-                        ? 'self-end rounded-tr-none bg-pink-500 text-white'
+                        ? 'self-end rounded-tr-none bg-slate-700 text-white'
                         : 'self-start rounded-tl-none border border-slate-200 bg-slate-100 text-slate-700'
                     )}
                   >
@@ -231,8 +246,8 @@ export const FidgetPet: React.FC = () => {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                    placeholder="Sapa si Sayang..."
-                    className="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium placeholder:text-slate-400 focus:border-pink-300 focus:outline-none"
+                    placeholder="Analisis Strategis..."
+                    className="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium placeholder:text-slate-400 focus:border-slate-300 focus:outline-none"
                   />
                   <button
                     type="button"
@@ -294,9 +309,9 @@ export const FidgetPet: React.FC = () => {
             <motion.div
               animate={{ y: [0, -5, 0], rotate: [0, 5, -5, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="absolute -top-4 text-amber-300 drop-shadow-md"
+              className="absolute -top-4 text-slate-300 drop-shadow-md"
             >
-              <Star className="h-6 w-6 fill-amber-300" />
+              <Cpu className="h-6 w-6" />
             </motion.div>
 
             {/* Explosive Particles on click */}
@@ -318,11 +333,13 @@ export const FidgetPet: React.FC = () => {
                     {(() => {
                       if (p.type === 0)
                         return (
-                          <Heart className="h-5 w-5 fill-white text-white" />
+                          <Zap className="h-5 w-5 fill-white text-white" />
                         );
                       if (p.type === 1)
-                        return <Sparkles className="h-6 w-6 text-amber-200" />;
-                      return <Star className="h-4 w-4 fill-white text-white" />;
+                        return <Target className="h-6 w-6 text-white" />;
+                      return (
+                        <Shield className="h-4 w-4 fill-white text-white" />
+                      );
                     })()}
                   </motion.div>
                 ))}

@@ -25,7 +25,7 @@ class WithdrawAssetAction extends BaseAction
 
             // 0. Safety Guard: Prevent over-withdrawal
             if ($amount > $asset->value) {
-                throw new \Exception("Maaf Sayang, saldo aset {$asset->name} kamu tidak cukup untuk dicairkan sebesar Rp ".number_format($amount, 0, ',', '.').'. Nilai saat ini: Rp '.number_format($asset->value, 0, ',', '.'));
+                throw new \Exception("Saldo aset {$asset->name} tidak mencukupi untuk penarikan sebesar Rp ".number_format($amount, 0, ',', '.').'. Nilai saat ini: Rp '.number_format($asset->value, 0, ',', '.'));
             }
 
             // 1. Create Transaction for the Source Asset

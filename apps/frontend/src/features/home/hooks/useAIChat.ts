@@ -15,3 +15,14 @@ export const useAIChat = () => {
     },
   });
 };
+
+export const useClearChat = () => {
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await axios.post<{ success: boolean; message: string }>(
+        '/ai/chat/clear'
+      );
+      return data;
+    },
+  });
+};

@@ -37,7 +37,7 @@ class AnalyzeReceiptAction extends BaseAction
         } catch (Exception $e) {
             $msg = $e->getMessage();
             Log::error('AI_SCAN_ERROR (Receipt Scan): '.$msg);
-            throw new RuntimeException('Maaf Sayang, AI lagi kecapekan: '.$msg);
+            throw new RuntimeException('Layanan analisis AI sedang mengalami kendala teknis: '.$msg);
         }
 
         if (preg_match('/\{.*\}/s', $jsonText, $matches)) {
@@ -48,7 +48,7 @@ class AnalyzeReceiptAction extends BaseAction
 
         if (! is_array($result)) {
             Log::error('AI_SCAN_PARSING_FAILED', ['raw' => $jsonText]);
-            throw new RuntimeException('Maaf Sayang, AI gagal memproses data struk ini. Coba ketik manual ya! ❤️');
+            throw new RuntimeException('Sistem gagal memproses data struk ini. Silakan lakukan input data secara manual.');
         }
 
         /** @var mixed $rawAmount */
@@ -59,7 +59,7 @@ class AnalyzeReceiptAction extends BaseAction
             'amount' => $cleanAmount,
             'merchant' => is_string($result['merchant'] ?? null) ? (string) $result['merchant'] : 'Toko Tidak Terbaca',
             'category' => is_string($result['category'] ?? null) ? (string) $result['category'] : 'Belanja',
-            'message' => is_string($result['message'] ?? null) ? (string) $result['message'] : 'AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️',
+            'message' => is_string($result['message'] ?? null) ? (string) $result['message'] : 'Analisis struk berhasil. Data nominal telah disinkronkan secara otomatis.',
         ];
     }
 }

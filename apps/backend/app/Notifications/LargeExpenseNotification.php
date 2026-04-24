@@ -38,16 +38,16 @@ class LargeExpenseNotification extends Notification
         $amount = number_format($this->transaction->amount, 0, ',', '.');
 
         return (new MailMessage)
-            ->subject('⚠️ Sayang, Ada Pengeluaran Besar Nih!')
-            ->greeting('Halo Sayang! ❤️')
-            ->line('Aku baru saja mencatat pengeluaran besar dari '.$this->spender->name.' di akun keluarga kita.')
-            ->line('Mungkin ini rencana kita bareng, tapi aku tetap kasih tahu ya biar kita tetap sinkron:')
+            ->subject('Lansiran Keamanan: Deteksi Pengeluaran Anomali/Signifikan')
+            ->greeting('Pemberitahuan Protokol CFO')
+            ->line('Sistem telah mencatat pengeluaran dengan nominal signifikan dari entitas '.$this->spender->name.' pada akun Ledger Bersama.')
+            ->line('Pemberitahuan ini dikirimkan untuk memastikan sinkronisasi data finansial antar partner:')
             ->line('**Detail Transaksi:**')
             ->line('- **Jumlah:** Rp '.$amount)
             ->line('- **Kategori:** '.$this->transaction->category)
             ->line('- **Catatan:** '.($this->transaction->note ?? 'Tidak ada catatan'))
             ->action('Cek Detail di Aplikasi', url('/transactions'))
-            ->line('Tetap semangat mengelola keuangan kita ya! Aku selalu di sini buat bantu kalian. ✨');
+            ->line('Verifikasi transaksi ini untuk menjaga integritas likuiditas rumah tangga.');
     }
 
     /**
@@ -63,7 +63,7 @@ class LargeExpenseNotification extends Notification
             'amount' => $this->transaction->amount,
             'category' => $this->transaction->category,
             'type' => 'large_expense',
-            'message' => 'Pengeluaran besar Rp '.number_format($this->transaction->amount).' dari '.$this->spender->name,
+            'message' => 'Deteksi pengeluaran anomali sebesar Rp '.number_format($this->transaction->amount).' oleh entitas '.$this->spender->name,
         ];
     }
 }

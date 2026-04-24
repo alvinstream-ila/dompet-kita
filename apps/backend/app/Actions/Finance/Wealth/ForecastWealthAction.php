@@ -77,7 +77,7 @@ class ForecastWealthAction extends BaseAction
                 'projected' => $lastWealth,
             ]);
         } catch (\Exception $e) {
-            $advice = 'Sayang, masa depan kita cerah banget kalau kita konsisten nabung. Semangat terus ya! ❤️';
+            $advice = 'Proyeksi finansial menunjukkan tren positif. Konsistensi dalam akumulasi aset akan mempercepat pencapaian target kemandirian finansial Anda.';
         }
 
         return [

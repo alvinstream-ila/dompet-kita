@@ -12,8 +12,10 @@ class GetWealthAdviceAction extends BaseAction
 {
     public function __construct(
         protected AiProviderManager $manager,
-        protected PrivacyFilter $filter
+        protected PrivacyFilter $filter,
+        protected \App\Services\FinancialIntelligenceService $intelService
     ) {}
+
 
     /**
      * @param  array{netWorth: float|int, savings: float|int, projected: float|int}  $data
@@ -21,22 +23,36 @@ class GetWealthAdviceAction extends BaseAction
     public function execute(User $user, array $data): string
     {
         $maskedName = $this->filter->mask($user->name);
-        $prompt = "You are 'Wealth Master Sayang', a sweet and visionary wealth advisor for {$maskedName}.
-            Data Proyeksi Kekayaan Kita:
+        $sovereign = $this->intelService->getSovereignMetrics($user);
+
+        $prompt = "Identitas: Anda adalah 'Sovereign Wealth Strategist', konsultan kekayaan visioner dan strategis untuk {$maskedName}.
+            
+            Snapshot Kekayaan (Proyeksi 12 Bulan):
             - Net Worth Sekarang: Rp ".number_format($data['netWorth'], 0, ',', '.').'
-            - Rata-rata Tabungan Bulanan: Rp '.number_format($data['savings'], 0, ',', '.').'
-            - Estimasi Net Worth 12 Bulan Lagi: Rp '.number_format($data['projected'], 0, ',', '.')."
+            - Rata-rata Tabungan: Rp '.number_format($data['savings'], 0, ',', '.').'
+            - Estimasi Net Worth (Final): Rp '.number_format($data['projected'], 0, ',', '.')."
+            
+            Metrik Sovereign (Intelejen Historis):
+            - Income Volatility: " . ($sovereign['income_volatility'] * 100) . "%
+            - Expense Volatility: " . ($sovereign['expense_volatility'] * 100) . "%
+            - Liquidity Ratio: " . $sovereign['liquidity_ratio'] . "x
+            - Recommendation Framework: " . $sovereign['recommendation_framework'] . "
+            
+            Prinsip Strategis:
+            1. Integritas Ekonomi: Gunakan logika dari Modigliani Life-Cycle Hypothesis (smoothing konsumsi) dan Modern Portfolio Theory (diversifikasi aset).
+            2. Analisis Trajektori: Apakah kekayaan tumbuh sehat atau tergerus inflasi/volatilitas?
+            3. Fokus Sovereign: Berikan 1 tip strategis untuk optimalisasi modal (misal: 'Cash Smoothing' jika volatil, atau 'Yield Enhancement' jika stabil).
+            4. Larangan Mutlak: NO 'Sayang', NO EMOJIS, NO EMOJI, PLAIN TEXT ONLY.
             
             Instructions:
-            1. Respond in Indonesian, sweet, and strategic.
-            2. Analyze the 'Trajectory': Is it growing? stagnant? declining?
-            3. Give 1 strategic tip for wealth growth (e.g. increase income source, cut useless expenses, keep investing).
-            4. Max 2 short paragraphs. PLAIN TEXT ONLY.";
+            1. Respond in Indonesian, formal, and analytical.
+            2. Maksimal 2 paragraf singkat. Langsung ke inti.";
+
 
         try {
             return trim($this->manager->generateText($prompt));
         } catch (Exception $e) {
-            return 'Sayang, aku yakin kita bisa kaya bareng. Terus semangat atur uangnya ya! ❤️';
+            return 'Proyeksi pertumbuhan kekayaan Anda menunjukkan potensi yang signifikan. Konsistensi dalam manajemen aset adalah kunci keberhasilan jangka panjang.';
         }
     }
 }

@@ -47,6 +47,7 @@ class CfoAssistantService
     {
         Transaction::create([
             'user_id' => $scheduled->user_id,
+            'household_id' => $scheduled->household_id,
             'amount' => $scheduled->amount,
             'type' => $scheduled->type,
             'category' => $scheduled->category,

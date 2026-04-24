@@ -62,7 +62,7 @@ class TransactionController extends Controller
                 'user' => $request->user()?->id,
             ]);
 
-            return $this->error('Gagal mengambil data transaksi sayang. 🥺', 500);
+            return $this->error('Gagal mengambil data riwayat transaksi.', 500);
         }
     }
 
@@ -104,11 +104,11 @@ class TransactionController extends Controller
                 'calendar_expense' => $data['calendar_expense'],
                 'transactions' => TransactionResource::collection($data['recentTransactions']),
                 'period' => $data['period'],
-            ], 'Summary terhitung rapi ya Sayang! 📊');
+            ], 'Rekonsiliasi ringkasan finansial selesai.');
         } catch (\Exception $e) {
             Log::error('TRANSACTION_SUMMARY_ERROR: '.$e->getMessage());
 
-            return $this->error('Gagal menghitung ringkasan transaksi sayang. 🥺', 500);
+            return $this->error('Gagal melakukan kalkulasi ringkasan transaksi.', 500);
         }
     }
 
@@ -124,7 +124,7 @@ class TransactionController extends Controller
 
         $transaction = $action->execute($user, $request->validated());
 
-        return $this->success(new TransactionResource($transaction), 'Transaksi berhasil dicatat! ❤️', 201);
+        return $this->success(new TransactionResource($transaction), 'Entri transaksi telah divalidasi dan diarsipkan.', 201);
     }
 
     /**
@@ -141,7 +141,7 @@ class TransactionController extends Controller
 
         $transaction = $action->execute($user, $transaction, $request->validated());
 
-        return $this->success(new TransactionResource($transaction), 'Catatan transaksinya sudah aku update ya! ✨');
+        return $this->success(new TransactionResource($transaction), 'Modifikasi entri transaksi telah berhasil diregistrasi.');
     }
 
     public function monthlyStatement(Request $request, GetTransactionSummaryAction $action): JsonResponse|Response
@@ -234,6 +234,6 @@ class TransactionController extends Controller
 
         $action->execute($user, $transaction);
 
-        return $this->success(null, 'Oke, transaksinya sudah dihapus. 👌');
+        return $this->success(null, 'Entri transaksi telah dihapus dari buku besar.');
     }
 }

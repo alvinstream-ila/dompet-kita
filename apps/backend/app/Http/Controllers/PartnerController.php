@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Household;
 use App\Models\PartnerInvitation;
 use App\Models\User;
 use App\Notifications\PartnerInvitationNotification;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class PartnerController extends Controller
@@ -33,18 +36,18 @@ class PartnerController extends Controller
 
         // 1. Check if inviting self
         if ($inviter->email === $inviteeEmail) {
-            return response()->json(['message' => 'Sayang, gak bisa undang diri sendiri... hehe 😁'], 422);
+            return response()->json(['message' => 'Anda tidak dapat mengundang diri sendiri.'], 422);
         }
 
         // 2. Check if already has a partner
         if ($inviter->partner_id) {
-            return response()->json(['message' => 'Kamu sudah punya partner, Sayang. Unlink dulu ya if you want to change.'], 422);
+            return response()->json(['message' => 'Anda sudah terhubung dengan partner lain. Harap lepaskan tautan terlebih dahulu.'], 422);
         }
 
         // 3. Find user and ensure verified
         $invitee = User::where('email', $inviteeEmail)->first();
         if (! $invitee instanceof User || ! $invitee->email_verified_at) {
-            return response()->json(['message' => 'Ups! Pasangan kamu harus sudah terdaftar dan verifikasi email dulu ya, Sayang! ✨'], 422);
+            return response()->json(['message' => 'Email partner belum terdaftar atau belum diverifikasi.'], 422);
         }
 
         // 4. Create Invitation
@@ -61,7 +64,7 @@ class PartnerController extends Controller
         $invitee->notify(new PartnerInvitationNotification($inviter, (string) $invitation->token));
 
         return response()->json([
-            'message' => 'Undangan berhasil dikirim! Kabari pasangan kamu ya! 💌✨',
+            'message' => 'Undangan partner berhasil dikirim.',
         ]);
     }
 
@@ -77,7 +80,7 @@ class PartnerController extends Controller
             ->first();
 
         if (! $invitation instanceof PartnerInvitation) {
-            return response()->json(['message' => 'Undangan tidak ditemukan atau sudah kadaluarsa, Sayang. 🥺'], 404);
+            return response()->json(['message' => 'Undangan tidak ditemukan atau telah kedaluwarsa.'], 404);
         }
 
         $inviter = $invitation->inviter;
@@ -106,7 +109,7 @@ class PartnerController extends Controller
             ->first();
 
         if (! $invitation instanceof PartnerInvitation) {
-            return response()->json(['message' => 'Gagal menerima undangan. Cek lagi ya Sayang!'], 404);
+            return response()->json(['message' => 'Proses aktivasi gagal. Token tidak valid atau kedaluwarsa.'], 404);
         }
 
         $user = $request->user();
@@ -120,15 +123,36 @@ class PartnerController extends Controller
             return response()->json(['message' => 'Pengundang tidak ditemukan.'], 404);
         }
 
-        // Cross-link
-        $user->update(['partner_id' => $inviter->id]);
-        $inviter->update(['partner_id' => $user->id]);
+        DB::transaction(function () use ($user, $inviter, $invitation) {
+            // 1. Ensure Inviter has a Household
+            if (! $inviter->household_id) {
+                $household = Household::create([
+                    'id' => (string) Str::uuid(),
+                    'name' => "Household of {$inviter->name}",
+                    'owner_id' => $inviter->id,
+                ]);
+                $inviter->update(['household_id' => $household->id]);
 
-        // Mark as accepted
-        $invitation->update(['status' => 'accepted']);
+                // Also migrate inviter's existing records to the new household
+                $this->reassignUserRecordsToHousehold($inviter->id, (string) $inviter->household_id);
+            }
+
+            // 2. Cross-link partners
+            $user->update([
+                'partner_id' => $inviter->id,
+                'household_id' => $inviter->household_id,
+            ]);
+            $inviter->update(['partner_id' => $user->id]);
+
+            // 3. Migrate user's existing records to the new household
+            $this->reassignUserRecordsToHousehold($user->id, (string) $inviter->household_id);
+
+            // 4. Mark as accepted
+            $invitation->update(['status' => 'accepted']);
+        });
 
         return response()->json([
-            'message' => 'Yay! Sekarang kamu dan '.$inviter->name.' resmi terhubung sebagai partner! 🥳❤️',
+            'message' => 'Tautan partner berhasil diaktifkan. Anda sekarang terhubung dengan '.$inviter->name.'.',
         ]);
     }
 
@@ -144,14 +168,65 @@ class PartnerController extends Controller
 
         $partner = $user->partner;
 
-        if ($partner instanceof User) {
-            $partner->update(['partner_id' => null]);
-        }
+        DB::transaction(function () use ($user, $partner) {
+            // 1. Break partner link
+            if ($partner instanceof User) {
+                $partner->update(['partner_id' => null]);
 
-        $user->update(['partner_id' => null]);
+                // Create new separate household for partner
+                $partnerHousehold = Household::create([
+                    'id' => (string) Str::uuid(),
+                    'name' => "Household of {$partner->name}",
+                    'owner_id' => $partner->id,
+                ]);
+                $partner->update(['household_id' => $partnerHousehold->id]);
+                $this->reassignUserRecordsToHousehold($partner->id, $partnerHousehold->id);
+            }
+
+            $user->update(['partner_id' => null]);
+
+            // 2. Create new separate household for current user
+            $userHousehold = Household::create([
+                'id' => (string) Str::uuid(),
+                'name' => "Household of {$user->name}",
+                'owner_id' => $user->id,
+            ]);
+            $user->update(['household_id' => $userHousehold->id]);
+            $this->reassignUserRecordsToHousehold($user->id, $userHousehold->id);
+        });
 
         return response()->json([
-            'message' => 'Hubungan partner berhasil dilepas. Tetap semangat kumpulin aset ya! ✨',
+            'message' => 'Tautan partner berhasil dilepaskan.',
         ]);
+    }
+
+    /**
+     * Reassign all finance records of a user to a specific household.
+     */
+    private function reassignUserRecordsToHousehold(int $userId, string $householdId): void
+    {
+        $financeTables = [
+            'transactions',
+            'assets',
+            'loans',
+            'goals',
+            'holidays',
+            'asset_transactions',
+            'budgets',
+            'transaction_insights',
+            'scheduled_transactions',
+            'goal_transactions',
+            'holiday_transactions',
+            'chat_histories',
+            'wealth_histories',
+        ];
+
+        foreach ($financeTables as $table) {
+            if (Schema::hasTable($table)) {
+                DB::table($table)
+                    ->where('user_id', $userId)
+                    ->update(['household_id' => $householdId]);
+            }
+        }
     }
 }

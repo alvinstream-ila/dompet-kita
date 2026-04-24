@@ -29,7 +29,7 @@ class VerifyEmailNotification extends VerifyEmail
         }
 
         return (new MailMessage)
-            ->subject('🛡️ Kode Verifikasi Dompet Kita ✨')
+            ->subject('Kode Verifikasi Dompet Kita')
             ->view('emails.verify-email', [
                 'code' => $this->code,
                 'notifiable' => $notifiable,

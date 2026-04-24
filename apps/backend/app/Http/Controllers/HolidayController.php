@@ -132,7 +132,7 @@ class HolidayController extends Controller
             }
 
             return \response()->json([
-                'message' => 'Dana liburan berhasil ditambahkan! Semoga liburannya berkesan ya, Sayang! ✈️',
+                'message' => 'Alokasi dana rekreasi/liburan berhasil diproses. Matriks pendanaan objektif telah diperbarui.',
                 'data' => new HolidayResource($holiday->load('transactions')),
             ]);
         });

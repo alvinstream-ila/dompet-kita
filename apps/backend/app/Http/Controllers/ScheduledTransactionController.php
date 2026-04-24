@@ -57,7 +57,7 @@ class ScheduledTransactionController extends Controller
 
         return $this->success(
             new ScheduledTransactionResource($scheduled),
-            'Jadwal transaksi rutin baru sudah aku catat ya Sayang! ✨',
+            'Instruksi transaksi berkala baru telah diarsip.',
             201
         );
     }
@@ -92,7 +92,7 @@ class ScheduledTransactionController extends Controller
 
         $scheduledTransaction->update($validated);
 
-        return $this->success(new ScheduledTransactionResource($scheduledTransaction), 'Jadwal transaksinya sudah diperbarui! 👍');
+        return $this->success(new ScheduledTransactionResource($scheduledTransaction), 'Parameter transaksi berkala telah diperbarui.');
     }
 
     /**
@@ -104,7 +104,7 @@ class ScheduledTransactionController extends Controller
 
         $scheduledTransaction->delete();
 
-        return $this->success(null, 'Jadwal transaksi rutin sudah dihapus. 👋', 204);
+        return $this->success(null, 'Instruksi transaksi berkala telah dihapus dari sistem.', 204);
     }
 
     /**
@@ -118,7 +118,7 @@ class ScheduledTransactionController extends Controller
 
         return $this->success(
             new ScheduledTransactionResource($scheduledTransaction),
-            'Yeay! Tagihan sudah dilunasi dan dicatat ya Sayang! 💖'
+            'Eksekusi kewajiban pembayaran telah dikonfirmasi dan direkonsiliasi.'
         );
     }
 }

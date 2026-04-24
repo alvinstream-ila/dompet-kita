@@ -29,7 +29,7 @@ class UserController extends Controller
      *
      *         @OA\JsonContent(
      *
-     *             @OA\Property(property="message", type="string", example="Profil berhasil diperbarui ya sayang! ✨"),
+     *             @OA\Property(property="message", type="string", example="Profil berhasil diperbarui."),
      *             @OA\Property(property="user", ref="#/components/schemas/UserResource")
      *         )
      *     )
@@ -46,7 +46,7 @@ class UserController extends Controller
         $user->update($validated);
 
         return \response()->json([
-            'message' => 'Profil berhasil diperbarui ya sayang! ✨',
+            'message' => 'Profil entitas berhasil diperbarui.',
             'user' => new UserResource($user),
         ]);
     }
@@ -87,7 +87,7 @@ class UserController extends Controller
 
         if (! Hash::check((string) $request->string('current_password'), (string) $user->password)) {
             return \response()->json([
-                'message' => 'Password lama kamu salah, Sayang. Cek lagi ya! 🥺',
+                'message' => 'Verifikasi kredensial saat ini gagal. Akses modifikasi ditolak.',
             ], 422);
         }
 
@@ -96,7 +96,7 @@ class UserController extends Controller
         ]);
 
         return \response()->json([
-            'message' => 'Password berhasil diganti! Jaga baik-baik ya Sayang! 🔐💖',
+            'message' => 'Kredensial akses berhasil diperbarui. Integritas akun tetap terjaga.',
         ]);
     }
 }

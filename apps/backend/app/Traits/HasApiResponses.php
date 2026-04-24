@@ -13,7 +13,7 @@ trait HasApiResponses
     /**
      * Standard success response.
      */
-    protected function success(mixed $data = null, string $message = 'Operasi berhasil dilakukan! ✨', int $code = 200): JsonResponse
+    protected function success(mixed $data = null, string $message = 'Operasi berhasil diselesaikan.', int $code = 200): JsonResponse
     {
         return response()->json([
             'success' => true,
@@ -25,7 +25,7 @@ trait HasApiResponses
     /**
      * Standard error response.
      */
-    protected function error(string $message = 'Terjadi kesalahan sistem, Sayang. 🥺', int $code = 400, mixed $details = null): JsonResponse
+    protected function error(string $message = 'Terjadi kesalahan pada sistem.', int $code = 400, mixed $details = null): JsonResponse
     {
         return response()->json([
             'success' => false,
@@ -37,7 +37,7 @@ trait HasApiResponses
     /**
      * Forbidden/Unauthorized response.
      */
-    protected function forbidden(string $message = 'Kamu tidak punya akses ke data ini ya Sayang! 🙅‍♂️'): JsonResponse
+    protected function forbidden(string $message = 'Anda tidak memiliki otoritas untuk mengakses data ini.'): JsonResponse
     {
         return $this->error($message, 403);
     }

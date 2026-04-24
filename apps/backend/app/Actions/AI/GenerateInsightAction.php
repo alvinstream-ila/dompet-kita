@@ -11,29 +11,43 @@ class GenerateInsightAction extends BaseAction
 {
     public function __construct(
         protected AiProviderManager $manager,
-        protected PrivacyFilter $filter
+        protected PrivacyFilter $filter,
+        protected \App\Services\FinancialIntelligenceService $intelService
     ) {}
+
 
     /**
      * @return array{title: string, insight: string}
      */
     public function execute(string $incomeStr, string $expenseStr, string $savingsStr, string $summaryText): array
     {
-        $prompt = <<<PROMPT
-Role: Pasangan (Istri/Suami) yang sangat penyayang, manja tapi pinter banget ngatur duit (Financial Pro).
-Konteks Data Keuangan Kita (30 Hari Terakhir):
-- Pemasukan Kita: Rp {$incomeStr}
-- Jajan/Pengeluaran Kita: Rp {$expenseStr}
-- Sisa Tabungan Kita: Rp {$savingsStr}
-- Daftar Belanja Terakhir:
-{$this->filter->maskSummary($summaryText)}
+        $user = auth()->user();
+        if (!$user instanceof \App\Models\User) {
+            $user = \App\Models\User::firstOrFail();
+        }
+        $sovereign = $this->intelService->getSovereignMetrics($user);
 
-INSTRUKSI:
-1. Panggil "Sayang" atau sebutan gemas lainnya.
-2. Analisis datanya: Kalau jajan kegedean, ingetin dengan cara "cubit manja". Kalau tabungan naik, puji setinggi langit!
-3. Sebutkan satu kategori belanja yang paling dominan kalau ada.
-4. Output valid JSON ONLY: {"title": "Judul Gemes ✨", "insight": "Pesan Cinta & Analisis Detil (Maks 3 kalimat)"}
+
+        $prompt = <<<PROMPT
+Role: Sovereign CFO Partner (Elite Institutional Strategist).
+Data Context (Sovereign Snapshot):
+- Monthly Cashflow: Rp {$incomeStr} (In) / Rp {$expenseStr} (Out)
+- Net Position: Rp {$savingsStr}
+- Income Volatility: {$sovereign['income_volatility']} (Coefficient of Variation)
+- Expense Volatility: {$sovereign['expense_volatility']}
+- Liquidity Ratio: {$sovereign['liquidity_ratio']}x
+- Recommendation Framework: {$sovereign['recommendation_framework']}
+
+MANDATORY ANALYSIS LOGIC:
+1. Dynamic Cashflow (Volatility): Jika volatilitas tinggi, fokus pada strategi "Consumption Smoothing" (Friedman's PIH) dan "Precautionary Buffers". Jangan menghakimi fluktuasi jika pemasukan rata-rata tinggi (>= 10jt).
+2. Capital Efficiency: Evaluasi apakah surplus dikonversi menjadi aset produktif atau mengendap di instrumen non-optimal.
+3. Tone: Formal, intelektual, otoritatif. No fluff.
+
+OUTPUT INSTRUCTIONS:
+1. Output MUST be valid JSON: {"title": "Strategic CFO Audit", "insight": "Analysis & tactical advice (Max 3 concise sentences)"}
+2. NO EMOJIS. NO casual language. NO "Sayang".
 PROMPT;
+
 
         try {
             $jsonText = $this->manager->generateText($prompt);
@@ -41,8 +55,8 @@ PROMPT;
             Log::error('AI_INSIGHT_ERROR: '.$e->getMessage());
 
             return [
-                'title' => 'Sayang Lagi Mikir ✨',
-                'insight' => 'Aku lagi cek catatan belanja kita sebentar ya Sayang. Pokoknya tetap semangat nabung buat mimpi kita! ❤️',
+                'title' => 'Sovereign Insight ✨',
+                'insight' => 'Sistem sedang memproses data transaksi untuk menghasilkan rekomendasi strategis. Mohon tunggu sejenak.',
             ];
         }
 
@@ -55,14 +69,14 @@ PROMPT;
             Log::error('AI_INSIGHT_PARSING_FAILED', ['raw' => $jsonText]);
 
             return [
-                'title' => 'Sayang Lagi Mikir ✨',
-                'insight' => 'Aku lagi cek catatan belanja kita sebentar ya Sayang. Pokoknya tetap semangat nabung buat mimpi kita! ❤️',
+                'title' => 'Sovereign Insight ✨',
+                'insight' => 'Sistem sedang memproses data transaksi untuk menghasilkan rekomendasi strategis. Mohon tunggu sejenak.',
             ];
         }
 
         return [
-            'title' => is_string($data['title'] ?? null) ? (string) $data['title'] : 'Sayang Terharu ✨',
-            'insight' => is_string($data['insight'] ?? null) ? (string) $data['insight'] : 'Aku lagi liat data belanja kita, semuanya aman kok Sayang! ❤️',
+            'title' => is_string($data['title'] ?? null) ? (string) $data['title'] : 'Sovereign Intelligence ✨',
+            'insight' => is_string($data['insight'] ?? null) ? (string) $data['insight'] : 'Data transaksi telah dianalisis. Semua parameter keuangan berada dalam batas operasional yang ditentukan.',
         ];
     }
 }

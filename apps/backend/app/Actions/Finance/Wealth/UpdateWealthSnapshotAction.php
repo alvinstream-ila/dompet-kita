@@ -13,11 +13,21 @@ class UpdateWealthSnapshotAction extends BaseAction
     {
         $month = \now()->month;
         $year = \now()->year;
-        $total = Asset::where('user_id', $user->id)->sum('value');
+        $householdId = $user->household_id;
+
+        // Aggregate total value of ALL assets in the household
+        $total = Asset::where('household_id', $householdId)->sum('value');
 
         return WealthHistory::updateOrCreate(
-            ['user_id' => $user->id, 'month' => $month, 'year' => $year],
-            ['total_value' => (float) $total]
+            [
+                'household_id' => $householdId,
+                'month' => $month,
+                'year' => $year
+            ],
+            [
+                'total_value' => (float) $total,
+                'user_id' => $user->id // Track who performed the latest update
+            ]
         );
     }
 }

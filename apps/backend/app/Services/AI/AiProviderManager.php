@@ -63,7 +63,7 @@ class AiProviderManager
             }
         }
 
-        throw new AiServiceException('Semua asisten AI sedang sibuk Sayang. Coba lagi sebentar lagi ya! ❤️ ['.implode(' | ', $errors).']');
+        throw new AiServiceException('Layanan AI sedang tidak tersedia saat ini. Silakan coba lagi beberapa saat lagi. ['.implode(' | ', $errors).']');
     }
 
     /**
@@ -99,7 +99,7 @@ class AiProviderManager
             }
         }
 
-        throw new AiServiceException('Maaf Sayang, AI gagal baca struknya nih. Mungkin lagi capek. Coba lagi ya! ❤️ ['.implode(' | ', $errors).']');
+        throw new AiServiceException('Gagal memproses dokumen/gambar melalui AI. Silakan unggah ulang atau gunakan format lain. ['.implode(' | ', $errors).']');
     }
 
     /**
@@ -135,7 +135,7 @@ class AiProviderManager
             }
         }
 
-        throw new AiServiceException('Maaf Sayang, AI gagal memproses suaramu. Coba lagi ya! ❤️ ['.implode(' | ', $errors).']');
+        throw new AiServiceException('Gagal memproses input suara melalui AI. Silakan coba lagi. ['.implode(' | ', $errors).']');
     }
 
     public function forceReset(): void

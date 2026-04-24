@@ -56,7 +56,7 @@ class AssetController extends Controller
 
         $asset = $action->execute($user, $request->validated());
 
-        return $this->success(new AssetResource($asset), 'Aset berhasil simpan ya Sayang! 💰', 201);
+        return $this->success(new AssetResource($asset), 'Alokasi aset baru berhasil diarsip.', 201);
     }
 
     /**
@@ -72,7 +72,7 @@ class AssetController extends Controller
 
         $asset = $action->execute($user, $asset, $request->validated());
 
-        return $this->success(new AssetResource($asset), 'Aset berhasil diupdate! Makin rapi deh keuangannya. ✨');
+        return $this->success(new AssetResource($asset), 'Metrik konfigurasi aset berhasil diperbarui.');
     }
 
     /**
@@ -88,7 +88,7 @@ class AssetController extends Controller
 
         $action->execute($user, $asset);
 
-        return $this->success(null, 'Aset sudah dihapus ya Sayang. 👋', 204);
+        return $this->success(null, 'Entri aset telah dihapus dari portofolio.', 204);
     }
 
     /**
@@ -114,7 +114,7 @@ class AssetController extends Controller
 
         $asset = $action->execute($user, $asset, $data);
 
-        return $this->success(new AssetResource($asset), 'Top up aset berhasil! Saldo kamu sudah terupdate. 📈');
+        return $this->success(new AssetResource($asset), 'Injeksi modal aset berhasil diproses. Posisi saldo telah diperbarui.');
     }
 
     /**
@@ -140,7 +140,7 @@ class AssetController extends Controller
         try {
             $asset = $action->execute($user, $asset, $data);
 
-            return $this->success(new AssetResource($asset), 'Pencairan aset berhasil! Uangnya sudah berpindah posisi. 💸');
+            return $this->success(new AssetResource($asset), 'Likuidasi/pencairan aset berhasil diselesaikan.');
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 422);
         }

@@ -33,7 +33,7 @@ class GeminiService
         } catch (\Exception $e) {
             Log::error('AI Service Exception (GeminiService): '.$e->getMessage());
 
-            return 'Aduh Sayang, ada kendala pas aku lagi mikir tadi (AI Error). Coba tanya lagi beberapa saat lagi ya? ❤️';
+            return 'Terjadi kesalahan sistem saat memproses permintaan AI. Silakan coba lagi nanti.';
         }
     }
 }

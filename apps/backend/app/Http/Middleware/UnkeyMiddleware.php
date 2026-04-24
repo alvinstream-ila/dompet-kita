@@ -23,7 +23,7 @@ class UnkeyMiddleware
         $response = null;
 
         if (! $key) {
-            $response = $this->errorResponse('Sayang, kunci gerbangnya mana? (API Key missing) 🌸', 401);
+            $response = $this->errorResponse('Otentikasi gagal: API Key diperlukan.', 401);
         } else {
             try {
                 $cacheKey = 'unkey_verify_'.md5($key);
@@ -43,10 +43,10 @@ class UnkeyMiddleware
 
                 if (isset($data['error'])) {
                     Log::error('UNKEY_VERIFICATION_FAILED', ['status' => $data['status']]);
-                    $response = $this->errorResponse('Aduh, kunci gerbangnya macet nih. Coba lagi ya! 🥺', 500);
+                    $response = $this->errorResponse('Terjadi kesalahan pada sistem otentikasi. Silakan coba lagi.', 500);
                 } elseif (! ($data['valid'] ?? false)) {
                     $response = $this->errorResponse(
-                        'Waduh Sayang, kunci kamu nggak cocok nih.. 🔐',
+                        'Otentikasi gagal: API Key tidak valid.',
                         401,
                         (string) ($data['code'] ?? 'INVALID_KEY')
                     );
@@ -56,7 +56,7 @@ class UnkeyMiddleware
                 }
             } catch (\Exception $e) {
                 Log::critical('UNKEY_CRITICAL_ERROR', ['error' => $e->getMessage()]);
-                $response = $this->errorResponse('Sayang, sistem kuncinya lagi istirahat sebentar nih.. 🥺', 500);
+                $response = $this->errorResponse('Layanan otentikasi sedang tidak tersedia.', 500);
             }
         }
 

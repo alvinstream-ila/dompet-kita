@@ -40,7 +40,7 @@ class CheckSessionTimeout
                 // Carbon is mutable/immutable depending on version/config, copy() is safer
                 if ($createdAt->copy()->addMinutes($absoluteTimeout)->isPast()) {
                     $token->delete();
-                    throw new AuthenticationException('Aduh Sayang, sesi kamu sudah berakhir setelah 24 jam. Demi keamanan, login ulang dulu ya! ✨');
+                    throw new AuthenticationException('Sesi Anda telah berakhir demi keamanan. Silakan login kembali.');
                 }
             }
 
@@ -51,7 +51,7 @@ class CheckSessionTimeout
             if ($lastUsedAt instanceof Carbon) {
                 if ($lastUsedAt->copy()->addMinutes($idleTimeout)->isPast()) {
                     $token->delete();
-                    throw new AuthenticationException('Sayang, kamu tadi ketiduran ya? Sesi kamu habis karena kelamaan nggak ada aktivitas. Login lagi yuk! 🌸');
+                    throw new AuthenticationException('Sesi Anda telah berakhir karena tidak ada aktivitas. Silakan login kembali.');
                 }
             }
         }

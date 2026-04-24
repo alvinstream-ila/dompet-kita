@@ -42,7 +42,7 @@ class ResetPasswordOTPNotification extends Notification
         }
 
         return (new MailMessage)
-            ->subject('🔐 Reset Password Dompet Kita ✨')
+            ->subject('Reset Password Dompet Kita')
             ->view('emails.reset-password', [
                 'code' => $this->code,
                 'notifiable' => $notifiable,

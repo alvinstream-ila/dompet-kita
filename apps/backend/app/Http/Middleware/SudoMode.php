@@ -23,7 +23,7 @@ class SudoMode
             if (! $lastSudoAt || now()->diffInMinutes((string) $lastSudoAt) > 15) {
                 return $request->expectsJson()
                     ? response()->json([
-                        'message' => 'Aduh Sayang, butuh konfirmasi ulang nih buat aksi penting ini. Re-auth dulu ya! 🔐',
+                        'message' => 'Konfirmasi keamanan diperlukan untuk melanjutkan aksi ini. Silakan lakukan otentikasi ulang.',
                         'sudo_required' => true,
                     ], 403)
                     : redirect()->route('sudo.confirm');

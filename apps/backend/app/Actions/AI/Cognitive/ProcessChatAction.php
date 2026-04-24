@@ -35,7 +35,7 @@ class ProcessChatAction
             ->reverse();
 
         // 2. Prepare Context (Current Financial Status)
-        $summary = $this->getFinancialSummaryContext();
+        $summary = $this->getFinancialSummaryContext($user);
 
         // 3. Detect Simulation Intent (Simple Regex for Amount)
         $simulationContext = '';
@@ -66,7 +66,7 @@ class ProcessChatAction
         return $aiResponse;
     }
 
-    private function getFinancialSummaryContext(): string
+    private function getFinancialSummaryContext(User $user): string
     {
         // Scoped to household automatically via HasHouseholdScope
         $transactions = Transaction::where('date', '>=', now()->subDays(30))
@@ -80,12 +80,23 @@ class ProcessChatAction
         // Scoped to household automatically via HasHouseholdScope
         $goals = Goal::get();
 
-        $ctx = 'Pemasukan: Rp '.number_format($totalIncome)."\n";
-        $ctx .= 'Pengeluaran: Rp '.number_format($totalExpense)."\n";
-        $ctx .= 'Sisa Saldo (30 hari): Rp '.number_format($savings)."\n";
+        // 4. Advanced Sovereign Metrics
+        $sovereign = $this->intelService->getSovereignMetrics($user);
+
+        $ctx = '--- DATA KEUANGAN (30 HARI) ---' . "\n";
+        $ctx .= 'Total Pemasukan: Rp '.number_format($totalIncome)."\n";
+        $ctx .= 'Total Pengeluaran: Rp '.number_format($totalExpense)."\n";
+        $ctx .= 'Net Cashflow: Rp '.number_format($savings)."\n";
+        
+        $ctx .= "\n" . '--- METRIK SOVEREIGN (HISTORIS 6 BULAN) ---' . "\n";
+        $ctx .= "Income Volatility: " . ($sovereign['income_volatility'] * 100) . "%\n";
+        $ctx .= "Expense Volatility: " . ($sovereign['expense_volatility'] * 100) . "%\n";
+        $ctx .= "Savings Rate: " . $sovereign['savings_rate'] . "%\n";
+        $ctx .= "Liquidity Ratio: " . $sovereign['liquidity_ratio'] . "x (Ketahanan Kas)\n";
+        $ctx .= "Framework Analisis: " . $sovereign['recommendation_framework'] . "\n";
 
         if ($goals->isNotEmpty()) {
-            $ctx .= "Goals Terakhir:\n";
+            $ctx .= "\nGoals Strategis:\n";
             foreach ($goals->take(3) as $goal) {
                 $ctx .= "- {$goal->name}: Progress Rp ".number_format($goal->current_amount).' / Rp '.number_format($goal->target_amount)."\n";
             }
@@ -93,6 +104,7 @@ class ProcessChatAction
 
         return $ctx;
     }
+
 
     /**
      * @param  array{simulated_cash: float, impact_on_liquidity_days: int|float, days_remaining_simulated: int|float, is_risky: bool}  $sim

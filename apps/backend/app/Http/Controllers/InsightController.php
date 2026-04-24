@@ -25,7 +25,7 @@ class InsightController extends Controller
         $engine->generateInsights($user);
 
         return response()->json([
-            'message' => 'Analisis kuantum selesai sayang! ✨ Pola baru telah terdeteksi.',
+            'message' => 'Analisis data finansial selesai. Pola baru telah diidentifikasi.',
             'success' => true,
         ]);
     }

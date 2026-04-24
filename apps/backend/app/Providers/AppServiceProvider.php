@@ -55,7 +55,7 @@ class AppServiceProvider extends ServiceProvider
         $this->bootSecurityGuards();
 
         // Sovereign Consciousness Log
-        Log::info('Sayang, sistem kognitif Dompet Kita v7.1.18 aktif dan siap membantu! ❤️');
+        Log::info('Sovereign CFO v7.1.18: Core system initialized and operational.');
     }
 
     /**
