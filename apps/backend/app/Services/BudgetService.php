@@ -43,12 +43,8 @@ class BudgetService
         // If the cycle starts after the 1st (e.g., 25th), the cycle for "Month X"
         // actually started in "Month X-1".
         // Example: April cycle starts March 25 and ends April 24.
-        if ($startDay > 1) {
-            // If month was explicitly provided, we always shift back.
-            // If not provided (current cycle), we shift back only if we haven't reached the startDay yet.
-            if ($month !== null || $now->day < $startDay) {
-                $targetMonth--;
-            }
+        if ($startDay > 1 && ($month !== null || $now->day < $startDay)) {
+            $targetMonth--;
         }
 
         // Handle year wrap-around

@@ -1,5 +1,5 @@
 import { Calendar, Edit3, FileText, Trash2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, parseLocalDate } from '@/lib/utils';
 
 interface Transaction {
   id: string;
@@ -63,7 +63,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
                 </div>
                 <div className="mt-1 flex items-center gap-2 text-xs font-bold text-slate-400/60 uppercase">
                   <Calendar className="h-3.5 w-3.5" />
-                  {new Date(t.date).toLocaleDateString('id-ID', {
+                  {parseLocalDate(t.date).toLocaleDateString('id-ID', {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric',

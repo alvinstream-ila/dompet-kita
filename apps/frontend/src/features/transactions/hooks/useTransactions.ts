@@ -69,11 +69,15 @@ function removeInfiniteTransaction(
   };
 }
 
-export function useTransactions(month?: number, year?: number) {
+export function useTransactions(
+  month?: number,
+  year?: number,
+  limit: number = 20
+) {
   const { budgetCycleStart } = useSettings();
 
   return useInfiniteQuery({
-    queryKey: ['transactions', month, year, budgetCycleStart],
+    queryKey: ['transactions', month, year, budgetCycleStart, limit],
     initialPageParam: 1,
     queryFn: async ({ pageParam = 1 }) => {
       const { data } = await api.get('/transactions', {
@@ -82,7 +86,7 @@ export function useTransactions(month?: number, year?: number) {
           year,
           page: pageParam,
           budget_cycle_start: budgetCycleStart,
-          limit: 20,
+          limit,
         },
       });
 
@@ -91,7 +95,7 @@ export function useTransactions(month?: number, year?: number) {
       return (data?.data?.data || []) as Transaction[];
     },
     getNextPageParam: (lastPage, allPages) => {
-      const isFullPage = lastPage?.length === 20;
+      const isFullPage = lastPage?.length === limit;
       return isFullPage ? allPages.length + 1 : undefined;
     },
   });

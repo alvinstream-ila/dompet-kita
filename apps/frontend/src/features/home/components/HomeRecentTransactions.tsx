@@ -23,7 +23,7 @@ import {
 import type React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { cn, parseLocalDate } from '@/lib/utils';
 import type { Transaction } from '@/types';
 
 interface HomeRecentTransactionsProps {
@@ -201,7 +201,7 @@ export const HomeRecentTransactions: React.FC<HomeRecentTransactionsProps> = ({
                 <div className="flex items-end justify-between">
                   <div className="space-y-1">
                     <p className="text-[9px] font-black tracking-widest text-slate-400 uppercase">
-                      {new Date(t.date).toLocaleDateString('id-ID', {
+                      {parseLocalDate(t.date).toLocaleDateString('id-ID', {
                         day: 'numeric',
                         month: 'long',
                         year: 'numeric',

@@ -6,9 +6,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatToRupiah(value: string | number): string {
-  const numberString = value.toString().replace(/[^0-9]/g, '');
+  const numberString = value.toString().replaceAll(/\D/g, '');
   if (!numberString) return '';
-  return new Intl.NumberFormat('id-ID').format(parseInt(numberString, 10));
+  return new Intl.NumberFormat('id-ID').format(
+    Number.parseInt(numberString, 10)
+  );
 }
 
 export function getTerbilang(amount: number): string {
@@ -42,4 +44,11 @@ export function getTerbilang(amount: number): string {
     }
   }
   return '';
+}
+
+export function parseLocalDate(dateString: string): Date {
+  // Handle strings like "2026-04-22 00:00:00" or just "2026-04-22"
+  const [datePart] = dateString.split(' ');
+  const [y, m, d] = datePart.split('-').map(Number);
+  return new Date(y, m - 1, d);
 }

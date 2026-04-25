@@ -22,6 +22,7 @@ import {
   ReportTableSkeleton,
 } from '@/features/reports/components/ReportSkeletons';
 import { useTransactions } from '@/features/transactions';
+import { parseLocalDate } from '@/lib/utils';
 import type { CategorySummary, Transaction } from '@/types';
 
 const ReportStats = dynamic(
@@ -128,7 +129,7 @@ export default function ReportsPage() {
   const monthlyData = transactions.reduce<
     Record<string, { income: number; expense: number }>
   >((acc, curr) => {
-    const date = new Date(curr.date);
+    const date = parseLocalDate(curr.date);
     const month = date.toLocaleString('id-ID', { month: 'short' });
     if (!acc[month]) acc[month] = { income: 0, expense: 0 };
     acc[month][curr.type] += curr.amount;
@@ -213,7 +214,7 @@ export default function ReportsPage() {
       ];
       transactions.forEach((t) => {
         transSheet.addRow({
-          date: new Date(t.date).toLocaleDateString('id-ID'),
+          date: parseLocalDate(t.date).toLocaleDateString('id-ID'),
           type: t.type,
           amount: t.amount,
         });

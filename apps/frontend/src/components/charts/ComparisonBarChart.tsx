@@ -12,6 +12,8 @@ import {
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { useTransactions } from '@/features/transactions';
+import { parseLocalDate } from '@/lib/utils';
+import type { Transaction } from '@/types';
 
 ChartJS.register(
   CategoryScale,
@@ -23,12 +25,16 @@ ChartJS.register(
 );
 
 export const ComparisonBarChart: React.FC = () => {
-  const { data: infiniteData, isLoading } = useTransactions();
+  const { data: infiniteData, isLoading } = useTransactions(
+    undefined,
+    undefined,
+    100
+  );
   const transactions = React.useMemo(() => {
     if (!infiniteData) return [];
     return infiniteData.pages.flatMap((page: unknown) =>
       Array.isArray(page) ? page : (page as { data?: unknown[] }).data || []
-    );
+    ) as Transaction[];
   }, [infiniteData]);
 
   const getWeekData = React.useCallback(
@@ -49,11 +55,11 @@ export const ComparisonBarChart: React.FC = () => {
 
       transactions.forEach((t) => {
         if (t.type !== 'expense') return;
-        const tDate = new Date(t.date);
+        const tDate = parseLocalDate(t.date);
         if (tDate >= startOfWeek && tDate <= endOfWeek) {
           const tDay = tDate.getDay();
           const tIndex = tDay === 0 ? 6 : tDay - 1;
-          weekExpenses[tIndex] += t.amount;
+          weekExpenses[tIndex] += Number(t.amount);
         }
       });
 
