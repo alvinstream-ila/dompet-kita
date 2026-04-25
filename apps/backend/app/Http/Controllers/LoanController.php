@@ -214,29 +214,52 @@ class LoanController extends Controller
         $totalPiutang = 0;
         $totalHutang = 0;
 
+        if ($loans->isEmpty()) {
+            return [
+                'items' => $items,
+                'total_piutang' => $totalPiutang,
+                'total_hutang' => $totalHutang,
+            ];
+        }
+
+        // Gather loan IDs as strings to prevent Postgres json = integer type mismatch
+        $loanIds = $loans->pluck('id')->map(fn ($id) => (string) $id)->toArray();
+
+        // Fetch all relevant repayments for these loans up to the specified date in one query
+        $repayments = Transaction::query()
+            ->where('metadata->source_type', Loan::class)
+            ->whereIn('metadata->loan_id', $loanIds)
+            ->where('date', '<=', $date->toDateString())
+            ->get()
+            ->groupBy(function ($t) {
+                /** @var array<string, mixed>|null $metadata */
+                $metadata = $t->metadata;
+
+                return is_array($metadata) ? (string) ($metadata['loan_id'] ?? '') : '';
+            });
+
         foreach ($loans as $loan) {
             // Only consider loans created on or before this date
             if ($loan->created_at->gt($date)) {
                 continue;
             }
 
-            // Calculate payments recorded on or before this date
-            // Note: We use metadata->loan_id since it's indexed and reliable
-            $repayments = Transaction::query()
-                ->where('metadata->source_type', Loan::class)
-                ->where('metadata->loan_id', $loan->id)
-                ->where('date', '<=', $date->toDateString())
-                ->where(function ($q) use ($loan) {
-                    if ($loan->type === LoanType::RECEIVABLE) {
-                        $q->where('type', TransactionType::INCOME);
-                    } else {
-                        $q->where('type', TransactionType::EXPENSE);
-                    }
-                })
-                ->sum('amount');
+            // Get repayments for this specific loan
+            $loanRepayments = $repayments->get((string) $loan->id, collect());
+
+            // Calculate valid payments based on loan type
+            $validRepayments = $loanRepayments->filter(function ($t) use ($loan) {
+                if ($loan->type === LoanType::RECEIVABLE) {
+                    return $t->type === TransactionType::INCOME;
+                } else {
+                    return $t->type === TransactionType::EXPENSE;
+                }
+            });
+
+            $repaymentsAmount = (float) $validRepayments->sum('amount');
 
             /** @var float $remaining */
-            $remaining = max(0, $loan->amount - $repayments);
+            $remaining = max(0, $loan->amount - $repaymentsAmount);
 
             if ($remaining > 0) {
                 $items[] = [

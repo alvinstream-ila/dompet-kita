@@ -72,7 +72,13 @@ export default function ReportsPage() {
     selectedMonth,
     selectedYear
   );
-  const transactions: Transaction[] = infiniteData?.pages.flat() || [];
+  const transactions: Transaction[] =
+    infiniteData?.pages.flatMap((page: unknown) => {
+      if (Array.isArray(page)) return page;
+      if (page && typeof page === 'object' && Array.isArray(page.data))
+        return page.data;
+      return [];
+    }) || [];
 
   const months = [
     'Januari',

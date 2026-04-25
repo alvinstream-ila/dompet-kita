@@ -23,11 +23,13 @@ ChartJS.register(
 );
 
 export const ComparisonBarChart: React.FC = () => {
-  const { data: infiniteData } = useTransactions();
-  const transactions = React.useMemo(
-    () => infiniteData?.pages.flat() || [],
-    [infiniteData?.pages]
-  );
+  const { data: infiniteData, isLoading } = useTransactions();
+  const transactions = React.useMemo(() => {
+    if (!infiniteData) return [];
+    return infiniteData.pages.flatMap((page: unknown) =>
+      Array.isArray(page) ? page : (page as { data?: unknown[] }).data || []
+    );
+  }, [infiniteData]);
 
   const getWeekData = React.useCallback(
     (weeksAgo: number) => {
@@ -150,6 +152,14 @@ export const ComparisonBarChart: React.FC = () => {
     }),
     []
   );
+
+  if (isLoading) {
+    return (
+      <div className="flex h-full w-full animate-pulse items-center justify-center text-[10px] font-black tracking-widest text-slate-400 uppercase">
+        Mencari Jejak Cuan...
+      </div>
+    );
+  }
 
   return (
     <div className="h-full w-full p-2">

@@ -33,7 +33,18 @@ export function TransactionsView() {
   const { mutateAsync: deleteTransaction, isPending: isDeleting } =
     useDeleteTransaction();
 
-  const transactions = data?.pages.flat() || [];
+  const transactions =
+    data?.pages.flatMap((page: unknown) => {
+      if (Array.isArray(page)) return page;
+      if (
+        page &&
+        typeof page === 'object' &&
+        'data' in page &&
+        Array.isArray((page as { data: unknown[] }).data)
+      )
+        return (page as { data: Transaction[] }).data;
+      return [];
+    }) || [];
   const { formatAmount } = useFormatting();
 
   const filteredTransactions = transactions.filter((t: Transaction) => {
