@@ -8,7 +8,7 @@ export function useBudgetGuard() {
 
   // Use financial summary instead of full transaction list (much more efficient)
   const { expense: currentMonthExpenses } = useFinancialSummary(
-    now.getMonth(),
+    now.getMonth() + 1,
     now.getFullYear()
   );
 

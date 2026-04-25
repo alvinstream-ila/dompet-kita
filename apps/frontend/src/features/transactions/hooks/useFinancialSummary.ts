@@ -6,7 +6,7 @@ import { Transaction } from '@/types';
 
 export function useFinancialSummary(month?: number, year?: number) {
   const now = new Date();
-  const targetMonth = month ?? now.getMonth();
+  const targetMonth = month ?? now.getMonth() + 1;
   const targetYear = year ?? now.getFullYear();
   const { budgetCycleStart } = useSettings();
 

@@ -4,6 +4,7 @@ namespace App\Actions\Finance\Asset;
 
 use App\Actions\BaseAction;
 use App\Enums\TransactionType;
+use App\Exceptions\InsufficientAssetBalanceException;
 use App\Models\Asset;
 use App\Models\AssetTransaction;
 use App\Models\User;
@@ -25,7 +26,7 @@ class WithdrawAssetAction extends BaseAction
 
             // 0. Safety Guard: Prevent over-withdrawal
             if ($amount > $asset->value) {
-                throw new \Exception("Saldo aset {$asset->name} tidak mencukupi untuk penarikan sebesar Rp ".number_format($amount, 0, ',', '.').'. Nilai saat ini: Rp '.number_format($asset->value, 0, ',', '.'));
+                throw new InsufficientAssetBalanceException("Saldo aset {$asset->name} tidak mencukupi untuk penarikan sebesar Rp ".number_format($amount, 0, ',', '.').'. Nilai saat ini: Rp '.number_format($asset->value, 0, ',', '.'));
             }
 
             // 1. Create Transaction for the Source Asset

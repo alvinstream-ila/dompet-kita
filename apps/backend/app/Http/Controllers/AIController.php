@@ -182,8 +182,8 @@ class AIController extends Controller
         }
 
         try {
-            $prediction = $this->intelService->predictLiquidityCrisis($user);
-            $rebalance = $this->intelService->generateRebalanceAdvice($user);
+            $prediction = $this->intelService->predictLiquidityCrisis();
+            $rebalance = $this->intelService->generateRebalanceAdvice();
 
             return $this->success([
                 'prediction' => $prediction,

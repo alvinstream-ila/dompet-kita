@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Finance;
 
 use App\Actions\BaseAction;
+use App\Exceptions\CfoAnalysisException;
 use App\Models\Asset;
 use App\Models\Transaction;
 use App\Services\GeminiService;
@@ -45,7 +46,7 @@ class PerformCfoAnalysisAction extends BaseAction
         $transactions = Transaction::whereBetween('date', [$startDate, $endDate])->get();
 
         if ($transactions->isEmpty()) {
-            throw new Exception("No transaction data found for the period {$startDate->format('Y-m')} to {$month}.");
+            throw new CfoAnalysisException("No transaction data found for the period {$startDate->format('Y-m')} to {$month}.");
         }
 
         // 2. Calculate Monthly Metrics

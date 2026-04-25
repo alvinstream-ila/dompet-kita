@@ -27,8 +27,8 @@ class GenerateWisdomAction
     {
         try {
             // Can be decoupled further eventually, using it via DI for now.
-            $prediction = $this->finIntel->predictLiquidityCrisis($user);
-            $rebalance = $this->finIntel->generateRebalanceAdvice($user);
+            $prediction = $this->finIntel->predictLiquidityCrisis();
+            $rebalance = $this->finIntel->generateRebalanceAdvice();
 
             $prompt = "Sebagai Sovereign CFO Partner (Strategist Finansial Premium), berikan 1 kalimat insight bijak dan strategis:\n";
             $prompt .= "- Likuiditas: {$prediction['status']} (Rp ".number_format((float) $prediction['current_cash'], 0, ',', '.').")\n";

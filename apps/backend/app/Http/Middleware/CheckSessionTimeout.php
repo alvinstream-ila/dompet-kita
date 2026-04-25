@@ -36,23 +36,18 @@ class CheckSessionTimeout
             $absoluteTimeout = (int) config('sanctum.absolute_expiration', 1440);
             $createdAt = $token->created_at;
 
-            if ($createdAt instanceof Carbon) {
-                // Carbon is mutable/immutable depending on version/config, copy() is safer
-                if ($createdAt->copy()->addMinutes($absoluteTimeout)->isPast()) {
-                    $token->delete();
-                    throw new AuthenticationException('Sesi Anda telah berakhir demi keamanan. Silakan login kembali.');
-                }
+            if ($createdAt instanceof Carbon && $createdAt->copy()->addMinutes($absoluteTimeout)->isPast()) {
+                $token->delete();
+                throw new AuthenticationException('Sesi Anda telah berakhir demi keamanan. Silakan login kembali.');
             }
 
             // 2. Idle Timeout / Sliding Window (Default: 30 Menit)
             $idleTimeout = (int) config('sanctum.idle_expiration', 30);
             $lastUsedAt = $token->last_used_at ?? $createdAt;
 
-            if ($lastUsedAt instanceof Carbon) {
-                if ($lastUsedAt->copy()->addMinutes($idleTimeout)->isPast()) {
-                    $token->delete();
-                    throw new AuthenticationException('Sesi Anda telah berakhir karena tidak ada aktivitas. Silakan login kembali.');
-                }
+            if ($lastUsedAt instanceof Carbon && $lastUsedAt->copy()->addMinutes($idleTimeout)->isPast()) {
+                $token->delete();
+                throw new AuthenticationException('Sesi Anda telah berakhir karena tidak ada aktivitas. Silakan login kembali.');
             }
         }
 

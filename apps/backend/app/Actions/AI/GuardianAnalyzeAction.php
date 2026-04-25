@@ -37,7 +37,7 @@ class GuardianAnalyzeAction extends BaseAction
     {
         try {
             // 1. Predict Crisis
-            $prediction = $this->intel->predictLiquidityCrisis($user);
+            $prediction = $this->intel->predictLiquidityCrisis();
 
             $result = [
                 'status' => (string) $prediction['status'],
@@ -67,7 +67,7 @@ class GuardianAnalyzeAction extends BaseAction
             } else {
                 // Check Rebalancing opportunities if safe
                 /** @var array<int, array{action: string, amount?: float, reason: string}> $rebalancing */
-                $rebalancing = $this->intel->generateRebalanceAdvice($user);
+                $rebalancing = $this->intel->generateRebalanceAdvice();
 
                 /** @var array<int, array{action: string, reason: string}> $opportunities */
                 $opportunities = array_values(array_filter($rebalancing, fn ($adv) => $adv['action'] === 'INVEST'));

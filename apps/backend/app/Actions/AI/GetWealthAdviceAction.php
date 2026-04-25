@@ -23,7 +23,7 @@ class GetWealthAdviceAction extends BaseAction
     public function execute(User $user, array $data): string
     {
         $maskedName = $this->filter->mask($user->name);
-        $sovereign = $this->intelService->getSovereignMetrics($user);
+        $sovereign = $this->intelService->getSovereignMetrics();
 
         $prompt = "Identitas: Anda adalah 'Sovereign Wealth Strategist', konsultan kekayaan visioner dan strategis untuk {$maskedName}.
             

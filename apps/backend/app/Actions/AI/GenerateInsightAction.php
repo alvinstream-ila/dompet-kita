@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\AI\AiProviderManager;
 use App\Services\FinancialIntelligenceService;
 use App\Services\Security\PrivacyFilter;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class GenerateInsightAction extends BaseAction
@@ -22,11 +23,11 @@ class GenerateInsightAction extends BaseAction
      */
     public function execute(string $incomeStr, string $expenseStr, string $savingsStr, string $summaryText): array
     {
-        $user = auth()->user();
+        $user = Auth::user();
         if (! $user instanceof User) {
             $user = User::firstOrFail();
         }
-        $sovereign = $this->intelService->getSovereignMetrics($user);
+        $sovereign = $this->intelService->getSovereignMetrics();
 
         $prompt = <<<PROMPT
 Role: Sovereign CFO Partner (Elite Institutional Strategist).

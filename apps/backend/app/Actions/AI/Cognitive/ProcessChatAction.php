@@ -35,7 +35,7 @@ class ProcessChatAction
             ->reverse();
 
         // 2. Prepare Context (Current Financial Status)
-        $summary = $this->getFinancialSummaryContext($user);
+        $summary = $this->getFinancialSummaryContext();
 
         // 3. Detect Simulation Intent (Simple Regex for Amount)
         $simulationContext = '';
@@ -43,7 +43,7 @@ class ProcessChatAction
             $amount = $this->parseAmount($matches[0]);
             if ($amount > 0) {
                 // Dependency on FinancialIntelligenceService (maybe later this becomes an action too, but for now we inject it)
-                $simulation = $this->intelService->simulateFinancialImpact($user, $amount);
+                $simulation = $this->intelService->simulateFinancialImpact($amount);
                 $simulationContext = $this->formatSimulationResult($simulation);
             }
         }
@@ -66,7 +66,7 @@ class ProcessChatAction
         return $aiResponse;
     }
 
-    private function getFinancialSummaryContext(User $user): string
+    private function getFinancialSummaryContext(): string
     {
         // Scoped to household automatically via HasHouseholdScope
         $transactions = Transaction::where('date', '>=', now()->subDays(30))
@@ -81,7 +81,7 @@ class ProcessChatAction
         $goals = Goal::get();
 
         // 4. Advanced Sovereign Metrics
-        $sovereign = $this->intelService->getSovereignMetrics($user);
+        $sovereign = $this->intelService->getSovereignMetrics();
 
         $ctx = '--- DATA KEUANGAN (30 HARI) ---'."\n";
         $ctx .= 'Total Pemasukan: Rp '.number_format($totalIncome)."\n";

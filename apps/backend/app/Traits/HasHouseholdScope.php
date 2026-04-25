@@ -43,15 +43,24 @@ trait HasHouseholdScope
     {
         static::creating(function ($model) {
             $user = Auth::user();
+
+            // 1. If we have an authenticated user, prioritize their context
             if ($user instanceof User) {
-                // 1. Ensure user_id is set
                 if (! $model->user_id) {
                     $model->user_id = $user->id;
                 }
 
-                // 2. Ensure household_id is set from the user's current household
                 if (! $model->household_id && $user->household_id) {
                     $model->household_id = $user->household_id;
+                }
+            }
+
+            // 2. Fallback: If household_id is still missing but user_id is set (e.g. manual assignment or console)
+            if (! $model->household_id && $model->user_id) {
+                /** @var User|null $owner */
+                $owner = User::find($model->user_id);
+                if ($owner && $owner->household_id) {
+                    $model->household_id = $owner->household_id;
                 }
             }
         });

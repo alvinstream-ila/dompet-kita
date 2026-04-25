@@ -3,11 +3,11 @@
 namespace App\Actions\AI;
 
 use App\Actions\BaseAction;
+use App\Exceptions\AnalyzeReceiptException;
 use App\Services\AI\AiProviderManager;
 use App\Services\Security\PrivacyFilter;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use RuntimeException;
 
 class AnalyzeReceiptAction extends BaseAction
 {
@@ -37,7 +37,7 @@ class AnalyzeReceiptAction extends BaseAction
         } catch (Exception $e) {
             $msg = $e->getMessage();
             Log::error('AI_SCAN_ERROR (Receipt Scan): '.$msg);
-            throw new RuntimeException('Layanan analisis AI sedang mengalami kendala teknis: '.$msg);
+            throw new AnalyzeReceiptException('Layanan analisis AI sedang mengalami kendala teknis: '.$msg);
         }
 
         if (preg_match('/\{.*\}/s', $jsonText, $matches)) {
@@ -48,12 +48,12 @@ class AnalyzeReceiptAction extends BaseAction
 
         if (! is_array($result)) {
             Log::error('AI_SCAN_PARSING_FAILED', ['raw' => $jsonText]);
-            throw new RuntimeException('Sistem gagal memproses data struk ini. Silakan lakukan input data secara manual.');
+            throw new AnalyzeReceiptException('Sistem gagal memproses data struk ini. Silakan lakukan input data secara manual.');
         }
 
         /** @var mixed $rawAmount */
         $rawAmount = $result['amount'] ?? 0;
-        $cleanAmount = (int) preg_replace('/[^0-9]/', '', is_scalar($rawAmount) ? (string) $rawAmount : '0');
+        $cleanAmount = (int) preg_replace('/\D/', '', is_scalar($rawAmount) ? (string) $rawAmount : '0');
 
         return [
             'amount' => $cleanAmount,

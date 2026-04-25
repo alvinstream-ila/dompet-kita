@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -312,7 +313,9 @@ class AuthController extends Controller
 
         Cache::forget("sudo_mode_{$user->id}");
 
-        $user->currentAccessToken()->delete();
+        /** @var PersonalAccessToken $token */
+        $token = $user->currentAccessToken();
+        $token->delete();
 
         return \response()->json([
             'message' => 'Sesi diakhiri secara aman.',

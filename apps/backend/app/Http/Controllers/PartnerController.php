@@ -23,32 +23,33 @@ class PartnerController extends Controller
      */
     public function invite(Request $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
-
         $inviter = $request->user();
         if (! $inviter instanceof User) {
             abort(401);
         }
 
+        $request->validate([
+            'email' => [
+                'required',
+                'email',
+                function ($_attribute, $value, $fail) use ($inviter) {
+                    if ($inviter->email === $value) {
+                        $fail('Anda tidak dapat mengundang diri sendiri.');
+                    }
+                    if ($inviter->partner_id) {
+                        $fail('Anda sudah terhubung dengan partner lain. Harap lepaskan tautan terlebih dahulu.');
+                    }
+
+                    $invitee = User::where('email', $value)->first();
+                    if (! $invitee instanceof User || ! $invitee->email_verified_at) {
+                        $fail('Email partner belum terdaftar atau belum diverifikasi.');
+                    }
+                },
+            ],
+        ]);
+
         $inviteeEmail = (string) $request->string('email');
-
-        // 1. Check if inviting self
-        if ($inviter->email === $inviteeEmail) {
-            return response()->json(['message' => 'Anda tidak dapat mengundang diri sendiri.'], 422);
-        }
-
-        // 2. Check if already has a partner
-        if ($inviter->partner_id) {
-            return response()->json(['message' => 'Anda sudah terhubung dengan partner lain. Harap lepaskan tautan terlebih dahulu.'], 422);
-        }
-
-        // 3. Find user and ensure verified
-        $invitee = User::where('email', $inviteeEmail)->first();
-        if (! $invitee instanceof User || ! $invitee->email_verified_at) {
-            return response()->json(['message' => 'Email partner belum terdaftar atau belum diverifikasi.'], 422);
-        }
+        $invitee = User::where('email', $inviteeEmail)->firstOrFail();
 
         // 4. Create Invitation
         /** @var PartnerInvitation $invitation */

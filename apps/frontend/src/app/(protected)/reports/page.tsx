@@ -75,8 +75,9 @@ export default function ReportsPage() {
   const transactions: Transaction[] =
     infiniteData?.pages.flatMap((page: unknown) => {
       if (Array.isArray(page)) return page;
-      if (page && typeof page === 'object' && Array.isArray(page.data))
-        return page.data;
+      const p = page as { data?: unknown };
+      if (p && typeof p === 'object' && Array.isArray(p.data))
+        return p.data;
       return [];
     }) || [];
 

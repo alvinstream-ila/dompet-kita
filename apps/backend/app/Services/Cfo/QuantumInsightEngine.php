@@ -29,9 +29,15 @@ class QuantumInsightEngine
         $endDate = Carbon::now();
         $startDate = Carbon::now()->subDays(30);
 
-        $transactions = Transaction::whereBetween('date', [$startDate, $endDate])
-            ->orderBy('date', 'desc')
-            ->get();
+        $query = Transaction::whereBetween('date', [$startDate, $endDate]);
+
+        if ($user->household_id) {
+            $query->where('household_id', $user->household_id);
+        } else {
+            $query->where('user_id', $user->id);
+        }
+
+        $transactions = $query->orderBy('date', 'desc')->get();
 
         if ($transactions->isEmpty()) {
             Log::info("Quantum Insight Engine: No transactions found for User {$user->id}. Skipping.");

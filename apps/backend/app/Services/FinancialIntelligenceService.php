@@ -6,7 +6,6 @@ use App\Enums\AssetType;
 use App\Enums\TransactionType;
 use App\Models\Asset;
 use App\Models\Transaction;
-use App\Models\User;
 use Illuminate\Support\Carbon;
 
 class FinancialIntelligenceService
@@ -23,12 +22,10 @@ class FinancialIntelligenceService
 
     /**
      * Prediction of when liquidity (Cash) will run out based on average spending.
-     * Includes option to toggle partner's cash into the calculation.
      *
-     * @param  bool  $includePartner  Whether to include the partner's assets in the calculation
      * @return array{status: string, days_remaining: float, current_cash: float, burn_rate: float, message: string}
      */
-    public function predictLiquidityCrisis(User $user, bool $includePartner = true): array
+    public function predictLiquidityCrisis(): array
     {
         // 1. Calculate Total Liquid Cash from Assets (Cash & Bank)
         // Scoped to household automatically via HasHouseholdScope
@@ -116,9 +113,9 @@ class FinancialIntelligenceService
      *
      * @return array<int, array{action: string, amount?: float, reason: string}>
      */
-    public function generateRebalanceAdvice(User $user, bool $includePartner = false): array
+    public function generateRebalanceAdvice(): array
     {
-        $prediction = $this->predictLiquidityCrisis($user, $includePartner);
+        $prediction = $this->predictLiquidityCrisis();
 
         // Safety Buffer: Minimal 2x monthly burn in Cash
         $monthlyNeed = $prediction['burn_rate'] * 30;
@@ -154,9 +151,9 @@ class FinancialIntelligenceService
      *
      * @return array{simulated_cash: float, impact_on_liquidity_days: float, days_remaining_simulated: float, is_risky: bool}
      */
-    public function simulateFinancialImpact(User $user, float $amount, bool $includePartner = false): array
+    public function simulateFinancialImpact(float $amount): array
     {
-        $prediction = $this->predictLiquidityCrisis($user, $includePartner);
+        $prediction = $this->predictLiquidityCrisis();
 
         $simulatedCash = max(0.0, $prediction['current_cash'] - $amount);
         $burnRate = $prediction['burn_rate'];
@@ -206,7 +203,7 @@ class FinancialIntelligenceService
      *   recommendation_framework: string
      * }
      */
-    public function getSovereignMetrics(User $user): array
+    public function getSovereignMetrics(): array
     {
         $months = 6;
         $monthlyData = [];

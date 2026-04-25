@@ -9,56 +9,46 @@ import {
 import { motion } from 'framer-motion';
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import { useTransactions } from '@/features/transactions';
+import { useFinancialSummary } from '@/features/transactions';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export const MonthlyDonutChart: React.FC = () => {
-  const { data: infiniteData } = useTransactions();
-  const transactions = React.useMemo(
-    () => infiniteData?.pages.flat() || [],
-    [infiniteData?.pages]
-  );
+  const { income, expense, isLoading } = useFinancialSummary();
 
-  const totals = React.useMemo(
-    () =>
-      transactions.reduce(
-        (acc, curr) => {
-          if (curr.type === 'income') acc.income += curr.amount;
-          else acc.expense += curr.amount;
-          return acc;
-        },
-        { income: 0, expense: 0 }
-      ),
-    [transactions]
-  );
+  const data = React.useMemo(() => {
+    // Determine if we have any data to show
+    const hasData = income > 0 || expense > 0;
 
-  const data = React.useMemo(
-    () => ({
+    return {
       labels: ['Pemasukan', 'Pengeluaran'],
       datasets: [
         {
-          data: [totals.income || 1, totals.expense || 0], // Fallback to 1 for income if empty to avoid empty chart
-          backgroundColor: [
-            '#60a5fa', // Blue 400
-            '#f472b6', // Pink 400
-          ],
-          hoverBackgroundColor: ['#3b82f6', '#ec4899'],
+          // If no data, show a neutral slice to keep chart visible but meaningful
+          data: hasData ? [income, expense] : [1, 0],
+          backgroundColor: hasData
+            ? [
+                '#60a5fa', // Blue 400
+                '#f472b6', // Pink 400
+              ]
+            : ['#f1f5f9', '#f1f5f9'], // Slate 100 for empty state
+          hoverBackgroundColor: hasData
+            ? ['#3b82f6', '#ec4899']
+            : ['#e2e8f0', '#e2e8f0'],
           borderWidth: 0,
           cutout: '70%',
           borderRadius: 12,
-          spacing: 5,
+          spacing: hasData ? 5 : 0,
         },
       ],
-    }),
-    [totals]
-  );
+    };
+  }, [income, expense]);
 
   const options: ChartOptions<'doughnut'> = React.useMemo(
     () => ({
       plugins: {
         tooltip: {
-          enabled: true,
+          enabled: income > 0 || expense > 0,
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
           titleColor: '#1e293b',
           bodyColor: '#1e293b',
@@ -81,15 +71,22 @@ export const MonthlyDonutChart: React.FC = () => {
         easing: 'easeOutElastic',
       },
     }),
-    []
+    [income, expense]
   );
 
-  const totalAmount = totals.income + totals.expense;
+  const totalAmount = income + expense;
   const incomePercentage = React.useMemo(
-    () =>
-      totalAmount > 0 ? Math.round((totals.income / totalAmount) * 100) : 0,
-    [totalAmount, totals.income]
+    () => (totalAmount > 0 ? Math.round((income / totalAmount) * 100) : 0),
+    [totalAmount, income]
   );
+
+  if (isLoading) {
+    return (
+      <div className="flex h-32 w-full animate-pulse items-center justify-center text-[10px] font-black tracking-widest text-slate-400 uppercase">
+        Memuat Budget...
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-full w-full flex-col items-center">
