@@ -104,10 +104,6 @@ export default function LoansPage() {
     currentPage * ITEMS_PER_PAGE
   );
 
-  React.useEffect(() => {
-    setCurrentPage(1);
-  }, []);
-
   const totalPiutang = loans
     .filter((l) => l.type === 'piutang')
     .reduce((acc, l) => acc + l.remaining_amount, 0);

@@ -110,11 +110,10 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
   const receiptStatusLabel = file ? file.name : receiptDisplayLabel;
   const scanStatusLabel = scanning ? 'SCANNING...' : 'SCAN AI';
 
-  useEffect(() => {
-    if (onTypeChange) onTypeChange(type);
-  }, [type, onTypeChange]);
-
-  useEffect(() => {
+  // Sync initialData with local state (Adjusting state while rendering)
+  const [prevInitialData, setPrevInitialData] = useState(initialData);
+  if (initialData !== prevInitialData) {
+    setPrevInitialData(initialData);
     if (initialData) {
       const newType = initialData.type || 'expense';
       setType(newType);
@@ -130,7 +129,11 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
       setDate(initialData.date ? new Date(initialData.date) : new Date());
       setPreview(initialData.receipt_url || null);
     }
-  }, [initialData]);
+  }
+
+  useEffect(() => {
+    if (onTypeChange) onTypeChange(type);
+  }, [type, onTypeChange]);
 
   const handleFileUpload = async (selectedFile: File) => {
     try {

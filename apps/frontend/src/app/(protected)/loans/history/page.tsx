@@ -74,9 +74,6 @@ export default function LoanHistoryPage() {
   );
 
   // Reset page when filter changes
-  React.useEffect(() => {
-    setCurrentPage(1);
-  }, []);
 
   if (isLoading)
     return (

@@ -76,16 +76,16 @@ export default function FamilyHubPage() {
     sector: user?.industry_sector || '',
   });
 
-  // Sync profile when user changes
-  React.useEffect(() => {
-    if (user) {
-      setTaxProfile({
-        status: user.tax_status || 'TK/0',
-        dependents: user.dependents_count || 0,
-        sector: user.industry_sector || '',
-      });
-    }
-  }, [user]);
+  // [RENDER SYNC] Adjust state while rendering if user changed
+  const [prevUserId, setPrevUserId] = React.useState(user?.id);
+  if (user?.id !== prevUserId) {
+    setPrevUserId(user?.id);
+    setTaxProfile({
+      status: user?.tax_status || 'TK/0',
+      dependents: user?.dependents_count || 0,
+      sector: user?.industry_sector || '',
+    });
+  }
 
   const handleManualRefresh = async () => {
     setIsRefreshing(true);

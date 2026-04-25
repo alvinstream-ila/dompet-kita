@@ -1,7 +1,7 @@
 import { CheckCircle2, ShieldCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import {
   Dialog,
@@ -60,13 +60,19 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({
   const [timezone, setTimezone] = useState('');
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 
-  useEffect(() => {
+  // Sync activeTab with defaultTab when modal opens
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (isOpen !== prevIsOpen) {
+    setPrevIsOpen(isOpen);
     if (isOpen) {
       setActiveTab(defaultTab);
     }
-  }, [isOpen, defaultTab]);
+  }
 
-  useEffect(() => {
+  // Sync profile states with user data when modal opens or user data changes
+  const [prevUser, setPrevUser] = useState(user);
+  if (user !== prevUser || (isOpen && !prevIsOpen)) {
+    setPrevUser(user);
     if (user && isOpen) {
       setDisplayName(user.name || '');
       setFullName(storedFullName || '');
@@ -76,14 +82,7 @@ export const AccountSettingsModal: React.FC<AccountSettingsModalProps> = ({
       setTwoFactorEnabled(!!user.two_factor_enabled);
       setSuccess(false);
     }
-  }, [
-    user,
-    isOpen,
-    storedFullName,
-    storedPartnerName,
-    storedAnniversaryDate,
-    storedTimezone,
-  ]);
+  }
 
   const showSuccess = useCallback((msg: string) => {
     setSuccess(true);

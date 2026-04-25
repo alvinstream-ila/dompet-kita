@@ -44,12 +44,16 @@ export default function LegacyVaultPage() {
     user?.legacy_threshold_months || 6
   );
 
-  // Sync threshold when user data loads
-  useEffect(() => {
+  // Sync threshold when user data loads (Adjusting state while rendering)
+  const [prevLegacyThreshold, setPrevLegacyThreshold] = useState(
+    user?.legacy_threshold_months
+  );
+  if (user?.legacy_threshold_months !== prevLegacyThreshold) {
+    setPrevLegacyThreshold(user?.legacy_threshold_months);
     if (user?.legacy_threshold_months) {
       setThreshold(user.legacy_threshold_months);
     }
-  }, [user]);
+  }
 
   const fetchReports = useCallback(async () => {
     try {
@@ -63,6 +67,7 @@ export default function LegacyVaultPage() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchReports();
   }, [fetchReports]);
 
