@@ -47,8 +47,13 @@ export function getTerbilang(amount: number): string {
 }
 
 export function parseLocalDate(dateString: string): Date {
-  // Handle strings like "2026-04-22 00:00:00" or just "2026-04-22"
-  const [datePart] = dateString.split(' ');
+  if (!dateString) return new Date();
+  // Handle ISO strings like "2026-04-22T00:00:00.000000Z"
+  // or strings like "2026-04-22 00:00:00"
+  const datePart = dateString.includes('T')
+    ? dateString.split('T')[0]
+    : dateString.split(' ')[0];
+
   const [y, m, d] = datePart.split('-').map(Number);
   return new Date(y, m - 1, d);
 }

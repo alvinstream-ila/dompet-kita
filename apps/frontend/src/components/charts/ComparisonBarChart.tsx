@@ -25,16 +25,18 @@ ChartJS.register(
 );
 
 export const ComparisonBarChart: React.FC = () => {
-  const { data: infiniteData, isLoading } = useTransactions(
-    undefined,
-    undefined,
-    100
-  );
+  const {
+    data: infiniteData,
+    isLoading,
+    isError,
+  } = useTransactions(undefined, undefined, 100);
   const transactions = React.useMemo(() => {
     if (!infiniteData) return [];
-    return infiniteData.pages.flatMap((page: unknown) =>
+    const txs = infiniteData.pages.flatMap((page: unknown) =>
       Array.isArray(page) ? page : (page as { data?: unknown[] }).data || []
     ) as Transaction[];
+    console.log('DEBUG: ComparisonBarChart transactions:', txs.length, txs);
+    return txs;
   }, [infiniteData]);
 
   const getWeekData = React.useCallback(
@@ -63,13 +65,19 @@ export const ComparisonBarChart: React.FC = () => {
         }
       });
 
-      return weekExpenses;
+      const res = weekExpenses;
+      console.log(`DEBUG: ComparisonBarChart getWeekData(${weeksAgo}):`, res);
+      return res;
     },
     [transactions]
   );
 
   const thisWeekData = React.useMemo(() => getWeekData(0), [getWeekData]);
   const lastWeekData = React.useMemo(() => getWeekData(1), [getWeekData]);
+
+  const hasData = React.useMemo(() => {
+    return thisWeekData.some((v) => v > 0) || lastWeekData.some((v) => v > 0);
+  }, [thisWeekData, lastWeekData]);
 
   const data = React.useMemo(
     () => ({
@@ -161,8 +169,43 @@ export const ComparisonBarChart: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-full w-full animate-pulse items-center justify-center text-[10px] font-black tracking-widest text-slate-400 uppercase">
-        Mencari Jejak Cuan...
+      <div className="flex h-full w-full animate-pulse flex-col items-center justify-center gap-2">
+        <div className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
+          Mencari Jejak Cuan...
+        </div>
+        <div className="h-1 w-24 overflow-hidden rounded-full bg-slate-100">
+          <div className="animate-shimmer h-full w-1/2 bg-pink-400" />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-4 text-center">
+        <div className="text-[10px] font-black tracking-widest text-red-400 uppercase">
+          Koneksi Terputus 🥺
+        </div>
+        <p className="text-[9px] leading-tight font-bold text-slate-400">
+          Gagal mengambil data transaksi.
+          <br />
+          Cek koneksi API lokal kamu.
+        </p>
+      </div>
+    );
+  }
+
+  if (!hasData) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-4 text-center">
+        <div className="text-[10px] font-black tracking-widest text-slate-300 uppercase">
+          Belum Ada Data 🍃
+        </div>
+        <p className="text-[9px] leading-tight font-bold text-slate-400">
+          Catat pengeluaran minggu ini
+          <br />
+          untuk melihat perbandingannya!
+        </p>
       </div>
     );
   }
