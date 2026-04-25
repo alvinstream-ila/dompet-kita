@@ -28,15 +28,13 @@ export const ComparisonBarChart: React.FC = () => {
   const {
     data: infiniteData,
     isLoading,
+    isFetching,
     isError,
-  } = useTransactions(undefined, undefined, 100);
+  } = useTransactions(undefined, undefined, 20);
   const transactions = React.useMemo(() => {
-    if (!infiniteData) return [];
-    const txs = infiniteData.pages.flatMap((page: unknown) =>
-      Array.isArray(page) ? page : (page as { data?: unknown[] }).data || []
-    ) as Transaction[];
-    console.log('DEBUG: ComparisonBarChart transactions:', txs.length, txs);
-    return txs;
+    if (!infiniteData?.pages) return [];
+    // useTransactions queryFn already returns Transaction[] per page
+    return infiniteData.pages.flat() as Transaction[];
   }, [infiniteData]);
 
   const getWeekData = React.useCallback(
@@ -65,9 +63,7 @@ export const ComparisonBarChart: React.FC = () => {
         }
       });
 
-      const res = weekExpenses;
-      console.log(`DEBUG: ComparisonBarChart getWeekData(${weeksAgo}):`, res);
-      return res;
+      return weekExpenses;
     },
     [transactions]
   );
@@ -167,7 +163,7 @@ export const ComparisonBarChart: React.FC = () => {
     []
   );
 
-  if (isLoading) {
+  if (isLoading && !infiniteData) {
     return (
       <div className="flex h-full w-full animate-pulse flex-col items-center justify-center gap-2">
         <div className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
@@ -195,7 +191,8 @@ export const ComparisonBarChart: React.FC = () => {
     );
   }
 
-  if (!hasData) {
+  // Only show "no data" when not fetching to avoid glitch during refetch
+  if (!hasData && !isFetching) {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-4 text-center">
         <div className="text-[10px] font-black tracking-widest text-slate-300 uppercase">
