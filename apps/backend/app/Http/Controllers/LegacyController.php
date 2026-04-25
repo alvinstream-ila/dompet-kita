@@ -85,7 +85,8 @@ class LegacyController extends Controller
         $user = $request->user() ?? abort(401);
         $password = (string) $request->input('password', '');
 
-        $filename = $this->generateReportAction->execute($user, $password ?: null);
+        $result = $this->generateReportAction->execute($user, $password ?: null);
+        $filename = (string) $result['filename'];
 
         return response()->json([
             'status' => 'success',

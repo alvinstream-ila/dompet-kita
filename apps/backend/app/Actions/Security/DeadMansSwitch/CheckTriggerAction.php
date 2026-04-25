@@ -53,6 +53,7 @@ class CheckTriggerAction extends BaseAction
         $user->update(['is_legacy_triggered' => true]);
 
         // Generate the final snapshot
+        /** @var array{filename: string, data: array<string, mixed>} $reportData */
         $reportData = $this->generateReportAction->execute($user);
 
         // Notify the partner

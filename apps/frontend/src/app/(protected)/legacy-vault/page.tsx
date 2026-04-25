@@ -157,6 +157,57 @@ export default function LegacyVaultPage() {
     },
   };
 
+  const renderReportsList = () => {
+    if (isLoading) {
+      return (
+        <div className="flex h-32 items-center justify-center text-slate-500">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      );
+    }
+
+    if (reports.length === 0) {
+      return (
+        <div className="flex h-32 flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 text-slate-500">
+          <FileText className="mb-2 h-8 w-8 opacity-20" />
+          <p>Belum ada snapshot yang tersimpan.</p>
+        </div>
+      );
+    }
+
+    return reports.map((report) => (
+      <div
+        key={report.id}
+        className="group flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 p-4 transition-all hover:border-white/10"
+      >
+        <div className="flex items-center gap-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
+            <Key className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="font-medium text-white">{report.filename}</p>
+            <p className="text-xs text-slate-500">
+              Auto-Archived •{' '}
+              {new Date(report.created_at).toLocaleDateString('id-ID', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              })}
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={() => handleDownload(report.id)}
+          type="button"
+          className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-400 transition-all hover:bg-emerald-500/20"
+        >
+          <Download className="h-4 w-4" />
+          Download
+        </button>
+      </div>
+    ));
+  };
+
   return (
     <div className="relative min-h-screen">
       {/* Background Ambience */}
@@ -371,60 +422,7 @@ export default function LegacyVaultPage() {
               </Button>
             </div>
 
-            <div className="space-y-3">
-              {isLoading ? (
-                <div className="flex h-32 items-center justify-center text-slate-500">
-                  <Loader2 className="h-8 w-8 animate-spin" />
-                </div>
-              ) : (
-                (() => {
-                  if (reports.length > 0) {
-                    return reports.map((report) => (
-                      <div
-                        key={report.id}
-                        className="group flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 p-4 transition-all hover:border-white/10"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
-                            <Key className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <p className="font-medium text-white">
-                              {report.filename}
-                            </p>
-                            <p className="text-xs text-slate-500">
-                              Auto-Archived •{' '}
-                              {new Date(report.created_at).toLocaleDateString(
-                                'id-ID',
-                                {
-                                  day: 'numeric',
-                                  month: 'long',
-                                  year: 'numeric',
-                                }
-                              )}
-                            </p>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => handleDownload(report.id)}
-                          type="button"
-                          className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-400 transition-all hover:bg-emerald-500/20"
-                        >
-                          <Download className="h-4 w-4" />
-                          Download
-                        </button>
-                      </div>
-                    ));
-                  }
-                  return (
-                    <div className="flex h-32 flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 text-slate-500">
-                      <FileText className="mb-2 h-8 w-8 opacity-20" />
-                      <p>Belum ada snapshot yang tersimpan.</p>
-                    </div>
-                  );
-                })()
-              )}
-            </div>
+            <div className="space-y-3">{renderReportsList()}</div>
           </motion.div>
         </motion.div>
       </div>

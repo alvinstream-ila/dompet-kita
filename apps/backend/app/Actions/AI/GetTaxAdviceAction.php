@@ -16,7 +16,7 @@ class GetTaxAdviceAction extends BaseAction
     ) {}
 
     /**
-     * @param  array{year: int|string, total_income: float, estimated_tax: float, ptkp_status: string, ptkp_value: float, effective_rate: float|int|string, applied_incentive: float}  $estimate
+     * @param  array{year: int|string, total_income: float|int, estimated_tax: float|int, ptkp_status: string, ptkp_value: float|int, effective_rate: float|int|string, applied_incentive: float|int}  $estimate
      */
     public function execute(User $user, array $estimate): string
     {
