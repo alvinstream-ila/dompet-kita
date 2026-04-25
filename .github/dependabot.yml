@@ -1,0 +1,32 @@
+version: 2
+updates:
+  # Frontend (npm)
+  - package-ecosystem: "npm"
+    directory: "/apps/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    ignore:
+      # GHSA-qx2v-qp2m-jg93: postcss XSS — bundled inside next internals,
+      # cannot be overridden. Waiting for Next.js upstream fix.
+      - dependency-name: "postcss"
+        versions: ["< 8.5.10"]
+      # GHSA-w5hq-g745-h8pq: uuid buffer bounds — no fix available upstream.
+      # Used by exceljs, @sentry/webpack-plugin, @arcjet/next internally.
+      - dependency-name: "uuid"
+        versions: ["< 14.0.0"]
+    labels:
+      - "dependencies"
+      - "security"
+
+  # Backend (composer)
+  - package-ecosystem: "composer"
+    directory: "/apps/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "security"

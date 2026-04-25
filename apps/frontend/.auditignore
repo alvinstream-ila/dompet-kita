@@ -1,0 +1,22 @@
+# Known Unfixable Vulnerabilities — Acknowledged & Tracked
+# Last reviewed: 2026-04-25
+# Reviewed by: Antigravity AI (Guardian Agent)
+#
+# These vulnerabilities exist in TRANSITIVE / BUNDLED dependencies.
+# They cannot be fixed by upgrading our direct dependencies.
+# All items below are pending upstream fixes.
+# ─────────────────────────────────────────────────────────────
+#
+# 1. GHSA-qx2v-qp2m-jg93 — postcss < 8.5.10 (XSS via </style>)
+#    Via: next (bundled internal postcss)
+#    Risk: LOW for our app — only exploitable during CSS build-time,
+#          not in user-facing runtime. No user input flows through postcss.
+#    Fix: Waiting for Next.js to upgrade internal postcss bundle.
+#    Ref: https://github.com/advisories/GHSA-qx2v-qp2m-jg93
+#
+# 2. GHSA-w5hq-g745-h8pq — uuid < 14.0.0 (Buffer bounds check)
+#    Via: @sentry/webpack-plugin, exceljs, @arcjet/next (via typeid-js)
+#    Risk: LOW for our app — the vulnerable code path (v3/v5/v6 + buf arg)
+#          is not invoked in our codebase. We don't pass custom buffers to uuid.
+#    Fix: Waiting for exceljs, @sentry, and @arcjet to upgrade uuid internally.
+#    Ref: https://github.com/advisories/GHSA-w5hq-g745-h8pq
