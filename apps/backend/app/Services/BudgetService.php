@@ -32,16 +32,39 @@ class BudgetService
      *
      * @return array{start: Carbon, end: Carbon}
      */
-    public function getBudgetCycleDates(?int $monthIndex, ?int $year, int $startDay = 1): array
+    public function getBudgetCycleDates(?int $month = null, ?int $year = null, int $startDay = 1): array
     {
-        $year = $year ?? Carbon::now()->year;
-        // Expect 1-indexed month
-        $month = $monthIndex !== null ? $monthIndex : Carbon::now()->month;
+        $now = Carbon::now();
+        $year = $year ?? $now->year;
 
-        $start = Carbon::createFromDate($year, $month, $startDay)->startOfDay();
+        // Determine the target month number
+        $targetMonth = $month ?? $now->month;
+
+        // If the cycle starts after the 1st (e.g., 25th), the cycle for "Month X"
+        // actually started in "Month X-1".
+        // Example: April cycle starts March 25 and ends April 24.
+        if ($startDay > 1) {
+            // If month was explicitly provided, we always shift back.
+            // If not provided (current cycle), we shift back only if we haven't reached the startDay yet.
+            if ($month !== null || $now->day < $startDay) {
+                $targetMonth--;
+            }
+        }
+
+        // Handle year wrap-around
+        if ($targetMonth <= 0) {
+            $targetMonth = 12 + $targetMonth;
+            $year--;
+        } elseif ($targetMonth > 12) {
+            $targetMonth = $targetMonth - 12;
+            $year++;
+        }
+
+        $start = Carbon::createFromDate($year, $targetMonth, $startDay)->startOfDay();
         $end = $start->copy()->addMonth()->subSecond();
 
-        // If startDay is 1, just use simple month boundaries
+        // If startDay is 1, we still want to ensure it's a clean calendar month
+        // (though createFromDate with 1 and addMonth usually does this anyway)
         if ($startDay === 1) {
             return [
                 'start' => $start->copy()->startOfMonth(),
