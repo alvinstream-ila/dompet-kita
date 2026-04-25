@@ -69,7 +69,7 @@ export default function ReportsPage() {
   const [isExporting, setIsExporting] = useState(false);
 
   const { data: infiniteData, isLoading } = useTransactions(
-    selectedMonth,
+    selectedMonth + 1,
     selectedYear
   );
   const transactions: Transaction[] =

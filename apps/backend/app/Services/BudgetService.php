@@ -28,15 +28,15 @@ class BudgetService
 
     /**
      * Get period boundaries for a specific month and year.
-     * Note: Expects 0-indexed month (0 = Jan, 11 = Dec) to align with JS/test expectations.
+     * Note: Expects 1-indexed month (1 = Jan, 12 = Dec) to align with standard API practices.
      *
      * @return array{start: Carbon, end: Carbon}
      */
     public function getBudgetCycleDates(?int $monthIndex, ?int $year, int $startDay = 1): array
     {
         $year = $year ?? Carbon::now()->year;
-        // Normalize 0-indexed month to 1-indexed Carbon month
-        $month = $monthIndex !== null ? $monthIndex + 1 : Carbon::now()->month;
+        // Expect 1-indexed month
+        $month = $monthIndex !== null ? $monthIndex : Carbon::now()->month;
 
         $start = Carbon::createFromDate($year, $month, $startDay)->startOfDay();
         $end = $start->copy()->addMonth()->subSecond();
