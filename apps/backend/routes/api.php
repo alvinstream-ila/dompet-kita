@@ -103,6 +103,7 @@ Route::middleware('firewall.all')->group(function () {
         // Transactions
         Route::get('/transactions/summary', [TransactionController::class, 'summary']);
         Route::get('/transactions/report/pdf', [TransactionController::class, 'exportPdf']);
+        Route::get('/transactions/report/data', [TransactionController::class, 'reportData']);
         Route::apiResource('transactions', TransactionController::class);
 
         // Assets
@@ -142,7 +143,7 @@ Route::middleware('firewall.all')->group(function () {
         Route::post('/legacy/heartbeat', [LegacyController::class, 'heartbeat']);
         Route::post('/legacy/snapshot', [LegacyController::class, 'triggerSnapshot'])->middleware('sudo');
         Route::get('/legacy/download/{id}', [LegacyController::class, 'download']);
-        Route::get('/ai/legacy/report', [LegacyController::class, 'generateStream'])->middleware('sudo');
+        Route::get('/ai/legacy/report', [LegacyController::class, 'generateStream']);
 
         // Quantum Insights (Phase 6)
         Route::get('/ai/quantum-insights', [InsightController::class, 'index']);

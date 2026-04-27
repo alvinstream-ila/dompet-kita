@@ -15,6 +15,8 @@ return [
 
     'enabled' => env('FIREWALL_ENABLED', true),
 
+    'authPath' => ($authPath = 'api/auth/*'),
+
     'whitelist' => array_filter(explode(',', env('FIREWALL_WHITELIST', '127.0.0.1'))),
 
     'models' => [
@@ -97,7 +99,7 @@ return [
 
         'bot' => [
             'methods' => ['all'],
-            'routes' => ['only' => [], 'except' => []],
+            'routes' => ['only' => [], 'except' => ['api/ai/legacy/report']],
             'crawlers' => [
                 'allow' => ['Googlebot', 'bingbot', 'DotBot', 'GuzzleHttp'],
                 'block' => [],
@@ -138,7 +140,7 @@ return [
             ],
             'routes' => [
                 'only' => [],
-                'except' => ['api/auth/*'],
+                'except' => [$authPath],
             ],
             'patterns' => [
                 '#\.\./#is',
@@ -177,7 +179,7 @@ return [
             ],
             'routes' => [
                 'only' => [],
-                'except' => ['api/auth/*'],
+                'except' => [$authPath],
             ],
             'patterns' => [
                 'bzip2://',
@@ -225,7 +227,7 @@ return [
             ],
             'routes' => [
                 'only' => [],
-                'except' => ['api/auth/*'],
+                'except' => [$authPath],
             ],
             'patterns' => [
                 '#(http|ftp){1,1}(s){0,1}://.*#i',
@@ -268,7 +270,7 @@ return [
             ],
             'routes' => [
                 'only' => [],
-                'except' => ['api/auth/*'],
+                'except' => [$authPath],
             ],
             'patterns' => [
                 '#[\d\W](union select|union join|union distinct)[\d\W]#is',
@@ -326,7 +328,7 @@ return [
             ],
             'routes' => [
                 'only' => [],
-                'except' => ['api/auth/*'],
+                'except' => [$authPath],
             ],
             'patterns' => [
                 // Evil starting attributes

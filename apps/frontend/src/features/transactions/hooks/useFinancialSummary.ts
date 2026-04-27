@@ -69,6 +69,7 @@ export function useFinancialSummary(month?: number, year?: number) {
     calendarIncome: data?.calendar_income ?? 0,
     calendarExpense: data?.calendar_expense ?? 0,
     transactions,
+    categoryBreakdown: data?.category_breakdown ?? [],
     period: data?.period,
     isLoading,
     isError,

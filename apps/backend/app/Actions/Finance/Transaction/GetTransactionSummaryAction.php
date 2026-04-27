@@ -23,6 +23,7 @@ class GetTransactionSummaryAction extends BaseAction
      *     calendar_income: float,
      *     calendar_expense: float,
      *     recentTransactions: Collection<int, Transaction>,
+     *     category_breakdown: array<int, array{type: string, category: string, amount: float}>,
      *     period: array{start: string, end: string}
      * }
      */
@@ -82,6 +83,17 @@ class GetTransactionSummaryAction extends BaseAction
                 ->limit(5)
                 ->get();
 
+            $categoryBreakdown = Transaction::query()
+                ->whereBetween('date', [$startDate, $endDate])
+                ->select('type', 'category', $selectSum)
+                ->groupBy('type', 'category')
+                ->get()
+                ->map(fn ($item) => [
+                    'type' => $item->type->value,
+                    'category' => $item->category,
+                    'amount' => (float) $item->total,
+                ]);
+
             return [
                 'income' => $income,
                 'expense' => $expense,
@@ -90,6 +102,7 @@ class GetTransactionSummaryAction extends BaseAction
                 'calendar_income' => $calIncome,
                 'calendar_expense' => $calExpense,
                 'recentTransactions' => $recentTransactions,
+                'category_breakdown' => $categoryBreakdown->all(),
                 'period' => [
                     'start' => $startDate->toIso8601String(),
                     'end' => $endDate->toIso8601String(),

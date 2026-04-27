@@ -144,7 +144,7 @@ class TransactionController extends Controller
         return $this->success(new TransactionResource($transaction), 'Modifikasi entri transaksi telah berhasil diregistrasi.');
     }
 
-    public function monthlyStatement(Request $request, GetTransactionSummaryAction $action): JsonResponse|Response
+    public function exportPdf(Request $request, GetTransactionSummaryAction $action): JsonResponse|Response
     {
         /** @var User $user */
         $user = $request->user();
@@ -175,41 +175,52 @@ class TransactionController extends Controller
         ]);
     }
 
+    public function reportData(Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        $month = $request->integer('month', now()->month);
+        $year = $request->filled('year') ? (int) $request->integer('year') : (int) date('Y');
+        $budgetCycleStart = (int) ($request->integer('budget_cycle_start') ?: 1);
+
+        $period = $this->budgetService->getBudgetCycleDates($month, $year, $budgetCycleStart);
+
+        $transactions = Transaction::query()
+            ->where('household_id', $user->household_id)
+            ->whereBetween('date', [$period['start'], $period['end']])
+            ->orderBy('date', 'desc')
+            ->get();
+
+        return $this->success(TransactionResource::collection($transactions), 'Data transaksi unpaginated berhasil dimuat.');
+    }
+
     /**
      * Prepare the core data for the transaction report.
      *
      * @return array{
      *   user: User,
-     *   summary: array<string, mixed>,
+     *   summary: array{category_breakdown: array<int, array{type: string, category: string, amount: float}>},
      *   transactions: Collection<int, Transaction>,
-     *   categories: \Illuminate\Support\Collection<int, mixed>,
+     *   categories: \Illuminate\Support\Collection<int, array{type: string, category: string, amount: float}>,
      *   period_label: string
      * }
      */
     private function prepareTransactionReportData(User $user, int $month, int $year, int $budgetCycleStart, GetTransactionSummaryAction $action): array
     {
-        /** @var array<string, mixed> $summaryData */
+        /** @var array{category_breakdown: array<int, array{type: string, category: string, amount: float}>} $summaryData */
         $summaryData = $action->execute($user->id, $month, $year, $budgetCycleStart);
 
         /** @var array{start: Carbon, end: Carbon} $period */
         $period = $this->budgetService->getBudgetCycleDates($month, $year, $budgetCycleStart);
 
         $transactions = Transaction::query()
+            ->where('household_id', $user->household_id)
             ->whereBetween('date', [$period['start'], $period['end']])
             ->orderBy('date', 'desc')
             ->get();
 
-        /** @var \Illuminate\Support\Collection<int, mixed> $categoryBreakdown */
-        $categoryBreakdown = $transactions->groupBy('category')->map(function (Collection $items, $key) {
-            /** @var Transaction $first */
-            $first = $items->first();
-
-            return [
-                'category' => $key,
-                'amount' => (float) $items->sum('amount'),
-                'type' => $first->type->value,
-            ];
-        })->values()->sortByDesc('amount');
+        $categoryBreakdown = collect($summaryData['category_breakdown']);
 
         return [
             'user' => $user,

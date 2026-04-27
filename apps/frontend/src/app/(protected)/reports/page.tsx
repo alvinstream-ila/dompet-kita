@@ -21,7 +21,8 @@ import {
   ReportStatSkeleton,
   ReportTableSkeleton,
 } from '@/features/reports/components/ReportSkeletons';
-import { useTransactions } from '@/features/transactions';
+import { useFinancialSummary } from '@/features/transactions';
+import { useSettings } from '@/features/settings';
 import { parseLocalDate } from '@/lib/utils';
 import type { CategorySummary, Transaction } from '@/types';
 
@@ -69,18 +70,19 @@ export default function ReportsPage() {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
-  const { data: infiniteData, isLoading } = useTransactions(
-    selectedMonth + 1,
-    selectedYear
+  const { budgetCycleStart } = useSettings();
+
+  const {
+    income: totalIncome,
+    expense: totalExpense,
+    balance,
+    categoryBreakdown: categoryData,
+    isLoading,
+  } = useFinancialSummary(selectedMonth + 1, selectedYear);
+
+  const sortedCategories: CategorySummary[] = [...categoryData].sort(
+    (a, b) => b.amount - a.amount
   );
-  const transactions: Transaction[] =
-    infiniteData?.pages.flatMap((page: unknown) => {
-      if (Array.isArray(page)) return page;
-      const p = page as { data?: unknown };
-      if (p && typeof p === 'object' && Array.isArray(p.data))
-        return p.data;
-      return [];
-    }) || [];
 
   const months = [
     'Januari',
@@ -97,51 +99,16 @@ export default function ReportsPage() {
     'Desember',
   ];
 
-  const totalIncome = transactions
-    .filter((t) => t.type === 'income')
-    .reduce((acc, curr) => acc + curr.amount, 0);
-  const totalExpense = transactions
-    .filter((t) => t.type === 'expense')
-    .reduce((acc, curr) => acc + curr.amount, 0);
-  const balance = totalIncome - totalExpense;
-
-  const categoryData = transactions.reduce<Record<string, CategorySummary>>(
-    (acc, curr) => {
-      const key = `${curr.type}-${curr.category}`;
-      if (!acc[key]) {
-        acc[key] = {
-          type: curr.type,
-          category: curr.category,
-          amount: 0,
-          percentage: 0,
-        };
-      }
-      acc[key].amount += curr.amount;
-      return acc;
-    },
-    {}
-  );
-
-  const sortedCategories = Object.values(categoryData).sort(
-    (a, b) => b.amount - a.amount
-  );
-
-  const monthlyData = transactions.reduce<
-    Record<string, { income: number; expense: number }>
-  >((acc, curr) => {
-    const date = parseLocalDate(curr.date);
-    const month = date.toLocaleString('id-ID', { month: 'short' });
-    if (!acc[month]) acc[month] = { income: 0, expense: 0 };
-    acc[month][curr.type] += curr.amount;
-    return acc;
-  }, {});
-
+  // We still want monthly trend for the bar chart.
+  // Since summary is for one month, we'll just show the income/expense for that month.
+  // If we want a trend, we'd need a multi-month summary.
+  // For now, let's just make the bar chart show the selected month data.
   const barChartData = {
-    labels: Object.keys(monthlyData),
+    labels: [months[selectedMonth]],
     datasets: [
       {
         label: 'Pemasukan',
-        data: Object.values(monthlyData).map((m) => m.income),
+        data: [totalIncome],
         backgroundColor: '#10b981',
         borderColor: '#10b981',
         borderRadius: 8,
@@ -149,7 +116,7 @@ export default function ReportsPage() {
       },
       {
         label: 'Pengeluaran',
-        data: Object.values(monthlyData).map((m) => m.expense),
+        data: [totalExpense],
         backgroundColor: '#f43f5e',
         borderColor: '#f43f5e',
         borderRadius: 8,
@@ -158,18 +125,18 @@ export default function ReportsPage() {
     ],
   };
 
-  const expenseByCat = transactions
-    .filter((t) => t.type === 'expense')
-    .reduce<Record<string, number>>((acc, curr) => {
-      acc[curr.category] = (acc[curr.category] || 0) + curr.amount;
+  const expenseByCat = categoryData
+    .filter((cat) => cat.type === 'expense')
+    .reduce((acc, curr) => {
+      acc[curr.category] = curr.amount;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
 
   const doughnutData = {
     labels: Object.keys(expenseByCat),
     datasets: [
       {
-        data: Object.values(expenseByCat),
+        data: Object.values(expenseByCat) as number[],
         backgroundColor: [
           '#f43f5e',
           '#10b981',
@@ -193,6 +160,15 @@ export default function ReportsPage() {
       const ExcelJS = await import('exceljs');
       const workbook = new ExcelJS.Workbook();
       workbook.creator = 'Dompet Kita';
+      const response = await api.get('/transactions/report/data', {
+        params: {
+          month: selectedMonth + 1,
+          year: selectedYear,
+          budget_cycle_start: budgetCycleStart,
+        },
+      });
+      const transactionsToExport: Transaction[] = response.data.data;
+
       const summarySheet = workbook.addWorksheet('Ringkasan');
       summarySheet.columns = [
         { header: 'LABEL', key: 'label', width: 25 },
@@ -210,12 +186,16 @@ export default function ReportsPage() {
       transSheet.columns = [
         { header: 'Tanggal', key: 'date', width: 15 },
         { header: 'Tipe', key: 'type', width: 15 },
+        { header: 'Kategori', key: 'category', width: 20 },
+        { header: 'Deskripsi', key: 'description', width: 30 },
         { header: 'Nominal', key: 'amount', width: 18 },
       ];
-      transactions.forEach((t) => {
+      transactionsToExport.forEach((t) => {
         transSheet.addRow({
           date: parseLocalDate(t.date).toLocaleDateString('id-ID'),
           type: t.type,
+          category: t.category,
+          description: t.description,
           amount: t.amount,
         });
       });
@@ -300,7 +280,7 @@ export default function ReportsPage() {
           <Button
             type="button"
             onClick={exportToExcel}
-            disabled={isExporting || transactions.length === 0}
+            disabled={isExporting || isLoading}
             className="flex h-14 flex-1 items-center justify-center gap-3 rounded-2xl border-none bg-emerald-50 px-8 text-[10px] font-black tracking-widest text-emerald-600 uppercase shadow-sm transition-all hover:-translate-y-0.5 hover:bg-emerald-100 active:scale-95 disabled:opacity-50 md:flex-none"
           >
             <FileSpreadsheet className="h-4 w-4" strokeWidth={3} /> Ekspor Excel
@@ -308,7 +288,7 @@ export default function ReportsPage() {
           <Button
             type="button"
             onClick={exportToPDF}
-            disabled={isExporting || transactions.length === 0}
+            disabled={isExporting || isLoading}
             className="flex h-14 flex-1 items-center justify-center gap-3 rounded-2xl border-none bg-rose-50 px-8 text-[10px] font-black tracking-widest text-rose-600 uppercase shadow-sm transition-all hover:-translate-y-0.5 hover:bg-rose-100 active:scale-95 disabled:opacity-50 md:flex-none"
           >
             {isExporting ? (

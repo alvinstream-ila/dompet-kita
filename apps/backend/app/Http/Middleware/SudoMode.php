@@ -20,13 +20,16 @@ class SudoMode
         if ($user) {
             $lastSudoAt = Cache::get("sudo_mode_{$user->id}");
 
-            if (! $lastSudoAt || now()->diffInMinutes((string) $lastSudoAt) > 15) {
-                return $request->expectsJson()
-                    ? response()->json([
+            if (! $lastSudoAt || ! is_string($lastSudoAt) || now()->diffInMinutes($lastSudoAt) > 15) {
+                if ($request->expectsJson()) {
+                    return response()->json([
                         'message' => 'Konfirmasi keamanan diperlukan untuk melanjutkan aksi ini. Silakan lakukan otentikasi ulang.',
                         'sudo_required' => true,
-                    ], 403)
-                    : redirect()->route('sudo.confirm');
+                    ], 403);
+                }
+
+                // Standard fallback for non-JSON requests
+                return abort(403, 'Sudo mode required.');
             }
         }
 
