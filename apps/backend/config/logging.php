@@ -134,6 +134,11 @@ return [
             'handler' => NullHandler::class,
         ],
 
+        'array' => [
+            'driver' => 'monolog',
+            'handler' => \Monolog\Handler\TestHandler::class,
+        ],
+
         'emergency' => [
             'path' => $defaultPath,
         ],

@@ -125,7 +125,7 @@ class TransactionTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-            ->getJson('/api/transactions/summary?month=1&year=2024'); // Feb is 1 (0-indexed in JS)
+            ->getJson('/api/transactions/summary?month=2&year=2024'); // Feb is 2 (1-indexed in Laravel)
 
         $response->assertStatus(200)
             ->assertJsonStructure(['data' => ['income', 'expense', 'balance', 'transactions', 'period']])
@@ -153,7 +153,7 @@ class TransactionTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-            ->getJson('/api/transactions?month=1&year=2024');
+            ->getJson('/api/transactions?month=2&year=2024');
 
         $response->assertStatus(200);
         $data = $response->json('data');

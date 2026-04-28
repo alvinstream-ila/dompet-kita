@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 uses(RefreshDatabase::class);
 
-test('it allows authenticated user to access legacy report without sudo', function () {
+test('it blocks authenticated user from accessing legacy report without sudo', function () {
     /** @var TestCase $this */
     /** @var User $user */
     $user = User::factory()->create();
@@ -22,7 +22,7 @@ test('it allows authenticated user to access legacy report without sudo', functi
 
     $status = $response->getStatusCode();
 
-    expect($status)->not->toBe(403);
+    expect($status)->toBe(403);
 });
 
 test('it still requires sudo for legacy snapshot creation', function () {

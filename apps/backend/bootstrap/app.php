@@ -70,10 +70,17 @@ return Application::configure(basePath: dirname(__DIR__))
                     ], 404),
 
                     $e instanceof AccessDeniedHttpException ||
-                    $e instanceof AuthorizationException => response()->json([
+                    $e instanceof AuthorizationException ||
+                    ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException && $e->getStatusCode() === 403) => response()->json([
                         'message' => 'Waduh Sayang, kamu nggak punya akses ke sini.. 🔐',
                         'success' => false,
                     ], 403),
+
+                    $e instanceof \Symfony\Component\HttpKernel\Exception\HttpException => response()->json([
+                        'message' => 'Aduh Sayang, ada kendala ['.$e->getStatusCode().'] nih.. 🥺',
+                        'success' => false,
+                        'debug' => config('app.debug') ? $e->getMessage() : null,
+                    ], $e->getStatusCode()),
 
                     default => response()->json([
                         'message' => 'Aduh Sayang, ada sedikit kendala di sistem nih. Tenang, aku coba bantu ya! 🥺',

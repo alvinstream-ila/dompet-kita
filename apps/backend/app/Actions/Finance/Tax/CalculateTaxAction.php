@@ -38,7 +38,7 @@ class CalculateTaxAction extends BaseAction
     /**
      * Calculate taxable income and estimated tax for a given year.
      *
-     * @return array{year: int, total_income: float, ptkp: float, taxable_income: float, estimated_tax: float, applied_incentive: float, is_dtp_active: bool, effective_rate: float, ptkp_status: string, ptkp_value: float}
+     * @return array{year: int, total_income: float, ptkp: float, taxable_income: float, estimated_tax: float, applied_incentive: float, is_dtp_active: bool, effective_rate: float, ptkp_status: string, ptkp_value: float, ter_category: string, monthly_ter_estimate: float}
      */
     public function execute(User $user, int $year): array
     {
@@ -88,6 +88,8 @@ class CalculateTaxAction extends BaseAction
             'effective_rate' => round($effectiveRate, 2),
             'ptkp_status' => $user->tax_status.'/'.$dependents,
             'ptkp_value' => $ptkp,
+            'ter_category' => $this->getTerCategory($user),
+            'monthly_ter_estimate' => $this->calculateMonthlyTer($user, $totalIncome / 12),
         ];
     }
 
@@ -101,6 +103,118 @@ class CalculateTaxAction extends BaseAction
 
         // PPh 21 DTP 2026 is for monthly gross < 10m. Annual simplified to < 120m.
         return $isEligibleSector && $totalIncome > 0 && ($totalIncome / 12) <= 10000000;
+    }
+
+    /**
+     * Determine TER Category (A, B, C) based on PTKP status.
+     * PP 58/2023.
+     */
+    private function getTerCategory(User $user): string
+    {
+        $status = $user->tax_status ?? 'TK/0';
+        $isMarried = str_starts_with($status, 'K');
+        $dependents = $user->dependents_count ?? 0;
+
+        if ($isMarried) {
+            return match ($dependents) {
+                0 => 'A',
+                1, 2 => 'B',
+                default => 'C', // K/3
+            };
+        }
+
+        return match ($dependents) {
+            0, 1 => 'A',
+            2, 3 => 'B',
+            default => 'B',
+        };
+    }
+
+    /**
+     * Calculate monthly TER tax estimate based on Category.
+     * Simplified lookup for demonstration.
+     */
+    private function calculateMonthlyTer(User $user, float $monthlyGross): float
+    {
+        $category = $this->getTerCategory($user);
+
+        // Thresholds where rate > 0%
+        $thresholds = [
+            'A' => 5400000,
+            'B' => 6200000,
+            'C' => 6600000,
+        ];
+
+        if ($monthlyGross <= $thresholds[$category]) {
+            return 0;
+        }
+
+        $rate = match ($category) {
+            'A' => $this->getRateCategoryA($monthlyGross),
+            'B' => $this->getRateCategoryB($monthlyGross),
+            'C' => $this->getRateCategoryC($monthlyGross),
+            default => 0,
+        };
+
+        return $monthlyGross * $rate;
+    }
+
+    private function getRateCategoryA(float $gross): float
+    {
+        $rates = [
+            5650000 => 0.0025,
+            5950000 => 0.005,
+            6300000 => 0.0075,
+            6750000 => 0.01,
+            7500000 => 0.0125,
+            8500000 => 0.015,
+            9500000 => 0.0175,
+            10600000 => 0.02,
+        ];
+
+        foreach ($rates as $limit => $rate) {
+            if ($gross <= $limit) {
+                return $rate;
+            }
+        }
+
+        return 0.05;
+    }
+
+    private function getRateCategoryB(float $gross): float
+    {
+        $rates = [
+            6500000 => 0.0025,
+            6850000 => 0.005,
+            7300000 => 0.0075,
+            9200000 => 0.01,
+        ];
+
+        foreach ($rates as $limit => $rate) {
+            if ($gross <= $limit) {
+                return $rate;
+            }
+        }
+
+        return 0.05;
+    }
+
+    private function getRateCategoryC(float $gross): float
+    {
+        $rates = [
+            6950000 => 0.0025,
+            7350000 => 0.005,
+            7800000 => 0.0075,
+            8350000 => 0.01,
+        ];
+
+        foreach ($rates as $limit => $rate) {
+            if ($gross <= $limit) {
+                return $rate;
+            }
+        }
+
+        return 0.05;
     }
 
     /**

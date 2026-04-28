@@ -22,7 +22,7 @@ test('user can get financial summary', function () {
     ]);
 
     $response = $this->actingAs($user)
-        ->getJson('/api/transactions/summary?month='.(now()->month - 1).'&year='.now()->year);
+        ->getJson('/api/transactions/summary?month='.now()->month.'&year='.now()->year);
 
     $response->assertStatus(200)
         ->assertJsonFragment(['income' => 100000, 'expense' => 40000]);

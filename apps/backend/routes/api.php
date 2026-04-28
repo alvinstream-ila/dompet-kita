@@ -142,8 +142,8 @@ Route::middleware('firewall.all')->group(function () {
         Route::patch('/legacy/settings', [LegacyController::class, 'updateSettings']);
         Route::post('/legacy/heartbeat', [LegacyController::class, 'heartbeat']);
         Route::post('/legacy/snapshot', [LegacyController::class, 'triggerSnapshot'])->middleware('sudo');
-        Route::get('/legacy/download/{id}', [LegacyController::class, 'download']);
-        Route::get('/ai/legacy/report', [LegacyController::class, 'generateStream']);
+        Route::get('/legacy/download/{id}', [LegacyController::class, 'download'])->middleware('sudo');
+        Route::get('/ai/legacy/report', [LegacyController::class, 'generateStream'])->middleware('sudo');
 
         // Quantum Insights (Phase 6)
         Route::get('/ai/quantum-insights', [InsightController::class, 'index']);

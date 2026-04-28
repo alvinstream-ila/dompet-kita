@@ -152,9 +152,9 @@ class AuthController extends Controller
 
         // 🛡️ Check for Two-Factor Authentication
         if ($user->two_factor_enabled) {
-            $code = random_int(100000, 999999);
+            $code = (string) random_int(100000, 999999);
             $user->update([
-                'two_factor_code' => $code,
+                'two_factor_code' => Hash::make($code),
                 'two_factor_expires_at' => now()->addMinutes(10),
             ]);
 
@@ -217,7 +217,7 @@ class AuthController extends Controller
             return \response()->json(['message' => 'Sesi tidak valid atau telah berakhir.'], 401);
         }
 
-        if ($user->email_verification_code !== (string) $request->string('code') ||
+        if (! Hash::check((string) $request->string('code'), (string) $user->email_verification_code) ||
             ($user->email_verification_expires_at !== null && now()->isAfter($user->email_verification_expires_at))) {
             return \response()->json([
                 'message' => 'Kode verifikasi tidak valid atau telah kedaluwarsa. Silakan periksa kembali email Anda.',
@@ -266,11 +266,10 @@ class AuthController extends Controller
         ]);
 
         $user = User::where('email', (string) $request->string('email'))
-            ->where('two_factor_code', (string) $request->string('code'))
             ->where('two_factor_expires_at', '>', now())
             ->first();
 
-        if (! $user instanceof User) {
+        if (! $user instanceof User || ! Hash::check((string) $request->string('code'), (string) $user->two_factor_code)) {
             return \response()->json([
                 'message' => 'Kode 2FA tidak valid atau telah kedaluwarsa. Silakan coba lagi.',
             ], 401);

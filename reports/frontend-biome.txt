@@ -1,5 +1,5 @@
 The number of diagnostics exceeds the limit allowed. Use --max-diagnostics to increase it.
 Diagnostics not shown: 175.
-Checked 193 files in 212ms. No fixes applied.
+Checked 193 files in 986ms. No fixes applied.
 Found 186 errors.
 Found 8 warnings.
