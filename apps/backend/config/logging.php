@@ -3,6 +3,7 @@
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
+use Monolog\Handler\TestHandler;
 use Monolog\Processor\WebProcessor;
 
 $defaultPath = storage_path('logs/laravel.log');
@@ -136,7 +137,7 @@ return [
 
         'array' => [
             'driver' => 'monolog',
-            'handler' => \Monolog\Handler\TestHandler::class,
+            'handler' => TestHandler::class,
         ],
 
         'emergency' => [

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Sentry\Laravel\Integration;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -71,12 +72,12 @@ return Application::configure(basePath: dirname(__DIR__))
 
                     $e instanceof AccessDeniedHttpException ||
                     $e instanceof AuthorizationException ||
-                    ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException && $e->getStatusCode() === 403) => response()->json([
+                    ($e instanceof HttpException && $e->getStatusCode() === 403) => response()->json([
                         'message' => 'Waduh Sayang, kamu nggak punya akses ke sini.. 🔐',
                         'success' => false,
                     ], 403),
 
-                    $e instanceof \Symfony\Component\HttpKernel\Exception\HttpException => response()->json([
+                    $e instanceof HttpException => response()->json([
                         'message' => 'Aduh Sayang, ada kendala ['.$e->getStatusCode().'] nih.. 🥺',
                         'success' => false,
                         'debug' => config('app.debug') ? $e->getMessage() : null,
