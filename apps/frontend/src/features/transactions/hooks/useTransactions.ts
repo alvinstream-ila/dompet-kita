@@ -131,10 +131,9 @@ export function useTransactions({
         },
       });
 
-      // 🛡️ Standardizing data extraction from Laravel's Success Response + Paginated Resource
       // Structure: response.data { success, data: { data: [], meta: { ..., period: {} } } }
-      const items = response?.data?.data || [];
-      const meta = response?.data?.meta || {};
+      const items = response?.data?.data ?? [];
+      const meta = response?.data?.meta ?? {};
 
       const period = meta?.period || {
         start: new Date(targetYear, targetMonth - 1, 1).toISOString(),

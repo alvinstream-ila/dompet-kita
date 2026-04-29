@@ -85,7 +85,7 @@ class TransactionController extends Controller
                 ],
             ]);
 
-            return $this->success($resource);
+            return $this->success($resource->toResponse($request)->getData());
         } catch (\Exception $e) {
             Log::error('TRANSACTION_INDEX_ERROR: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
