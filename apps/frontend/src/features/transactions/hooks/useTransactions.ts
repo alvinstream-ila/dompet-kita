@@ -23,14 +23,14 @@ function findTransactionInCache(
   queryClient: QueryClient,
   transactionId: string
 ): Transaction | undefined {
-  const allTxs = queryClient.getQueriesData<InfiniteData<Transaction[]>>({
+  const allTxs = queryClient.getQueriesData<InfiniteData<TransactionPage>>({
     queryKey: ['transactions'],
   });
 
   for (const [, data] of allTxs) {
     if (!data) continue;
     for (const page of data.pages) {
-      const found = page.find((t) => t.id === transactionId);
+      const found = page.items.find((t) => t.id === transactionId);
       if (found) return found;
     }
   }
@@ -41,15 +41,18 @@ function findTransactionInCache(
  * 🛠️ Helper to update a transaction in infinite query pages.
  */
 function updateInfiniteTransactions(
-  old: InfiniteData<Transaction[]> | undefined,
+  old: InfiniteData<TransactionPage> | undefined,
   updatedTx: Partial<Transaction> & { id: string }
-): InfiniteData<Transaction[]> | undefined {
+): InfiniteData<TransactionPage> | undefined {
   if (!old) return old;
   return {
     ...old,
-    pages: old.pages.map((page) =>
-      page.map((tx) => (tx.id === updatedTx.id ? { ...tx, ...updatedTx } : tx))
-    ),
+    pages: old.pages.map((page) => ({
+      ...page,
+      items: page.items.map((tx) =>
+        tx.id === updatedTx.id ? { ...tx, ...updatedTx } : tx
+      ),
+    })),
   };
 }
 
@@ -57,46 +60,105 @@ function updateInfiniteTransactions(
  * 🛠️ Helper to remove a transaction from infinite query pages.
  */
 function removeInfiniteTransaction(
-  old: InfiniteData<Transaction[]> | undefined,
+  old: InfiniteData<TransactionPage> | undefined,
   transactionId: string
-): InfiniteData<Transaction[]> | undefined {
+): InfiniteData<TransactionPage> | undefined {
   if (!old) return old;
   return {
     ...old,
-    pages: old.pages.map((page) =>
-      page.filter((tx) => tx.id !== transactionId)
-    ),
+    pages: old.pages.map((page) => ({
+      ...page,
+      items: page.items.filter((tx) => tx.id !== transactionId),
+    })),
   };
 }
 
-export function useTransactions(
-  month?: number,
-  year?: number,
-  limit: number = 20
-) {
-  const { budgetCycleStart } = useSettings();
+export interface TransactionPage {
+  items: Transaction[];
+  meta: {
+    current_page: number;
+    last_page: number;
+    total: number;
+  };
+  period: {
+    start: string;
+    end: string;
+    month: number;
+    year: number;
+    budget_cycle_start: number;
+  };
+}
 
-  return useInfiniteQuery({
-    queryKey: ['transactions', month, year, budgetCycleStart, limit],
+export function useTransactions({
+  month,
+  year,
+  category = 'Semua',
+  search = '',
+  limit = 20,
+}: {
+  month?: number;
+  year?: number;
+  category?: string;
+  search?: string;
+  limit?: number;
+} = {}) {
+  const { budgetCycleStart } = useSettings();
+  const now = new Date();
+  const targetMonth = month ?? now.getMonth() + 1;
+  const targetYear = year ?? now.getFullYear();
+
+  return useInfiniteQuery<TransactionPage>({
+    queryKey: [
+      'transactions',
+      targetMonth,
+      targetYear,
+      budgetCycleStart,
+      category,
+      search,
+      limit,
+    ],
     initialPageParam: 1,
     queryFn: async ({ pageParam = 1 }) => {
-      const { data } = await api.get('/transactions', {
+      const { data: response } = await api.get('/transactions', {
         params: {
-          month,
-          year,
+          month: targetMonth,
+          year: targetYear,
+          category: category !== 'Semua' ? category : undefined,
+          search: search || undefined,
           page: pageParam,
           budget_cycle_start: budgetCycleStart,
           limit,
         },
       });
 
-      // Laravel Paginated Response: { success: true, data: { data: Transaction[], ... } }
-      // Safely access data or fallback to empty array
-      return (data?.data?.data || []) as Transaction[];
+      // 🛡️ Standardizing data extraction from Laravel's Success Response + Paginated Resource
+      // Structure: response.data { success, data: { data: [], meta: { ..., period: {} } } }
+      const items = response?.data?.data || [];
+      const meta = response?.data?.meta || {};
+
+      const period = meta?.period || {
+        start: new Date(targetYear, targetMonth - 1, 1).toISOString(),
+        end: new Date(targetYear, targetMonth, 0).toISOString(),
+        month: targetMonth,
+        year: targetYear,
+        budget_cycle_start: budgetCycleStart,
+      };
+
+      return {
+        items: Array.isArray(items) ? items : [],
+        meta: {
+          current_page: Number(meta?.current_page) || 1,
+          last_page: Number(meta?.last_page) || 1,
+          total: Number(meta?.total) || 0,
+        },
+        period,
+      } as TransactionPage;
     },
-    getNextPageParam: (lastPage, allPages) => {
-      const isFullPage = lastPage?.length === limit;
-      return isFullPage ? allPages.length + 1 : undefined;
+    getNextPageParam: (lastPage) => {
+      if (lastPage.meta.current_page < lastPage.meta.last_page) {
+        return lastPage.meta.current_page + 1;
+      }
+      return undefined;
     },
   });
 }
@@ -124,7 +186,7 @@ export function useAddTransaction() {
       });
 
       // 3. Optimistically update the transactions list (Infinite Query)
-      queryClient.setQueriesData<InfiniteData<Transaction[]>>(
+      queryClient.setQueriesData<InfiniteData<TransactionPage>>(
         { queryKey: ['transactions'] },
         (old) => {
           if (!old) return old;
@@ -138,7 +200,9 @@ export function useAddTransaction() {
           return {
             ...old,
             pages: old.pages.map((page, index) =>
-              index === 0 ? [optimisticTx, ...page] : page
+              index === 0
+                ? { ...page, items: [optimisticTx, ...page.items] }
+                : page
             ),
           };
         }
@@ -223,7 +287,7 @@ export function useUpdateTransaction() {
       });
 
       // 1. Update Transaction List
-      queryClient.setQueriesData<InfiniteData<Transaction[]>>(
+      queryClient.setQueriesData<InfiniteData<TransactionPage>>(
         { queryKey: ['transactions'] },
         (old) => updateInfiniteTransactions(old, updatedTx)
       );
@@ -317,7 +381,7 @@ export function useDeleteTransaction() {
       });
 
       // 3. Optimistically remove from transaction list
-      queryClient.setQueriesData<InfiniteData<Transaction[]>>(
+      queryClient.setQueriesData<InfiniteData<TransactionPage>>(
         { queryKey: ['transactions'] },
         (old) => removeInfiniteTransaction(old, deletedTx.id)
       );

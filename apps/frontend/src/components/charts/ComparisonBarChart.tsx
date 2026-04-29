@@ -33,8 +33,7 @@ export const ComparisonBarChart: React.FC = () => {
   } = useTransactions(undefined, undefined, 20);
   const transactions = React.useMemo(() => {
     if (!infiniteData?.pages) return [];
-    // useTransactions queryFn already returns Transaction[] per page
-    return infiniteData.pages.flat() as Transaction[];
+    return infiniteData.pages.flatMap((page) => page.items);
   }, [infiniteData]);
 
   const getWeekData = React.useCallback(

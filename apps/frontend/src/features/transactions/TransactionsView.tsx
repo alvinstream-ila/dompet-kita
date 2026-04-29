@@ -1,8 +1,8 @@
 'use client';
 
-import { ReceiptText } from 'lucide-react';
+import { Calendar, ReceiptText, RefreshCw } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useDeferredValue, useState } from 'react';
 import { UserNavDropdown } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
@@ -21,41 +21,42 @@ export function TransactionsView() {
   const [selectedTransaction, setSelectedTransaction] =
     useState<Transaction | null>(null);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  // 🔍 Search & Category State
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
+  const deferredSearch = useDeferredValue(searchQuery);
+
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [transactionToDelete, setTransactionToDelete] =
     useState<Transaction | null>(null);
 
-  const { data, isLoading, isFetching, refetch, hasNextPage, fetchNextPage } =
-    useTransactions();
+  // 🗓️ Period State
+  const now = new Date();
+  const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(now.getFullYear());
+
+  const {
+    data,
+    isLoading,
+    isFetching,
+    refetch,
+    hasNextPage,
+    fetchNextPage,
+    isError,
+    error,
+  } = useTransactions({
+    month: selectedMonth,
+    year: selectedYear,
+    category: selectedCategory,
+    search: deferredSearch,
+  });
 
   const { mutateAsync: deleteTransaction, isPending: isDeleting } =
     useDeleteTransaction();
 
-  const transactions =
-    data?.pages.flatMap((page: unknown) => {
-      if (Array.isArray(page)) return page;
-      if (
-        page &&
-        typeof page === 'object' &&
-        'data' in page &&
-        Array.isArray((page as { data: unknown[] }).data)
-      )
-        return (page as { data: Transaction[] }).data;
-      return [];
-    }) || [];
+  const transactions = data?.pages.flatMap((page) => page.items) || [];
+  const period = data?.pages[0]?.period;
   const { formatAmount } = useFormatting();
-
-  const filteredTransactions = transactions.filter((t: Transaction) => {
-    const title = t.description || t.category;
-    const matchesSearch =
-      title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.category.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory =
-      selectedCategory === 'Semua' || t.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
 
   const categories = [
     'Semua',
@@ -121,6 +122,23 @@ export function TransactionsView() {
             <span className="font-mono text-[8px] font-bold tracking-[0.3em] text-slate-400 uppercase md:text-[10px]">
               Money Journals
             </span>
+            {period && period.start && (
+              <div className="mt-1 flex items-center gap-1.5 rounded-lg bg-slate-50 px-2 py-0.5 text-[7px] font-bold text-slate-500 ring-1 ring-slate-100 md:mt-2 md:px-3 md:py-1 md:text-[10px]">
+                <Calendar className="text-blue-royal h-2 w-2 md:h-3 md:w-3" />
+                <span>
+                  {new Date(period.start).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                  })}{' '}
+                  -{' '}
+                  {new Date(period.end).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                  })}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -155,10 +173,14 @@ export function TransactionsView() {
         onOpenCategoryModal={() => setIsCategoryModalOpen(true)}
         onRefresh={refetch}
         isFetching={isFetching}
+        selectedMonth={selectedMonth}
+        onMonthChange={setSelectedMonth}
+        selectedYear={selectedYear}
+        onYearChange={setSelectedYear}
       />
 
       <div className="space-y-5">
-        {filteredTransactions.map((t: Transaction, index: number) => (
+        {transactions.map((t: Transaction, index: number) => (
           <TransactionItem
             key={t.id}
             transaction={t}
@@ -184,7 +206,7 @@ export function TransactionsView() {
           </div>
         )}
 
-        {transactions.length === 0 && !isLoading && (
+        {transactions.length === 0 && !isLoading && !isError && (
           <div className="space-y-6 rounded-[48px] border-2 border-dashed border-slate-200 bg-white/50 py-28 text-center">
             <div className="group mx-auto flex size-24 animate-pulse items-center justify-center rounded-full bg-white text-slate-200 shadow-xl shadow-slate-100">
               <ReceiptText size={48} strokeWidth={1} />
@@ -204,6 +226,31 @@ export function TransactionsView() {
               className="border-blue-royal/10 text-blue-royal hover:bg-blue-royal/5 h-12 rounded-full border px-8 text-[10px] font-black tracking-widest uppercase"
             >
               Mulai Mencatat
+            </Button>
+          </div>
+        )}
+
+        {isError && (
+          <div className="space-y-6 rounded-[48px] border-2 border-dashed border-red-200 bg-red-50/30 py-28 text-center">
+            <div className="mx-auto flex size-24 items-center justify-center rounded-full bg-white text-red-400 shadow-xl shadow-red-100">
+              <RefreshCw size={48} strokeWidth={1} />
+            </div>
+            <div className="space-y-2">
+              <h4 className="mb-1 text-[12px] font-black tracking-[0.4em] text-red-600 uppercase">
+                Gagal Memuat Jejak
+              </h4>
+              <p className="text-[10px] font-bold text-red-400 italic opacity-70">
+                {error instanceof Error
+                  ? error.message
+                  : 'Koneksi ke server terganggu, coba refresh ya Sayang...'}
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              onClick={() => refetch()}
+              className="h-12 rounded-full border border-red-200 px-8 text-[10px] font-black tracking-widest text-red-600 uppercase hover:bg-red-50"
+            >
+              Coba Lagi ✨
             </Button>
           </div>
         )}

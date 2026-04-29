@@ -40,10 +40,9 @@ class BudgetService
         // Determine the target month number
         $targetMonth = $month ?? $now->month;
 
-        // If the cycle starts after the 1st (e.g., 25th), the cycle for "Month X"
-        // actually started in "Month X-1".
-        // Example: April cycle starts March 25 and ends April 24.
-        if ($startDay > 1 && ($month !== null || $now->day < $startDay)) {
+        // If no month is provided (automatic mode), we check if we are currently
+        // before the startDay. If so, the current "active" cycle actually started last month.
+        if ($month === null && $startDay > 1 && $now->day < $startDay) {
             $targetMonth--;
         }
 

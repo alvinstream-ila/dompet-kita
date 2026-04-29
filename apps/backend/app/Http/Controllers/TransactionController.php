@@ -45,17 +45,47 @@ class TransactionController extends Controller
                 abort(401);
             }
 
+            // Standardizing month indexing: PHP uses 1-12. Frontend also sends 1-12.
+            $month = $request->filled('month') ? (int) $request->integer('month') : (int) now()->month;
+            $year = $request->filled('year') ? (int) $request->integer('year') : (int) now()->year;
+            $startDay = (int) ($request->integer('budget_cycle_start') ?: 1);
+
             $query = Transaction::query()
-                ->filterByPeriod(
-                    $request->filled('month') ? (int) $request->integer('month') : null,
-                    $request->filled('year') ? (int) $request->integer('year') : null,
-                    (int) ($request->integer('budget_cycle_start') ?: 1)
-                );
+                ->filterByPeriod($month, $year, $startDay);
+
+            if ($request->filled('category') && $request->input('category') !== 'Semua') {
+                $query->where('category', $request->input('category'));
+            }
+
+            if ($request->filled('search')) {
+                $search = $request->input('search');
+                $query->where(function($q) use ($search) {
+                    $q->where('description', 'like', "%{$search}%")
+                      ->orWhere('category', 'like', "%{$search}%")
+                      ->orWhere('note', 'like', "%{$search}%");
+                });
+            }
 
             $limit = min((int) $request->integer('limit', 20), 100);
             $transactions = $query->orderBy('date', 'desc')->paginate($limit);
 
-            return $this->success(TransactionResource::collection($transactions));
+            // Get period boundaries for metadata
+            $dates = $this->budgetService->getBudgetCycleDates($month, $year, $startDay);
+
+            $resource = TransactionResource::collection($transactions);
+            $resource->additional([
+                'meta' => [
+                    'period' => [
+                        'start' => $dates['start']->toDateString(),
+                        'end' => $dates['end']->toDateString(),
+                        'month' => $month,
+                        'year' => $year,
+                        'budget_cycle_start' => $startDay,
+                    ]
+                ]
+            ]);
+
+            return $this->success($resource);
         } catch (\Exception $e) {
             Log::error('TRANSACTION_INDEX_ERROR: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
