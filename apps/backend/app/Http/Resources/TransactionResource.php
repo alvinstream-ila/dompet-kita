@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
  * @property string|null $receipt_url
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ * @property array|null $metadata
  */
 class TransactionResource extends JsonResource
 {
