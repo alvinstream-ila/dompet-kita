@@ -59,10 +59,10 @@ class TransactionController extends Controller
 
             if ($request->filled('search')) {
                 $search = $request->input('search');
-                $query->where(function($q) use ($search) {
+                $query->where(function ($q) use ($search) {
                     $q->where('description', 'like', "%{$search}%")
-                      ->orWhere('category', 'like', "%{$search}%")
-                      ->orWhere('note', 'like', "%{$search}%");
+                        ->orWhere('category', 'like', "%{$search}%")
+                        ->orWhere('note', 'like', "%{$search}%");
                 });
             }
 
@@ -81,8 +81,8 @@ class TransactionController extends Controller
                         'month' => $month,
                         'year' => $year,
                         'budget_cycle_start' => $startDay,
-                    ]
-                ]
+                    ],
+                ],
             ]);
 
             return $this->success($resource);
