@@ -58,7 +58,7 @@ class TransactionController extends Controller
             }
 
             if ($request->filled('search')) {
-                $search = $request->input('search');
+                $search = (string) $request->input('search');
                 $query->where(function ($q) use ($search) {
                     $q->where('description', 'like', "%{$search}%")
                         ->orWhere('category', 'like', "%{$search}%")
