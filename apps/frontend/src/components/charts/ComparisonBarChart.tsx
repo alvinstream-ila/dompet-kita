@@ -13,7 +13,6 @@ import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { useTransactions } from '@/features/transactions';
 import { parseLocalDate } from '@/lib/utils';
-import type { Transaction } from '@/types';
 
 ChartJS.register(
   CategoryScale,
