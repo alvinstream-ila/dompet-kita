@@ -29,7 +29,7 @@ export const ComparisonBarChart: React.FC = () => {
     isLoading,
     isFetching,
     isError,
-  } = useTransactions(undefined, undefined, 20);
+  } = useTransactions({ limit: 20 });
   const transactions = React.useMemo(() => {
     if (!infiniteData?.pages) return [];
     return infiniteData.pages.flatMap((page) => page.items);
