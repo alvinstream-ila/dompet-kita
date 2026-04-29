@@ -40,7 +40,7 @@ export interface Transaction {
   note: string | null;
   description: string;
   receipt_url?: string | null;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   user_id?: string;
 }
 
