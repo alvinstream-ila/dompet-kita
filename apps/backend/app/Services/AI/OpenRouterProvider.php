@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\AI;
 
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -14,6 +15,7 @@ class OpenRouterProvider implements AiProviderInterface
     protected string $modelText;
 
     protected string $modelVision;
+
     protected string $model;
 
     protected string $baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
@@ -27,7 +29,7 @@ class OpenRouterProvider implements AiProviderInterface
         $this->model = is_string($model) ? $model : 'google/gemini-flash-1.5';
     }
 
-    protected function getHttpClient(): \Illuminate\Http\Client\PendingRequest
+    protected function getHttpClient(): PendingRequest
     {
         return Http::withToken($this->apiKey)
             ->timeout(30)

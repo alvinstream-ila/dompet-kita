@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
 class StorageService
 {
     private const string IMAGE_JPEG = 'image/jpeg';
+
     private const string USER_AGENT = 'DompetKita-Storage/1.0';
 
     /**
