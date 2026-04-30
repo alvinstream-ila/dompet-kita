@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
 use App\Services\AI\AiProviderManager;
@@ -14,16 +16,16 @@ class AiServiceProvider extends ServiceProvider
     /**
      * Register services.
      */
+    #[\Override]
     public function register(): void
     {
-        $this->app->singleton(AiProviderManager::class, function (): AiProviderManager {
+        $this->app->singleton(AiProviderManager::class, 
             // Priority order: Groq (Primary) → OpenRouter (Fallback) → Gemini (Emergency)
-            return new AiProviderManager([
-                new GroqProvider,
-                new OpenRouterProvider,
-                new GeminiProvider,
-            ]);
-        });
+            fn(): AiProviderManager => new AiProviderManager([
+            new GroqProvider,
+            new OpenRouterProvider,
+            new GeminiProvider,
+        ]));
 
         $this->app->singleton(QuantumInsightEngine::class);
     }

@@ -41,7 +41,7 @@ trait HasHouseholdScope
      */
     protected static function bootHasHouseholdScope(): void
     {
-        static::creating(function ($model) {
+        static::creating(function ($model): void {
             $user = Auth::user();
 
             // 1. If we have an authenticated user, prioritize their context
@@ -66,7 +66,7 @@ trait HasHouseholdScope
         });
 
         // 🛡️ The Sovereign Scope: Alvin & Ila see everything in the same household.
-        static::addGlobalScope('household_scope', function (Builder $builder) {
+        static::addGlobalScope('household_scope', function (Builder $builder): void {
             $user = Auth::user();
             if ($user instanceof User) {
                 if ($user->household_id) {

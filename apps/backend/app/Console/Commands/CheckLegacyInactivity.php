@@ -35,7 +35,7 @@ class CheckLegacyInactivity extends Command
 
         // Find users with legacy setup (partner or email) who are not already triggered
         $users = User::whereRaw('is_legacy_triggered IS FALSE')
-            ->where(function ($query) {
+            ->where(function ($query): void {
                 $query->whereNotNull('partner_id')
                     ->orWhereNotNull('legacy_partner_email');
             })
@@ -93,7 +93,8 @@ class CheckLegacyInactivity extends Command
             $notificationData = [
                 'filename' => $filename,
                 'financial_summary' => $reportData['financial_summary'],
-                'vault_url' => ((string) config('app.frontend_url')).'/legacy-vault/claim?token='.bin2hex(random_bytes(16)), // Placeholder for claim flow
+                'vault_url' => config('app.frontend_url').'/legacy-vault/claim?token='.bin2hex(random_bytes(16)), // @phpstan-ignore binaryOp.invalid
+
             ];
 
             // 3. Notify Partner (Internal or External)
@@ -111,7 +112,6 @@ class CheckLegacyInactivity extends Command
             ]);
 
             Log::emergency("Dead Man's Switch COMPLETED for user {$user->id}. Partner notified.");
-
         } catch (\Exception $e) {
             $this->error("CRITICAL: Failed to execute legacy trigger for user {$user->id}: ".$e->getMessage());
             Log::critical('Legacy trigger fatal error: '.$e->getMessage());

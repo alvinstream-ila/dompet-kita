@@ -10,7 +10,7 @@ use Illuminate\Console\Command;
 
 class CloudStatus extends Command
 {
-    private const SEPARATOR = '===============================================';
+    private const string SEPARATOR = '===============================================';
 
     /**
      * The name and signature of the console command.

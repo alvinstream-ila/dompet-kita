@@ -43,9 +43,9 @@ class ForecastWealthAction extends BaseAction
         $currentLoans = 0;
 
         // [ASP-v2] Market Intelligence: Get USD/IDR and Gold Rates dynamically
-        $market = (array) $this->marketService->getRates();
+        $market = $this->marketService->getRates();
 
-        $netWorth = (float) ($currentAssets - $currentLoans);
+        $netWorth = $currentAssets - $currentLoans;
 
         // Fixed to 0 per user request: "Focus only on existing asset growth"
         $avgMonthlySavings = 0.0;
@@ -54,7 +54,6 @@ class ForecastWealthAction extends BaseAction
         $projection = collect([]);
         $runningWealth = $netWorth > 0 ? $netWorth : 0.0;
 
-        /** @var float $inflationRate */
         $inflationRate = (float) $market['inflation_rate'];
         $inflationMonthly = $inflationRate / 12;
 
@@ -71,12 +70,12 @@ class ForecastWealthAction extends BaseAction
         $lastWealth = $lastItem ? (float) $lastItem['estimated_net_worth'] : 0.0;
 
         try {
-            $advice = (string) $this->getWealthAdviceAction->execute($user, [
+            $advice = $this->getWealthAdviceAction->execute($user, [
                 'netWorth' => $netWorth,
                 'savings' => $avgMonthlySavings,
                 'projected' => $lastWealth,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $advice = 'Proyeksi finansial menunjukkan tren positif. Konsistensi dalam akumulasi aset akan mempercepat pencapaian target kemandirian finansial Anda.';
         }
 

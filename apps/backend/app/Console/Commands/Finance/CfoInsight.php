@@ -43,7 +43,7 @@ class CfoInsight extends Command
                 $this->processInsight($user, $action);
             } else {
                 $this->info('Starting global financial analysis for all active users...');
-                User::all()->each(fn ($user) => $this->processInsight($user, $action));
+                User::all()->each(fn (\App\Models\User $user) => $this->processInsight($user, $action));
             }
 
             $this->info('Financial analysis completed successfully.');

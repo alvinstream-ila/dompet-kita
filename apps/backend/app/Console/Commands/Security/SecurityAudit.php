@@ -10,9 +10,9 @@ use Illuminate\Console\Command;
 
 class SecurityAudit extends Command
 {
-    private const SEPARATOR = '========================================';
+    private const string SEPARATOR = '========================================';
 
-    private const SCORE_SUFFIX = '/100)';
+    private const string SCORE_SUFFIX = '/100)';
 
     /**
      * The name and signature of the console command.
@@ -69,7 +69,7 @@ class SecurityAudit extends Command
 
         $this->info(self::SEPARATOR);
 
-        if (empty($findings)) {
+        if ($findings === []) {
             $this->info('No security concerns found. Your finances are safe!');
         } else {
             foreach ($findings as $finding) {

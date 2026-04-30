@@ -10,15 +10,15 @@ use Illuminate\Support\Carbon;
 
 class FinancialIntelligenceService
 {
-    private const CALCULATION_DAYS = 30;
+    private const int CALCULATION_DAYS = 30;
 
-    private const SAFETY_THRESHOLD_DAYS = 15;
+    private const int SAFETY_THRESHOLD_DAYS = 15;
 
-    private const WARNING_THRESHOLD_DAYS = 7;
+    private const int WARNING_THRESHOLD_DAYS = 7;
 
-    private const CRITICAL_THRESHOLD_DAYS = 3;
+    private const int CRITICAL_THRESHOLD_DAYS = 3;
 
-    private const HIGH_INCOME_THRESHOLD = 10000000;
+    private const int HIGH_INCOME_THRESHOLD = 10000000;
 
     /**
      * Prediction of when liquidity (Cash) will run out based on average spending.
@@ -101,9 +101,9 @@ class FinancialIntelligenceService
 
         return [
             'status' => $status,
-            'days_remaining' => (float) round($daysRemaining, 1),
+            'days_remaining' => round($daysRemaining, 1),
             'current_cash' => (float) $totalLiquidity,
-            'burn_rate' => (float) round($dailyBurnRate, 0),
+            'burn_rate' => round($dailyBurnRate, 0),
             'message' => $message,
         ];
     }
@@ -157,8 +157,8 @@ class FinancialIntelligenceService
 
         $simulatedCash = max(0.0, $prediction['current_cash'] - $amount);
         $burnRate = $prediction['burn_rate'];
-        $daysRemaining = $burnRate > 0 ? (float) round($simulatedCash / $burnRate, 1) : 999.0;
-        $impactDays = $burnRate > 0 ? (float) round($amount / $burnRate, 1) : 0.0;
+        $daysRemaining = $burnRate > 0 ? round($simulatedCash / $burnRate, 1) : 999.0;
+        $impactDays = $burnRate > 0 ? round($amount / $burnRate, 1) : 0.0;
 
         return [
             'simulated_cash' => $simulatedCash,
@@ -182,7 +182,7 @@ class FinancialIntelligenceService
                 'usd_idr' => (float) ($market['currency_rates']['IDR'] ?? 16950.0),
                 'gold_gram' => (float) $market['gold_antam_gram'],
             ];
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return [
                 'usd_idr' => 16950.0,
                 'gold_gram' => 2525000.0,
@@ -232,7 +232,7 @@ class FinancialIntelligenceService
         $avgIncome = count(array_filter($incomes)) > 0 ? array_sum($incomes) / count(array_filter($incomes)) : 0;
         $avgExpense = count(array_filter($expenses)) > 0 ? array_sum($expenses) / count(array_filter($expenses)) : 0;
 
-        $savingsRate = $avgIncome > 0 ? (($avgIncome - $avgExpense) / $avgIncome) * 100 : 0;
+        $savingsRate = $avgIncome > 0 ? ($avgIncome - $avgExpense) / $avgIncome * 100 : 0;
 
         $liquidAssets = (float) Asset::whereIn('type', [AssetType::CASH, AssetType::BANK])
             ->sum('value');
@@ -266,7 +266,7 @@ class FinancialIntelligenceService
     /**
      * Calculate Standard Deviation relative to the mean (Coefficient of Variation).
      *
-     * @param  float[]  $values
+     * @param  array<float>  $values
      */
     private function calculateRelativeStdDev(array $values): float
     {
@@ -283,7 +283,7 @@ class FinancialIntelligenceService
 
         $variance = 0.0;
         foreach ($filtered as $v) {
-            $variance += pow($v - $mean, 2);
+            $variance += ($v - $mean) ** 2;
         }
         $stdDev = sqrt($variance / ($count - 1));
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Finance\Asset;
 
 use App\Actions\BaseAction;

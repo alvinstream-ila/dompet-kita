@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Process;
 
 class MaintenanceVerify extends Command
 {
-    private const SEPARATOR = '========================================';
+    private const string SEPARATOR = '========================================';
 
     /**
      * The name and signature of the console command.

@@ -59,7 +59,7 @@ class TransactionController extends Controller
 
             if ($request->filled('search')) {
                 $search = (string) $request->input('search');
-                $query->where(function ($q) use ($search) {
+                $query->where(function ($q) use ($search): void {
                     $q->where('description', 'like', "%{$search}%")
                         ->orWhere('category', 'like', "%{$search}%")
                         ->orWhere('note', 'like', "%{$search}%");
@@ -226,6 +226,23 @@ class TransactionController extends Controller
     }
 
     /**
+     * Delete a transaction.
+     */
+    public function destroy(Request $request, Transaction $transaction, DeleteTransactionAction $action): JsonResponse
+    {
+        $this->authorize('delete', $transaction);
+
+        $user = $request->user();
+        if (! $user instanceof User) {
+            abort(401);
+        }
+
+        $action->execute($user, $transaction);
+
+        return $this->success(null, 'Entri transaksi telah dihapus dari buku besar.');
+    }
+
+    /**
      * Prepare the core data for the transaction report.
      *
      * @return array{
@@ -259,22 +276,5 @@ class TransactionController extends Controller
             'categories' => $categoryBreakdown,
             'period_label' => $period['start']->translatedFormat('F Y'),
         ];
-    }
-
-    /**
-     * Delete a transaction.
-     */
-    public function destroy(Request $request, Transaction $transaction, DeleteTransactionAction $action): JsonResponse
-    {
-        $this->authorize('delete', $transaction);
-
-        $user = $request->user();
-        if (! $user instanceof User) {
-            abort(401);
-        }
-
-        $action->execute($user, $transaction);
-
-        return $this->success(null, 'Entri transaksi telah dihapus dari buku besar.');
     }
 }

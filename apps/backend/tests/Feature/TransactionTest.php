@@ -24,14 +24,18 @@ class TransactionTest extends TestCase
                 'success',
                 'message',
                 'data' => [
-                    '*' => [
-                        'id',
-                        'date',
-                        'amount',
-                        'category',
-                        'type',
-                        'description',
+                    'data' => [
+                        '*' => [
+                            'id',
+                            'date',
+                            'amount',
+                            'category',
+                            'type',
+                            'description',
+                        ],
                     ],
+                    'links',
+                    'meta',
                 ],
             ]);
     }
@@ -156,9 +160,9 @@ class TransactionTest extends TestCase
             ->getJson('/api/transactions?month=2&year=2024');
 
         $response->assertStatus(200);
-        $data = $response->json('data');
+        $data = $response->json('data.data');  // Paginated response: data.data is the items array
         if (! is_array($data)) {
-            $this->fail('Response data is not an array');
+            $this->fail('Response data.data is not an array');
         }
         /** @var array<int, array<string, mixed>> $data */
         $this->assertCount(1, $data);

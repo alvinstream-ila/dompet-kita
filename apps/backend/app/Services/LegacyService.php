@@ -24,7 +24,7 @@ class LegacyService
         User::where('is_legacy_triggered', false)
             ->whereNotNull('last_active_at')
             ->whereNotNull('partner_id')
-            ->each(function (User $user) {
+            ->each(function (User $user): void {
                 $threshold = (int) ($user->legacy_threshold_months ?: 6); // Default 6 months
 
                 $lastActive = $user->last_active_at;

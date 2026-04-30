@@ -29,6 +29,7 @@ class TransactionResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function toArray(Request $request): array
     {
         $receiptUrl = null;
@@ -41,7 +42,7 @@ class TransactionResource extends JsonResource
                         $this->receipt_url,
                         now()->addMinutes(15)
                     );
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     $receiptUrl = Storage::disk('storj')->url($this->receipt_url);
                 }
             }

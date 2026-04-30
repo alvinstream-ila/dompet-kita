@@ -41,7 +41,7 @@ class AiWatchdog
             'groq' => self::checkQuarantine('groq'),
             'openrouter' => self::checkQuarantine('openrouter'),
             'gemini' => self::checkQuarantine('gemini'),
-        ])->mapWithKeys(function ($isQuarantined, $name) {
+        ])->mapWithKeys(function ($isQuarantined, string $name): array {
             /** @var string $name */
             /** @var bool $isQuarantined */
             return [$name => [

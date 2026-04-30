@@ -34,7 +34,7 @@ class SystemHealthCheckAction extends BaseAction
             'ai_provider' => $this->checkAiProvider(),
         ];
 
-        $allSafe = collect($report)->every(fn ($item) => $item['status'] === 'safe');
+        $allSafe = collect($report)->every(fn ($item): bool => $item['status'] === 'safe');
         $report['overall_status'] = $allSafe ? 'safe' : 'degraded';
 
         return $report;

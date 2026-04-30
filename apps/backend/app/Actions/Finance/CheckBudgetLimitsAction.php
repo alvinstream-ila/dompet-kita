@@ -45,8 +45,8 @@ class CheckBudgetLimitsAction extends BaseAction
         }
 
         return [
-            'spending' => (float) $spending,
-            'limit' => (float) $limit,
+            'spending' => $spending,
+            'limit' => $limit,
             'percentage' => (float) $percentage,
             'status' => (string) $status,
         ];

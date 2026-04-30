@@ -12,14 +12,8 @@ use App\Services\FinancialIntelligenceService;
 
 class ProcessChatAction
 {
-    protected ChatWithAiAction $chatWithAiAction;
-
-    protected FinancialIntelligenceService $intelService;
-
-    public function __construct(ChatWithAiAction $chatWithAiAction, FinancialIntelligenceService $intelService)
+    public function __construct(protected ChatWithAiAction $chatWithAiAction, protected FinancialIntelligenceService $intelService)
     {
-        $this->chatWithAiAction = $chatWithAiAction;
-        $this->intelService = $intelService;
     }
 
     /**
@@ -49,10 +43,10 @@ class ProcessChatAction
         }
 
         // 4. Build Context String with History
-        $historyContext = $history->map(fn ($h) => ucfirst($h->role).': '.$h->content)->implode("\n");
+        $historyContext = $history->map(fn ($h): string => ucfirst((string) $h->role).': '.$h->content)->implode("\n");
         $fullContext = "--- HISTORY ---\n".$historyContext."\n\n--- CURRENT STATUS ---\n".$summary;
 
-        if ($simulationContext) {
+        if ($simulationContext !== '' && $simulationContext !== '0') {
             $fullContext .= "\n\n--- SIMULATION (AUTOPILOT DETECTED) ---\n".$simulationContext;
         }
 
@@ -61,7 +55,7 @@ class ProcessChatAction
 
         // 6. Save History
         $this->saveHistory($user, 'user', $userMessage);
-        $this->saveHistory($user, 'assistant', $aiResponse, ['simulation' => $simulationContext ? true : false]);
+        $this->saveHistory($user, 'assistant', $aiResponse, ['simulation' => (bool) $simulationContext]);
 
         return $aiResponse;
     }
@@ -73,8 +67,8 @@ class ProcessChatAction
             ->orderBy('date', 'desc')
             ->get();
 
-        $totalIncome = (float) $transactions->filter(fn ($t) => $t->type === TransactionType::INCOME)->sum('amount');
-        $totalExpense = (float) $transactions->filter(fn ($t) => $t->type === TransactionType::EXPENSE)->sum('amount');
+        $totalIncome = (float) $transactions->filter(fn ($t): bool => $t->type === TransactionType::INCOME)->sum('amount');
+        $totalExpense = (float) $transactions->filter(fn ($t): bool => $t->type === TransactionType::EXPENSE)->sum('amount');
         $savings = $totalIncome - $totalExpense;
 
         // Scoped to household automatically via HasHouseholdScope
@@ -164,8 +158,8 @@ class ProcessChatAction
     {
         ChatHistory::create([
             'user_id' => $user->id,
-            'role' => (string) $role,
-            'content' => (string) $content,
+            'role' => $role,
+            'content' => $content,
             'metadata' => $metadata,
         ]);
     }

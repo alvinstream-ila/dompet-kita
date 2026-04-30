@@ -26,9 +26,9 @@ class WealthHistoryController extends Controller
 
         // Fetch historical data excluding current month
         $histories = WealthHistory::query()
-            ->where(function ($query) use ($now) {
+            ->where(function ($query) use ($now): void {
                 $query->where('year', '<', $now->year)
-                    ->orWhere(function ($q) use ($now) {
+                    ->orWhere(function ($q) use ($now): void {
                         $q->where('year', $now->year)
                             ->where('month', '<', $now->month);
                     });

@@ -5,7 +5,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-test('user can login with correct credentials', function () {
+test('user can login with correct credentials', function (): void {
     $user = User::factory()->create([
         'email' => 'test@example.com',
         'password' => 'password',
@@ -20,7 +20,7 @@ test('user can login with correct credentials', function () {
         ->assertJsonStructure(['access_token', 'user']);
 });
 
-test('authenticated user can get their profile', function () {
+test('authenticated user can get their profile', function (): void {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)

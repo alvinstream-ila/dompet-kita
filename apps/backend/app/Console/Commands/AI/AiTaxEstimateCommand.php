@@ -57,7 +57,7 @@ class AiTaxEstimateCommand extends Command
                     ['Taxable Income', 'Rp '.number_format($estimateData['taxable_income'], 0, ',', '.')],
                     ['Estimated Tax (Annual)', 'Rp '.number_format($estimateData['estimated_tax'], 0, ',', '.')],
                     ['Monthly Tax', 'Rp '.number_format($monthlyTax, 0, ',', '.')],
-                    ['Effective Rate', (string) $estimateData['effective_rate'].'%'],
+                    ['Effective Rate', $estimateData['effective_rate'].'%'],
                 ]
             );
 

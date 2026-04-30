@@ -45,10 +45,10 @@ class SelfHealingService
         }
 
         return [
-            'status' => empty($issues) ? 'healthy' : 'unhealthy',
+            'status' => $issues === [] ? 'healthy' : 'unhealthy',
             'timestamp' => now()->toIso8601String(),
             'issues' => $issues,
-            'message' => empty($issues)
+            'message' => $issues === []
                 ? 'Sistem dalam kondisi optimal.'
                 : 'Terdeteksi anomali pada sistem. Memulai prosedur diagnosa otomatis.',
         ];

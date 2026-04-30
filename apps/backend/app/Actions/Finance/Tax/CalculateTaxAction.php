@@ -61,7 +61,7 @@ class CalculateTaxAction extends BaseAction
 
         // Dependents (Max 3)
         $dependents = min(3, $user->dependents_count ?? 0);
-        $ptkp += ($dependents * $this->ptkpExtra);
+        $ptkp += $dependents * $this->ptkpExtra;
 
         $taxableIncome = max(0, $totalIncome - $ptkp);
         $taxPayable = $this->calculateProgressiveTax($taxableIncome);

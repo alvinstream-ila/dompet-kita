@@ -75,8 +75,8 @@ PROMPT;
         }
 
         return [
-            'title' => is_string($data['title'] ?? null) ? (string) $data['title'] : 'Sovereign Intelligence ✨',
-            'insight' => is_string($data['insight'] ?? null) ? (string) $data['insight'] : 'Data transaksi telah dianalisis. Semua parameter keuangan berada dalam batas operasional yang ditentukan.',
+            'title' => is_string($data['title'] ?? null) ? $data['title'] : 'Sovereign Intelligence ✨',
+            'insight' => is_string($data['insight'] ?? null) ? $data['insight'] : 'Data transaksi telah dianalisis. Semua parameter keuangan berada dalam batas operasional yang ditentukan.',
         ];
     }
 }

@@ -47,12 +47,12 @@ class GenerateReportAction extends BaseAction
 
         // AI Advice
         $partner = $user->partner()->first();
-        $partnerName = $partner instanceof User ? (string) $partner->name : ((string) ($user->legacy_partner_name ?? 'belum dihubungkan'));
+        $partnerName = $partner instanceof User ? (string) $partner->name : (string) ($user->legacy_partner_name ?? 'belum dihubungkan');
 
         $aiAdvice = $this->getLegacyAdviceAction->execute($user, $data);
 
         $data['recommendations'] = [
-            (string) $aiAdvice,
+            $aiAdvice,
             "Ini adalah snapshot kekayaan digital 'Dompet Kita' per hari ini.",
             'Simpan dokumen ini di tempat yang aman (misial: Vault digital atau cetak fisik).',
             "Pastikan pasangan Anda ({$partnerName}) mengetahui lokasi penyimpanan ini.",

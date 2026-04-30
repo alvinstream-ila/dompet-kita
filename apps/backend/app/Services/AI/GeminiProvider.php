@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\AI;
 
 use Exception;
@@ -30,7 +32,7 @@ class GeminiProvider implements AiProviderInterface
 
     public function isAvailable(): bool
     {
-        return ! empty($this->apiKey);
+        return $this->apiKey !== '' && $this->apiKey !== '0';
     }
 
     public function supportsVision(): bool
@@ -49,7 +51,6 @@ class GeminiProvider implements AiProviderInterface
             $client = Gemini::client($this->apiKey);
             $response = $client->generativeModel($this->model)->generateContent($prompt);
 
-            /** @var UsageMetadata $usage */
             $usage = $response->usageMetadata;
 
             return [

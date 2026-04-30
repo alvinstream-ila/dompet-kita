@@ -43,7 +43,7 @@ class SimulateMonteCarloAction extends BaseAction
 
                 // 2. Market volatility (Paper wealth/Gold logic): ±5%
                 $marketNoise = random_int(-5, 5) / 100;
-                $runningWealth = $runningWealth * (1 + $marketNoise);
+                $runningWealth *= 1 + $marketNoise;
 
                 // 3. Regular Savings & Inflation
                 $runningWealth = ($runningWealth + $actualSavings) * (1 - $inflationMonthly);

@@ -22,7 +22,7 @@ class CfoAssistantService
 
         /** @var ScheduledTransaction $scheduled */
         foreach ($dueTransactions as $scheduled) {
-            DB::transaction(function () use ($scheduled, &$processedCount) {
+            DB::transaction(function () use ($scheduled, &$processedCount): void {
                 // If auto-execute is enabled, create the actual transaction
                 if ($scheduled->is_auto_execute) {
                     $this->executeTransaction($scheduled);
@@ -66,7 +66,7 @@ class CfoAssistantService
      */
     public function executeTransactionManually(ScheduledTransaction $scheduled): void
     {
-        DB::transaction(function () use ($scheduled) {
+        DB::transaction(function () use ($scheduled): void {
             $this->executeTransaction($scheduled);
             $this->updateNextDueDate($scheduled);
         });

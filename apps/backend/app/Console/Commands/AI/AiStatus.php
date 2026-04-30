@@ -33,7 +33,7 @@ class AiStatus extends Command
 
         $statusData = $action->execute();
 
-        $tableData = array_map(fn ($s) => [
+        $tableData = array_map(fn (array $s): array => [
             $s['name'],
             $s['status'],
             $s['latency'],

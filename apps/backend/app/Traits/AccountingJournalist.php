@@ -37,7 +37,7 @@ trait AccountingJournalist
             'date' => $date ?? now(),
             'metadata' => array_merge($metadata, [
                 'auto_journal' => true,
-                'source_type' => get_class($this),
+                'source_type' => static::class,
                 'source_id' => $this->id,
             ]),
         ]);

@@ -116,7 +116,7 @@ class LegacyController extends Controller
         /** @var User $user */
         $user = $request->user() ?? abort(401);
 
-        return response()->streamDownload(function () use ($user) {
+        return response()->streamDownload(function () use ($user): void {
             $result = $this->generateReportAction->execute($user);
             $filename = (string) $result['filename'];
 

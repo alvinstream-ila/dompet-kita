@@ -31,7 +31,7 @@ trait EnumExtensions
      */
     public static function options(): array
     {
-        return array_map(fn ($case) => [
+        return array_map(fn ($case): array => [
             'label' => $case->label(),
             'value' => $case->value,
             /** @phpstan-ignore function.alreadyNarrowedType, function.impossibleType */

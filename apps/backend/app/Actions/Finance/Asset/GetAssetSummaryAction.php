@@ -23,12 +23,12 @@ class GetAssetSummaryAction extends BaseAction
     {
         $query = Asset::query();
 
-        if ($user) {
+        if ($user instanceof \App\Models\User) {
             $query->where('user_id', $user->id);
         }
 
         $assets = $query->get();
-        $totalWealth = $assets->sum(fn (Asset $asset) => (float) $asset->value);
+        $totalWealth = $assets->sum(fn (Asset $asset): float => (float) $asset->value);
 
         return [
             'assets' => $assets,

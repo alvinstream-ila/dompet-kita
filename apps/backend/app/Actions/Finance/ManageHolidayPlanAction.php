@@ -19,8 +19,8 @@ class ManageHolidayPlanAction extends BaseAction
     public function create(User $user, array $data): Holiday
     {
         $data['user_id'] = $user->id;
-        $data['spent'] = $data['spent'] ?? 0;
-        $data['status'] = $data['status'] ?? 'planning';
+        $data['spent'] ??= 0;
+        $data['status'] ??= 'planning';
 
         return Holiday::create($data);
     }

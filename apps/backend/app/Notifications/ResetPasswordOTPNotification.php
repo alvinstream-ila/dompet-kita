@@ -12,14 +12,11 @@ class ResetPasswordOTPNotification extends Notification
 {
     use Queueable;
 
-    public string $code;
-
     /**
      * Create a new notification instance.
      */
-    public function __construct(string $code)
+    public function __construct(public string $code)
     {
-        $this->code = $code;
     }
 
     /**
@@ -38,7 +35,7 @@ class ResetPasswordOTPNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         if ($notifiable instanceof User) {
-            Log::info('Sending PREMIUM OTP reset password email to: '.(string) $notifiable->email);
+            Log::info('Sending PREMIUM OTP reset password email to: '.$notifiable->email);
         }
 
         return (new MailMessage)

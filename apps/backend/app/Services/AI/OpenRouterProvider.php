@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\AI;
 
 use Illuminate\Support\Facades\Http;
@@ -26,7 +28,7 @@ class OpenRouterProvider implements AiProviderInterface
         $this->modelVision = is_string($modelVision) ? $modelVision : 'openai/gpt-4-vision-preview';
 
         // Override with the smart auto-router
-        if (str_contains($this->modelVision, 'gemini') || str_contains($this->modelVision, 'llama-3.2-11b') || empty($this->modelVision)) {
+        if (str_contains($this->modelVision, 'gemini') || str_contains($this->modelVision, 'llama-3.2-11b') || ($this->modelVision === '' || $this->modelVision === '0')) {
             $this->modelVision = 'openrouter/free';
         }
     }
@@ -38,7 +40,7 @@ class OpenRouterProvider implements AiProviderInterface
 
     public function isAvailable(): bool
     {
-        return ! empty($this->apiKey);
+        return $this->apiKey !== '' && $this->apiKey !== '0';
     }
 
     public function supportsVision(): bool

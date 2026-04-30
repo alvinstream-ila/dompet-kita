@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use App\Models\WealthHistory;
@@ -17,12 +19,15 @@ class WealthHistoryResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function toArray(Request $request): array
     {
         // Check if $this->resource is an array
         if (is_array($this->resource)) {
-            /** @var array<string, mixed> */
-            return $this->resource;
+            /** @var array<string, mixed> $res */
+            $res = $this->resource;
+
+            return $res;
         }
 
         $date = Carbon::create((int) $this->year, (int) $this->month, 1);

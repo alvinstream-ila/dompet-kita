@@ -25,7 +25,7 @@ class AuditHoneypotLogsAction extends BaseAction
         ];
 
         if ($ip) {
-            return array_values(array_filter($attacks, fn ($a) => $a['ip'] === $ip));
+            return array_values(array_filter($attacks, fn (array $a): bool => $a['ip'] === $ip));
         }
 
         return $attacks;

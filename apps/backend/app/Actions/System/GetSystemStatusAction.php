@@ -59,7 +59,7 @@ class GetSystemStatusAction extends BaseAction
         $goalsQuery = Goal::where('status', 'active')->orderBy('target_amount', 'desc')->take(2);
 
         /** @var array<int, array{name: string, percentage: float, status_icon: string}> $targets */
-        $targets = $goalsQuery->get()->map(function ($goal) {
+        $targets = $goalsQuery->get()->map(function ($goal): array {
             $percent = $goal->target_amount > 0 ? (float) $goal->current_amount / (float) $goal->target_amount * 100 : 0;
 
             if ($percent >= 100) {

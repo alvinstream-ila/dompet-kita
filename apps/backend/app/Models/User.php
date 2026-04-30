@@ -79,25 +79,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'last_active_at' => 'datetime',
-            'legacy_grace_start_at' => 'datetime',
-            'is_legacy_triggered' => 'boolean',
-            'two_factor_enabled' => 'boolean',
-            'two_factor_expires_at' => 'datetime',
-            'household_id' => 'string',
-        ];
-    }
-
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -156,6 +137,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Send the email verification notification overriding Laravel default.
      */
+    #[\Override]
     public function sendEmailVerificationNotification(): void
     {
         $code = (string) random_int(100000, 999999);
@@ -166,5 +148,25 @@ class User extends Authenticatable implements MustVerifyEmail
         ]);
 
         $this->notify(new VerifyEmailNotification($code));
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    #[\Override]
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'last_active_at' => 'datetime',
+            'legacy_grace_start_at' => 'datetime',
+            'is_legacy_triggered' => 'boolean',
+            'two_factor_enabled' => 'boolean',
+            'two_factor_expires_at' => 'datetime',
+            'household_id' => 'string',
+        ];
     }
 }

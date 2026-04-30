@@ -32,7 +32,7 @@ class PartnerController extends Controller
             'email' => [
                 'required',
                 'email',
-                function ($_attribute, $value, $fail) use ($inviter) {
+                function ($_attribute, $value, $fail) use ($inviter): void {
                     if ($inviter->email === $value) {
                         $fail('Anda tidak dapat mengundang diri sendiri.');
                     }
@@ -124,7 +124,7 @@ class PartnerController extends Controller
             return response()->json(['message' => 'Pengundang tidak ditemukan.'], 404);
         }
 
-        DB::transaction(function () use ($user, $inviter, $invitation) {
+        DB::transaction(function () use ($user, $inviter, $invitation): void {
             // 1. Ensure Inviter has a Household
             if (! $inviter->household_id) {
                 $household = Household::create([
@@ -169,7 +169,7 @@ class PartnerController extends Controller
 
         $partner = $user->partner;
 
-        DB::transaction(function () use ($user, $partner) {
+        DB::transaction(function () use ($user, $partner): void {
             // 1. Break partner link
             if ($partner instanceof User) {
                 $partner->update(['partner_id' => null]);

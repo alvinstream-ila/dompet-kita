@@ -10,14 +10,8 @@ use Illuminate\Support\Facades\Log;
 
 class GenerateWisdomAction
 {
-    protected ChatWithAiAction $chatWithAiAction;
-
-    protected FinancialIntelligenceService $finIntel;
-
-    public function __construct(ChatWithAiAction $chatWithAiAction, FinancialIntelligenceService $finIntel)
+    public function __construct(protected ChatWithAiAction $chatWithAiAction, protected FinancialIntelligenceService $finIntel)
     {
-        $this->chatWithAiAction = $chatWithAiAction;
-        $this->finIntel = $finIntel;
     }
 
     /**

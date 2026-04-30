@@ -88,7 +88,7 @@ class SocialAuthController extends Controller
             $token = $user->createToken('auth_token')->plainTextToken;
 
             // Redirect to Frontend callback route
-            $callbackUrl = $frontendUrl.'/auth/callback?token='.urlencode($token).($isNewUser ? '&is_new=1' : '');
+            $callbackUrl = $frontendUrl.'/auth/callback?token='.urlencode((string) $token).($isNewUser ? '&is_new=1' : '');
 
             Log::info("SocialAuth: Login SUCCESS for {$user->email} via {$provider}");
 

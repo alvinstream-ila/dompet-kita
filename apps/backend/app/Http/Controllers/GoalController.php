@@ -93,7 +93,7 @@ class GoalController extends Controller
             'date' => 'required|date',
         ]);
 
-        return DB::transaction(function () use ($validated, $goal, $request) {
+        return DB::transaction(function () use ($validated, $goal, $request): \Illuminate\Http\JsonResponse {
             $user = $request->user();
             if (! $user instanceof User) {
                 abort(401);

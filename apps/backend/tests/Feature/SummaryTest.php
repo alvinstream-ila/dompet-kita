@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-test('user can get financial summary', function () {
+test('user can get financial summary', function (): void {
     $user = User::factory()->create();
     Transaction::factory()->create([
         'user_id' => $user->id,

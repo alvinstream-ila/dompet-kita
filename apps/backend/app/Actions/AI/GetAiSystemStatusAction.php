@@ -26,12 +26,12 @@ class GetAiSystemStatusAction extends BaseAction
         $status = AiWatchdog::getStatus();
 
         return array_map(function (array $s): array {
-            $usage = AiWatchdog::getTokenUsage((string) $s['name']);
+            $usage = AiWatchdog::getTokenUsage($s['name']);
 
             return [
-                'name' => (string) $s['name'],
-                'status' => (string) $s['status'],
-                'latency' => (string) $s['recent_latency'].'s',
+                'name' => $s['name'],
+                'status' => $s['status'],
+                'latency' => $s['recent_latency'].'s',
                 'tokens_in' => number_format((float) $usage['prompt']),
                 'tokens_out' => number_format((float) $usage['completion']),
                 'tokens_total' => number_format((float) $usage['total']),

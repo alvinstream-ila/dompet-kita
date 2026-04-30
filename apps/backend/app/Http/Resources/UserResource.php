@@ -33,6 +33,7 @@ class UserResource extends JsonResource
      * @param  Request  $request
      * @return array<string, mixed>
      */
+    #[\Override]
     public function toArray($request): array
     {
         return [

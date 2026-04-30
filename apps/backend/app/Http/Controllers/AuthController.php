@@ -19,14 +19,8 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
-    protected RecordActivityAction $recordActivityAction;
-
-    protected SentinelService $sentinel;
-
-    public function __construct(RecordActivityAction $recordActivityAction, SentinelService $sentinel)
+    public function __construct(protected RecordActivityAction $recordActivityAction, protected SentinelService $sentinel)
     {
-        $this->recordActivityAction = $recordActivityAction;
-        $this->sentinel = $sentinel;
     }
 
     /**
@@ -160,7 +154,7 @@ class AuthController extends Controller
 
             // 💌 Send 2FA Code via Email
             try {
-                Mail::raw("Protokol Keamanan Dompet Kita\n\nKode verifikasi login Anda: {$code}\nKode ini berlaku selama 10 menit. Pastikan kerahasiaan kode ini untuk menjaga keamanan aset Anda.", function ($message) use ($user) {
+                Mail::raw("Protokol Keamanan Dompet Kita\n\nKode verifikasi login Anda: {$code}\nKode ini berlaku selama 10 menit. Pastikan kerahasiaan kode ini untuk menjaga keamanan aset Anda.", function ($message) use ($user): void {
                     $message->to($user->email)
                         ->subject('Keamanan: Kode Verifikasi 2FA');
                 });

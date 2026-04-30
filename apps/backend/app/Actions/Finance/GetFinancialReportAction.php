@@ -33,8 +33,8 @@ class GetFinancialReportAction extends BaseAction
 
         $txs = $query->get();
 
-        $income = $txs->where('type', TransactionType::INCOME)->sum(fn (Transaction $t) => (float) $t->amount);
-        $expense = $txs->where('type', TransactionType::EXPENSE)->sum(fn (Transaction $t) => (float) $t->amount);
+        $income = $txs->where('type', TransactionType::INCOME)->sum(fn (Transaction $t): float => (float) $t->amount);
+        $expense = $txs->where('type', TransactionType::EXPENSE)->sum(fn (Transaction $t): float => (float) $t->amount);
 
         $topSpending = $txs->where('type', TransactionType::EXPENSE)
             ->sortByDesc('amount')

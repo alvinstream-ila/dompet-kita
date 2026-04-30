@@ -35,7 +35,7 @@ class BudgetService
     public function getBudgetCycleDates(?int $month = null, ?int $year = null, int $startDay = 1): array
     {
         $now = Carbon::now();
-        $year = $year ?? $now->year;
+        $year ??= $now->year;
 
         // Determine the target month number
         $targetMonth = $month ?? $now->month;
@@ -51,7 +51,7 @@ class BudgetService
             $targetMonth = 12 + $targetMonth;
             $year--;
         } elseif ($targetMonth > 12) {
-            $targetMonth = $targetMonth - 12;
+            $targetMonth -= 12;
             $year++;
         }
 
@@ -83,7 +83,7 @@ class BudgetService
         $cycle = $this->getCurrentCycleDates();
         $budgets = Budget::get();
 
-        return $budgets->map(function (Budget $budget) use ($cycle) {
+        return $budgets->map(function (Budget $budget) use ($cycle): array {
             $used = (float) Transaction::where('category', $budget->category)
                 ->whereBetween('date', [$cycle['start'], $cycle['end']])
                 ->where('type', 'expense')
@@ -99,7 +99,7 @@ class BudgetService
                 'limit' => $limit,
                 'used' => $used,
                 'remaining' => $remaining,
-                'percentage' => (float) round($percentage, 2),
+                'percentage' => round($percentage, 2),
                 'status' => $this->getUsageStatus((float) $percentage),
             ];
         })->all();

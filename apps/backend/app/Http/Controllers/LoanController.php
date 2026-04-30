@@ -134,6 +134,18 @@ class LoanController extends Controller
     }
 
     /**
+     * Delete a loan.
+     */
+    public function destroy(Loan $loan): JsonResponse
+    {
+        $this->authorize('delete', $loan);
+
+        $loan->delete();
+
+        return $this->success(null, 'Instrumen pinjaman telah dihapus dari sistem.', 204);
+    }
+
+    /**
      * Prepare the core data for the loan report.
      *
      * @return array{
@@ -150,7 +162,7 @@ class LoanController extends Controller
 
         // 1. Fetch loans active during or before this month
         $loans = Loan::where('created_at', '<=', $endDate)
-            ->where(function ($query) use ($startDate) {
+            ->where(function ($query) use ($startDate): void {
                 $query->where('status', 'active')
                     ->orWhere('updated_at', '>=', $startDate);
             })
@@ -160,7 +172,7 @@ class LoanController extends Controller
         $transactions = Transaction::whereBetween('date', [$startDate, $endDate])
             ->whereNotNull('metadata')
             ->get()
-            ->filter(function (Transaction $t) {
+            ->filter(function (Transaction $t): bool {
                 /** @var array<string, mixed>|null $metadata */
                 $metadata = $t->metadata;
 
@@ -223,7 +235,7 @@ class LoanController extends Controller
         }
 
         // Gather loan IDs as strings to prevent Postgres json = integer type mismatch
-        $loanIds = $loans->pluck('id')->map(fn ($id) => (string) $id)->toArray();
+        $loanIds = $loans->pluck('id')->map(fn ($id): string => (string) $id)->toArray();
 
         // Fetch all relevant repayments for these loans up to the specified date in one query
         $repayments = Transaction::query()
@@ -231,7 +243,7 @@ class LoanController extends Controller
             ->whereIn('metadata->loan_id', $loanIds)
             ->where('date', '<=', $date->toDateString())
             ->get()
-            ->groupBy(function ($t) {
+            ->groupBy(function ($t): string {
                 /** @var array<string, mixed>|null $metadata */
                 $metadata = $t->metadata;
 
@@ -248,12 +260,12 @@ class LoanController extends Controller
             $loanRepayments = $repayments->get((string) $loan->id, collect());
 
             // Calculate valid payments based on loan type
-            $validRepayments = $loanRepayments->filter(function ($t) use ($loan) {
+            $validRepayments = $loanRepayments->filter(function ($t) use ($loan): bool {
                 if ($loan->type === LoanType::RECEIVABLE) {
                     return $t->type === TransactionType::INCOME;
-                } else {
-                    return $t->type === TransactionType::EXPENSE;
                 }
+
+                return $t->type === TransactionType::EXPENSE;
             });
 
             $repaymentsAmount = (float) $validRepayments->sum('amount');
@@ -284,17 +296,5 @@ class LoanController extends Controller
             'total_piutang' => $totalPiutang,
             'total_hutang' => $totalHutang,
         ];
-    }
-
-    /**
-     * Delete a loan.
-     */
-    public function destroy(Loan $loan): JsonResponse
-    {
-        $this->authorize('delete', $loan);
-
-        $loan->delete();
-
-        return $this->success(null, 'Instrumen pinjaman telah dihapus dari sistem.', 204);
     }
 }

@@ -12,9 +12,6 @@ use Illuminate\Support\Facades\Log;
  */
 class AiProviderManager
 {
-    /** @var array<AiProviderInterface> */
-    protected array $providers = [];
-
     protected int $quarantineMinutes = 10;
 
     protected int $errorThreshold = 3;
@@ -22,9 +19,8 @@ class AiProviderManager
     /**
      * @param  array<AiProviderInterface>  $providers
      */
-    public function __construct(array $providers = [])
+    public function __construct(protected array $providers = [])
     {
-        $this->providers = $providers;
     }
 
     /**
@@ -35,10 +31,12 @@ class AiProviderManager
         $errors = [];
 
         foreach ($this->providers as $provider) {
-            if (! $provider->isAvailable() || $this->isQuarantined($provider)) {
+            if (! $provider->isAvailable()) {
                 continue;
             }
-
+            if ($this->isQuarantined($provider)) {
+                continue;
+            }
             try {
                 $startTime = microtime(true);
                 Log::info("Trying AI Provider: {$provider->getName()} for text generation.");
@@ -74,10 +72,15 @@ class AiProviderManager
         $errors = [];
 
         foreach ($this->providers as $provider) {
-            if (! $provider->isAvailable() || $this->isQuarantined($provider) || ! $provider->supportsVision()) {
+            if (! $provider->isAvailable()) {
                 continue;
             }
-
+            if ($this->isQuarantined($provider)) {
+                continue;
+            }
+            if (! $provider->supportsVision()) {
+                continue;
+            }
             try {
                 $startTime = microtime(true);
                 Log::info('Trying AI Provider (Vision): '.$provider->getName());
@@ -110,10 +113,15 @@ class AiProviderManager
         $errors = [];
 
         foreach ($this->providers as $provider) {
-            if (! $provider->isAvailable() || $this->isQuarantined($provider) || ! $provider->supportsAudio()) {
+            if (! $provider->isAvailable()) {
                 continue;
             }
-
+            if ($this->isQuarantined($provider)) {
+                continue;
+            }
+            if (! $provider->supportsAudio()) {
+                continue;
+            }
             try {
                 $startTime = microtime(true);
                 Log::info('Trying AI Provider (Audio): '.$provider->getName());

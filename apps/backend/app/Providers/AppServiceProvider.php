@@ -24,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
+    #[\Override]
     public function register(): void
     {
         // ── Firewall Autoload Patch ────────────────────────────────────────────
@@ -54,8 +55,10 @@ class AppServiceProvider extends ServiceProvider
         $this->bootRateLimiters();
         $this->bootSecurityGuards();
 
-        // Sovereign Consciousness Log
-        Log::info('Sovereign CFO v7.1.18: Core system initialized and operational.');
+        // Sovereign Consciousness Log (Only in HTTP mode to avoid CLI tool interference)
+        if (! $this->app->runningInConsole()) {
+            Log::info('Sovereign CFO v7.1.18: Core system initialized and operational.');
+        }
     }
 
     /**
@@ -75,31 +78,23 @@ class AppServiceProvider extends ServiceProvider
      */
     private function bootRateLimiters(): void
     {
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-        });
+        RateLimiter::for('api', fn(Request $request): Limit => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
 
         // AI Feature Limits
-        RateLimiter::for('ai-insight', function (Request $request) {
-            return [
-                Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()),
-                Limit::perDay(100)->by($request->user()?->id ?: $request->ip()),
-            ];
-        });
+        RateLimiter::for('ai-insight', fn(Request $request): array => [
+            Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()),
+            Limit::perDay(100)->by($request->user()?->id ?: $request->ip()),
+        ]);
 
-        RateLimiter::for('ai-chat', function (Request $request) {
-            return [
-                Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()),
-                Limit::perDay(50)->by($request->user()?->id ?: $request->ip()),
-            ];
-        });
+        RateLimiter::for('ai-chat', fn(Request $request): array => [
+            Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()),
+            Limit::perDay(50)->by($request->user()?->id ?: $request->ip()),
+        ]);
 
-        RateLimiter::for('ai-scan', function (Request $request) {
-            return [
-                Limit::perMinute(3)->by($request->user()?->id ?: $request->ip()),
-                Limit::perDay(30)->by($request->user()?->id ?: $request->ip()),
-            ];
-        });
+        RateLimiter::for('ai-scan', fn(Request $request): array => [
+            Limit::perMinute(3)->by($request->user()?->id ?: $request->ip()),
+            Limit::perDay(30)->by($request->user()?->id ?: $request->ip()),
+        ]);
     }
 
     /**
@@ -114,7 +109,7 @@ class AppServiceProvider extends ServiceProvider
         if (($this->app->environment('production') || $isSecure) && ! $this->app->environment('testing')) {
             config(['logging.channels.stack.level' => 'info']);
             URL::forceScheme('https');
-            URL::forceRootUrl($appUrl ? $appUrl : null);
+            URL::forceRootUrl($appUrl ?: null);
         }
     }
 }

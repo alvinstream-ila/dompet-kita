@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Security;
 
 class PrivacyFilter
@@ -10,7 +12,7 @@ class PrivacyFilter
      */
     public function mask(string $text): string
     {
-        if (empty($text)) {
+        if ($text === '' || $text === '0') {
             return $text;
         }
 
@@ -30,7 +32,7 @@ class PrivacyFilter
         // 3. Mask Credit Card / Account Numbers (12-16 digits)
         $maskedText = preg_replace('/\b\d{12,16}\b/', '[ID_NUM_REDACTED]', $text);
         if (is_string($maskedText)) {
-            $text = $maskedText;
+            return $maskedText;
         }
 
         return $text;
@@ -43,7 +45,7 @@ class PrivacyFilter
     {
         // Split by lines and mask each
         $lines = explode("\n", $summary);
-        $maskedLines = array_map([$this, 'mask'], $lines);
+        $maskedLines = array_map($this->mask(...), $lines);
 
         return implode("\n", $maskedLines);
     }

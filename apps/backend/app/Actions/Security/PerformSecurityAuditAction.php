@@ -30,7 +30,7 @@ class PerformSecurityAuditAction extends BaseAction
         $this->auditTestCoverage($score, $findings);
 
         return [
-            'score' => (int) max(0, $score),
+            'score' => max(0, $score),
             'findings' => $findings,
         ];
     }
@@ -108,7 +108,7 @@ class PerformSecurityAuditAction extends BaseAction
             $logContent = file_get_contents($logPath);
             if ($logContent !== false) {
                 if (strlen($logContent) > 50000) {
-                    $logContent = (string) substr($logContent, -50000);
+                    $logContent = substr($logContent, -50000);
                 }
                 $sensitiveKeywords = ['DB_PASSWORD', 'APP_KEY', 'AWS_SECRET', 'STRIPE_SECRET', 'BACKUP_PASSWORD', 'DB_URL'];
                 foreach ($sensitiveKeywords as $keyword) {

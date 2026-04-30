@@ -97,54 +97,6 @@ class AIController extends Controller
     }
 
     /**
-     * Build the insight payload; throws on error so the controller can catch it.
-     *
-     * @return array{title: string, insight: string}
-     */
-    private function buildDashboardInsightData(User $user): array
-    {
-        $transactions = Transaction::where('date', '>=', now()->subDays(90))
-            ->orderBy('date', 'desc')
-            ->get();
-
-        if ($transactions->isEmpty()) {
-            return [
-                'title' => 'CFO Intelligence Ready',
-                'insight' => 'Sistem siap menganalisis keuangan Anda. Mulailah mencatat transaksi untuk mendapatkan proyeksi dan rekomendasi strategis.',
-            ];
-        }
-
-        $totalIncome = (float) $transactions->filter(fn ($t) => $t->type === TransactionType::INCOME)->sum('amount');
-        $totalExpense = (float) $transactions->filter(fn ($t) => $t->type === TransactionType::EXPENSE)->sum('amount');
-        $savings = (float) ($totalIncome - $totalExpense);
-
-        $summaryText = $transactions->take(20)->map(function ($t) {
-            /** @var Transaction $t */
-            $typeStr = $t->type->value;
-
-            return "{$t->date}: {$typeStr} Rp ".number_format((float) $t->amount)." ({$t->category})";
-        })->implode("\n");
-
-        $scopeId = $user->household_id ?? $user->id;
-        $cacheKey = "ai_insight_{$scopeId}";
-
-        /** @var array{title: string, insight: string} $data */
-        $data = Cache::remember($cacheKey, 3600 * 4, function () use ($totalIncome, $totalExpense, $savings, $summaryText) {
-            return $this->generateInsightAction->execute(
-                (string) number_format((float) $totalIncome),
-                (string) number_format((float) $totalExpense),
-                (string) number_format((float) $savings),
-                $summaryText
-            );
-        });
-
-        return [
-            'title' => $data['title'],
-            'insight' => $data['insight'],
-        ];
-    }
-
-    /**
      * Chat with the AI about financial context (Cognitive Chat Genius).
      */
     public function check(): JsonResponse
@@ -283,5 +235,51 @@ class AIController extends Controller
 
             return $this->error('Gagal membersihkan riwayat chat.', 500);
         }
+    }
+
+    /**
+     * Build the insight payload; throws on error so the controller can catch it.
+     *
+     * @return array{title: string, insight: string}
+     */
+    private function buildDashboardInsightData(User $user): array
+    {
+        $transactions = Transaction::where('date', '>=', now()->subDays(90))
+            ->orderBy('date', 'desc')
+            ->get();
+
+        if ($transactions->isEmpty()) {
+            return [
+                'title' => 'CFO Intelligence Ready',
+                'insight' => 'Sistem siap menganalisis keuangan Anda. Mulailah mencatat transaksi untuk mendapatkan proyeksi dan rekomendasi strategis.',
+            ];
+        }
+
+        $totalIncome = (float) $transactions->filter(fn ($t): bool => $t->type === TransactionType::INCOME)->sum('amount');
+        $totalExpense = (float) $transactions->filter(fn ($t): bool => $t->type === TransactionType::EXPENSE)->sum('amount');
+        $savings = $totalIncome - $totalExpense;
+
+        $summaryText = $transactions->take(20)->map(function ($t): string {
+            /** @var Transaction $t */
+            $typeStr = $t->type->value;
+
+            return "{$t->date}: {$typeStr} Rp ".number_format((float) $t->amount)." ({$t->category})";
+        })->implode("\n");
+
+        $scopeId = $user->household_id ?? $user->id;
+        $cacheKey = "ai_insight_{$scopeId}";
+
+        /** @var array{title: string, insight: string} $data */
+        $data = Cache::remember($cacheKey, 3600 * 4, fn(): array => $this->generateInsightAction->execute(
+            number_format($totalIncome),
+            number_format($totalExpense),
+            number_format($savings),
+            $summaryText
+        ));
+
+        return [
+            'title' => $data['title'],
+            'insight' => $data['insight'],
+        ];
     }
 }

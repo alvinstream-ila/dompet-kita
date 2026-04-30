@@ -48,7 +48,7 @@ class PerformDeepSecurityAuditAction extends BaseAction
                 'output' => $frontendResult->output(),
             ],
             'secrets' => [
-                'success' => empty($secretsFindings),
+                'success' => $secretsFindings === [],
                 'findings' => $secretsFindings,
             ],
         ];

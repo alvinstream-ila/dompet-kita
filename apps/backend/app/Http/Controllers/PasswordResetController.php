@@ -27,7 +27,7 @@ class PasswordResetController extends Controller
         // Just call the default Laravel way or trigger it directly
         $user->sendPasswordResetNotification(Str::random(60)); // The token is irrelevant but standard
 
-        Log::info('Sent Premium OTP Reset to: '.(string) $request->string('email'));
+        Log::info('Sent Premium OTP Reset to: '.$request->string('email'));
 
         return response()->json(['message' => 'Kode pemulihan kata sandi telah dikirim ke alamat email Anda.']);
     }

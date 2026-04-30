@@ -18,6 +18,11 @@ class Household extends Model
     use SoftDeletes;
 
     /**
+     * Disable auto-incrementing since we use UUIDs.
+     */
+    public $incrementing = false;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -27,11 +32,6 @@ class Household extends Model
         'name',
         'owner_id',
     ];
-
-    /**
-     * Disable auto-incrementing since we use UUIDs.
-     */
-    public $incrementing = false;
 
     /**
      * The data type of the primary key.

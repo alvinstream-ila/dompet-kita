@@ -50,7 +50,7 @@ class GetWealthAdviceAction extends BaseAction
 
         try {
             return trim($this->manager->generateText($prompt));
-        } catch (Exception $e) {
+        } catch (Exception) {
             return 'Proyeksi pertumbuhan kekayaan Anda menunjukkan potensi yang signifikan. Konsistensi dalam manajemen aset adalah kunci keberhasilan jangka panjang.';
         }
     }

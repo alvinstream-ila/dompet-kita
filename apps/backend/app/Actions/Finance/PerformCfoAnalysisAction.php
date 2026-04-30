@@ -50,13 +50,11 @@ class PerformCfoAnalysisAction extends BaseAction
         }
 
         // 2. Calculate Monthly Metrics
-        $monthlyData = $transactions->groupBy(fn ($t) => Carbon::parse($t->date)->format('Y-m'))
-            ->map(function ($group) {
-                return [
-                    'income' => (float) $group->where('type', 'income')->sum('amount'),
-                    'expense' => (float) $group->where('type', 'expense')->sum('amount'),
-                ];
-            });
+        $monthlyData = $transactions->groupBy(fn ($t): string => Carbon::parse($t->date)->format('Y-m'))
+            ->map(fn($group): array => [
+                'income' => (float) $group->where('type', 'income')->sum('amount'),
+                'expense' => (float) $group->where('type', 'expense')->sum('amount'),
+            ]);
 
         $totalIncome = (float) $monthlyData->sum('income');
         $permanentIncome = $totalIncome / 6;
@@ -75,9 +73,9 @@ class PerformCfoAnalysisAction extends BaseAction
         $runway = $liquidAssets / $burnRate;
 
         // 4. Current Month specific data
-        $currentMonthData = $transactions->filter(fn ($t) => Carbon::parse($t->date)->format('Y-m') === $month);
+        $currentMonthData = $transactions->filter(fn ($t): bool => Carbon::parse($t->date)->format('Y-m') === $month);
         /** @var array<string, float> $categories */
-        $categories = $currentMonthData->groupBy('category')->map(fn ($g) => (float) $g->sum('amount'))->all();
+        $categories = $currentMonthData->groupBy('category')->map(fn ($g): float => (float) $g->sum('amount'))->all();
 
         // 5. Build Sophisticated Prompt
         $prompt = "Identitas: Anda adalah 'Sovereign CFO Partner', penasihat keuangan elit untuk Alvin & Ila.
@@ -100,7 +98,7 @@ class PerformCfoAnalysisAction extends BaseAction
             4. Nada bicara: Elit, Tenang, Data-Driven, dan Profesional. NO marking/lebay.
             5. Berikan 3 poin strategi yang benar-benar kritis dan tajam.";
 
-        $advice = (string) $this->gemini->analyzeFinancials($prompt);
+        $advice = $this->gemini->analyzeFinancials($prompt);
 
         return [
             'month' => $month,
@@ -135,7 +133,7 @@ class PerformCfoAnalysisAction extends BaseAction
 
         $variance = 0;
         foreach ($data as $value) {
-            $variance += pow($value - $mean, 2);
+            $variance += ($value - $mean) ** 2;
         }
         $stdDev = sqrt($variance / $count);
 

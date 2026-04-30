@@ -22,7 +22,7 @@ class BackupDatabaseAction extends BaseAction
     public function execute(): array
     {
         $dbUrl = (string) config('database.connections.pgsql.url');
-        if (! $dbUrl) {
+        if ($dbUrl === '' || $dbUrl === '0') {
             throw new Exception('DB_URL is not configured.');
         }
 

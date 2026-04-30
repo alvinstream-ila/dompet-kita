@@ -11,14 +11,14 @@ use Illuminate\Support\Facades\Log;
  */
 class MarketService
 {
-    private const CACHE_KEY = 'market_rates';
+    private const string CACHE_KEY = 'market_rates';
 
-    private const CACHE_TTL = 300; // 5 Minutes for Realtime Feel
+    private const int CACHE_TTL = 300; // 5 Minutes for Realtime Feel
 
     // 2026 Sovereign Failover Constants
-    private const FAILOVER_USD_IDR = 16950.0;
+    private const float FAILOVER_USD_IDR = 16950.0;
 
-    private const FAILOVER_GOLD_ANTAM = 2525000.0;
+    private const float FAILOVER_GOLD_ANTAM = 2525000.0;
 
     /**
      * Get current market rates with robust caching and failover.
@@ -49,9 +49,9 @@ class MarketService
                 $goldPulse = $this->getCryptoPrice('PAXGUSDT');
 
                 return [
-                    'currency_rates' => array_map(fn ($val) => is_numeric($val) ? (float) $val : 0.0, $currencyRates),
-                    'gold_antam_gram' => is_numeric($goldAntam) ? (float) $goldAntam : self::FAILOVER_GOLD_ANTAM,
-                    'gold_global_oz' => is_numeric($goldPulse) ? (float) $goldPulse : 2400.0,
+                    'currency_rates' => array_map(fn ($val): float => is_numeric($val) ? (float) $val : 0.0, $currencyRates),
+                    'gold_antam_gram' => is_numeric($goldAntam) ? $goldAntam : self::FAILOVER_GOLD_ANTAM,
+                    'gold_global_oz' => is_numeric($goldPulse) ? $goldPulse : 2400.0,
                     'inflation_rate' => 0.035, // Default 3.5%
                     'last_updated' => now()->toIso8601String(),
                 ];
@@ -74,7 +74,7 @@ class MarketService
      */
     public function scrapeAntam(): ?float
     {
-        return retry(2, function () {
+        return retry(2, function (): ?float {
             try {
                 $response = Http::timeout(15)->withoutVerifying()->get('https://www.logammulia.com/id/harga-emas-hari-ini');
                 if (! $response->successful()) {
@@ -108,7 +108,7 @@ class MarketService
     {
         $cacheKey = "crypto_price_{$symbol}";
 
-        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($symbol) {
+        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($symbol): ?float {
             // Try Local Path First for stability in Indonesia (Indodax)
             if (str_ends_with($symbol, 'IDR') || str_ends_with($symbol, 'USDT')) {
                 $localPrice = $this->getIndodaxPrice($symbol);
@@ -147,7 +147,7 @@ class MarketService
     {
         $cacheKey = "stock_price_{$symbol}";
 
-        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($symbol) {
+        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($symbol): ?float {
             try {
                 // Yahoo Finance Chart API is more stable than others for public use
                 $response = Http::timeout(5)->withoutVerifying()->get("https://query1.finance.yahoo.com/v8/finance/chart/{$symbol}");
@@ -175,7 +175,7 @@ class MarketService
             $pair .= '_idr';
         }
 
-        return retry(2, function () use ($pair) {
+        return retry(2, function () use ($pair): ?float {
             try {
                 $response = Http::timeout(10)->withoutVerifying()->get("https://indodax.com/api/ticker/{$pair}");
                 if ($response->successful()) {

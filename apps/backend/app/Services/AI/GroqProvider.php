@@ -29,7 +29,7 @@ class GroqProvider implements AiProviderInterface
 
     public function isAvailable(): bool
     {
-        return ! empty($this->apiKey);
+        return $this->apiKey !== '' && $this->apiKey !== '0';
     }
 
     public function supportsVision(): bool

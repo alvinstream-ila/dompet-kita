@@ -49,7 +49,7 @@ class StorageManage extends Command
 
         $files = $action->listFiles('s3'); // Disk configured as 's3' for Storj
 
-        if (empty($files)) {
+        if ($files === []) {
             $this->info('Storage is empty.');
 
             return 0;

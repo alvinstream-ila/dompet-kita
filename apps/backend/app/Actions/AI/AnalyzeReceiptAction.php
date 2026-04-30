@@ -37,7 +37,7 @@ class AnalyzeReceiptAction extends BaseAction
         } catch (Exception $e) {
             $msg = $e->getMessage();
             Log::error('AI_SCAN_ERROR (Receipt Scan): '.$msg);
-            throw new AnalyzeReceiptException('Layanan analisis AI sedang mengalami kendala teknis: '.$msg);
+            throw new AnalyzeReceiptException('Layanan analisis AI sedang mengalami kendala teknis: '.$msg, $e->getCode(), $e);
         }
 
         if (preg_match('/\{.*\}/s', $jsonText, $matches)) {
@@ -57,9 +57,9 @@ class AnalyzeReceiptAction extends BaseAction
 
         return [
             'amount' => $cleanAmount,
-            'merchant' => is_string($result['merchant'] ?? null) ? (string) $result['merchant'] : 'Toko Tidak Terbaca',
-            'category' => is_string($result['category'] ?? null) ? (string) $result['category'] : 'Belanja',
-            'message' => is_string($result['message'] ?? null) ? (string) $result['message'] : 'Analisis struk berhasil. Data nominal telah disinkronkan secara otomatis.',
+            'merchant' => is_string($result['merchant'] ?? null) ? $result['merchant'] : 'Toko Tidak Terbaca',
+            'category' => is_string($result['category'] ?? null) ? $result['category'] : 'Belanja',
+            'message' => is_string($result['message'] ?? null) ? $result['message'] : 'Analisis struk berhasil. Data nominal telah disinkronkan secara otomatis.',
         ];
     }
 }

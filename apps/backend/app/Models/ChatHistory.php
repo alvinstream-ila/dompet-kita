@@ -33,6 +33,7 @@ class ChatHistory extends Model
      *
      * @return array<string, string>
      */
+    #[\Override]
     protected function casts(): array
     {
         return [

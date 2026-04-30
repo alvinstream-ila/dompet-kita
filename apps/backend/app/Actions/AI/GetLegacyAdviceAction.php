@@ -35,7 +35,7 @@ class GetLegacyAdviceAction extends BaseAction
 
         try {
             return trim($this->manager->generateText($prompt));
-        } catch (Exception $e) {
+        } catch (Exception) {
             return 'Informasi manajemen warisan digital ini sangat krusial bagi keberlangsungan aset Anda di masa depan. Pastikan data ini tersimpan dengan aman.';
         }
     }

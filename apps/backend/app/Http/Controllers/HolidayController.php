@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class HolidayController extends Controller
 {
-    private const IMAGE_PROVIDER = 'https://loremflickr.com/1200/800/%s,landscape,travel';
+    private const string IMAGE_PROVIDER = 'https://loremflickr.com/1200/800/%s,landscape,travel';
 
     public function index(Request $request): AnonymousResourceCollection
     {

@@ -11,11 +11,8 @@ use Illuminate\Support\Facades\Log;
 
 class QuantumInsightEngine
 {
-    protected AiProviderManager $aiManager;
-
-    public function __construct(AiProviderManager $aiManager)
+    public function __construct(protected AiProviderManager $aiManager)
     {
-        $this->aiManager = $aiManager;
     }
 
     /**
@@ -53,7 +50,7 @@ class QuantumInsightEngine
                 ->groupBy('category')
                 ->map(fn ($group) => $group->sum('amount')),
             'transaction_count' => $transactions->count(),
-            'recent_history' => $transactions->take(15)->map(fn ($t) => [
+            'recent_history' => $transactions->take(15)->map(fn ($t): array => [
                 'date' => $t->date,
                 'desc' => $t->description,
                 'amount' => $t->amount,

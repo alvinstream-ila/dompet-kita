@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
  */
 class StorageService
 {
-    private const IMAGE_JPEG = 'image/jpeg';
+    private const string IMAGE_JPEG = 'image/jpeg';
 
     /**
      * Get base64 data and mime type from request params.
@@ -25,7 +25,7 @@ class StorageService
     {
         /** @var array<string, mixed> $requestData */
         $requestData = (array) \Illuminate\Support\Facades\Request::input();
-        $filePath = is_string($requestData['receipt_path'] ?? null) ? (string) $requestData['receipt_path'] : null;
+        $filePath = is_string($requestData['receipt_path'] ?? null) ? $requestData['receipt_path'] : null;
         $fileContents = null;
 
         if (! $filePath && ! empty($requestData['receipt_url'])) {
@@ -113,7 +113,7 @@ class StorageService
     private function formatFileData(string $content, ?string $path, ?string $url): array
     {
         $base64Data = base64_encode($content);
-        $reference = $path ? $path : $url;
+        $reference = $path ?: $url;
         $urlPath = parse_url((string) $reference, PHP_URL_PATH);
         $ext = strtolower(pathinfo((string) $urlPath, PATHINFO_EXTENSION));
 

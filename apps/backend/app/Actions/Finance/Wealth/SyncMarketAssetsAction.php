@@ -20,12 +20,12 @@ class SyncMarketAssetsAction extends BaseAction
      */
     public function execute(): array
     {
-        $market = (array) $this->marketService->getRates();
+        $market = $this->marketService->getRates();
         /** @var array{updated: int, alerts: int} $stats */
         $stats = ['updated' => 0, 'alerts' => 0];
 
         Asset::marketSynced()
-            ->each(function (Asset $asset) use ($market, &$stats) {
+            ->each(function (Asset $asset) use ($market, &$stats): void {
                 if ($asset->quantity <= 0) {
                     return;
                 }
@@ -79,7 +79,7 @@ class SyncMarketAssetsAction extends BaseAction
 
             case AssetType::CASH:
                 if (in_array($symbol, ['USD', 'SGD', 'EUR', 'JPY', 'GBP', 'AUD'])) {
-                    $price = (float) $this->marketService->getRate($symbol, 'IDR');
+                    $price = $this->marketService->getRate($symbol, 'IDR');
                 }
                 break;
 
@@ -101,7 +101,7 @@ class SyncMarketAssetsAction extends BaseAction
 
     private function resolveStockUnitPrice(string $symbol): float
     {
-        if (empty($symbol)) {
+        if ($symbol === '' || $symbol === '0') {
             return 0.0;
         }
 
@@ -112,7 +112,7 @@ class SyncMarketAssetsAction extends BaseAction
 
         // International Conversion
         if (! str_ends_with($symbol, '.JK')) {
-            $price *= (float) $this->marketService->getRate('USD', 'IDR');
+            $price *= $this->marketService->getRate('USD', 'IDR');
         }
 
         return $price;

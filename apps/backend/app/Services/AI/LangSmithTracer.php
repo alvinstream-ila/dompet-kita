@@ -14,9 +14,9 @@ use Illuminate\Support\Str;
  */
 class LangSmithTracer
 {
-    private ?string $apiKey;
+    private readonly ?string $apiKey;
 
-    private string $project;
+    private readonly string $project;
 
     private string $baseUrl = 'https://api.smith.langchain.com';
 
@@ -79,7 +79,7 @@ class LangSmithTracer
             'end_time' => $endTime,
         ];
 
-        if ($error) {
+        if ($error instanceof \Throwable) {
             $payload['error'] = $error->getMessage();
         }
 

@@ -34,10 +34,11 @@ class WealthHistory extends Model
      *
      * @return array<string, string>
      */
+    #[\Override]
     protected function casts(): array
     {
         return [
-            'total_value' => 'decimal:2',
+            'total_value' => 'encrypted:decimal:2',
             'month' => 'integer',
             'year' => 'integer',
         ];

@@ -19,7 +19,7 @@ class ManageLoanAction extends BaseAction
     public function record(User $user, array $data): Loan
     {
         $data['user_id'] = $user->id;
-        $data['status'] = $data['status'] ?? 'pending';
+        $data['status'] ??= 'pending';
 
         return Loan::create($data);
     }

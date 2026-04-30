@@ -52,6 +52,7 @@ class HolidayTransaction extends Model
         return $this->belongsTo(Asset::class);
     }
 
+    #[\Override]
     protected function casts(): array
     {
         return [

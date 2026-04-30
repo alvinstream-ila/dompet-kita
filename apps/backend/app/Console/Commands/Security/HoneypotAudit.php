@@ -47,7 +47,7 @@ class HoneypotAudit extends Command
             $this->newLine();
             $this->info('RADAR STATUS: [HIGH ALERT]');
 
-            if (! $ip && ! empty($attacks)) {
+            if (! $ip && $attacks !== []) {
                 $this->info("Recommended: IP '{$attacks[0]['ip']}' has been automatically blacklisted via Cloudflare.");
             }
 

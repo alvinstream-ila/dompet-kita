@@ -9,23 +9,21 @@ use Illuminate\Support\Facades\Log;
 
 class VerifyEmailNotification extends VerifyEmail
 {
-    public string $code;
-
     /**
      * Create a new notification instance.
      */
-    public function __construct(string $code)
+    public function __construct(public string $code)
     {
-        $this->code = $code;
     }
 
     /**
      * Get the mail representation of the notification.
      */
+    #[\Override]
     public function toMail(mixed $notifiable): MailMessage
     {
         if ($notifiable instanceof User) {
-            Log::info('Sending PREMIUM OTP verification email to: '.(string) $notifiable->email);
+            Log::info('Sending PREMIUM OTP verification email to: '.$notifiable->email);
         }
 
         return (new MailMessage)

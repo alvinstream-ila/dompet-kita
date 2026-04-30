@@ -55,7 +55,7 @@ class GetWealthStatusAction extends BaseAction
         $receivables = (float) ($loans->where('type', 'piutang')->sum('remaining_amount') ?: 0.0);
 
         return [
-            'month' => (string) $now->toFormattedDateString(),
+            'month' => $now->toFormattedDateString(),
             'monthly_summary' => [
                 'income' => $income,
                 'expense' => $expense,

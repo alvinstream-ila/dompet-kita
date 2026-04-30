@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 uses(RefreshDatabase::class);
 
-test('it rejects malicious file uploads in media controller', function () {
+test('it rejects malicious file uploads in media controller', function (): void {
     /** @var TestCase $this */
     $user = User::factory()->create();
     config([
@@ -33,7 +33,7 @@ test('it rejects malicious file uploads in media controller', function () {
     $response->assertJsonValidationErrors(['file']);
 });
 
-test('it accepts valid image file uploads', function () {
+test('it accepts valid image file uploads', function (): void {
     /** @var TestCase $this */
     $user = User::factory()->create();
     config([
@@ -53,7 +53,7 @@ test('it accepts valid image file uploads', function () {
         ->assertJson(['success' => true]);
 });
 
-test('it prevents unauthorized access to other users transactions', function () {
+test('it prevents unauthorized access to other users transactions', function (): void {
     /** @var TestCase $this */
     $alvin = User::factory()->create();
     $ila = User::factory()->create();
@@ -72,7 +72,7 @@ test('it prevents unauthorized access to other users transactions', function () 
     $response->assertStatus(404);
 });
 
-test('it verifies branding variables are set correctly', function () {
+test('it verifies branding variables are set correctly', function (): void {
     $appName = config('app.name');
     $mailFromName = config('mail.from.name');
 
@@ -80,7 +80,7 @@ test('it verifies branding variables are set correctly', function () {
     expect($mailFromName)->toBe('Dompet Kita');
 });
 
-test('it verifies secure mail configuration', function () {
+test('it verifies secure mail configuration', function (): void {
     expect(config('mail.mailers.smtp.encryption'))->toBe('tls');
     expect((int) config('mail.mailers.smtp.port'))->toBe(587);
 });

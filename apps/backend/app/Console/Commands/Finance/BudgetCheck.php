@@ -42,16 +42,11 @@ class BudgetCheck extends Command
 
             $this->newLine();
 
-            switch ($result['status']) {
-                case 'critical':
-                    $this->error('🚨 **CRITICAL: Budget terlampaui!** Sebaiknya istirahat belanja dulu ya.');
-                    break;
-                case 'warning':
-                    $this->warn('⚠️ **WARNING: Sudah mendekati limit!** Hati-hati ya.');
-                    break;
-                default:
-                    $this->info('✅ Aman! Silakan lanjutkan rencana produktif kalian.');
-            }
+            match ($result['status']) {
+                'critical' => $this->error('🚨 **CRITICAL: Budget terlampaui!** Sebaiknya istirahat belanja dulu ya.'),
+                'warning' => $this->warn('⚠️ **WARNING: Sudah mendekati limit!** Hati-hati ya.'),
+                default => $this->info('✅ Aman! Silakan lanjutkan rencana produktif kalian.'),
+            };
 
             return 0;
         } catch (Exception $e) {

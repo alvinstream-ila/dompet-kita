@@ -34,7 +34,7 @@ class LegacyGracePeriodNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $subject = ($this->daysRemaining === 7)
+        $subject = $this->daysRemaining === 7
             ? '⚠️ [PENTING] Masa Tenggang Digital Legacy Vault Dimulai'
             : "⚠️ [PERINGATAN] Vault Digital Anda akan dibuka dalam {$this->daysRemaining} hari";
 
@@ -44,7 +44,8 @@ class LegacyGracePeriodNotification extends Notification
             ->line('Sistem kami mendeteksi Anda sudah lama tidak aktif di Dompet Kita.')
             ->line("Sesuai pengaturan 'Digital Legacy Vault' Anda, masa tenggang (grace period) telah dimulai.")
             ->line("**PENTING:** Jika tidak ada aktivitas dalam {$this->daysRemaining} hari ke depan, akses ke data finansial Anda akan otomatis diberikan kepada pasangan Anda.")
-            ->action('Konfirmasi Saya Masih Aktif (Heartbeat)', url(((string) config('app.frontend_url')).'/legacy-vault/heartbeat'))
+            ->action('Konfirmasi Saya Masih Aktif (Heartbeat)', url(config('app.frontend_url').'/legacy-vault/heartbeat')) // @phpstan-ignore binaryOp.invalid
+
             ->line('Cukup login atau klik tombol di atas untuk membatalkan proses ini.')
             ->line('Pesan ini dikirim demi keamanan data dan masa depan orang-orang tercinta Anda.');
     }

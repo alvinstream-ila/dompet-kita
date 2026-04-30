@@ -23,17 +23,6 @@ class AssetPriceHistory extends Model
     ];
 
     /**
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'price' => 'float',
-            'recorded_at' => 'datetime',
-        ];
-    }
-
-    /**
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -47,5 +36,17 @@ class AssetPriceHistory extends Model
     public function asset(): BelongsTo
     {
         return $this->belongsTo(Asset::class);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    #[\Override]
+    protected function casts(): array
+    {
+        return [
+            'price' => 'float',
+            'recorded_at' => 'datetime',
+        ];
     }
 }

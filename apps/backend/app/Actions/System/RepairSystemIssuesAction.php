@@ -10,11 +10,8 @@ use Illuminate\Support\Facades\Log;
 
 class RepairSystemIssuesAction extends BaseAction
 {
-    protected AiProviderManager $gemini;
-
-    public function __construct(AiProviderManager $gemini)
+    public function __construct(protected AiProviderManager $gemini)
     {
-        $this->gemini = $gemini;
     }
 
     /**

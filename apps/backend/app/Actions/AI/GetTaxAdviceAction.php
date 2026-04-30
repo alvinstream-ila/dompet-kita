@@ -39,7 +39,7 @@ class GetTaxAdviceAction extends BaseAction
 
         try {
             return trim($this->manager->generateText($prompt));
-        } catch (Exception $e) {
+        } catch (Exception) {
             return 'Layanan analisis pajak sedang tidak tersedia. Mohon pastikan kepatuhan pelaporan SPT Anda secara mandiri.';
         }
     }
