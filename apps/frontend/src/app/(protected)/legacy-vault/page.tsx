@@ -138,9 +138,11 @@ export default function LegacyVaultPage() {
       document.body.appendChild(link);
       link.click();
       link.remove();
-    } catch (error) {
-      console.error('Download failed:', error);
-      toast.error('Gagal mendownload snapshot 🥺');
+    } catch (error: unknown) {
+      if (!(error as ApiError).response?.data?.sudo_required) {
+        console.error('Download failed:', error);
+        toast.error('Gagal mendownload snapshot 🥺');
+      }
     }
   };
 

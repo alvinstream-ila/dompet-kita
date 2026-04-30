@@ -14,6 +14,7 @@ use App\Observers\LoanObserver;
 use App\Observers\TransactionObserver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
@@ -78,23 +79,41 @@ class AppServiceProvider extends ServiceProvider
      */
     private function bootRateLimiters(): void
     {
-        RateLimiter::for('api', fn (Request $request): Limit => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
+        $this->bootGeneralRateLimiters();
+        $this->bootAiRateLimiters();
+    }
 
-        // AI Feature Limits
+    private function bootGeneralRateLimiters(): void
+    {
+        RateLimiter::for('api', fn (Request $request): Limit => Limit::perMinute(60)->by($this->getRateLimitKey($request)));
+
+        RateLimiter::for('media-upload', fn (Request $request): Limit => Limit::perMinute(5)->by($this->getRateLimitKey($request)));
+    }
+
+    private function bootAiRateLimiters(): void
+    {
         RateLimiter::for('ai-insight', fn (Request $request): array => [
-            Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()),
-            Limit::perDay(100)->by($request->user()?->id ?: $request->ip()),
+            Limit::perMinute(10)->by($this->getRateLimitKey($request)),
+            Limit::perDay(100)->by($this->getRateLimitKey($request)),
         ]);
 
         RateLimiter::for('ai-chat', fn (Request $request): array => [
-            Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()),
-            Limit::perDay(50)->by($request->user()?->id ?: $request->ip()),
+            Limit::perMinute(10)->by($this->getRateLimitKey($request)),
+            Limit::perDay(50)->by($this->getRateLimitKey($request)),
         ]);
 
         RateLimiter::for('ai-scan', fn (Request $request): array => [
-            Limit::perMinute(3)->by($request->user()?->id ?: $request->ip()),
-            Limit::perDay(30)->by($request->user()?->id ?: $request->ip()),
+            Limit::perMinute(3)->by($this->getRateLimitKey($request)),
+            Limit::perDay(30)->by($this->getRateLimitKey($request)),
         ]);
+    }
+
+    /**
+     * Get a consistent rate limit key.
+     */
+    private function getRateLimitKey(Request $request): string
+    {
+        return (string) ($request->user()?->getAuthIdentifier() ?: $request->ip());
     }
 
     /**
@@ -109,7 +128,18 @@ class AppServiceProvider extends ServiceProvider
         if (($this->app->environment('production') || $isSecure) && ! $this->app->environment('testing')) {
             config(['logging.channels.stack.level' => 'info']);
             URL::forceScheme('https');
-            URL::forceRootUrl($appUrl ?: null);
+            if ($appUrl) {
+                URL::useOrigin($appUrl);
+            }
         }
+
+        // Configure Global HTTP Client Defaults
+        Http::globalOptions([
+            'timeout' => 30,
+            'connect_timeout' => 10,
+            'headers' => [
+                'User-Agent' => 'DompetKita-Core/1.0',
+            ],
+        ]);
     }
 }

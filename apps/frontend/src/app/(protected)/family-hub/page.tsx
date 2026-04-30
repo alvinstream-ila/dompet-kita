@@ -129,11 +129,19 @@ export default function FamilyHubPage() {
   });
 
   const handleUnlink = async () => {
-    const result = await unlinkPartnerAction();
-    if (result.success) {
-      toast.success(result.message);
-    } else {
-      toast.error(result.error);
+    const action = async () => {
+      const res = await api.post('/partner/unlink');
+      toast.success(res.data.message || 'Berhasil melepas partner! ❤️');
+      // Force refresh data
+      window.location.reload();
+    };
+
+    try {
+      await action();
+    } catch (error: unknown) {
+      if (!(error as ApiError).response?.data?.sudo_required) {
+        toast.error('Gagal melepas partner 🥺');
+      }
     }
   };
 

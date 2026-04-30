@@ -53,6 +53,8 @@ class GroqProvider implements AiProviderInterface
         try {
             $response = Http::withToken($this->apiKey)
                 ->timeout(30)
+                ->retry(3, 100)
+                ->withHeaders(['User-Agent' => 'DompetKita-AI/1.0 (Groq)'])
                 ->post($this->baseUrl, [
                     'model' => $this->model,
                     'messages' => [

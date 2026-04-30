@@ -15,10 +15,7 @@ class MarketService
 
     private const int CACHE_TTL = 300; // 5 Minutes for Realtime Feel
 
-    // 2026 Sovereign Failover Constants
-    private const float FAILOVER_USD_IDR = 16950.0;
-
-    private const float FAILOVER_GOLD_ANTAM = 2525000.0;
+    // 2026 Sovereign Failover Constants (Moved to Config)
 
     /**
      * Get current market rates with robust caching and failover.
@@ -37,9 +34,13 @@ class MarketService
         return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function (): array {
             try {
                 // 1. Forex: Frankfurter (Unlimited/Keyless)
-                $fxResponse = Http::timeout(5)->withoutVerifying()->get('https://api.frankfurter.app/latest?from=USD');
+                $fxResponse = Http::timeout(5)
+                    ->withHeaders(['User-Agent' => config('services.market.user_agent')])
+                    ->retry(2, 100)
+                    ->get('https://api.frankfurter.app/latest?from=USD');
+
                 $fxData = $fxResponse->successful() ? (array) $fxResponse->json() : [];
-                $currencyRates = $fxData['rates'] ?? ['IDR' => self::FAILOVER_USD_IDR];
+                $currencyRates = $fxData['rates'] ?? ['IDR' => config('services.market.failover.usd_idr')];
                 assert(is_array($currencyRates));
 
                 // 2. Gold: Antam Scraper (Indonesia Retail)
@@ -50,8 +51,8 @@ class MarketService
 
                 return [
                     'currency_rates' => array_map(fn ($val): float => is_numeric($val) ? (float) $val : 0.0, $currencyRates),
-                    'gold_antam_gram' => is_numeric($goldAntam) ? $goldAntam : self::FAILOVER_GOLD_ANTAM,
-                    'gold_global_oz' => is_numeric($goldPulse) ? $goldPulse : 2400.0,
+                    'gold_antam_gram' => $this->validatePrice($goldAntam, 'gold_antam') ? $goldAntam : config('services.market.failover.gold_antam'),
+                    'gold_global_oz' => $this->validatePrice($goldPulse, 'gold_global') ? $goldPulse : 2400.0,
                     'inflation_rate' => 0.035, // Default 3.5%
                     'last_updated' => now()->toIso8601String(),
                 ];
@@ -59,8 +60,8 @@ class MarketService
                 Log::warning('MarketService Failover Triggered: '.$e->getMessage());
 
                 return [
-                    'currency_rates' => ['IDR' => self::FAILOVER_USD_IDR],
-                    'gold_antam_gram' => self::FAILOVER_GOLD_ANTAM,
+                    'currency_rates' => ['IDR' => config('services.market.failover.usd_idr')],
+                    'gold_antam_gram' => config('services.market.failover.gold_antam'),
                     'gold_global_oz' => 2400.0,
                     'inflation_rate' => 0.035,
                     'last_updated' => now()->toIso8601String(),
@@ -76,7 +77,9 @@ class MarketService
     {
         return retry(2, function (): ?float {
             try {
-                $response = Http::timeout(15)->withoutVerifying()->get('https://www.logammulia.com/id/harga-emas-hari-ini');
+                $response = Http::timeout(15)
+                    ->withHeaders(['User-Agent' => config('services.market.user_agent')])
+                    ->get('https://www.logammulia.com/id/harga-emas-hari-ini');
                 if (! $response->successful()) {
                     return null;
                 }
@@ -120,12 +123,13 @@ class MarketService
             $endpoints = [
                 "https://api.binance.com/api/v3/ticker/price?symbol={$symbol}",
                 "https://api1.binance.com/api/v3/ticker/price?symbol={$symbol}",
-                "https://api3.binance.com/api/v3/ticker/price?symbol={$symbol}",
             ];
 
             foreach ($endpoints as $url) {
                 try {
-                    $response = Http::timeout(10)->withoutVerifying()->get($url);
+                    $response = Http::timeout(10)
+                        ->withHeaders(['User-Agent' => config('services.market.user_agent')])
+                        ->get($url);
                     if ($response->successful()) {
                         $priceData = $response->json('price');
 
@@ -150,7 +154,9 @@ class MarketService
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($symbol): ?float {
             try {
                 // Yahoo Finance Chart API is more stable than others for public use
-                $response = Http::timeout(5)->withoutVerifying()->get("https://query1.finance.yahoo.com/v8/finance/chart/{$symbol}");
+                $response = Http::timeout(5)
+                    ->withHeaders(['User-Agent' => config('services.market.user_agent')])
+                    ->get("https://query1.finance.yahoo.com/v8/finance/chart/{$symbol}");
                 if ($response->successful()) {
                     $priceData = $response->json('chart.result.0.meta.regularMarketPrice');
 
@@ -177,7 +183,9 @@ class MarketService
 
         return retry(2, function () use ($pair): ?float {
             try {
-                $response = Http::timeout(10)->withoutVerifying()->get("https://indodax.com/api/ticker/{$pair}");
+                $response = Http::timeout(10)
+                    ->withHeaders(['User-Agent' => config('services.market.user_agent')])
+                    ->get("https://indodax.com/api/ticker/{$pair}");
                 if ($response->successful()) {
                     $price = $response->json('ticker.last');
 
@@ -204,6 +212,22 @@ class MarketService
         }
 
         return 1.0;
+    }
+
+    /**
+     * Validate price to prevent corrupting data with outliers or errors.
+     */
+    private function validatePrice(?float $price, string $type): bool
+    {
+        if ($price === null || $price <= 0) {
+            return false;
+        }
+
+        return match ($type) {
+            'gold_antam' => $price > 1000000 && $price < 10000000, // Reasonable range for 1gr gold in IDR
+            'gold_global' => $price > 1000 && $price < 10000,      // Reasonable range for oz gold in USD
+            default => true,
+        };
     }
 
     /**

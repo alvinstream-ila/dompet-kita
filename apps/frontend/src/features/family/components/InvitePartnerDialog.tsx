@@ -15,31 +15,37 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { invitePartnerAction } from '../actions/partner';
+import api from '@/lib/axios';
+import type { ApiError } from '@/types';
 
 export function InvitePartnerDialog() {
   const [email, setEmail] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleInvite = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleInvite = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!email) return;
 
     setIsLoading(true);
+
+    const action = async () => {
+      await api.post('/partner/invite', { email });
+      toast.success('Undangan Terkirim! 💌', {
+        description:
+          'Semoga dia cepat merespon ya Sayang, biar kita bisa atur mimpi bareng! ✨',
+      });
+      setIsOpen(false);
+      setEmail('');
+    };
+
     try {
-      const result = await invitePartnerAction(email);
-      if (result.success) {
-        toast.success('Undangan Terkirim! 💌', {
-          description:
-            'Semoga dia cepat merespon ya Sayang, biar kita bisa atur mimpi bareng! ✨',
-        });
-        setIsOpen(false);
-        setEmail('');
-      } else {
+      await action();
+    } catch (error: unknown) {
+      if (!(error as ApiError).response?.data?.sudo_required) {
         toast.error('Gagal Mengirim Undangan 🥺', {
           description:
-            result.error ||
+            (error as ApiError).response?.data?.message ||
             'Coba cek lagi emailnya ya Sayang, maaf ada kendala.',
         });
       }

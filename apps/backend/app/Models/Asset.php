@@ -89,7 +89,7 @@ class Asset extends Model
      */
     public function scopeMarketSynced($query)
     {
-        return $query->whereRaw('is_market_synced IS TRUE');
+        return $query->where('is_market_synced', true);
     }
 
     /**

@@ -53,7 +53,7 @@ class AIController extends Controller
                 $base64Data = (string) $request->string('image');
                 $mimeType = (string) $request->string('mime_type', 'image/jpeg');
             } else {
-                [$base64Data, $mimeType] = $this->storageService->getFileDataFromRequest($request);
+                [$base64Data, $mimeType] = $this->storageService->getFileDataFromRequest();
             }
 
             $result = $this->analyzeReceiptAction->execute($base64Data, $mimeType);

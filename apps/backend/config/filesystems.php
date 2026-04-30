@@ -36,7 +36,7 @@ return [
             'driver' => 'local',
             'root' => storage_path('app/private'),
             'serve' => true,
-            'throw' => false,
+            'throw' => true,
             'report' => false,
         ],
 
@@ -58,7 +58,7 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-            'throw' => false,
+            'throw' => true,
             'report' => false,
         ],
 
@@ -71,6 +71,8 @@ return [
             'url' => env('STORJ_URL'),
             'endpoint' => env('STORJ_ENDPOINT', 'https://gateway.storjshare.io'),
             'use_path_style_endpoint' => true, // Essential for Storj
+            'throw' => true,
+            'visibility' => 'private',
         ],
 
     ],

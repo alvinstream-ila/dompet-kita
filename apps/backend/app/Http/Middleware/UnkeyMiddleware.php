@@ -28,7 +28,12 @@ class UnkeyMiddleware
             try {
                 $cacheKey = 'unkey_verify_'.md5($key);
                 $data = Cache::remember($cacheKey, 300, function () use ($key) {
-                    $unkeyRes = Http::withHeaders(['Content-Type' => 'application/json'])
+                    $unkeyRes = Http::withHeaders([
+                        'Content-Type' => 'application/json',
+                        'User-Agent' => 'DompetKita-Auth/1.0 (Unkey)',
+                    ])
+                        ->timeout(5)
+                        ->retry(2, 100)
                         ->post('https://api.unkey.dev/v1/keys.verifyKey', [
                             'key' => $key,
                             'apiId' => config('services.unkey.api_id'),

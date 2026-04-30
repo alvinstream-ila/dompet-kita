@@ -15,13 +15,14 @@ use Illuminate\Support\Facades\Storage;
 class StorageService
 {
     private const string IMAGE_JPEG = 'image/jpeg';
+    private const string USER_AGENT = 'DompetKita-Storage/1.0';
 
     /**
      * Get base64 data and mime type from request params.
      *
      * @return array{0: string, 1: string}
      */
-    public function getFileDataFromRequest(Request $request): array
+    public function getFileDataFromRequest(): array
     {
         /** @var array<string, mixed> $requestData */
         $requestData = (array) \Illuminate\Support\Facades\Request::input();
@@ -69,13 +70,13 @@ class StorageService
 
     private function tryReadFromDisk(string $path): ?string
     {
-        $defaultDisk = config('filesystems.default', 'public');
-        $defaultDiskStr = is_string($defaultDisk) ? $defaultDisk : 'public';
-        $disk = config('filesystems.disks.storj.key') ? 'storj' : $defaultDiskStr;
+        $disk = config('filesystems.disks.storj.key') ? 'storj' : config('filesystems.default', 'local');
+        $diskStr = is_string($disk) ? $disk : 'local';
+
         try {
-            return Storage::disk($disk)->get($path);
+            return Storage::disk($diskStr)->get($path);
         } catch (\Exception $e) {
-            Log::warning("Gagal baca via disk {$disk}: ".$e->getMessage());
+            Log::warning("🛡️ Storage Read Failed via disk {$diskStr}: ".$e->getMessage());
 
             return null;
         }
@@ -91,17 +92,24 @@ class StorageService
 
         if (! in_array($parsedHost, array_filter($safeHosts), true)) {
             $hostStr = is_string($parsedHost) ? $parsedHost : 'unknown';
-            Log::warning("SSRF BLOCKED: Domain {$hostStr} bukan whitelist.");
+            Log::warning("🛡️ SSRF BLOCKED: Domain {$hostStr} is not whitelisted.");
 
             return null;
         }
 
         try {
-            $response = Http::timeout(10)->get($url);
+            // Hardened HTTP Client with Identity and Timeout
+            $response = Http::withHeaders([
+                'User-Agent' => self::USER_AGENT,
+                'Accept' => 'image/*,application/pdf',
+            ])
+                ->timeout(15)
+                ->retry(2, 500)
+                ->get($url);
 
             return $response->successful() ? $response->body() : null;
         } catch (\Exception $e) {
-            Log::warning('Gagal download receipt_url: '.$e->getMessage());
+            Log::warning('🛡️ Media Download Failed: '.$e->getMessage(), ['url' => $url]);
 
             return null;
         }
@@ -113,6 +121,16 @@ class StorageService
     private function formatFileData(string $content, ?string $path, ?string $url): array
     {
         $base64Data = base64_encode($content);
+
+        // 🛡️ High-Reliability MIME Detection
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $detectedMime = $finfo->buffer($content);
+
+        if ($detectedMime && $detectedMime !== 'application/octet-stream') {
+            return [$base64Data, $detectedMime];
+        }
+
+        // Fallback to extension-based detection
         $reference = $path ?: $url;
         $urlPath = parse_url((string) $reference, PHP_URL_PATH);
         $ext = strtolower(pathinfo((string) $urlPath, PATHINFO_EXTENSION));
@@ -122,6 +140,7 @@ class StorageService
             'webp' => 'image/webp',
             'heic' => 'image/heic',
             'heif' => 'image/heif',
+            'pdf' => 'application/pdf',
             'jpg', 'jpeg' => self::IMAGE_JPEG,
             default => self::IMAGE_JPEG
         };

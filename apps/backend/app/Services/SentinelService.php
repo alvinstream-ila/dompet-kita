@@ -55,6 +55,7 @@ class SentinelService
 
             $response = Http::timeout(10)
                 ->retry(3, 100)
+                ->withHeaders(['User-Agent' => 'DompetKita-Sentinel/1.0 (Telegram)'])
                 ->post("https://api.telegram.org/bot{$tokenStr}/sendMessage", [
                     'chat_id' => $chatIdStr,
                     'text' => $text,
@@ -62,7 +63,8 @@ class SentinelService
                 ]);
 
             if (! $response->successful()) {
-                Log::error('Sentinel Telegram Error: '.$response->body());
+                $body = str_replace($tokenStr, '***HIDDEN***', $response->body());
+                Log::error('Sentinel Telegram Error: '.$body);
 
                 return false;
             }

@@ -71,4 +71,12 @@ return [
         'root_key' => env('UNKEY_ROOT_KEY'),
     ],
 
+    'market' => [
+        'failover' => [
+            'usd_idr' => env('MARKET_FAILOVER_USD_IDR', 16950.0),
+            'gold_antam' => env('MARKET_FAILOVER_GOLD_ANTAM', 2525000.0),
+        ],
+        'user_agent' => env('MARKET_USER_AGENT', 'DompetKita/1.0 (Family Wealth Hub; official.dompetkita@gmail.com)'),
+    ],
+
 ];

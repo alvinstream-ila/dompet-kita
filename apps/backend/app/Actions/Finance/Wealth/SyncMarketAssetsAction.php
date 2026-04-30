@@ -44,6 +44,12 @@ class SyncMarketAssetsAction extends BaseAction
     {
         $oldValue = $asset->value;
         $unitPrice = $this->resolveUnitPrice($asset, $market);
+
+        // Safety Guard: Don't update with zero price (API failure/Outlier)
+        if ($unitPrice <= 0) {
+            return;
+        }
+
         $newValue = $unitPrice * (float) $asset->quantity;
 
         // 1. Update Asset Value and Sync Timestamp

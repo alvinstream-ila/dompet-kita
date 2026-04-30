@@ -137,7 +137,7 @@ Route::middleware('firewall.all')->group(function (): void {
         Route::get('/ai/tax/estimate', [TaxController::class, 'getEstimate'])->middleware('throttle:ai-insight');
         // Digital Legacy Vault
         Route::get('/legacy', [LegacyController::class, 'index']);
-        Route::patch('/legacy/settings', [LegacyController::class, 'updateSettings']);
+        Route::patch('/legacy/settings', [LegacyController::class, 'updateSettings'])->middleware('sudo');
         Route::post('/legacy/heartbeat', [LegacyController::class, 'heartbeat']);
         Route::post('/legacy/snapshot', [LegacyController::class, 'triggerSnapshot'])->middleware('sudo');
         Route::get('/legacy/download/{id}', [LegacyController::class, 'download'])->middleware('sudo');
@@ -149,13 +149,13 @@ Route::middleware('firewall.all')->group(function (): void {
         Route::patch('/ai/quantum-insights/{insight}', [InsightController::class, 'update']);
         Route::delete('/ai/quantum-insights/{insight}', [InsightController::class, 'destroy']);
 
-        Route::post('/media/upload', [MediaController::class, 'upload']);
+        Route::post('/media/upload', [MediaController::class, 'upload'])->middleware('throttle:media-upload');
 
         // Partner Sync (Family Hub)
-        Route::post('/partner/invite', [PartnerController::class, 'invite']);
+        Route::post('/partner/invite', [PartnerController::class, 'invite'])->middleware('sudo');
         Route::get('/partner/invitation/{token}', [PartnerController::class, 'getInvitation']);
-        Route::post('/partner/accept', [PartnerController::class, 'accept']);
-        Route::post('/partner/unlink', [PartnerController::class, 'unlink']);
+        Route::post('/partner/accept', [PartnerController::class, 'accept'])->middleware('sudo');
+        Route::post('/partner/unlink', [PartnerController::class, 'unlink'])->middleware('sudo');
 
         // Holidays
         Route::apiResource('holidays', HolidayController::class);

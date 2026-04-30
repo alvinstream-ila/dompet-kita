@@ -13,10 +13,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  acceptInvitationAction,
-  getInvitationAction,
-} from '../actions/partner';
+import api from '@/lib/axios';
+import type { ApiError } from '@/types';
 
 export function AcceptPartnerModal() {
   const searchParams = useSearchParams();
@@ -30,12 +28,15 @@ export function AcceptPartnerModal() {
   useEffect(() => {
     const checkInvitation = async () => {
       if (!token) return;
-      const result = await getInvitationAction(token);
-      if (result.success) {
-        setInviterName(result.inviter_name || 'Pasangan kamu');
+      try {
+        const res = await api.get(`/partner/invitation/${token}`);
+        setInviterName(res.data.inviter_name || 'Pasangan kamu');
         setIsOpen(true);
-      } else {
-        toast.error(result.error || 'Undangan tidak valid 🥺');
+      } catch (error: unknown) {
+        toast.error(
+          (error as ApiError).response?.data?.message ||
+            'Undangan tidak valid 🥺'
+        );
         // Clean up the URL
         router.replace('/family-hub');
       }
@@ -49,14 +50,22 @@ export function AcceptPartnerModal() {
   const handleAccept = async () => {
     if (!token) return;
     setIsLoading(true);
+
+    const action = async () => {
+      const res = await api.post('/partner/accept', { token });
+      toast.success(res.data.message || 'Berhasil terhubung! ❤️');
+      setIsOpen(false);
+      router.push('/family-hub');
+    };
+
     try {
-      const result = await acceptInvitationAction(token);
-      if (result.success) {
-        toast.success(result.message || 'Berhasil terhubung! ❤️');
-        setIsOpen(false);
-        router.push('/family-hub');
-      } else {
-        toast.error(result.error || 'Gagal menerima undangan 🥺');
+      await action();
+    } catch (error: unknown) {
+      if (!(error as ApiError).response?.data?.sudo_required) {
+        toast.error(
+          (error as ApiError).response?.data?.message ||
+            'Gagal menerima undangan 🥺'
+        );
       }
     } finally {
       setIsLoading(false);

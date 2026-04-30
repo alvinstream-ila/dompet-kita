@@ -46,13 +46,20 @@ class GeminiProvider implements AiProviderInterface
 
     public function generateText(string $prompt): array
     {
+        /** @var LangSmithTracer $tracer */
+        $tracer = app(LangSmithTracer::class);
+        $runId = $tracer->createRun('Gemini:generateText', [
+            'prompt' => $prompt,
+            'model' => $this->model,
+        ]);
+
         try {
             $client = Gemini::client($this->apiKey);
             $response = $client->generativeModel($this->model)->generateContent($prompt);
 
             $usage = $response->usageMetadata;
 
-            return [
+            $output = [
                 'text' => $response->text(),
                 'usage' => [
                     'prompt_tokens' => (int) ($usage->promptTokenCount),
@@ -60,8 +67,14 @@ class GeminiProvider implements AiProviderInterface
                     'total_tokens' => (int) ($usage->totalTokenCount),
                 ],
             ];
+
+            $tracer->updateRun($runId, $output);
+
+            return $output;
         } catch (Exception $e) {
-            Log::error('Gemini generateText error: '.$e->getMessage());
+            $message = str_replace($this->apiKey, '***HIDDEN***', $e->getMessage());
+            Log::error('Gemini generateText error: '.$message);
+            $tracer->updateRun($runId, [], $e);
             throw $e;
         }
     }
@@ -89,6 +102,14 @@ class GeminiProvider implements AiProviderInterface
      */
     protected function generateWithMultimedia(string $prompt, string $base64Data, string $mimeType): array
     {
+        /** @var LangSmithTracer $tracer */
+        $tracer = app(LangSmithTracer::class);
+        $runId = $tracer->createRun('Gemini:multimedia', [
+            'prompt' => $prompt,
+            'model' => $this->model,
+            'mime_type' => $mimeType,
+        ]);
+
         try {
             $url = "https://generativelanguage.googleapis.com/v1beta/models/{$this->model}:generateContent?key={$this->apiKey}";
 
@@ -111,7 +132,10 @@ class GeminiProvider implements AiProviderInterface
                 ],
             ];
 
-            $response = Http::timeout(120)->post($url, $payload);
+            $response = Http::timeout(120)
+                ->retry(3, 100)
+                ->withHeaders(['User-Agent' => 'DompetKita-AI/1.0 (Gemini)'])
+                ->post($url, $payload);
 
             if (! $response->successful()) {
                 throw new \RuntimeException('Gemini API Error: '.$response->body());
@@ -127,7 +151,7 @@ class GeminiProvider implements AiProviderInterface
             /** @var array{promptTokenCount?: int, candidatesTokenCount?: int, totalTokenCount?: int} $usage */
             $usage = $data['usageMetadata'] ?? [];
 
-            return [
+            $output = [
                 'text' => $text,
                 'usage' => [
                     'prompt_tokens' => $usage['promptTokenCount'] ?? 0,
@@ -135,8 +159,14 @@ class GeminiProvider implements AiProviderInterface
                     'total_tokens' => $usage['totalTokenCount'] ?? 0,
                 ],
             ];
+
+            $tracer->updateRun($runId, $output);
+
+            return $output;
         } catch (Exception $e) {
-            Log::error('Gemini generateMultimedia HTTP error: '.$e->getMessage());
+            $message = str_replace($this->apiKey, '***HIDDEN***', $e->getMessage());
+            Log::error('Gemini generateMultimedia HTTP error: '.$message);
+            $tracer->updateRun($runId, [], $e);
             throw $e;
         }
     }

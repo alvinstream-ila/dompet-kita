@@ -45,6 +45,8 @@ class LangSmithTracer
 
         try {
             Http::withHeaders(['x-api-key' => $this->apiKey])
+                ->timeout(2)
+                ->retry(2, 50)
                 ->post("{$this->baseUrl}/runs", [
                     'id' => $id,
                     'name' => $name,
@@ -85,6 +87,8 @@ class LangSmithTracer
 
         try {
             Http::withHeaders(['x-api-key' => $this->apiKey])
+                ->timeout(2)
+                ->retry(2, 50)
                 ->patch("{$this->baseUrl}/runs/{$runId}", $payload);
         } catch (\Exception $e) {
             Log::warning('LangSmith Trace Update Failed: '.$e->getMessage());

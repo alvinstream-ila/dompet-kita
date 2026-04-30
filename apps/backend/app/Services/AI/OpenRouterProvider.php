@@ -14,23 +14,29 @@ class OpenRouterProvider implements AiProviderInterface
     protected string $modelText;
 
     protected string $modelVision;
+    protected string $model;
 
     protected string $baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
 
     public function __construct()
     {
         $apiKey = \config('services.ai.openrouter.key');
-        $modelText = \config('services.ai.openrouter.model_text');
-        $modelVision = \config('services.ai.openrouter.model_vision');
-
         $this->apiKey = is_string($apiKey) ? $apiKey : '';
-        $this->modelText = is_string($modelText) ? $modelText : 'openai/gpt-3.5-turbo';
-        $this->modelVision = is_string($modelVision) ? $modelVision : 'openai/gpt-4-vision-preview';
 
-        // Override with the smart auto-router
-        if (str_contains($this->modelVision, 'gemini') || str_contains($this->modelVision, 'llama-3.2-11b') || ($this->modelVision === '' || $this->modelVision === '0')) {
-            $this->modelVision = 'openrouter/free';
-        }
+        $model = \config('services.ai.openrouter.model', 'google/gemini-flash-1.5');
+        $this->model = is_string($model) ? $model : 'google/gemini-flash-1.5';
+    }
+
+    protected function getHttpClient(): \Illuminate\Http\Client\PendingRequest
+    {
+        return Http::withToken($this->apiKey)
+            ->timeout(30)
+            ->retry(3, 100)
+            ->withHeaders([
+                'HTTP-Referer' => config('app.url'),
+                'X-Title' => config('app.name'),
+                'User-Agent' => 'DompetKita-AI/1.0 (OpenRouter)',
+            ]);
     }
 
     public function getName(): string
@@ -55,15 +61,17 @@ class OpenRouterProvider implements AiProviderInterface
 
     public function generateText(string $prompt): array
     {
+        /** @var LangSmithTracer $tracer */
+        $tracer = app(LangSmithTracer::class);
+        $runId = $tracer->createRun('OpenRouter:generateText', [
+            'prompt' => $prompt,
+            'model' => $this->model,
+        ]);
+
         try {
-            $response = Http::withToken($this->apiKey)
-                ->timeout(30)
-                ->withHeaders([
-                    'HTTP-Referer' => \config('app.url', 'https://dompetkita.id'),
-                    'X-Title' => 'Dompet Kita',
-                ])
+            $response = $this->getHttpClient()
                 ->post($this->baseUrl, [
-                    'model' => $this->modelText,
+                    'model' => $this->model,
                     'messages' => [
                         ['role' => 'user', 'content' => $prompt],
                     ],
@@ -71,7 +79,7 @@ class OpenRouterProvider implements AiProviderInterface
                 ]);
 
             if ($response->failed()) {
-                throw new \Exception('OpenRouter Text API Error ('.$response->status().'): '.$response->body());
+                throw new \Exception('OpenRouter API Error ('.$response->status().'): '.$response->body());
             }
 
             $content = $response->json('choices.0.message.content');
@@ -79,7 +87,7 @@ class OpenRouterProvider implements AiProviderInterface
             $completionTokens = $response->json('usage.completion_tokens');
             $totalTokens = $response->json('usage.total_tokens');
 
-            return [
+            $output = [
                 'text' => is_string($content) ? $content : '',
                 'usage' => [
                     'prompt_tokens' => is_int($promptTokens) ? $promptTokens : 0,
@@ -87,23 +95,31 @@ class OpenRouterProvider implements AiProviderInterface
                     'total_tokens' => is_int($totalTokens) ? $totalTokens : 0,
                 ],
             ];
+
+            $tracer->updateRun($runId, $output);
+
+            return $output;
         } catch (\Exception $e) {
             Log::error('OpenRouter generateText error: '.$e->getMessage());
+            $tracer->updateRun($runId, [], $e);
             throw $e;
         }
     }
 
     public function generateFromImage(string $prompt, string $base64Image, string $mimeType): array
     {
+        /** @var LangSmithTracer $tracer */
+        $tracer = app(LangSmithTracer::class);
+        $runId = $tracer->createRun('OpenRouter:generateFromImage', [
+            'prompt' => $prompt,
+            'model' => $this->model,
+            'mime_type' => $mimeType,
+        ]);
+
         try {
-            $response = Http::withToken($this->apiKey)
-                ->timeout(30)
-                ->withHeaders([
-                    'HTTP-Referer' => \config('app.url', 'https://dompetkita.id'),
-                    'X-Title' => 'Dompet Kita',
-                ])
+            $response = $this->getHttpClient()
                 ->post($this->baseUrl, [
-                    'model' => $this->modelVision,
+                    'model' => $this->model,
                     'messages' => [
                         [
                             'role' => 'user',
@@ -122,7 +138,7 @@ class OpenRouterProvider implements AiProviderInterface
                 ]);
 
             if ($response->failed()) {
-                throw new \Exception('OpenRouter Vision API Error ('.$response->status().'): '.$response->body());
+                throw new \Exception('OpenRouter Vision Error ('.$response->status().'): '.$response->body());
             }
 
             $content = $response->json('choices.0.message.content');
@@ -130,7 +146,7 @@ class OpenRouterProvider implements AiProviderInterface
             $completionTokens = $response->json('usage.completion_tokens');
             $totalTokens = $response->json('usage.total_tokens');
 
-            return [
+            $output = [
                 'text' => is_string($content) ? $content : '',
                 'usage' => [
                     'prompt_tokens' => is_int($promptTokens) ? $promptTokens : 0,
@@ -138,8 +154,13 @@ class OpenRouterProvider implements AiProviderInterface
                     'total_tokens' => is_int($totalTokens) ? $totalTokens : 0,
                 ],
             ];
+
+            $tracer->updateRun($runId, $output);
+
+            return $output;
         } catch (\Exception $e) {
-            Log::error('OpenRouter generateFromImage error: '.$e->getMessage());
+            Log::error('OpenRouter vision error: '.$e->getMessage());
+            $tracer->updateRun($runId, [], $e);
             throw $e;
         }
     }
