@@ -22,3 +22,14 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Snyk CLI (large binary — use bin/snyk.exe at project root)
+/snyk/
+
+# Debug/Scratch JSON artifacts
+/insights-*.json
+/parallel-lint*.json
+/phpstan-*.json
+/snyk-*.json
+/test-final.txt
+/pint-output.txt
