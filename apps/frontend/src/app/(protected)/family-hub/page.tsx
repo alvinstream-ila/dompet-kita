@@ -29,7 +29,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAuth } from '@/features/auth';
-import { unlinkPartnerAction } from '@/features/family/actions/partner';
 import { InvitePartnerDialog } from '@/features/family/components/InvitePartnerDialog';
 import api from '@/lib/axios';
 import { useFormatting } from '@/lib/hooks/useFormatting';
