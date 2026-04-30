@@ -270,7 +270,7 @@ class AIController extends Controller
         $cacheKey = "ai_insight_{$scopeId}";
 
         /** @var array{title: string, insight: string} $data */
-        $data = Cache::remember($cacheKey, 3600 * 4, fn(): array => $this->generateInsightAction->execute(
+        $data = Cache::remember($cacheKey, 3600 * 4, fn (): array => $this->generateInsightAction->execute(
             number_format($totalIncome),
             number_format($totalExpense),
             number_format($savings),

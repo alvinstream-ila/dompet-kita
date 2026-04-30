@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('assets', function (Blueprint $table) {
+        Schema::table('assets', function (Blueprint $table): void {
             $table->decimal('quantity', 15, 4)->nullable()->after('type');
             $table->string('unit')->nullable()->after('quantity');
             $table->boolean('is_market_synced')->default(false)->after('unit');
@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('assets', function (Blueprint $table) {
+        Schema::table('assets', function (Blueprint $table): void {
             $table->dropColumn(['quantity', 'unit', 'is_market_synced']);
         });
     }

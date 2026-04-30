@@ -3,12 +3,12 @@ import {
   Activity,
   Bot,
   Cpu,
+  Send,
   Shield,
   ShieldCheck,
-  Send,
-  Zap,
   Target,
   X,
+  Zap,
 } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';

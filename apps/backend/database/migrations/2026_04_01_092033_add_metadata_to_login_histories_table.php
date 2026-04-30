@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('login_histories', function (Blueprint $table) {
+        Schema::table('login_histories', function (Blueprint $table): void {
             $table->json('metadata')->after('status')->nullable();
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('login_histories', function (Blueprint $table) {
+        Schema::table('login_histories', function (Blueprint $table): void {
             $table->dropColumn('metadata');
         });
     }

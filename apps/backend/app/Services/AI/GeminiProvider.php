@@ -6,7 +6,6 @@ namespace App\Services\AI;
 
 use Exception;
 use Gemini;
-use Gemini\Data\UsageMetadata;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 

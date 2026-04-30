@@ -90,7 +90,11 @@
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
+        "scan:snyk": [
+            "../../bin/snyk.exe test --all-projects --severity-threshold=high 2>&1 > ../../reports/backend-snyk.txt || exit 0"
+        ],
         "scan": [
+            "@scan:snyk",
             "php artisan insights --no-interaction --min-quality=90 --min-complexity=90 > ../../reports/backend-insights.txt || exit 0",
             "vendor/bin/phpstan analyse --memory-limit=2G --no-progress > ../../reports/backend-phpstan.txt || exit 0",
             "vendor/bin/rector process --dry-run > ../../reports/backend-rector.txt || exit 0"

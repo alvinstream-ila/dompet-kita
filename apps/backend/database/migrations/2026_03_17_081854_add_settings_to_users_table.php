@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->integer('budget_cycle_start')->default(1);
             $table->boolean('is_privacy_mode')->default(false);
             $table->boolean('is_eco_mode')->default(false);
@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->dropColumn([
                 'budget_cycle_start',
                 'is_privacy_mode',

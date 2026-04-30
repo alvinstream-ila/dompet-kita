@@ -1,4 +1,5 @@
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import { cookies } from 'next/headers';
 /**
  * Dompet Kita - Protected Home Page (RSC)
  *
@@ -11,8 +12,6 @@ import { DashboardView } from '@/features/home';
 import { DashboardSkeletons } from '@/features/home/components/DashboardSkeletons';
 import { getFinancialSummaryAction } from '@/features/transactions/actions/transactions';
 import { getQueryClient } from '@/lib/get-query-client';
-
-import { cookies } from 'next/headers';
 
 export default async function HomePage() {
   return (

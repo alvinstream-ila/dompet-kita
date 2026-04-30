@@ -122,7 +122,7 @@ export function TransactionsView() {
             <span className="font-mono text-[8px] font-bold tracking-[0.3em] text-slate-400 uppercase md:text-[10px]">
               Money Journals
             </span>
-            {period && period.start && (
+            {period?.start && (
               <div className="mt-1 flex items-center gap-1.5 rounded-lg bg-slate-50 px-2 py-0.5 text-[7px] font-bold text-slate-500 ring-1 ring-slate-100 md:mt-2 md:px-3 md:py-1 md:text-[10px]">
                 <Calendar className="text-blue-royal h-2 w-2 md:h-3 md:w-3" />
                 <span>

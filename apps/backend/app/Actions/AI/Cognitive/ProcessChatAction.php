@@ -12,9 +12,7 @@ use App\Services\FinancialIntelligenceService;
 
 class ProcessChatAction
 {
-    public function __construct(protected ChatWithAiAction $chatWithAiAction, protected FinancialIntelligenceService $intelService)
-    {
-    }
+    public function __construct(protected ChatWithAiAction $chatWithAiAction, protected FinancialIntelligenceService $intelService) {}
 
     /**
      * Process a chat message with persistent history and cognitive simulation.

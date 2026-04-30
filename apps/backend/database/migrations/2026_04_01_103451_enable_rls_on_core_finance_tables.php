@@ -27,7 +27,7 @@ return new class extends Migration
             if (! str_contains(strtolower((string) $version), 'postgres')) {
                 return;
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             return;
         }
 

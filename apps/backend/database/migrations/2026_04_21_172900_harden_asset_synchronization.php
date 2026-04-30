@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         // 1. Add last_synced_at to assets table
-        Schema::table('assets', function (Blueprint $blueprint) {
+        Schema::table('assets', function (Blueprint $blueprint): void {
             $blueprint->timestamp('last_synced_at')->nullable()->after('is_market_synced');
         });
 
         // 2. Create asset_price_histories table for trend tracking
-        Schema::create('asset_price_histories', function (Blueprint $table) {
+        Schema::create('asset_price_histories', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('asset_id')->constrained()->cascadeOnDelete();
@@ -35,7 +35,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('asset_price_histories');
-        Schema::table('assets', function (Blueprint $blueprint) {
+        Schema::table('assets', function (Blueprint $blueprint): void {
             $blueprint->dropColumn('last_synced_at');
         });
     }

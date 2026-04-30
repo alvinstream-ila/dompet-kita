@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         // 1. Create Households Table
-        Schema::create('households', function (Blueprint $table) {
+        Schema::create('households', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('name');
             $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
@@ -22,7 +22,7 @@ return new class extends Migration
         });
 
         // 2. Harden Users Table
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             // Mapping column for Supabase RLS
             if (! Schema::hasColumn('users', 'auth_uuid')) {
                 $table->uuid('auth_uuid')->nullable()->unique()->after('id');
@@ -38,7 +38,7 @@ return new class extends Migration
         $financeTables = ['transactions', 'assets', 'loans', 'goals', 'holidays', 'asset_transactions'];
         foreach ($financeTables as $tableName) {
             if (Schema::hasTable($tableName)) {
-                Schema::table($tableName, function (Blueprint $table) use ($tableName) {
+                Schema::table($tableName, function (Blueprint $table) use ($tableName): void {
                     if (! Schema::hasColumn($tableName, 'household_id')) {
                         $table->foreignUuid('household_id')->nullable()->constrained('households')->onDelete('cascade');
                     }
@@ -55,14 +55,14 @@ return new class extends Migration
         $financeTables = ['transactions', 'assets', 'loans', 'goals', 'holidays', 'asset_transactions'];
         foreach ($financeTables as $tableName) {
             if (Schema::hasTable($tableName)) {
-                Schema::table($tableName, function (Blueprint $table) {
+                Schema::table($tableName, function (Blueprint $table): void {
                     $table->dropForeign(['household_id']);
                     $table->dropColumn('household_id');
                 });
             }
         }
 
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->dropForeign(['household_id']);
             $table->dropColumn(['auth_uuid', 'household_id']);
         });

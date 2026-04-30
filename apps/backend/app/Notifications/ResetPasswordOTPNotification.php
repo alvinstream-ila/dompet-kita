@@ -15,9 +15,7 @@ class ResetPasswordOTPNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(public string $code)
-    {
-    }
+    public function __construct(public string $code) {}
 
     /**
      * Get the notification's delivery channels.

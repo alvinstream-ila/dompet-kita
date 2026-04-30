@@ -1,22 +1,251 @@
 
 
-   JsonException 
 
-  Syntax error
+[2026-04-30 01:50:20] `C:\Programing alvin\dompet-kita\apps\backend`
 
-  at vendor\nunomaduro\phpinsights\src\Domain\Insights\SyntaxCheck.php:57
-     53▕         }
-     54▕         $configuration = Container::make()->get(Configuration::class);
-     55▕         $process->setTimeout($configuration->getTimeout())->run();
-     56▕ 
-  ➜  57▕         $output = json_decode($process->getOutput(), true, 512, JSON_THROW_ON_ERROR);
-     58▕         $errors = $output['results']['errors'] ?? [];
-     59▕ 
-     60▕         foreach ($errors as $error) {
-     61▕             if (preg_match('/^.*error:(.*) in .* on line [\d]+/m', $error['message'], $matches) === 1) {
+                                                                                                              
+                90.0%                   88.1%                   81.3%                   98.8%                 
+                                                                                                              
+                                                                                                              
+                 Code                 Complexity             Architecture               Style                 
 
-  1   vendor\nunomaduro\phpinsights\src\Domain\Insights\SyntaxCheck.php:57
 
-  2   vendor\nunomaduro\phpinsights\src\Domain\Runner.php:171
-      NunoMaduro\PhpInsights\Domain\Insights\SyntaxCheck::process()
+Score scale: ◼ 1-49 ◼ 50-79 ◼ 80-100
+
+[CODE] 90 pts within 7566 lines
+
+Comments ...................................................... 43.0 %
+Classes ....................................................... 37.8 %
+Functions ...................................................... 1.4 %
+Globally ...................................................... 17.8 %
+
+[COMPLEXITY] 88.1 pts with average of 2.26 cyclomatic complexity
+
+[ARCHITECTURE] 81.3 pts within 229 files
+
+Classes ....................................................... 86.5 %
+Interfaces ..................................................... 0.4 %
+Globally ...................................................... 10.5 %
+Traits ......................................................... 2.6 %
+
+[MISC] 98.8 pts on coding style and 0 security issues encountered
+
+• [Code] Forbidden public property:
+  app\Models\Household.php:34: Do not use public properties. Use method access instead.
+  app\Notifications\ResetPasswordOTPNotification.php:15: Do not use public properties. Use method access instead.
+  app\Notifications\VerifyEmailNotification.php:12: Do not use public properties. Use method access instead.
+
+• [Code] Unused variable:
+  app\Actions\AI\GenerateInsightAction.php:28: Unused variable $user.
+
+• [Code] Empty statement:
+  app\Actions\System\VerifyCloudConnectivityAction.php:28: Empty CATCH statement detected
+
+• [Code] No silenced errors:
+  app\Actions\System\BackupDatabaseAction.php:47: Silencing errors is discouraged; found: @unlink($tempPath...
+  app\Actions\System\BackupDatabaseAction.php:50: Silencing errors is discouraged; found: @unlink($encryptedPath...
+
+• [Code] Unnecessary string concat:
+  app\Services\Cfo\QuantumInsightEngine.php:133: String concat is not required here; use a single string instead
+  app\Services\Cfo\QuantumInsightEngine.php:134: String concat is not required here; use a single string instead
+  app\Services\Cfo\QuantumInsightEngine.php:135: String concat is not required here; use a single string instead
+  +15 issues omitted
+
+• [Code] Disallow empty:
+  app\Services\SelfHealingService.php:51: Use of empty() is disallowed.
+  app\Services\StorageService.php:31: Use of empty() is disallowed.
+  app\Services\StorageService.php:42: Use of empty() is disallowed.
+  +24 issues omitted
+
+• [Code] Disallow short ternary operator:
+  app\Providers\AppServiceProvider.php:101: Use of short ternary operator is disallowed.
+  app\Providers\AppServiceProvider.php:102: Use of short ternary operator is disallowed.
+  app\Services\LegacyService.php:28: Use of short ternary operator is disallowed.
+  +20 issues omitted
+
+• [Code] Inline doc comment declaration:
+  app\Http\Resources\WealthHistoryResource.php:24: Invalid inline documentation comment format "@var array<string, mixed>", expected "@var type $variableName Optional description".
+  app\Services\LegacyService.php:32: Missing variable $lastActive before or after the documentation comment.
+  app\Services\MarketService.php:36: Invalid inline documentation comment format "@var array{currency_rates: array<string, float>, gold_antam_gram: float, gold_global_oz: float, inflation_rate: float, last_updated: string}", expected "@var type $variableName Optional description".
+  +4 issues omitted
+
+• [Code] Unused parameter:
+  app\Services\AI\OpenRouterProvider.php:145: Unused parameter $mimeType.
+  app\Services\AI\OpenRouterProvider.php:145: Unused parameter $prompt.
+  app\Services\StorageService.php:24: Unused parameter $request.
+  +39 issues omitted
+
+• [Complexity] Having `classes` with total cyclomatic complexity more than 5 is prohibited - Consider refactoring:
+  app\Services\StorageService.php: 22 cyclomatic complexity
+  app\Traits\ClearsFinancialCache.php: 8 cyclomatic complexity
+  app\Traits\HasHouseholdScope.php: 11 cyclomatic complexity
+  +51 issues omitted
+
+• [Complexity] Having `methods` with cyclomatic complexity more than 5 is prohibited - Consider refactoring:
+  C:\Programing alvin\dompet-kita\apps\backend\app\Services\SelfHealingService.php:performDiagnosis: 6 cyclomatic complexity
+  C:\Programing alvin\dompet-kita\apps\backend\app\Services\StorageService.php:getFileDataFromRequest: 11 cyclomatic complexity
+  C:\Programing alvin\dompet-kita\apps\backend\app\Services\StorageService.php:tryDownloadFromUrl: 6 cyclomatic complexity
+  +25 issues omitted
+
+• [Architecture] Superfluous interface naming:
+  app\Services\AI\AiProviderInterface.php:5: Superfluous suffix "Interface".
+
+• [Architecture] Superfluous exception naming:
+  app\Exceptions\MailTransportException.php:10: Superfluous suffix "Exception".
+  app\Exceptions\MarketServiceException.php:10: Superfluous suffix "Exception".
+  app\Exceptions\PenpotException.php:10: Superfluous suffix "Exception".
+  +5 issues omitted
+
+• [Architecture] Function length:
+  app\Services\SentinelService.php:46: Your function is too long. Currently using 21 lines. Can be up to 20 lines.
+  app\Services\StorageService.php:24: Your function is too long. Currently using 23 lines. Can be up to 20 lines.
+  app\Traits\HasHouseholdScope.php:42: Your function is too long. Currently using 27 lines. Can be up to 20 lines.
+  +90 issues omitted
+
+• [Style] Line length:
+  routes\api.php:158: Line exceeds 80 characters; contains 95 characters
+  routes\api.php:164: Line exceeds 80 characters; contains 83 characters
+  routes\api.php:165: Line exceeds 80 characters; contains 88 characters
+  +1063 issues omitted
+
+ [OK] 🧙 ️Congrats ! 108 issues fixed                                                                                   
+
+• [Code] Modern class name reference:
+ app\Traits\AccountingJournalist.php: 1 issue fixed
+
+• [Code] Disallow short ternary operator:
+ app\Http\Controllers\LegacyController.php: 1 issue fixed
+
+• [Code] Require combined assignment operator:
+ app\Services\BudgetService.php: 1 issue fixed
+
+• [Code] Useless parentheses:
+ app\Actions\Finance\Tax\CalculateTaxAction.php: 1 issue fixed
+ app\Actions\Security\DeadMansSwitch\GenerateReportAction.php: 1 issue fixed
+ app\Console\Commands\CheckLegacyInactivity.php: 1 issue fixed
+ app\Models\Asset.php: 1 issue fixed
+ app\Notifications\LegacyGracePeriodNotification.php: 1 issue fixed
+ app\Services\FinancialIntelligenceService.php: 1 issue fixed
+
+• [Code] No useless else:
+ app\Http\Controllers\LoanController.php: 1 issue fixed
+
+• [Code] Disallow array type hint syntax:
+ app\Services\FinancialIntelligenceService.php: 1 issue fixed
+
+• [Code] No empty comment:
+ app\Exceptions\InsufficientAssetBalanceException.php: 1 issue fixed
+
+• [Style] Scope closing brace:
+ app\Actions\AI\AnalyzeReceiptAction.php: 1 issue fixed
+ app\Actions\AI\ChatWithAiAction.php: 1 issue fixed
+ app\Actions\AI\GenerateInsightAction.php: 1 issue fixed
+ app\Actions\AI\GetLegacyAdviceAction.php: 1 issue fixed
+ app\Actions\AI\GetTaxAdviceAction.php: 1 issue fixed
+ app\Actions\AI\GetWealthAdviceAction.php: 1 issue fixed
+ app\Actions\AI\GuardianAnalyzeAction.php: 1 issue fixed
+ app\Actions\AI\PerformSelfHealingAction.php: 1 issue fixed
+ app\Actions\AI\SystemHealthCheckAction.php: 1 issue fixed
+ app\Actions\Finance\Asset\CreateAssetAction.php: 1 issue fixed
+ app\Actions\Finance\Asset\DeleteAssetAction.php: 1 issue fixed
+ app\Actions\Finance\Asset\UpdateAssetAction.php: 1 issue fixed
+ app\Actions\Finance\GetQuantumInsightsAction.php: 1 issue fixed
+ app\Actions\Finance\PerformCfoAnalysisAction.php: 1 issue fixed
+ app\Actions\Finance\ProcessScheduledTransactionsAction.php: 1 issue fixed
+ app\Actions\Finance\Transaction\GetTransactionSummaryAction.php: 1 issue fixed
+ app\Actions\Finance\Wealth\ForecastWealthAction.php: 1 issue fixed
+ app\Actions\Finance\Wealth\SimulateMonteCarloAction.php: 1 issue fixed
+ app\Actions\Finance\Wealth\SimulatePurchaseAction.php: 1 issue fixed
+ app\Actions\Finance\Wealth\SyncMarketAssetsAction.php: 1 issue fixed
+ app\Actions\Security\DeadMansSwitch\CheckTriggerAction.php: 1 issue fixed
+ app\Actions\Security\DeadMansSwitch\GenerateReportAction.php: 1 issue fixed
+ app\Actions\System\BackupDatabaseAction.php: 1 issue fixed
+ app\Actions\System\GetSystemStatusAction.php: 1 issue fixed
+ app\Exceptions\AiServiceException.php: 1 issue fixed
+ app\Exceptions\AnalyzeReceiptException.php: 1 issue fixed
+ app\Exceptions\CfoAnalysisException.php: 1 issue fixed
+ app\Exceptions\FileStorageException.php: 1 issue fixed
+ app\Exceptions\MailTransportException.php: 1 issue fixed
+ app\Exceptions\MarketServiceException.php: 1 issue fixed
+ app\Exceptions\PenpotException.php: 1 issue fixed
+ app\Http\Controllers\AIController.php: 1 issue fixed
+ app\Http\Controllers\LegacyController.php: 1 issue fixed
+ app\Http\Controllers\TaxController.php: 1 issue fixed
+ app\Http\Controllers\TransactionController.php: 1 issue fixed
+ app\Notifications\LargeExpenseNotification.php: 1 issue fixed
+ app\Notifications\LegacyGracePeriodNotification.php: 1 issue fixed
+ app\Notifications\LegacyTriggerNotification.php: 1 issue fixed
+ app\Notifications\PartnerInvitationNotification.php: 1 issue fixed
+ app\Providers\AiServiceProvider.php: 1 issue fixed
+ app\Providers\MailServiceProvider.php: 1 issue fixed
+ app\Services\GeminiService.php: 1 issue fixed
+ app\Services\LegacyService.php: 1 issue fixed
+ app\Services\SelfHealingService.php: 1 issue fixed
+
+• [Style] Disallow tab indent:
+ app\Http\Controllers\LoanController.php: 1 issue fixed
+ app\Http\Resources\UserResource.php: 1 issue fixed
+ app\Models\Asset.php: 1 issue fixed
+ app\Models\ScheduledTransaction.php: 1 issue fixed
+ app\Models\Transaction.php: 1 issue fixed
+ app\Services\FinancialIntelligenceService.php: 1 issue fixed
+
+• [Style] Doc comment spacing:
+ app\Http\Controllers\LoanController.php: 1 issue fixed
+ app\Http\Resources\UserResource.php: 1 issue fixed
+ app\Models\Asset.php: 1 issue fixed
+ app\Models\GoalTransaction.php: 1 issue fixed
+ app\Models\HolidayTransaction.php: 1 issue fixed
+ app\Models\Household.php: 1 issue fixed
+ app\Models\ScheduledTransaction.php: 1 issue fixed
+ app\Models\Transaction.php: 1 issue fixed
+ app\Models\User.php: 1 issue fixed
+
+• [Style] Class instantiation:
+ app\Console\Commands\TestLangSmithTrace.php: 1 issue fixed
+ app\Notifications\LargeExpenseNotification.php: 1 issue fixed
+ app\Notifications\LegacyGracePeriodNotification.php: 1 issue fixed
+ app\Notifications\LegacyTriggerNotification.php: 1 issue fixed
+ app\Notifications\PartnerInvitationNotification.php: 1 issue fixed
+ app\Notifications\ResetPasswordOTPNotification.php: 1 issue fixed
+ app\Notifications\VerifyEmailNotification.php: 1 issue fixed
+ app\Providers\AiServiceProvider.php: 1 issue fixed
+ app\Providers\MailServiceProvider.php: 1 issue fixed
+
+• [Style] Braces:
+ app\Actions\Finance\Transaction\GetTransactionSummaryAction.php: 1 issue fixed
+ app\Actions\System\BackupDatabaseAction.php: 1 issue fixed
+ app\Actions\System\GetSystemStatusAction.php: 1 issue fixed
+ app\Console\Commands\CheckLegacyInactivity.php: 1 issue fixed
+ app\Exceptions\AiServiceException.php: 1 issue fixed
+ app\Exceptions\AnalyzeReceiptException.php: 1 issue fixed
+ app\Exceptions\CfoAnalysisException.php: 1 issue fixed
+ app\Exceptions\FileStorageException.php: 1 issue fixed
+ app\Exceptions\MailTransportException.php: 1 issue fixed
+ app\Exceptions\MarketServiceException.php: 1 issue fixed
+ app\Exceptions\PenpotException.php: 1 issue fixed
+ app\Http\Controllers\TransactionController.php: 1 issue fixed
+ app\Providers\AiServiceProvider.php: 1 issue fixed
+ app\Providers\MailServiceProvider.php: 1 issue fixed
+ app\Services\SelfHealingService.php: 1 issue fixed
+
+• [Style] Class definition:
+ app\Exceptions\AiServiceException.php: 1 issue fixed
+ app\Exceptions\AnalyzeReceiptException.php: 1 issue fixed
+ app\Exceptions\CfoAnalysisException.php: 1 issue fixed
+ app\Exceptions\FileStorageException.php: 1 issue fixed
+ app\Exceptions\MailTransportException.php: 1 issue fixed
+ app\Exceptions\MarketServiceException.php: 1 issue fixed
+ app\Exceptions\PenpotException.php: 1 issue fixed
+
+• [Style] Ordered class elements:
+ app\Http\Controllers\AIController.php: 1 issue fixed
+ app\Http\Controllers\LoanController.php: 1 issue fixed
+ app\Http\Controllers\TransactionController.php: 1 issue fixed
+ app\Models\AssetPriceHistory.php: 1 issue fixed
+ app\Models\Household.php: 1 issue fixed
+ app\Models\User.php: 1 issue fixed
+
+1374 issues remaining
+
 

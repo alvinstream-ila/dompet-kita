@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Spatie\Honeypot\SpamProtection;
 use Spatie\Honeypot\SpamResponder\BlankPageResponder;
 

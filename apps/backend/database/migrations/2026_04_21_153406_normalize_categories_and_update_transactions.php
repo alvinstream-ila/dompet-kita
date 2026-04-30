@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         // 1. Create Categories Table
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table): void {
             $table->id();
             $table->foreignUuid('household_id')->nullable()->constrained('households')->onDelete('cascade');
             $table->string('name');
@@ -27,7 +27,7 @@ return new class extends Migration
         });
 
         // 2. Update Transactions Table
-        Schema::table('transactions', function (Blueprint $table) {
+        Schema::table('transactions', function (Blueprint $table): void {
             if (! Schema::hasColumn('transactions', 'category_id')) {
                 $table->foreignId('category_id')->nullable()->after('amount')->constrained('categories')->onDelete('set null');
             }
@@ -35,7 +35,7 @@ return new class extends Migration
 
         // 3. Update Scheduled Transactions if they exist
         if (Schema::hasTable('scheduled_transactions')) {
-            Schema::table('scheduled_transactions', function (Blueprint $table) {
+            Schema::table('scheduled_transactions', function (Blueprint $table): void {
                 if (! Schema::hasColumn('scheduled_transactions', 'category_id')) {
                     $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
                 }
@@ -49,13 +49,13 @@ return new class extends Migration
     public function down(): void
     {
         if (Schema::hasTable('scheduled_transactions')) {
-            Schema::table('scheduled_transactions', function (Blueprint $table) {
+            Schema::table('scheduled_transactions', function (Blueprint $table): void {
                 $table->dropForeign(['category_id']);
                 $table->dropColumn('category_id');
             });
         }
 
-        Schema::table('transactions', function (Blueprint $table) {
+        Schema::table('transactions', function (Blueprint $table): void {
             $table->dropForeign(['category_id']);
             $table->dropColumn('category_id');
         });

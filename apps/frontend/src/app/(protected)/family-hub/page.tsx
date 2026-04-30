@@ -29,11 +29,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAuth } from '@/features/auth';
-import type { ApiError } from '@/types';
 import { unlinkPartnerAction } from '@/features/family/actions/partner';
 import { InvitePartnerDialog } from '@/features/family/components/InvitePartnerDialog';
 import api from '@/lib/axios';
 import { useFormatting } from '@/lib/hooks/useFormatting';
+import type { ApiError } from '@/types';
 
 /**
  * FamilyHub Page - Ecosystem & Legacy 🏡

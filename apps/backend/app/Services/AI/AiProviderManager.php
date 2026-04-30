@@ -19,9 +19,7 @@ class AiProviderManager
     /**
      * @param  array<AiProviderInterface>  $providers
      */
-    public function __construct(protected array $providers = [])
-    {
-    }
+    public function __construct(protected array $providers = []) {}
 
     /**
      * Tries each provider in order until one succeeds.

@@ -2,6 +2,19 @@
 
 ---
 
+## [7.5.5] — 2026-04-29 (Transaction Visibility & API Standardization)
+
+### 🚀 CI/CD & DEPLOYMENT
+- **Deployment to Main**: Successfully pushed all transaction visibility fixes and metadata exposure to the `main` branch.
+- **Pre-Push Hardening**: Resolved "Next build lock" issues and satisfied strict PHPStan Level 9 requirements for the `metadata` property.
+- **Sovereign Security Gate**: All security audits passed with a 100/100 score.
+
+### ⚡ DATA RELIABILITY
+- **API Nesting Fix**: Standardized `TransactionController` output to preserve pagination metadata (`data`, `links`, `meta`) within the `success()` wrapper.
+- **Metadata Exposure**: Expose raw transaction metadata to the frontend, enabling future deep-linking with Assets and Loans.
+- **Frontend Resilience**: Hardened `useTransactions` hook to safely handle nested API structures.
+
+
 ## [7.5.4] — 2026-04-22 (Transaction Hook Refactoring)
 
 ### 🛠️ CODE QUALITY & REFACTORING

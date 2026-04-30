@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class GenerateWisdomAction
 {
-    public function __construct(protected ChatWithAiAction $chatWithAiAction, protected FinancialIntelligenceService $finIntel)
-    {
-    }
+    public function __construct(protected ChatWithAiAction $chatWithAiAction, protected FinancialIntelligenceService $finIntel) {}
 
     /**
      * Generate a proactive financial insight for a user.

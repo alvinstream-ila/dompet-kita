@@ -12,7 +12,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { UserNavDropdown } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import {

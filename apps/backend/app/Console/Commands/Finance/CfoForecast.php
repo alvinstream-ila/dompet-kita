@@ -55,7 +55,7 @@ class CfoForecast extends Command
             $this->info("🔮 PROJECTION (Next {$months} months):");
 
             $projectionData = $data['projection'];
-            $tableData = $projectionData->map(fn($item): array => [
+            $tableData = $projectionData->map(fn ($item): array => [
                 'month' => $item['month'],
                 'projected' => 'Rp '.number_format((float) $item['estimated_net_worth'], 0, ',', '.'),
             ])->toArray();

@@ -12,9 +12,7 @@ class VerifyEmailNotification extends VerifyEmail
     /**
      * Create a new notification instance.
      */
-    public function __construct(public string $code)
-    {
-    }
+    public function __construct(public string $code) {}
 
     /**
      * Get the mail representation of the notification.

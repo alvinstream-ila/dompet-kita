@@ -7,12 +7,10 @@ class CreateFirewallIpsTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('firewall_ips', function (Blueprint $table) {
+        Schema::create('firewall_ips', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('ip');
             $table->integer('log_id')->nullable();
@@ -26,10 +24,8 @@ class CreateFirewallIpsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::drop('firewall_ips');
     }

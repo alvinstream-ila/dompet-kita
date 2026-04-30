@@ -16,7 +16,7 @@ return new class extends Migration
 
         foreach ($tables as $tableName) {
             if (Schema::hasTable($tableName)) {
-                Schema::table($tableName, function (Blueprint $table) use ($tableName) {
+                Schema::table($tableName, function (Blueprint $table) use ($tableName): void {
                     if (! Schema::hasColumn($tableName, 'household_id')) {
                         $table->foreignUuid('household_id')->nullable()->constrained('households')->onDelete('cascade');
                     }
@@ -34,7 +34,7 @@ return new class extends Migration
 
         foreach ($tables as $tableName) {
             if (Schema::hasTable($tableName)) {
-                Schema::table($tableName, function (Blueprint $table) {
+                Schema::table($tableName, function (Blueprint $table): void {
                     $table->dropForeign(['household_id']);
                     $table->dropColumn('household_id');
                 });

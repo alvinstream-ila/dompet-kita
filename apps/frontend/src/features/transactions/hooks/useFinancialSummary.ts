@@ -1,8 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSettings } from '@/features/settings';
+import type { Transaction } from '@/types';
 import { getFinancialSummaryAction } from '../actions/transactions';
-
-import { Transaction } from '@/types';
 
 export function useFinancialSummary(month?: number, year?: number) {
   const now = new Date();

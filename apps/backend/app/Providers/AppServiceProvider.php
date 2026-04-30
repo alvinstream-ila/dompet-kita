@@ -78,20 +78,20 @@ class AppServiceProvider extends ServiceProvider
      */
     private function bootRateLimiters(): void
     {
-        RateLimiter::for('api', fn(Request $request): Limit => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
+        RateLimiter::for('api', fn (Request $request): Limit => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
 
         // AI Feature Limits
-        RateLimiter::for('ai-insight', fn(Request $request): array => [
+        RateLimiter::for('ai-insight', fn (Request $request): array => [
             Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()),
             Limit::perDay(100)->by($request->user()?->id ?: $request->ip()),
         ]);
 
-        RateLimiter::for('ai-chat', fn(Request $request): array => [
+        RateLimiter::for('ai-chat', fn (Request $request): array => [
             Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()),
             Limit::perDay(50)->by($request->user()?->id ?: $request->ip()),
         ]);
 
-        RateLimiter::for('ai-scan', fn(Request $request): array => [
+        RateLimiter::for('ai-scan', fn (Request $request): array => [
             Limit::perMinute(3)->by($request->user()?->id ?: $request->ip()),
             Limit::perDay(30)->by($request->user()?->id ?: $request->ip()),
         ]);

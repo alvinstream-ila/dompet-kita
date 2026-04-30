@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->foreignId('partner_id')->nullable()->after('id')->constrained('users')->onDelete('set null');
             $table->decimal('large_expense_threshold', 15, 2)->default(1000000)->after('monthly_budget_limit');
         });
@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->dropForeign(['partner_id']);
             $table->dropColumn(['partner_id', 'large_expense_threshold']);
         });

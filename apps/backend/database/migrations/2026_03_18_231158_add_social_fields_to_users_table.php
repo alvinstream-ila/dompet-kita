@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->string('social_id')->nullable()->after('id');
             $table->string('social_type')->nullable()->after('social_id');
             $table->string('password')->nullable()->change(); // Password can be null for social login
@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->dropColumn(['social_id', 'social_type']);
             $table->string('password')->nullable(false)->change();
         });

@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         // Add grace period tracking to users table
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->timestamp('legacy_grace_start_at')->nullable()->after('is_legacy_triggered');
             $table->string('legacy_partner_name')->nullable()->after('partner_id');
             $table->string('legacy_partner_email')->nullable()->after('legacy_partner_name');
         });
 
         // Create the legacy vault reports table
-        Schema::create('legacy_vault_reports', function (Blueprint $table) {
+        Schema::create('legacy_vault_reports', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('filename');
@@ -39,7 +39,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('legacy_vault_reports');
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->dropColumn(['legacy_grace_start_at', 'legacy_partner_name', 'legacy_partner_email']);
         });
     }

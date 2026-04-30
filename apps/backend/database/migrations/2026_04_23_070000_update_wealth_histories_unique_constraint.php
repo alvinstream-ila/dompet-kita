@@ -15,7 +15,7 @@ return new class extends Migration
         // Populate household_id from users table if missing
         DB::statement('UPDATE wealth_histories SET household_id = users.household_id FROM users WHERE wealth_histories.user_id = users.id AND wealth_histories.household_id IS NULL');
 
-        Schema::table('wealth_histories', function (Blueprint $table) {
+        Schema::table('wealth_histories', function (Blueprint $table): void {
             // Drop old unique constraint
             $table->dropUnique(['user_id', 'month', 'year']);
 
@@ -32,7 +32,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('wealth_histories', function (Blueprint $table) {
+        Schema::table('wealth_histories', function (Blueprint $table): void {
             $table->dropUnique(['household_id', 'month', 'year']);
             $table->unique(['user_id', 'month', 'year']);
             $table->uuid('household_id')->nullable(true)->change();

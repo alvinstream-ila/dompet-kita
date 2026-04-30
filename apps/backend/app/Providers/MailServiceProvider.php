@@ -21,7 +21,7 @@ class MailServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Register Google Mail Transport (OAuth2 Over HTTP API to bypass Railway SMTP blocks)
-        Mail::extend('google', function (array $config): \App\Services\Security\GoogleMailTransport {
+        Mail::extend('google', function (array $config): GoogleMailTransport {
             $client = new GoogleClient;
             $client->setClientId($config['client_id']);
             $client->setClientSecret($config['client_secret']);

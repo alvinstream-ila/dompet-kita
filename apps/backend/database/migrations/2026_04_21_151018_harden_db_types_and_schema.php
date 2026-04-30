@@ -21,7 +21,7 @@ return new class extends Migration
         }
 
         // 2. Add Missing Column to Transactions
-        Schema::table('transactions', function (Blueprint $table) {
+        Schema::table('transactions', function (Blueprint $table): void {
             if (! Schema::hasColumn('transactions', 'is_ai_generated')) {
                 $table->boolean('is_ai_generated')->default(false)->after('metadata');
             }
@@ -33,7 +33,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('transactions', function (Blueprint $table) {
+        Schema::table('transactions', function (Blueprint $table): void {
             $table->dropColumn('is_ai_generated');
         });
 

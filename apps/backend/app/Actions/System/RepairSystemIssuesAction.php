@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class RepairSystemIssuesAction extends BaseAction
 {
-    public function __construct(protected AiProviderManager $gemini)
-    {
-    }
+    public function __construct(protected AiProviderManager $gemini) {}
 
     /**
      * Detect and repair system issues.

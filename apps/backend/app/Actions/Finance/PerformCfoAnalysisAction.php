@@ -51,7 +51,7 @@ class PerformCfoAnalysisAction extends BaseAction
 
         // 2. Calculate Monthly Metrics
         $monthlyData = $transactions->groupBy(fn ($t): string => Carbon::parse($t->date)->format('Y-m'))
-            ->map(fn($group): array => [
+            ->map(fn ($group): array => [
                 'income' => (float) $group->where('type', 'income')->sum('amount'),
                 'expense' => (float) $group->where('type', 'expense')->sum('amount'),
             ]);

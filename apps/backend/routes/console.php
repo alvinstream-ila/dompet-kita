@@ -11,10 +11,10 @@ Schedule::command('ai:guardian')->dailyAt('08:00');
 Schedule::command('ai:self-heal --auto-fix')->dailyAt('03:00');
 
 // 🛡️ Phase 5: Digital Legacy Sentinel (Dead Man's Switch)
-Schedule::call(function () {
+Schedule::call(function (): void {
     app(LegacyService::class)->checkAndTriggerDeadMansSwitch();
 })->dailyAt('02:00');
 
-Artisan::command('inspire', function () {
+Artisan::command('inspire', function (): void {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');

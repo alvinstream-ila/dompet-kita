@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+use App\Models\User;
+
 /**
  * ┌─────────────────────────────────────────────────────────────────────────┐
  * │  🛡️ DOMPET KITA — INTERNAL FIREWALL CONFIGURATION                      │
@@ -10,17 +13,16 @@
  * │  Session Injection, Malicious Bots.                                    │
  * └─────────────────────────────────────────────────────────────────────────┘
  */
-
 return [
 
     'enabled' => env('FIREWALL_ENABLED', true),
 
     'authPath' => ($authPath = 'api/auth/*'),
 
-    'whitelist' => array_filter(explode(',', env('FIREWALL_WHITELIST', '127.0.0.1'))),
+    'whitelist' => array_filter(explode(',', (string) env('FIREWALL_WHITELIST', '127.0.0.1'))),
 
     'models' => [
-        'user' => '\App\Models\User',
+        'user' => User::class,
         // Logging to DB currently disabled — relying on Sentry for observability.
         // 'log' => '\App\Models\FirewallLog',
         // 'ip'  => '\App\Models\FirewallIp',
@@ -50,8 +52,8 @@ return [
             'enabled' => env('FIREWALL_SLACK_ENABLED', false),
             'emoji' => ':shield:',
             'from' => env('FIREWALL_SLACK_FROM', 'Dompet Kita Firewall'),
-            'to' => env('FIREWALL_SLACK_TO', null),
-            'channel' => env('FIREWALL_SLACK_CHANNEL', null),
+            'to' => env('FIREWALL_SLACK_TO'),
+            'channel' => env('FIREWALL_SLACK_CHANNEL'),
         ],
 
     ],
@@ -92,7 +94,7 @@ return [
             'properties' => ['allow' => [], 'block' => []],
             'auto_block' => [
                 'attempts' => 10,
-                'frequency' => 1 * 60,
+                'frequency' => 60,
                 'period' => 30 * 60,
             ],
         ],
@@ -106,7 +108,7 @@ return [
             ],
             'auto_block' => [
                 'attempts' => 5,
-                'frequency' => 1 * 60,
+                'frequency' => 60,
                 'period' => 30 * 60,
             ],
         ],
@@ -160,7 +162,7 @@ return [
             'enabled' => true,
             'auto_block' => [
                 'attempts' => 5,
-                'frequency' => 1 * 60,
+                'frequency' => 60,
                 'period' => 30 * 60,
             ],
         ],
@@ -304,7 +306,7 @@ return [
             'inspections' => [],
             'auto_block' => [
                 'attempts' => 5,
-                'frequency' => 1 * 60,
+                'frequency' => 60,
                 'period' => 30 * 60,
             ],
         ],

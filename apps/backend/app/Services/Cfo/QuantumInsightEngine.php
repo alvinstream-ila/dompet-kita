@@ -11,9 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class QuantumInsightEngine
 {
-    public function __construct(protected AiProviderManager $aiManager)
-    {
-    }
+    public function __construct(protected AiProviderManager $aiManager) {}
 
     /**
      * Generate fresh insights for a specific user.

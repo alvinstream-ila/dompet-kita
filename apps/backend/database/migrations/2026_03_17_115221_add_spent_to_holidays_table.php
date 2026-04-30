@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('holidays', function (Blueprint $table) {
+        Schema::table('holidays', function (Blueprint $table): void {
             $table->decimal('spent', 15, 2)->default(0)->after('budget');
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('holidays', function (Blueprint $table) {
+        Schema::table('holidays', function (Blueprint $table): void {
             $table->dropColumn('spent');
         });
     }

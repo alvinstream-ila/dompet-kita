@@ -23,6 +23,8 @@
     "scan:fix": "turbo run scan:fix && node scripts/generate-summary.mjs",
     "report:summary": "node scripts/generate-summary.mjs",
     "supabase": "supabase",
+    "snyk:auth": "bin\\snyk.exe auth",
+    "snyk:test": "bin\\snyk.exe test",
     "uplink": "infra\\bin\\uplink",
     "rclone": "infra\\bin\\rclone --config infra\\config\\rclone.conf",
     "prepare": "node -e \"if(process.env.NODE_ENV !== 'production' && !process.env.CI && !process.env.VERCEL && require('fs').existsSync('.git')){require('child_process').execSync('husky install')}\" || exit 0"

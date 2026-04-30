@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('assets', function (Blueprint $table) {
+        Schema::table('assets', function (Blueprint $table): void {
             $table->decimal('invested_capital', 20, 2)->default(0)->after('value');
         });
 
@@ -27,7 +27,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('assets', function (Blueprint $table) {
+        Schema::table('assets', function (Blueprint $table): void {
             $table->dropColumn('invested_capital');
         });
     }

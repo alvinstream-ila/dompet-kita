@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('goals', function (Blueprint $table) {
+        Schema::table('goals', function (Blueprint $table): void {
             $table->string('icon')->nullable()->after('category');
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('goals', function (Blueprint $table) {
+        Schema::table('goals', function (Blueprint $table): void {
             $table->dropColumn('icon');
         });
     }

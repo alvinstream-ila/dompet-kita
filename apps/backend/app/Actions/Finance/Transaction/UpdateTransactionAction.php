@@ -16,7 +16,7 @@ class UpdateTransactionAction extends BaseAction
      */
     public function execute(User $user, Transaction $transaction, array $data): Transaction
     {
-        return DB::transaction(function () use ($user, $transaction, $data): \App\Models\Transaction {
+        return DB::transaction(function () use ($user, $transaction, $data): Transaction {
             $this->clearTransactionCache($user);
 
             $transaction->update($data);

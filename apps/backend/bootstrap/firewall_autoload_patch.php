@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * ── Akaunting Firewall + Dependencies Autoload Patch ───────────────────────
  * Registers missing PSR-4 namespaces that are installed in vendor but absent

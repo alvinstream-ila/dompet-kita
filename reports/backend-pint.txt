@@ -1,10 +1,10 @@
 
-  ✓✓.....✓.✓✓✓✓.✓✓.✓✓..✓...✓....✓✓...✓..✓✓✓✓..✓✓.....✓.✓...........................................✓......✓✓✓✓✓......✓
-  ......✓..✓....................✓...........✓✓.✓.✓✓✓✓✓......✓.✓..........✓✓✓...✓......................................
-  ...............................................................
+  ✓✓......✓.✓✓✓✓.✓✓.✓✓..✓...✓....✓✓...✓..✓✓✓✓..✓✓.....✓.✓............................................✓......✓✓✓✓✓✓✓✓✓.
+  .....✓✓.....✓..✓...................✓.✓......✓.✓✓....✓✓.✓.✓✓✓✓✓✓............✓.✓...........✓✓...✓.........✓.........✓.
+  ..............................................................................................✓..........
 
   ──────────────────────────────────────────────────────────────────────────────────────────────────────────── Laravel  
-    FIXED   ......................................................................... 295 files, 48 style issues fixed  
+    FIXED   ......................................................................... 337 files, 60 style issues fixed  
   ✓ app\Actions\AI\AnalyzeReceiptAction.php unary_operator_spaces, not_operator_with_successor_space, single_line_emp…  
   ✓ app\Actions\AI\ChatWithAiAction.php                                                         single_line_empty_body  
   ✓ app\Actions\AI\GenerateInsightAction.php unary_operator_spaces, not_operator_with_successor_space, single_line_em…  
@@ -31,26 +31,38 @@
   ✓ app\Actions\System\GetSystemStatusAction.php                                                single_line_empty_body  
   ✓ app\Console\Commands\TestLangSmithTrace.php                                                   new_with_parentheses  
   ✓ app\Exceptions\AiServiceException.php                                                       single_line_empty_body  
+  ✓ app\Exceptions\AnalyzeReceiptException.php                                                  single_line_empty_body  
+  ✓ app\Exceptions\CfoAnalysisException.php                                                     single_line_empty_body  
   ✓ app\Exceptions\FileStorageException.php                                                     single_line_empty_body  
+  ✓ app\Exceptions\InsufficientAssetBalanceException.php                                        single_line_empty_body  
   ✓ app\Exceptions\MailTransportException.php                                                   single_line_empty_body  
   ✓ app\Exceptions\MarketServiceException.php                                                   single_line_empty_body  
+  ✓ app\Exceptions\PenpotException.php                                                          single_line_empty_body  
   ✓ app\Http\Controllers\AIController.php unary_operator_spaces, not_operator_with_successor_space, single_line_empty…  
-  ✓ app\Http\Controllers\LegacyController.php unary_operator_spaces, not_operator_with_successor_space, single_line_e…  
+  ✓ app\Http\Controllers\LegacyController.php                                                   single_line_empty_body  
+  ✓ app\Http\Controllers\LoanController.php unary_operator_spaces, phpdoc_separation, not_operator_with_successor_spa…  
   ✓ app\Http\Controllers\TaxController.php unary_operator_spaces, not_operator_with_successor_space, single_line_empt…  
   ✓ app\Http\Controllers\TransactionController.php unary_operator_spaces, not_operator_with_successor_space, single_l…  
-  ✓ app\Models\Asset.php                                                                             phpdoc_separation  
+  ✓ app\Http\Resources\UserResource.php                                                              phpdoc_separation  
+  ✓ app\Models\Asset.php                   unary_operator_spaces, phpdoc_separation, not_operator_with_successor_space  
+  ✓ app\Models\GoalTransaction.php                                                                   phpdoc_separation  
+  ✓ app\Models\HolidayTransaction.php                                                                phpdoc_separation  
+  ✓ app\Models\Household.php                                                                         phpdoc_separation  
   ✓ app\Models\ScheduledTransaction.php                                                              phpdoc_separation  
   ✓ app\Models\Transaction.php             unary_operator_spaces, phpdoc_separation, not_operator_with_successor_space  
   ✓ app\Models\User.php                                                                              phpdoc_separation  
   ✓ app\Notifications\LargeExpenseNotification.php                        new_with_parentheses, single_line_empty_body  
+  ✓ app\Notifications\LegacyGracePeriodNotification.php                   new_with_parentheses, single_line_empty_body  
   ✓ app\Notifications\LegacyTriggerNotification.php new_with_parentheses, unary_operator_spaces, not_operator_with_su…  
   ✓ app\Notifications\PartnerInvitationNotification.php                   new_with_parentheses, single_line_empty_body  
   ✓ app\Notifications\ResetPasswordOTPNotification.php                                            new_with_parentheses  
   ✓ app\Notifications\VerifyEmailNotification.php                                                 new_with_parentheses  
   ✓ app\Providers\AiServiceProvider.php                                   new_with_parentheses, single_line_empty_body  
   ✓ app\Providers\MailServiceProvider.php                                 new_with_parentheses, single_line_empty_body  
-  ✓ app\Services\FinancialIntelligenceService.php                                                    phpdoc_separation  
   ✓ app\Services\GeminiService.php                                                              single_line_empty_body  
   ✓ app\Services\LegacyService.php                                                              single_line_empty_body  
   ✓ app\Services\SelfHealingService.php                                                         single_line_empty_body  
+  ✓ bootstrap\providers.php                                                               fully_qualified_strict_types  
+  ✓ config\insights.php                                                  fully_qualified_strict_types, ordered_imports  
+  ✓ scratch\capture_insights.php                                                          blank_line_after_opening_tag  
 

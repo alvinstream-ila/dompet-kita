@@ -23,7 +23,7 @@ class GetAssetSummaryAction extends BaseAction
     {
         $query = Asset::query();
 
-        if ($user instanceof \App\Models\User) {
+        if ($user instanceof User) {
             $query->where('user_id', $user->id);
         }
 

@@ -1,0 +1,10 @@
+﻿php : Note: Using configuration file C:\Programing alvin\dompet-kita\apps\backend\phpstan.neon.
+At line:1 char:1
++ php vendor/bin/phpstan analyse --error-format=json --memory-limit=2G  ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Note: Using con...d\phpstan.neon.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   0/296 [>---------------------------]   0%[1G[2K 296/296 [============================] 100%
+
+{"totals":{"errors":0,"file_errors":0},"files":{},"errors":[]}

@@ -22,7 +22,6 @@ class ClearChatHistoryAction extends BaseAction
 
             Log::info("Chat history cleared for user {$user->id}. Deleted ".$deletedCount.' records.'); // @phpstan-ignore binaryOp.invalid
 
-
             return true;
         } catch (\Exception $e) {
             Log::error('Failed to clear chat history: '.$e->getMessage());

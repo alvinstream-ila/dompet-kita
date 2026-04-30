@@ -28,7 +28,7 @@ use Spatie\Honeypot\ProtectAgainstSpam;
 
 // ─── Internal Guard (Firewall v7.1.18) ───────────────────────────────────────
 // All routes wrapped in firewall.all for SQLi, XSS, LFI, RFI, PHP & Bot protection
-Route::middleware('firewall.all')->group(function () {
+Route::middleware('firewall.all')->group(function (): void {
     Route::post('/login', [AuthController::class, 'login'])->middleware(['throttle:5,1', ProtectAgainstSpam::class]);
     Route::post('/verify-2fa', [AuthController::class, 'verify2fa'])->middleware('throttle:5,1');
     Route::post('/register', [AuthController::class, 'register'])->middleware(['throttle:3,1', ProtectAgainstSpam::class]);
@@ -87,16 +87,14 @@ Route::middleware('firewall.all')->group(function () {
     Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
 
     // Diagnostic Routes (Protected)
-    Route::middleware(['auth:sanctum', 'sudo'])->group(function () {
+    Route::middleware(['auth:sanctum', 'sudo'])->group(function (): void {
         Route::get('/test/ai-health', [AiHealthController::class, 'check']);
         Route::get('/test/ai-reset', [AiMaintenanceController::class, 'reset']);
     });
 
-    Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
+    Route::middleware(['auth:sanctum', 'throttle:api'])->group(function (): void {
         Route::post('/logout', [AuthController::class, 'logout']);
-        Route::get('/user', function (Request $request) {
-            return $request->user();
-        });
+        Route::get('/user', fn (Request $request) => $request->user());
         Route::put('/user/profile', [UserController::class, 'update'])->middleware('sudo');
         Route::put('/user/change-password', [UserController::class, 'changePassword'])->middleware('sudo');
 

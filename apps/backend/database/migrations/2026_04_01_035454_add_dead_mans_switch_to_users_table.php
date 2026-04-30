@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->timestamp('last_active_at')->nullable()->after('updated_at');
             $table->integer('legacy_threshold_months')->default(6)->after('last_active_at');
             $table->boolean('is_legacy_triggered')->default(false)->after('legacy_threshold_months');
@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->dropColumn(['last_active_at', 'legacy_threshold_months', 'is_legacy_triggered']);
         });
     }

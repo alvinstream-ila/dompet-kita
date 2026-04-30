@@ -1,6 +1,6 @@
 import {
-  InfiniteData,
-  QueryClient,
+  type InfiniteData,
+  type QueryClient,
   useInfiniteQuery,
   useMutation,
   useQueryClient,

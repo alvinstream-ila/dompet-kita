@@ -1,8 +1,8 @@
 'use client';
 
-import { ArrowLeft, Scale, Calendar as CalendarIcon } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, Scale } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { UserNavDropdown } from '@/components/layout';
 import {
   Select,

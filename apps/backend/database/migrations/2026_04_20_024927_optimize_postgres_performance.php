@@ -13,50 +13,50 @@ return new class extends Migration
     public function up(): void
     {
         // 1. Add Missing Indexes to speed up Foreign Key lookups and joins
-        Schema::table('transactions', function (Blueprint $table) {
+        Schema::table('transactions', function (Blueprint $table): void {
             $table->index('user_id');
             // Adding a composite index for Dashboard summary fetching speed
             $table->index(['user_id', 'date']);
         });
-        Schema::table('assets', function (Blueprint $table) {
+        Schema::table('assets', function (Blueprint $table): void {
             $table->index('user_id');
         });
-        Schema::table('goals', function (Blueprint $table) {
+        Schema::table('goals', function (Blueprint $table): void {
             $table->index('user_id');
         });
-        Schema::table('loans', function (Blueprint $table) {
+        Schema::table('loans', function (Blueprint $table): void {
             $table->index('user_id');
         });
-        Schema::table('asset_transactions', function (Blueprint $table) {
+        Schema::table('asset_transactions', function (Blueprint $table): void {
             $table->index('asset_id');
             $table->index('source_asset_id');
         });
-        Schema::table('goal_transactions', function (Blueprint $table) {
+        Schema::table('goal_transactions', function (Blueprint $table): void {
             $table->index('user_id');
             $table->index('goal_id');
             $table->index('asset_id');
         });
-        Schema::table('holiday_transactions', function (Blueprint $table) {
+        Schema::table('holiday_transactions', function (Blueprint $table): void {
             $table->index('user_id');
             $table->index('holiday_id');
             $table->index('asset_id');
         });
-        Schema::table('chat_histories', function (Blueprint $table) {
+        Schema::table('chat_histories', function (Blueprint $table): void {
             $table->index('user_id');
         });
-        Schema::table('legacy_vault_reports', function (Blueprint $table) {
+        Schema::table('legacy_vault_reports', function (Blueprint $table): void {
             $table->index('user_id');
         });
-        Schema::table('login_histories', function (Blueprint $table) {
+        Schema::table('login_histories', function (Blueprint $table): void {
             $table->index('user_id');
         });
-        Schema::table('transaction_insights', function (Blueprint $table) {
+        Schema::table('transaction_insights', function (Blueprint $table): void {
             $table->index('user_id');
         });
-        Schema::table('scheduled_transactions', function (Blueprint $table) {
+        Schema::table('scheduled_transactions', function (Blueprint $table): void {
             $table->index('user_id');
         });
-        Schema::table('partner_invitations', function (Blueprint $table) {
+        Schema::table('partner_invitations', function (Blueprint $table): void {
             $table->index('inviter_id');
         });
 

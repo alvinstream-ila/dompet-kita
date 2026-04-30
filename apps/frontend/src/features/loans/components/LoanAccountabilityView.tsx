@@ -1,17 +1,17 @@
 import {
+  ArrowRight,
+  Loader2,
   Printer,
   ShieldCheck,
-  ArrowRight,
-  TrendingUp,
   TrendingDown,
-  Loader2,
+  TrendingUp,
 } from 'lucide-react';
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
-import { Loan, Transaction } from '@/types';
 import api from '@/lib/axios';
+import { cn } from '@/lib/utils';
+import type { Loan, Transaction } from '@/types';
 
 interface LoanReportData {
   period: {

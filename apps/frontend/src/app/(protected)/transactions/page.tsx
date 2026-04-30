@@ -1,12 +1,11 @@
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import { cookies } from 'next/headers';
 import { Suspense } from 'react';
 import { getUserProfileAction } from '@/features/auth/actions/user';
 import { RecentTransactionsSkeleton } from '@/features/home/components/DashboardSkeletons';
 import { TransactionsView } from '@/features/transactions';
 import { getQueryClient } from '@/lib/get-query-client';
 import { serverApi } from '@/lib/server-api';
-
-import { cookies } from 'next/headers';
 
 export default async function TransactionsPage() {
   return (

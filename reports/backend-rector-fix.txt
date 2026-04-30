@@ -1,9 +1,5558 @@
 
- [WARNING] The "strictBooleans" set is deprecated as mostly risky and not practical. Remove it from withPreparedSets() 
-           method and use "codeQuality" and "codingStyle" sets instead. They already contain more granular and stable  
-           rules on same note.                                                                                         
+204 files with changes
+======================
+
+1) database/migrations/2019_07_15_000000_create_firewall_ips_table.php:12
+
+    ---------- begin diff ----------
+@@ Line 12 @@
+      */
+     public function up()
+     {
+-        Schema::create('firewall_ips', function (Blueprint $table) {
++        Schema::create('firewall_ips', function (Blueprint $table): void {
+             $table->increments('id');
+             $table->string('ip');
+             $table->integer('log_id')->nullable();
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
 
 
- [ERROR] Your config already enables type declarations set.                                                            
-         Remove "->withTypeCoverageLevel()" as it only duplicates it, or remove type declaration set.                  
+2) database/migrations/2019_07_15_000000_create_firewall_logs_table.php:12
+
+    ---------- begin diff ----------
+@@ Line 12 @@
+      */
+     public function up()
+     {
+-        Schema::create('firewall_logs', function (Blueprint $table) {
++        Schema::create('firewall_logs', function (Blueprint $table): void {
+             $table->increments('id');
+             $table->string('ip');
+             $table->string('level')->default('medium');
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+3) database/migrations/2026_03_17_071457_create_personal_access_tokens_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('personal_access_tokens', function (Blueprint $table) {
++        Schema::create('personal_access_tokens', function (Blueprint $table): void {
+             $table->id();
+             $table->morphs('tokenable');
+             $table->text('name');
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+4) database/migrations/2026_03_17_075259_create_transactions_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('transactions', function (Blueprint $table) {
++        Schema::create('transactions', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+             $table->timestamp('date');
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+5) database/migrations/2026_03_17_075300_create_assets_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('assets', function (Blueprint $table) {
++        Schema::create('assets', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+             $table->string('name');
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+6) database/migrations/2026_03_17_075300_create_loans_table.php:12
+
+    ---------- begin diff ----------
+@@ Line 12 @@
+     public function up(): void
+     {
+         Schema::dropIfExists('loans');
+-        Schema::create('loans', function (Blueprint $table) {
++        Schema::create('loans', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+             $table->string('type'); // utang | piutang
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+7) database/migrations/2026_03_17_075301_create_goals_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('goals', function (Blueprint $table) {
++        Schema::create('goals', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+             $table->string('name');
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+8) database/migrations/2026_03_17_075301_create_holidays_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('holidays', function (Blueprint $table) {
++        Schema::create('holidays', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+             $table->string('destination');
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+9) database/migrations/2026_03_17_081854_add_settings_to_users_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->integer('budget_cycle_start')->default(1);
+             $table->boolean('is_privacy_mode')->default(false);
+             $table->boolean('is_eco_mode')->default(false);
+@@ Line 25 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->dropColumn([
+                 'budget_cycle_start',
+                 'is_privacy_mode',
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+10) database/migrations/2026_03_17_114741_add_icon_to_goals_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('goals', function (Blueprint $table) {
++        Schema::table('goals', function (Blueprint $table): void {
+             $table->string('icon')->nullable()->after('category');
+         });
+     }
+@@ Line 21 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('goals', function (Blueprint $table) {
++        Schema::table('goals', function (Blueprint $table): void {
+             $table->dropColumn('icon');
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+11) database/migrations/2026_03_17_115221_add_spent_to_holidays_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('holidays', function (Blueprint $table) {
++        Schema::table('holidays', function (Blueprint $table): void {
+             $table->decimal('spent', 15, 2)->default(0)->after('budget');
+         });
+     }
+@@ Line 21 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('holidays', function (Blueprint $table) {
++        Schema::table('holidays', function (Blueprint $table): void {
+             $table->dropColumn('spent');
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+12) database/migrations/2026_03_18_023303_add_profile_and_couple_fields_to_users_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->string('full_name')->nullable()->after('name');
+             $table->string('avatar_url')->nullable()->after('full_name');
+             $table->string('partner_name')->nullable()->after('avatar_url');
+@@ Line 25 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->dropColumn([
+                 'full_name',
+                 'avatar_url',
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+13) database/migrations/2026_03_18_101000_add_exchange_rate_to_users_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->decimal('exchange_rate', 20, 10)->default(1.0)->after('currency_format');
+         });
+     }
+@@ Line 21 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->dropColumn('exchange_rate');
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+14) database/migrations/2026_03_18_231158_add_social_fields_to_users_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->string('social_id')->nullable()->after('id');
+             $table->string('social_type')->nullable()->after('social_id');
+             $table->string('password')->nullable()->change(); // Password can be null for social login
+@@ Line 23 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->dropColumn(['social_id', 'social_type']);
+             $table->string('password')->nullable(false)->change();
+         });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+15) database/migrations/2026_03_20_000500_create_wealth_histories_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('wealth_histories', function (Blueprint $blueprint) {
++        Schema::create('wealth_histories', function (Blueprint $blueprint): void {
+             $blueprint->id();
+             $blueprint->foreignId('user_id')->constrained()->onDelete('cascade');
+             $blueprint->integer('month');
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+16) database/migrations/2026_03_30_032001_create_login_histories_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('login_histories', function (Blueprint $table) {
++        Schema::create('login_histories', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+             $table->string('ip_address', 45)->nullable();
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+17) database/migrations/2026_03_30_033928_create_activity_log_table.php:8
+
+    ---------- begin diff ----------
+@@ Line 8 @@
+ {
+     public function up(): void
+     {
+-        Schema::create('activity_log', function (Blueprint $table) {
++        Schema::create('activity_log', function (Blueprint $table): void {
+             $table->id();
+             $table->string('log_name')->nullable()->index();
+             $table->text('description');
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+18) database/migrations/2026_03_30_124517_add_two_factor_to_users_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->boolean('two_factor_enabled')->default(false);
+             $table->string('two_factor_code')->nullable();
+             $table->dateTime('two_factor_expires_at')->nullable();
+@@ Line 23 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->dropColumn(['two_factor_code', 'two_factor_expires_at']);
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+19) database/migrations/2026_03_31_032315_create_chat_histories_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('chat_histories', function (Blueprint $table) {
++        Schema::create('chat_histories', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+             $table->string('role'); // user, assistant, system
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+20) database/migrations/2026_03_31_034052_create_financial_wisdoms_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('financial_wisdoms', function (Blueprint $table) {
++        Schema::create('financial_wisdoms', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+             $table->string('type'); // insight, warning, nudge, anomaly
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+21) database/migrations/2026_03_31_042110_add_partner_and_threshold_to_users_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->foreignId('partner_id')->nullable()->after('id')->constrained('users')->onDelete('set null');
+             $table->decimal('large_expense_threshold', 15, 2)->default(1000000)->after('monthly_budget_limit');
+         });
+@@ Line 22 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->dropForeign(['partner_id']);
+             $table->dropColumn(['partner_id', 'large_expense_threshold']);
+         });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+22) database/migrations/2026_04_01_032158_add_market_sync_to_assets_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('assets', function (Blueprint $table) {
++        Schema::table('assets', function (Blueprint $table): void {
+             $table->decimal('quantity', 15, 4)->nullable()->after('type');
+             $table->string('unit')->nullable()->after('quantity');
+             $table->boolean('is_market_synced')->default(false)->after('unit');
+@@ Line 23 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('assets', function (Blueprint $table) {
++        Schema::table('assets', function (Blueprint $table): void {
+             $table->dropColumn(['quantity', 'unit', 'is_market_synced']);
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+23) database/migrations/2026_04_01_035454_add_dead_mans_switch_to_users_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->timestamp('last_active_at')->nullable()->after('updated_at');
+             $table->integer('legacy_threshold_months')->default(6)->after('last_active_at');
+             $table->boolean('is_legacy_triggered')->default(false)->after('legacy_threshold_months');
+@@ Line 23 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->dropColumn(['last_active_at', 'legacy_threshold_months', 'is_legacy_triggered']);
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+24) database/migrations/2026_04_01_044030_change_description_to_text_in_transactions_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('transactions', function (Blueprint $table) {
++        Schema::table('transactions', function (Blueprint $table): void {
+             //
+         });
+     }
+@@ Line 21 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('transactions', function (Blueprint $table) {
++        Schema::table('transactions', function (Blueprint $table): void {
+             //
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+25) database/migrations/2026_04_01_092033_add_metadata_to_login_histories_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('login_histories', function (Blueprint $table) {
++        Schema::table('login_histories', function (Blueprint $table): void {
+             $table->json('metadata')->after('status')->nullable();
+         });
+     }
+@@ Line 21 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('login_histories', function (Blueprint $table) {
++        Schema::table('login_histories', function (Blueprint $table): void {
+             $table->dropColumn('metadata');
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+26) database/migrations/2026_04_01_103451_enable_rls_on_core_finance_tables.php:27
+
+    ---------- begin diff ----------
+@@ Line 27 @@
+             if (! str_contains(strtolower((string) $version), 'postgres')) {
+                 return;
+             }
+-        } catch (Exception $e) {
++        } catch (Exception) {
+             return;
+         }
+    ----------- end diff -----------
+
+Applied rules:
+ * RemoveUnusedVariableInCatchRector
+
+
+27) database/migrations/2026_04_01_141609_create_scheduled_transactions_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('scheduled_transactions', function (Blueprint $table) {
++        Schema::create('scheduled_transactions', function (Blueprint $table): void {
+             $table->uuid('id')->primary();
+             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+             $table->string('description');
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+28) database/migrations/2026_04_01_142619_create_transaction_insights_table.php:12
+
+    ---------- begin diff ----------
+@@ Line 12 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('transaction_insights', function (Blueprint $table) {
++        Schema::create('transaction_insights', function (Blueprint $table): void {
+             $table->uuid('id')->primary();
+             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+             $table->string('type'); // leak, optimization, trend, achievement
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+29) database/migrations/2026_04_07_000000_create_budgets_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('budgets', function (Blueprint $table) {
++        Schema::create('budgets', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+             $table->string('category');
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+30) database/migrations/2026_04_09_065119_create_partner_invitations_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('partner_invitations', function (Blueprint $table) {
++        Schema::create('partner_invitations', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignId('inviter_id')->constrained('users')->onDelete('cascade');
+             $table->string('email');
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+31) database/migrations/2026_04_09_070426_add_unique_index_to_users_name.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->string('name')->unique()->change();
+         });
+     }
+@@ Line 21 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->dropUnique(['name']);
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+32) database/migrations/2026_04_09_071421_add_email_verification_code_to_users_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->string('email_verification_code', 6)->nullable()->after('remember_token');
+             $table->timestamp('email_verification_expires_at')->nullable()->after('email_verification_code');
+         });
+@@ Line 22 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->dropColumn(['email_verification_code', 'email_verification_expires_at']);
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+33) app/Console/Commands/Security/SecurityGate.php:10
+
+    ---------- begin diff ----------
+@@ Line 10 @@
+
+ class SecurityGate extends Command
+ {
+-    private const SEPARATOR = '===============================';
++    private const string SEPARATOR = '===============================';
+
+     /**
+      * The name and signature of the console command.
+    ----------- end diff -----------
+
+Applied rules:
+ * AddTypeToConstRector
+
+
+34) app/Console/Commands/System/CloudStatus.php:10
+
+    ---------- begin diff ----------
+@@ Line 10 @@
+
+ class CloudStatus extends Command
+ {
+-    private const SEPARATOR = '===============================================';
++    private const string SEPARATOR = '===============================================';
+
+     /**
+      * The name and signature of the console command.
+    ----------- end diff -----------
+
+Applied rules:
+ * AddTypeToConstRector
+
+
+35) app/Console/Commands/System/MaintenanceVerify.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+
+ class MaintenanceVerify extends Command
+ {
+-    private const SEPARATOR = '========================================';
++    private const string SEPARATOR = '========================================';
+
+     /**
+      * The name and signature of the console command.
+    ----------- end diff -----------
+
+Applied rules:
+ * AddTypeToConstRector
+
+
+36) app/Console/Commands/System/StorageManage.php:49
+
+    ---------- begin diff ----------
+@@ Line 49 @@
+
+         $files = $action->listFiles('s3'); // Disk configured as 's3' for Storj
+
+-        if (empty($files)) {
++        if ($files === []) {
+             $this->info('Storage is empty.');
+
+             return 0;
+    ----------- end diff -----------
+
+Applied rules:
+ * SimplifyEmptyCheckOnEmptyArrayRector
+
+
+37) app/Console/Commands/TestLangSmithTrace.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Console\Commands;
+
+ use App\Services\AI\GroqProvider;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+38) app/Enums/AssetType.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Enums;
+
+ use App\Traits\EnumExtensions;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+39) app/Enums/LoanStatus.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Enums;
+
+ use App\Traits\EnumExtensions;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+40) app/Enums/LoanType.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Enums;
+
+ use App\Traits\EnumExtensions;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+41) app/Enums/RecurrenceFrequency.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Enums;
+
+ use App\Traits\EnumExtensions;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+42) app/Enums/ScheduleStatus.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Enums;
+
+ use App\Traits\EnumExtensions;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+43) app/Enums/TransactionType.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Enums;
+
+ use App\Traits\EnumExtensions;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+44) app/Exceptions/AiServiceException.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Exceptions;
+
+ use Exception;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+45) app/Exceptions/AnalyzeReceiptException.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Exceptions;
+
+ use Exception;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+46) app/Exceptions/CfoAnalysisException.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Exceptions;
+
+ use Exception;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+47) app/Exceptions/FileStorageException.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Exceptions;
+
+ use Exception;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+48) app/Exceptions/InsufficientAssetBalanceException.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Exceptions;
+
+ use Exception;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+49) database/migrations/2026_04_09_072408_add_otp_reset_fields_to_users_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->string('otp_reset_code')->nullable()->after('otp_expires_at');
+             $table->datetime('otp_reset_expires_at')->nullable()->after('otp_reset_code');
+         });
+@@ Line 22 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->dropColumn(['otp_reset_code', 'otp_reset_expires_at']);
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+50) database/migrations/2026_04_09_100532_add_image_url_to_holidays_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('holidays', function (Blueprint $table) {
++        Schema::table('holidays', function (Blueprint $table): void {
+             $table->string('image_url')->nullable()->after('status');
+         });
+     }
+@@ Line 21 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('holidays', function (Blueprint $table) {
++        Schema::table('holidays', function (Blueprint $table): void {
+             $table->dropColumn('image_url');
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+51) database/migrations/2026_04_10_070000_create_goal_transactions_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('goal_transactions', function (Blueprint $table) {
++        Schema::create('goal_transactions', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+             $table->foreignId('goal_id')->constrained()->onDelete('cascade');
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+52) database/migrations/2026_04_10_080000_add_funded_amount_to_holidays_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('holidays', function (Blueprint $row) {
++        Schema::table('holidays', function (Blueprint $row): void {
+             $row->decimal('funded_amount', 15, 2)->default(0)->after('budget');
+         });
+     }
+@@ Line 21 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('holidays', function (Blueprint $row) {
++        Schema::table('holidays', function (Blueprint $row): void {
+             $row->dropColumn('funded_amount');
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+53) database/migrations/2026_04_10_080001_create_holiday_transactions_table.php:12
+
+    ---------- begin diff ----------
+@@ Line 12 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('holiday_transactions', function (Blueprint $table) {
++        Schema::create('holiday_transactions', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+             $table->foreignId('holiday_id')->constrained()->cascadeOnDelete();
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+54) database/migrations/2026_04_10_090000_add_invested_capital_to_assets_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('assets', function (Blueprint $table) {
++        Schema::table('assets', function (Blueprint $table): void {
+             $table->decimal('invested_capital', 20, 2)->default(0)->after('value');
+         });
+
+@@ Line 27 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('assets', function (Blueprint $table) {
++        Schema::table('assets', function (Blueprint $table): void {
+             $table->dropColumn('invested_capital');
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+55) database/migrations/2026_04_10_090001_create_asset_transactions_table.php:12
+
+    ---------- begin diff ----------
+@@ Line 12 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('asset_transactions', function (Blueprint $table) {
++        Schema::create('asset_transactions', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+             $table->foreignId('asset_id')->constrained()->onDelete('cascade');
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+56) database/migrations/2026_04_16_095359_add_tax_profile_to_users_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->string('tax_status')->default('TK/0')->after('partner_id');
+             $table->integer('dependents_count')->default(0)->after('tax_status');
+             $table->string('industry_sector')->nullable()->after('dependents_count');
+@@ Line 23 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->dropColumn(['tax_status', 'dependents_count', 'industry_sector']);
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+57) database/migrations/2026_04_16_175600_create_legacy_vault_reports_table.php:12
+
+    ---------- begin diff ----------
+@@ Line 12 @@
+     public function up(): void
+     {
+         // Add grace period tracking to users table
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->timestamp('legacy_grace_start_at')->nullable()->after('is_legacy_triggered');
+             $table->string('legacy_partner_name')->nullable()->after('partner_id');
+             $table->string('legacy_partner_email')->nullable()->after('legacy_partner_name');
+@@ Line 19 @@
+         });
+
+         // Create the legacy vault reports table
+-        Schema::create('legacy_vault_reports', function (Blueprint $table) {
++        Schema::create('legacy_vault_reports', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+             $table->string('filename');
+@@ Line 39 @@
+     public function down(): void
+     {
+         Schema::dropIfExists('legacy_vault_reports');
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->dropColumn(['legacy_grace_start_at', 'legacy_partner_name', 'legacy_partner_email']);
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+58) database/migrations/2026_04_20_024927_optimize_postgres_performance.php:13
+
+    ---------- begin diff ----------
+@@ Line 13 @@
+     public function up(): void
+     {
+         // 1. Add Missing Indexes to speed up Foreign Key lookups and joins
+-        Schema::table('transactions', function (Blueprint $table) {
++        Schema::table('transactions', function (Blueprint $table): void {
+             $table->index('user_id');
+             // Adding a composite index for Dashboard summary fetching speed
+             $table->index(['user_id', 'date']);
+         });
+-        Schema::table('assets', function (Blueprint $table) {
++        Schema::table('assets', function (Blueprint $table): void {
+             $table->index('user_id');
+         });
+-        Schema::table('goals', function (Blueprint $table) {
++        Schema::table('goals', function (Blueprint $table): void {
+             $table->index('user_id');
+         });
+-        Schema::table('loans', function (Blueprint $table) {
++        Schema::table('loans', function (Blueprint $table): void {
+             $table->index('user_id');
+         });
+-        Schema::table('asset_transactions', function (Blueprint $table) {
++        Schema::table('asset_transactions', function (Blueprint $table): void {
+             $table->index('asset_id');
+             $table->index('source_asset_id');
+         });
+-        Schema::table('goal_transactions', function (Blueprint $table) {
++        Schema::table('goal_transactions', function (Blueprint $table): void {
+             $table->index('user_id');
+             $table->index('goal_id');
+             $table->index('asset_id');
+         });
+-        Schema::table('holiday_transactions', function (Blueprint $table) {
++        Schema::table('holiday_transactions', function (Blueprint $table): void {
+             $table->index('user_id');
+             $table->index('holiday_id');
+             $table->index('asset_id');
+         });
+-        Schema::table('chat_histories', function (Blueprint $table) {
++        Schema::table('chat_histories', function (Blueprint $table): void {
+             $table->index('user_id');
+         });
+-        Schema::table('legacy_vault_reports', function (Blueprint $table) {
++        Schema::table('legacy_vault_reports', function (Blueprint $table): void {
+             $table->index('user_id');
+         });
+-        Schema::table('login_histories', function (Blueprint $table) {
++        Schema::table('login_histories', function (Blueprint $table): void {
+             $table->index('user_id');
+         });
+-        Schema::table('transaction_insights', function (Blueprint $table) {
++        Schema::table('transaction_insights', function (Blueprint $table): void {
+             $table->index('user_id');
+         });
+-        Schema::table('scheduled_transactions', function (Blueprint $table) {
++        Schema::table('scheduled_transactions', function (Blueprint $table): void {
+             $table->index('user_id');
+         });
+-        Schema::table('partner_invitations', function (Blueprint $table) {
++        Schema::table('partner_invitations', function (Blueprint $table): void {
+             $table->index('inviter_id');
+         });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+59) database/migrations/2026_04_20_025348_add_remaining_indexes_for_performance.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('holidays', function (Blueprint $table) {
++        Schema::table('holidays', function (Blueprint $table): void {
+             $table->index('user_id');
+         });
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->index('partner_id');
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+60) database/migrations/2026_04_20_162149_add_metadata_to_transactions_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('transactions', function (Blueprint $table) {
++        Schema::table('transactions', function (Blueprint $table): void {
+             $table->json('metadata')->after('receipt_url')->nullable();
+         });
+     }
+@@ Line 21 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('transactions', function (Blueprint $table) {
++        Schema::table('transactions', function (Blueprint $table): void {
+             $table->dropColumn('metadata');
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+61) database/migrations/2026_04_21_151018_harden_db_types_and_schema.php:21
+
+    ---------- begin diff ----------
+@@ Line 21 @@
+         }
+
+         // 2. Add Missing Column to Transactions
+-        Schema::table('transactions', function (Blueprint $table) {
++        Schema::table('transactions', function (Blueprint $table): void {
+             if (! Schema::hasColumn('transactions', 'is_ai_generated')) {
+                 $table->boolean('is_ai_generated')->default(false)->after('metadata');
+             }
+@@ Line 33 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('transactions', function (Blueprint $table) {
++        Schema::table('transactions', function (Blueprint $table): void {
+             $table->dropColumn('is_ai_generated');
+         });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+62) database/migrations/2026_04_21_153206_upgrade_financial_precision_to_v2025.php:13
+
+    ---------- begin diff ----------
+@@ Line 13 @@
+     public function up(): void
+     {
+         // 1. Transactions Precision & Soft Deletes
+-        Schema::table('transactions', function (Blueprint $table) {
++        Schema::table('transactions', function (Blueprint $table): void {
+             $table->decimal('amount', 19, 4)->change();
+             if (! Schema::hasColumn('transactions', 'deleted_at')) {
+                 $table->softDeletes();
+@@ Line 21 @@
+         });
+
+         // 2. Assets Hardening (Value, Quantity, Unit)
+-        Schema::table('assets', function (Blueprint $table) {
++        Schema::table('assets', function (Blueprint $table): void {
+             $table->decimal('value', 19, 4)->change();
+             if (! Schema::hasColumn('assets', 'quantity')) {
+                 $table->decimal('quantity', 36, 18)->default(0)->after('value');
+@@ Line 36 @@
+
+         // 3. Asset Transactions Hardening
+         if (Schema::hasTable('asset_transactions')) {
+-            Schema::table('asset_transactions', function (Blueprint $table) {
++            Schema::table('asset_transactions', function (Blueprint $table): void {
+                 $table->decimal('amount', 19, 4)->change();
+                 if (! Schema::hasColumn('asset_transactions', 'quantity')) {
+                     $table->decimal('quantity', 36, 18)->default(0)->after('amount');
+@@ Line 48 @@
+         }
+
+         // 4. Loans Precision & Soft Deletes
+-        Schema::table('loans', function (Blueprint $table) {
++        Schema::table('loans', function (Blueprint $table): void {
+             $table->decimal('amount', 19, 4)->change();
+             $table->decimal('remaining_amount', 19, 4)->change();
+             if (! Schema::hasColumn('loans', 'deleted_at')) {
+@@ Line 57 @@
+         });
+
+         // 5. Goals & Holidays Soft Deletes
+-        Schema::table('goals', function (Blueprint $table) {
++        Schema::table('goals', function (Blueprint $table): void {
+             if (! Schema::hasColumn('goals', 'deleted_at')) {
+                 $table->softDeletes();
+             }
+         });
+
+-        Schema::table('holidays', function (Blueprint $table) {
++        Schema::table('holidays', function (Blueprint $table): void {
+             if (! Schema::hasColumn('holidays', 'deleted_at')) {
+                 $table->softDeletes();
+             }
+@@ Line 75 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('transactions', function (Blueprint $table) {
++        Schema::table('transactions', function (Blueprint $table): void {
+             $table->decimal('amount', 15, 2)->change();
+             $table->dropSoftDeletes();
+         });
+
+-        Schema::table('assets', function (Blueprint $table) {
++        Schema::table('assets', function (Blueprint $table): void {
+             $table->decimal('value', 15, 2)->change();
+             $table->dropColumn(['quantity', 'unit']);
+             $table->dropSoftDeletes();
+@@ Line 87 @@
+         });
+
+         if (Schema::hasTable('asset_transactions')) {
+-            Schema::table('asset_transactions', function (Blueprint $table) {
++            Schema::table('asset_transactions', function (Blueprint $table): void {
+                 $table->decimal('amount', 15, 2)->change();
+                 $table->dropColumn('quantity');
+                 $table->dropSoftDeletes();
+@@ Line 94 @@
+             });
+         }
+
+-        Schema::table('loans', function (Blueprint $table) {
++        Schema::table('loans', function (Blueprint $table): void {
+             $table->decimal('amount', 15, 2)->change();
+             $table->decimal('remaining_amount', 15, 2)->change();
+             $table->dropSoftDeletes();
+         });
+
+-        Schema::table('goals', function (Blueprint $table) {
++        Schema::table('goals', function (Blueprint $table): void {
+             $table->dropSoftDeletes();
+         });
+
+-        Schema::table('holidays', function (Blueprint $table) {
++        Schema::table('holidays', function (Blueprint $table): void {
+             $table->dropSoftDeletes();
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+63) database/migrations/2026_04_21_153329_create_households_table_and_harden_users.php:13
+
+    ---------- begin diff ----------
+@@ Line 13 @@
+     public function up(): void
+     {
+         // 1. Create Households Table
+-        Schema::create('households', function (Blueprint $table) {
++        Schema::create('households', function (Blueprint $table): void {
+             $table->uuid('id')->primary();
+             $table->string('name');
+             $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
+@@ Line 22 @@
+         });
+
+         // 2. Harden Users Table
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             // Mapping column for Supabase RLS
+             if (! Schema::hasColumn('users', 'auth_uuid')) {
+                 $table->uuid('auth_uuid')->nullable()->unique()->after('id');
+@@ Line 38 @@
+         $financeTables = ['transactions', 'assets', 'loans', 'goals', 'holidays', 'asset_transactions'];
+         foreach ($financeTables as $tableName) {
+             if (Schema::hasTable($tableName)) {
+-                Schema::table($tableName, function (Blueprint $table) use ($tableName) {
++                Schema::table($tableName, function (Blueprint $table) use ($tableName): void {
+                     if (! Schema::hasColumn($tableName, 'household_id')) {
+                         $table->foreignUuid('household_id')->nullable()->constrained('households')->onDelete('cascade');
+                     }
+@@ Line 55 @@
+         $financeTables = ['transactions', 'assets', 'loans', 'goals', 'holidays', 'asset_transactions'];
+         foreach ($financeTables as $tableName) {
+             if (Schema::hasTable($tableName)) {
+-                Schema::table($tableName, function (Blueprint $table) {
++                Schema::table($tableName, function (Blueprint $table): void {
+                     $table->dropForeign(['household_id']);
+                     $table->dropColumn('household_id');
+                 });
+@@ Line 62 @@
+             }
+         }
+
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->dropForeign(['household_id']);
+             $table->dropColumn(['auth_uuid', 'household_id']);
+         });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+64) database/migrations/2026_04_21_153406_normalize_categories_and_update_transactions.php:13
+
+    ---------- begin diff ----------
+@@ Line 13 @@
+     public function up(): void
+     {
+         // 1. Create Categories Table
+-        Schema::create('categories', function (Blueprint $table) {
++        Schema::create('categories', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignUuid('household_id')->nullable()->constrained('households')->onDelete('cascade');
+             $table->string('name');
+@@ Line 27 @@
+         });
+
+         // 2. Update Transactions Table
+-        Schema::table('transactions', function (Blueprint $table) {
++        Schema::table('transactions', function (Blueprint $table): void {
+             if (! Schema::hasColumn('transactions', 'category_id')) {
+                 $table->foreignId('category_id')->nullable()->after('amount')->constrained('categories')->onDelete('set null');
+             }
+@@ Line 35 @@
+
+         // 3. Update Scheduled Transactions if they exist
+         if (Schema::hasTable('scheduled_transactions')) {
+-            Schema::table('scheduled_transactions', function (Blueprint $table) {
++            Schema::table('scheduled_transactions', function (Blueprint $table): void {
+                 if (! Schema::hasColumn('scheduled_transactions', 'category_id')) {
+                     $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
+                 }
+@@ Line 49 @@
+     public function down(): void
+     {
+         if (Schema::hasTable('scheduled_transactions')) {
+-            Schema::table('scheduled_transactions', function (Blueprint $table) {
++            Schema::table('scheduled_transactions', function (Blueprint $table): void {
+                 $table->dropForeign(['category_id']);
+                 $table->dropColumn('category_id');
+             });
+         }
+
+-        Schema::table('transactions', function (Blueprint $table) {
++        Schema::table('transactions', function (Blueprint $table): void {
+             $table->dropForeign(['category_id']);
+             $table->dropColumn('category_id');
+         });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+65) tests/TestCase.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace Tests;
+
+ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+66) tests/Unit/ExampleTest.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
+-test('that true is true', function () {
++declare(strict_types=1);
++
++test('that true is true', function (): void {
+     expect(true)->toBeTrue();
+ });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+ * SafeDeclareStrictTypesRector
+
+
+67) app/Actions/AI/AnalyzeReceiptAction.php:37
+
+    ---------- begin diff ----------
+@@ Line 37 @@
+         } catch (Exception $e) {
+             $msg = $e->getMessage();
+             Log::error('AI_SCAN_ERROR (Receipt Scan): '.$msg);
+-            throw new AnalyzeReceiptException('Layanan analisis AI sedang mengalami kendala teknis: '.$msg);
++            throw new AnalyzeReceiptException('Layanan analisis AI sedang mengalami kendala teknis: '.$msg, $e->getCode(), $e);
+         }
+
+         if (preg_match('/\{.*\}/s', $jsonText, $matches)) {
+    ----------- end diff -----------
+
+Applied rules:
+ * ThrowWithPreviousExceptionRector
+
+
+68) app/Actions/AI/ChatWithAiAction.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Actions\AI;
+
+ use App\Actions\BaseAction;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+69) app/Actions/AI/Cognitive/GenerateWisdomAction.php:10
+
+    ---------- begin diff ----------
+@@ Line 10 @@
+
+ class GenerateWisdomAction
+ {
+-    protected ChatWithAiAction $chatWithAiAction;
+-
+-    protected FinancialIntelligenceService $finIntel;
+-
+-    public function __construct(ChatWithAiAction $chatWithAiAction, FinancialIntelligenceService $finIntel)
++    public function __construct(protected ChatWithAiAction $chatWithAiAction, protected FinancialIntelligenceService $finIntel)
+     {
+-        $this->chatWithAiAction = $chatWithAiAction;
+-        $this->finIntel = $finIntel;
+     }
+
+     /**
+    ----------- end diff -----------
+
+Applied rules:
+ * ClassPropertyAssignToConstructorPromotionRector
+
+
+70) app/Actions/AI/Cognitive/ProcessChatAction.php:12
+
+    ---------- begin diff ----------
+@@ Line 12 @@
+
+ class ProcessChatAction
+ {
+-    protected ChatWithAiAction $chatWithAiAction;
+-
+-    protected FinancialIntelligenceService $intelService;
+-
+-    public function __construct(ChatWithAiAction $chatWithAiAction, FinancialIntelligenceService $intelService)
++    public function __construct(protected ChatWithAiAction $chatWithAiAction, protected FinancialIntelligenceService $intelService)
+     {
+-        $this->chatWithAiAction = $chatWithAiAction;
+-        $this->intelService = $intelService;
+     }
+
+     /**
+@@ Line 49 @@
+         }
+
+         // 4. Build Context String with History
+-        $historyContext = $history->map(fn ($h) => ucfirst($h->role).': '.$h->content)->implode("\n");
++        $historyContext = $history->map(fn ($h) => ucfirst((string) $h->role).': '.$h->content)->implode("\n");
+         $fullContext = "--- HISTORY ---\n".$historyContext."\n\n--- CURRENT STATUS ---\n".$summary;
+
+-        if ($simulationContext) {
++        if ($simulationContext !== '' && $simulationContext !== '0') {
+             $fullContext .= "\n\n--- SIMULATION (AUTOPILOT DETECTED) ---\n".$simulationContext;
+         }
+
+@@ Line 61 @@
+
+         // 6. Save History
+         $this->saveHistory($user, 'user', $userMessage);
+-        $this->saveHistory($user, 'assistant', $aiResponse, ['simulation' => $simulationContext ? true : false]);
++        $this->saveHistory($user, 'assistant', $aiResponse, ['simulation' => (bool) $simulationContext]);
+
+         return $aiResponse;
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * ExplicitBoolCompareRector
+ * UnnecessaryTernaryExpressionRector
+ * ClassPropertyAssignToConstructorPromotionRector
+ * NullToStrictStringFuncCallArgRector
+
+
+71) app/Actions/AI/GetLegacyAdviceAction.php:35
+
+    ---------- begin diff ----------
+@@ Line 35 @@
+
+         try {
+             return trim($this->manager->generateText($prompt));
+-        } catch (Exception $e) {
++        } catch (Exception) {
+             return 'Informasi manajemen warisan digital ini sangat krusial bagi keberlangsungan aset Anda di masa depan. Pastikan data ini tersimpan dengan aman.';
+         }
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * RemoveUnusedVariableInCatchRector
+
+
+72) app/Actions/AI/GetTaxAdviceAction.php:39
+
+    ---------- begin diff ----------
+@@ Line 39 @@
+
+         try {
+             return trim($this->manager->generateText($prompt));
+-        } catch (Exception $e) {
++        } catch (Exception) {
+             return 'Layanan analisis pajak sedang tidak tersedia. Mohon pastikan kepatuhan pelaporan SPT Anda secara mandiri.';
+         }
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * RemoveUnusedVariableInCatchRector
+
+
+73) app/Actions/AI/GetWealthAdviceAction.php:50
+
+    ---------- begin diff ----------
+@@ Line 50 @@
+
+         try {
+             return trim($this->manager->generateText($prompt));
+-        } catch (Exception $e) {
++        } catch (Exception) {
+             return 'Proyeksi pertumbuhan kekayaan Anda menunjukkan potensi yang signifikan. Konsistensi dalam manajemen aset adalah kunci keberhasilan jangka panjang.';
+         }
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * RemoveUnusedVariableInCatchRector
+
+
+74) app/Actions/BaseAction.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Actions;
+
+ abstract class BaseAction
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+75) app/Actions/Finance/Asset/GetAssetSummaryAction.php:23
+
+    ---------- begin diff ----------
+@@ Line 23 @@
+     {
+         $query = Asset::query();
+
+-        if ($user) {
++        if ($user instanceof \App\Models\User) {
+             $query->where('user_id', $user->id);
+         }
+    ----------- end diff -----------
+
+Applied rules:
+ * ExplicitBoolCompareRector
+
+
+76) app/Actions/Finance/Asset/UpdateAssetAction.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Actions\Finance\Asset;
+
+ use App\Actions\BaseAction;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+77) app/Actions/Finance/ManageHolidayPlanAction.php:19
+
+    ---------- begin diff ----------
+@@ Line 19 @@
+     public function create(User $user, array $data): Holiday
+     {
+         $data['user_id'] = $user->id;
+-        $data['spent'] = $data['spent'] ?? 0;
+-        $data['status'] = $data['status'] ?? 'planning';
++        $data['spent'] ??= 0;
++        $data['status'] ??= 'planning';
+
+         return Holiday::create($data);
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * NullCoalescingOperatorRector
+
+
+78) app/Actions/Finance/ManageLoanAction.php:19
+
+    ---------- begin diff ----------
+@@ Line 19 @@
+     public function record(User $user, array $data): Loan
+     {
+         $data['user_id'] = $user->id;
+-        $data['status'] = $data['status'] ?? 'pending';
++        $data['status'] ??= 'pending';
+
+         return Loan::create($data);
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * NullCoalescingOperatorRector
+
+
+79) app/Actions/Finance/PerformCfoAnalysisAction.php:51
+
+    ---------- begin diff ----------
+@@ Line 51 @@
+
+         // 2. Calculate Monthly Metrics
+         $monthlyData = $transactions->groupBy(fn ($t) => Carbon::parse($t->date)->format('Y-m'))
+-            ->map(function ($group) {
+-                return [
+-                    'income' => (float) $group->where('type', 'income')->sum('amount'),
+-                    'expense' => (float) $group->where('type', 'expense')->sum('amount'),
+-                ];
+-            });
++            ->map(fn($group) => [
++                'income' => (float) $group->where('type', 'income')->sum('amount'),
++                'expense' => (float) $group->where('type', 'expense')->sum('amount'),
++            ]);
+
+         $totalIncome = (float) $monthlyData->sum('income');
+         $permanentIncome = $totalIncome / 6;
+@@ Line 135 @@
+
+         $variance = 0;
+         foreach ($data as $value) {
+-            $variance += pow($value - $mean, 2);
++            $variance += ($value - $mean) ** 2;
+         }
+         $stdDev = sqrt($variance / $count);
+    ----------- end diff -----------
+
+Applied rules:
+ * PowToExpRector
+ * ClosureToArrowFunctionRector
+
+
+80) app/Actions/Finance/Transaction/DeleteTransactionAction.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Actions\Finance\Transaction;
+
+ use App\Actions\BaseAction;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+81) app/Actions/Finance/Wealth/ForecastWealthAction.php:76
+
+    ---------- begin diff ----------
+@@ Line 76 @@
+                 'savings' => $avgMonthlySavings,
+                 'projected' => $lastWealth,
+             ]);
+-        } catch (\Exception $e) {
++        } catch (\Exception) {
+             $advice = 'Proyeksi finansial menunjukkan tren positif. Konsistensi dalam akumulasi aset akan mempercepat pencapaian target kemandirian finansial Anda.';
+         }
+    ----------- end diff -----------
+
+Applied rules:
+ * RemoveUnusedVariableInCatchRector
+
+
+82) config/database.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ use Illuminate\Support\Str;
+
+ $defaultHost = '127.0.0.1';
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+83) config/filesystems.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ return [
+
+     /*
+@@ Line 41 @@
+         'public' => [
+             'driver' => 'local',
+             'root' => storage_path('app/public'),
+-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
++            'url' => rtrim((string) env('APP_URL', 'http://localhost'), '/').'/storage',
+             'visibility' => 'public',
+             'throw' => false,
+             'report' => false,
+    ----------- end diff -----------
+
+Applied rules:
+ * NullToStrictStringFuncCallArgRector
+ * SafeDeclareStrictTypesRector
+
+
+84) config/firewall.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ /**
+  * ┌─────────────────────────────────────────────────────────────────────────┐
+  * │  🛡️ DOMPET KITA — INTERNAL FIREWALL CONFIGURATION                      │
+@@ Line 10 @@
+  * │  Session Injection, Malicious Bots.                                    │
+  * └─────────────────────────────────────────────────────────────────────────┘
+  */
+-
+ return [
+
+     'enabled' => env('FIREWALL_ENABLED', true),
+@@ Line 17 @@
+
+     'authPath' => ($authPath = 'api/auth/*'),
+
+-    'whitelist' => array_filter(explode(',', env('FIREWALL_WHITELIST', '127.0.0.1'))),
++    'whitelist' => array_filter(explode(',', (string) env('FIREWALL_WHITELIST', '127.0.0.1'))),
+
+     'models' => [
+-        'user' => '\App\Models\User',
++        'user' => \App\Models\User::class,
+         // Logging to DB currently disabled — relying on Sentry for observability.
+         // 'log' => '\App\Models\FirewallLog',
+         // 'ip'  => '\App\Models\FirewallIp',
+    ----------- end diff -----------
+
+Applied rules:
+ * StringClassNameToClassConstantRector
+ * NullToStrictStringFuncCallArgRector
+ * SafeDeclareStrictTypesRector
+
+
+85) config/honeypot.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ use Spatie\Honeypot\SpamProtection;
+ use Spatie\Honeypot\SpamResponder\BlankPageResponder;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+86) config/logging.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ use Monolog\Handler\NullHandler;
+ use Monolog\Handler\StreamHandler;
+ use Monolog\Handler\SyslogUdpHandler;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+87) config/mail.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ return [
+
+     /*
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+88) config/queue.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ return [
+
+     /*
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+89) config/sanctum.php:18
+
+    ---------- begin diff ----------
+@@ Line 18 @@
+     |
+     */
+
+-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
++    'stateful' => explode(',', (string) env('SANCTUM_STATEFUL_DOMAINS', sprintf(
+         '%s%s',
+         'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
+         Sanctum::currentApplicationUrlWithPort(),
+    ----------- end diff -----------
+
+Applied rules:
+ * NullToStrictStringFuncCallArgRector
+
+
+90) config/sentry.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ /**
+  * Sentry Laravel SDK configuration file.
+  *
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+91) config/services.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ return [
+
+     /*
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+92) config/session.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ use Illuminate\Support\Str;
+
+ return [
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+93) database/factories/TransactionFactory.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace Database\Factories;
+
+ use App\Models\Transaction;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+94) database/migrations/0001_01_01_000000_create_users_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('users', function (Blueprint $table) {
++        Schema::create('users', function (Blueprint $table): void {
+             $table->id();
+             $table->string('name');
+             $table->string('email')->unique();
+@@ Line 21 @@
+             $table->timestamps();
+         });
+
+-        Schema::create('password_reset_tokens', function (Blueprint $table) {
++        Schema::create('password_reset_tokens', function (Blueprint $table): void {
+             $table->string('email')->primary();
+             $table->string('token');
+             $table->timestamp('created_at')->nullable();
+         });
+
+-        Schema::create('sessions', function (Blueprint $table) {
++        Schema::create('sessions', function (Blueprint $table): void {
+             $table->string('id')->primary();
+             $table->foreignId('user_id')->nullable()->index();
+             $table->string('ip_address', 45)->nullable();
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+95) database/migrations/0001_01_01_000001_create_cache_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('cache', function (Blueprint $table) {
++        Schema::create('cache', function (Blueprint $table): void {
+             $table->string('key')->primary();
+             $table->mediumText('value');
+             $table->integer('expiration')->index();
+         });
+
+-        Schema::create('cache_locks', function (Blueprint $table) {
++        Schema::create('cache_locks', function (Blueprint $table): void {
+             $table->string('key')->primary();
+             $table->string('owner');
+             $table->integer('expiration')->index();
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+96) database/migrations/0001_01_01_000002_create_jobs_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::create('jobs', function (Blueprint $table) {
++        Schema::create('jobs', function (Blueprint $table): void {
+             $table->id();
+             $table->string('queue')->index();
+             $table->longText('payload');
+@@ Line 21 @@
+             $table->unsignedInteger('created_at');
+         });
+
+-        Schema::create('job_batches', function (Blueprint $table) {
++        Schema::create('job_batches', function (Blueprint $table): void {
+             $table->string('id')->primary();
+             $table->string('name');
+             $table->integer('total_jobs');
+@@ Line 34 @@
+             $table->integer('finished_at')->nullable();
+         });
+
+-        Schema::create('failed_jobs', function (Blueprint $table) {
++        Schema::create('failed_jobs', function (Blueprint $table): void {
+             $table->id();
+             $table->string('uuid')->unique();
+             $table->text('connection');
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+97) database/migrations/2026_04_21_172900_harden_asset_synchronization.php:12
+
+    ---------- begin diff ----------
+@@ Line 12 @@
+     public function up(): void
+     {
+         // 1. Add last_synced_at to assets table
+-        Schema::table('assets', function (Blueprint $blueprint) {
++        Schema::table('assets', function (Blueprint $blueprint): void {
+             $blueprint->timestamp('last_synced_at')->nullable()->after('is_market_synced');
+         });
+
+         // 2. Create asset_price_histories table for trend tracking
+-        Schema::create('asset_price_histories', function (Blueprint $table) {
++        Schema::create('asset_price_histories', function (Blueprint $table): void {
+             $table->id();
+             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+             $table->foreignId('asset_id')->constrained()->cascadeOnDelete();
+@@ Line 35 @@
+     public function down(): void
+     {
+         Schema::dropIfExists('asset_price_histories');
+-        Schema::table('assets', function (Blueprint $blueprint) {
++        Schema::table('assets', function (Blueprint $blueprint): void {
+             $blueprint->dropColumn('last_synced_at');
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+98) database/migrations/2026_04_22_065011_complete_household_schema_v2025.php:16
+
+    ---------- begin diff ----------
+@@ Line 16 @@
+
+         foreach ($tables as $tableName) {
+             if (Schema::hasTable($tableName)) {
+-                Schema::table($tableName, function (Blueprint $table) use ($tableName) {
++                Schema::table($tableName, function (Blueprint $table) use ($tableName): void {
+                     if (! Schema::hasColumn($tableName, 'household_id')) {
+                         $table->foreignUuid('household_id')->nullable()->constrained('households')->onDelete('cascade');
+                     }
+@@ Line 34 @@
+
+         foreach ($tables as $tableName) {
+             if (Schema::hasTable($tableName)) {
+-                Schema::table($tableName, function (Blueprint $table) {
++                Schema::table($tableName, function (Blueprint $table): void {
+                     $table->dropForeign(['household_id']);
+                     $table->dropColumn('household_id');
+                 });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+99) database/migrations/2026_04_22_070233_add_household_id_to_remaining_finance_tables.php:21
+
+    ---------- begin diff ----------
+@@ Line 21 @@
+
+         foreach ($tables as $tableName) {
+             if (Schema::hasTable($tableName)) {
+-                Schema::table($tableName, function (Blueprint $table) use ($tableName) {
++                Schema::table($tableName, function (Blueprint $table) use ($tableName): void {
+                     if (! Schema::hasColumn($tableName, 'household_id')) {
+                         $table->foreignUuid('household_id')
+                             ->nullable()
+@@ Line 48 @@
+
+         foreach ($tables as $tableName) {
+             if (Schema::hasTable($tableName)) {
+-                Schema::table($tableName, function (Blueprint $table) {
++                Schema::table($tableName, function (Blueprint $table): void {
+                     $table->dropForeign(['household_id']);
+                     $table->dropColumn('household_id');
+                 });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+100) database/migrations/2026_04_22_071201_add_household_id_to_ai_tables.php:17
+
+    ---------- begin diff ----------
+@@ Line 17 @@
+         ];
+
+         foreach ($tables as $tableName) {
+-            Schema::table($tableName, function (Blueprint $table) use ($tableName) {
++            Schema::table($tableName, function (Blueprint $table) use ($tableName): void {
+                 if (! Schema::hasColumn($tableName, 'household_id')) {
+                     $table->foreignUuid('household_id')
+                         ->nullable()
+@@ Line 40 @@
+         ];
+
+         foreach ($tables as $tableName) {
+-            Schema::table($tableName, function (Blueprint $table) {
++            Schema::table($tableName, function (Blueprint $table): void {
+                 $table->dropForeign(['household_id']);
+                 $table->dropColumn('household_id');
+             });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+101) database/migrations/2026_04_22_100000_add_household_id_to_transaction_subtables.php:16
+
+    ---------- begin diff ----------
+@@ Line 16 @@
+
+         foreach ($tables as $tableName) {
+             if (Schema::hasTable($tableName)) {
+-                Schema::table($tableName, function (Blueprint $table) use ($tableName) {
++                Schema::table($tableName, function (Blueprint $table) use ($tableName): void {
+                     if (! Schema::hasColumn($tableName, 'household_id')) {
+                         $table->foreignUuid('household_id')->nullable()->constrained('households')->onDelete('cascade');
+                     }
+@@ Line 34 @@
+
+         foreach ($tables as $tableName) {
+             if (Schema::hasTable($tableName)) {
+-                Schema::table($tableName, function (Blueprint $table) {
++                Schema::table($tableName, function (Blueprint $table): void {
+                     $table->dropForeign(['household_id']);
+                     $table->dropColumn('household_id');
+                 });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+102) database/migrations/2026_04_23_070000_update_wealth_histories_unique_constraint.php:15
+
+    ---------- begin diff ----------
+@@ Line 15 @@
+         // Populate household_id from users table if missing
+         DB::statement('UPDATE wealth_histories SET household_id = users.household_id FROM users WHERE wealth_histories.user_id = users.id AND wealth_histories.household_id IS NULL');
+
+-        Schema::table('wealth_histories', function (Blueprint $table) {
++        Schema::table('wealth_histories', function (Blueprint $table): void {
+             // Drop old unique constraint
+             $table->dropUnique(['user_id', 'month', 'year']);
+
+@@ Line 32 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('wealth_histories', function (Blueprint $table) {
++        Schema::table('wealth_histories', function (Blueprint $table): void {
+             $table->dropUnique(['household_id', 'month', 'year']);
+             $table->unique(['user_id', 'month', 'year']);
+             $table->uuid('household_id')->nullable(true)->change();
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+103) database/seeders/DatabaseSeeder.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace Database\Seeders;
+
+ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+104) routes/api.php:28
+
+    ---------- begin diff ----------
+@@ Line 28 @@
+
+ // ─── Internal Guard (Firewall v7.1.18) ───────────────────────────────────────
+ // All routes wrapped in firewall.all for SQLi, XSS, LFI, RFI, PHP & Bot protection
+-Route::middleware('firewall.all')->group(function () {
++Route::middleware('firewall.all')->group(function (): void {
+     Route::post('/login', [AuthController::class, 'login'])->middleware(['throttle:5,1', ProtectAgainstSpam::class]);
+     Route::post('/verify-2fa', [AuthController::class, 'verify2fa'])->middleware('throttle:5,1');
+     Route::post('/register', [AuthController::class, 'register'])->middleware(['throttle:3,1', ProtectAgainstSpam::class]);
+@@ Line 87 @@
+     Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleProviderCallback']);
+
+     // Diagnostic Routes (Protected)
+-    Route::middleware(['auth:sanctum', 'sudo'])->group(function () {
++    Route::middleware(['auth:sanctum', 'sudo'])->group(function (): void {
+         Route::get('/test/ai-health', [AiHealthController::class, 'check']);
+         Route::get('/test/ai-reset', [AiMaintenanceController::class, 'reset']);
+     });
+
+-    Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
++    Route::middleware(['auth:sanctum', 'throttle:api'])->group(function (): void {
+         Route::post('/logout', [AuthController::class, 'logout']);
+-        Route::get('/user', function (Request $request) {
+-            return $request->user();
+-        });
++        Route::get('/user', fn(Request $request) => $request->user());
+         Route::put('/user/profile', [UserController::class, 'update'])->middleware('sudo');
+         Route::put('/user/change-password', [UserController::class, 'changePassword'])->middleware('sudo');
+    ----------- end diff -----------
+
+Applied rules:
+ * ClosureToArrowFunctionRector
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+105) routes/console.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+ Schedule::command('ai:self-heal --auto-fix')->dailyAt('03:00');
+
+ // 🛡️ Phase 5: Digital Legacy Sentinel (Dead Man's Switch)
+-Schedule::call(function () {
++Schedule::call(function (): void {
+     app(LegacyService::class)->checkAndTriggerDeadMansSwitch();
+ })->dailyAt('02:00');
+
+-Artisan::command('inspire', function () {
++Artisan::command('inspire', function (): void {
+     $this->comment(Inspiring::quote());
+ })->purpose('Display an inspiring quote');
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+106) routes/web.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ use Illuminate\Support\Facades\Route;
+
+-Route::get('/', function () {
+-    return view('welcome');
+-});
++Route::get('/', fn() => view('welcome'));
+    ----------- end diff -----------
+
+Applied rules:
+ * ClosureToArrowFunctionRector
+ * SafeDeclareStrictTypesRector
+
+
+107) tests/Feature/AuthTest.php:5
+
+    ---------- begin diff ----------
+@@ Line 5 @@
+
+ uses(RefreshDatabase::class);
+
+-test('user can login with correct credentials', function () {
++test('user can login with correct credentials', function (): void {
+     $user = User::factory()->create([
+         'email' => 'test@example.com',
+         'password' => 'password',
+@@ Line 20 @@
+         ->assertJsonStructure(['access_token', 'user']);
+ });
+
+-test('authenticated user can get their profile', function () {
++test('authenticated user can get their profile', function (): void {
+     $user = User::factory()->create();
+
+     $response = $this->actingAs($user)
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+108) tests/Feature/ExampleTest.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
+-test('the application returns a successful response', function () {
++test('the application returns a successful response', function (): void {
+     $response = $this->get('/');
+
+     $response->assertStatus(200);
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+109) tests/Feature/LegacyReportTest.php:8
+
+    ---------- begin diff ----------
+@@ Line 8 @@
+
+ uses(RefreshDatabase::class);
+
+-test('it blocks authenticated user from accessing legacy report without sudo', function () {
++test('it blocks authenticated user from accessing legacy report without sudo', function (): void {
+     /** @var TestCase $this */
+     /** @var User $user */
+     $user = User::factory()->create();
+@@ Line 25 @@
+     expect($status)->toBe(403);
+ });
+
+-test('it still requires sudo for legacy snapshot creation', function () {
++test('it still requires sudo for legacy snapshot creation', function (): void {
+     /** @var TestCase $this */
+     /** @var User $user */
+     $user = User::factory()->create();
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+110) tests/Feature/SecurityAuditTest.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+
+ uses(RefreshDatabase::class);
+
+-test('it rejects malicious file uploads in media controller', function () {
++test('it rejects malicious file uploads in media controller', function (): void {
+     /** @var TestCase $this */
+     $user = User::factory()->create();
+     config([
+@@ Line 33 @@
+     $response->assertJsonValidationErrors(['file']);
+ });
+
+-test('it accepts valid image file uploads', function () {
++test('it accepts valid image file uploads', function (): void {
+     /** @var TestCase $this */
+     $user = User::factory()->create();
+     config([
+@@ Line 53 @@
+         ->assertJson(['success' => true]);
+ });
+
+-test('it prevents unauthorized access to other users transactions', function () {
++test('it prevents unauthorized access to other users transactions', function (): void {
+     /** @var TestCase $this */
+     $alvin = User::factory()->create();
+     $ila = User::factory()->create();
+@@ Line 72 @@
+     $response->assertStatus(404);
+ });
+
+-test('it verifies branding variables are set correctly', function () {
++test('it verifies branding variables are set correctly', function (): void {
+     $appName = config('app.name');
+     $mailFromName = config('mail.from.name');
+
+@@ Line 80 @@
+     expect($mailFromName)->toBe('Dompet Kita');
+ });
+
+-test('it verifies secure mail configuration', function () {
++test('it verifies secure mail configuration', function (): void {
+     expect(config('mail.mailers.smtp.encryption'))->toBe('tls');
+     expect((int) config('mail.mailers.smtp.port'))->toBe(587);
+ });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+111) tests/Feature/SummaryTest.php:6
+
+    ---------- begin diff ----------
+@@ Line 6 @@
+
+ uses(RefreshDatabase::class);
+
+-test('user can get financial summary', function () {
++test('user can get financial summary', function (): void {
+     $user = User::factory()->create();
+     Transaction::factory()->create([
+         'user_id' => $user->id,
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+112) tests/Pest.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ use Tests\TestCase;
+
+ /*
+@@ Line 28 @@
+ |
+ */
+
+-expect()->extend('toBeOne', function () {
+-    return $this->toBe(1);
+-});
++expect()->extend('toBeOne', fn() => $this->toBe(1));
+
+ /*
+ |--------------------------------------------------------------------------
+    ----------- end diff -----------
+
+Applied rules:
+ * ClosureToArrowFunctionRector
+ * SafeDeclareStrictTypesRector
+
+
+113) app/Actions/Finance/Wealth/SimulateMonteCarloAction.php:43
+
+    ---------- begin diff ----------
+@@ Line 43 @@
+
+                 // 2. Market volatility (Paper wealth/Gold logic): ±5%
+                 $marketNoise = random_int(-5, 5) / 100;
+-                $runningWealth = $runningWealth * (1 + $marketNoise);
++                $runningWealth *= 1 + $marketNoise;
+
+                 // 3. Regular Savings & Inflation
+                 $runningWealth = ($runningWealth + $actualSavings) * (1 - $inflationMonthly);
+    ----------- end diff -----------
+
+Applied rules:
+ * CombinedAssignRector
+
+
+114) app/Actions/Finance/Wealth/SyncMarketAssetsAction.php:25
+
+    ---------- begin diff ----------
+@@ Line 25 @@
+         $stats = ['updated' => 0, 'alerts' => 0];
+
+         Asset::marketSynced()
+-            ->each(function (Asset $asset) use ($market, &$stats) {
++            ->each(function (Asset $asset) use ($market, &$stats): void {
+                 if ($asset->quantity <= 0) {
+                     return;
+                 }
+@@ Line 101 @@
+
+     private function resolveStockUnitPrice(string $symbol): float
+     {
+-        if (empty($symbol)) {
++        if ($symbol === '' || $symbol === '0') {
+             return 0.0;
+         }
+    ----------- end diff -----------
+
+Applied rules:
+ * DisallowedEmptyRuleFixerRector
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+115) app/Actions/Security/DeadMansSwitch/PrepareArchiveAction.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Actions\Security\DeadMansSwitch;
+
+ use App\Actions\BaseAction;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+116) app/Actions/Security/DeadMansSwitch/RecordActivityAction.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Actions\Security\DeadMansSwitch;
+
+ use App\Actions\BaseAction;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+117) app/Actions/Security/PerformDeepSecurityAuditAction.php:48
+
+    ---------- begin diff ----------
+@@ Line 48 @@
+                 'output' => $frontendResult->output(),
+             ],
+             'secrets' => [
+-                'success' => empty($secretsFindings),
++                'success' => $secretsFindings === [],
+                 'findings' => $secretsFindings,
+             ],
+         ];
+    ----------- end diff -----------
+
+Applied rules:
+ * SimplifyEmptyCheckOnEmptyArrayRector
+
+
+118) app/Actions/System/BackupDatabaseAction.php:22
+
+    ---------- begin diff ----------
+@@ Line 22 @@
+     public function execute(): array
+     {
+         $dbUrl = (string) config('database.connections.pgsql.url');
+-        if (! $dbUrl) {
++        if ($dbUrl === '' || $dbUrl === '0') {
+             throw new Exception('DB_URL is not configured.');
+         }
+    ----------- end diff -----------
+
+Applied rules:
+ * ExplicitBoolCompareRector
+
+
+119) app/Actions/System/RepairSystemIssuesAction.php:10
+
+    ---------- begin diff ----------
+@@ Line 10 @@
+
+ class RepairSystemIssuesAction extends BaseAction
+ {
+-    protected AiProviderManager $gemini;
+-
+-    public function __construct(AiProviderManager $gemini)
++    public function __construct(protected AiProviderManager $gemini)
+     {
+-        $this->gemini = $gemini;
+     }
+
+     /**
+    ----------- end diff -----------
+
+Applied rules:
+ * ClassPropertyAssignToConstructorPromotionRector
+
+
+120) app/Console/Commands/AI/AiResetManagerCommand.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Console\Commands\AI;
+
+ use App\Services\AI\AiProviderManager;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+121) app/Console/Commands/AI/AiSelfAudit.php:9
+
+    ---------- begin diff ----------
+@@ Line 9 @@
+
+ class AiSelfAudit extends Command
+ {
+-    private const SEPARATOR = '========================================';
++    private const string SEPARATOR = '========================================';
+
+     /**
+      * The name and signature of the console command.
+    ----------- end diff -----------
+
+Applied rules:
+ * AddTypeToConstRector
+
+
+122) app/Console/Commands/CheckLegacyInactivity.php:35
+
+    ---------- begin diff ----------
+@@ Line 35 @@
+
+         // Find users with legacy setup (partner or email) who are not already triggered
+         $users = User::whereRaw('is_legacy_triggered IS FALSE')
+-            ->where(function ($query) {
++            ->where(function ($query): void {
+                 $query->whereNotNull('partner_id')
+                     ->orWhereNotNull('legacy_partner_email');
+             })
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+123) app/Console/Commands/Finance/BudgetCheck.php:42
+
+    ---------- begin diff ----------
+@@ Line 42 @@
+
+             $this->newLine();
+
+-            switch ($result['status']) {
+-                case 'critical':
+-                    $this->error('🚨 **CRITICAL: Budget terlampaui!** Sebaiknya istirahat belanja dulu ya.');
+-                    break;
+-                case 'warning':
+-                    $this->warn('⚠️ **WARNING: Sudah mendekati limit!** Hati-hati ya.');
+-                    break;
+-                default:
+-                    $this->info('✅ Aman! Silakan lanjutkan rencana produktif kalian.');
+-            }
++            match ($result['status']) {
++                'critical' => $this->error('🚨 **CRITICAL: Budget terlampaui!** Sebaiknya istirahat belanja dulu ya.'),
++                'warning' => $this->warn('⚠️ **WARNING: Sudah mendekati limit!** Hati-hati ya.'),
++                default => $this->info('✅ Aman! Silakan lanjutkan rencana produktif kalian.'),
++            };
+
+             return 0;
+         } catch (Exception $e) {
+    ----------- end diff -----------
+
+Applied rules:
+ * ChangeSwitchToMatchRector
+
+
+124) app/Console/Commands/Finance/CfoForecast.php:55
+
+    ---------- begin diff ----------
+@@ Line 55 @@
+             $this->info("🔮 PROJECTION (Next {$months} months):");
+
+             $projectionData = $data['projection'];
+-            $tableData = $projectionData->map(function ($item) {
+-                return [
+-                    'month' => $item['month'],
+-                    'projected' => 'Rp '.number_format((float) $item['estimated_net_worth'], 0, ',', '.'),
+-                ];
+-            })->toArray();
++            $tableData = $projectionData->map(fn($item) => [
++                'month' => $item['month'],
++                'projected' => 'Rp '.number_format((float) $item['estimated_net_worth'], 0, ',', '.'),
++            ])->toArray();
+
+             $this->table(['Month', 'Projected Net Worth'], $tableData);
+    ----------- end diff -----------
+
+Applied rules:
+ * ClosureToArrowFunctionRector
+
+
+125) app/Console/Commands/Security/HoneypotAudit.php:47
+
+    ---------- begin diff ----------
+@@ Line 47 @@
+             $this->newLine();
+             $this->info('RADAR STATUS: [HIGH ALERT]');
+
+-            if (! $ip && ! empty($attacks)) {
++            if (! $ip && $attacks !== []) {
+                 $this->info("Recommended: IP '{$attacks[0]['ip']}' has been automatically blacklisted via Cloudflare.");
+             }
+    ----------- end diff -----------
+
+Applied rules:
+ * SimplifyEmptyCheckOnEmptyArrayRector
+
+
+126) app/Console/Commands/Security/SecurityAudit.php:10
+
+    ---------- begin diff ----------
+@@ Line 10 @@
+
+ class SecurityAudit extends Command
+ {
+-    private const SEPARATOR = '========================================';
++    private const string SEPARATOR = '========================================';
+
+-    private const SCORE_SUFFIX = '/100)';
++    private const string SCORE_SUFFIX = '/100)';
+
+     /**
+      * The name and signature of the console command.
+@@ Line 69 @@
+
+         $this->info(self::SEPARATOR);
+
+-        if (empty($findings)) {
++        if ($findings === []) {
+             $this->info('No security concerns found. Your finances are safe!');
+         } else {
+             foreach ($findings as $finding) {
+    ----------- end diff -----------
+
+Applied rules:
+ * SimplifyEmptyCheckOnEmptyArrayRector
+ * AddTypeToConstRector
+
+
+127) app/Console/Commands/Security/SecurityDeepAudit.php:10
+
+    ---------- begin diff ----------
+@@ Line 10 @@
+
+ class SecurityDeepAudit extends Command
+ {
+-    private const SEPARATOR = '========================================';
++    private const string SEPARATOR = '========================================';
+
+     /**
+      * The name and signature of the console command.
+    ----------- end diff -----------
+
+Applied rules:
+ * AddTypeToConstRector
+
+
+128) app/Services/Security/PrivacyFilter.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Services\Security;
+
+ class PrivacyFilter
+@@ Line 10 @@
+      */
+     public function mask(string $text): string
+     {
+-        if (empty($text)) {
++        if ($text === '' || $text === '0') {
+             return $text;
+         }
+
+@@ Line 30 @@
+         // 3. Mask Credit Card / Account Numbers (12-16 digits)
+         $maskedText = preg_replace('/\b\d{12,16}\b/', '[ID_NUM_REDACTED]', $text);
+         if (is_string($maskedText)) {
+-            $text = $maskedText;
++            return $maskedText;
+         }
+
+         return $text;
+@@ Line 43 @@
+     {
+         // Split by lines and mask each
+         $lines = explode("\n", $summary);
+-        $maskedLines = array_map([$this, 'mask'], $lines);
++        $maskedLines = array_map($this->mask(...), $lines);
+
+         return implode("\n", $maskedLines);
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * CompleteMissingIfElseBracketRector
+ * ReturnEarlyIfVariableRector
+ * ArrayToFirstClassCallableRector
+ * DisallowedEmptyRuleFixerRector
+ * SafeDeclareStrictTypesRector
+
+
+129) app/Services/SelfHealingService.php:45
+
+    ---------- begin diff ----------
+@@ Line 45 @@
+         }
+
+         return [
+-            'status' => empty($issues) ? 'healthy' : 'unhealthy',
++            'status' => $issues === [] ? 'healthy' : 'unhealthy',
+             'timestamp' => now()->toIso8601String(),
+             'issues' => $issues,
+-            'message' => empty($issues)
++            'message' => $issues === []
+                 ? 'Sistem dalam kondisi optimal.'
+                 : 'Terdeteksi anomali pada sistem. Memulai prosedur diagnosa otomatis.',
+         ];
+    ----------- end diff -----------
+
+Applied rules:
+ * SimplifyEmptyCheckOnEmptyArrayRector
+
+
+130) app/Services/SentinelService.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Services;
+
+ use Illuminate\Support\Facades\Http;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+131) app/Services/StorageService.php:14
+
+    ---------- begin diff ----------
+@@ Line 14 @@
+  */
+ class StorageService
+ {
+-    private const IMAGE_JPEG = 'image/jpeg';
++    private const string IMAGE_JPEG = 'image/jpeg';
+
+     /**
+      * Get base64 data and mime type from request params.
+@@ Line 113 @@
+     private function formatFileData(string $content, ?string $path, ?string $url): array
+     {
+         $base64Data = base64_encode($content);
+-        $reference = $path ? $path : $url;
++        $reference = $path ?: $url;
+         $urlPath = parse_url((string) $reference, PHP_URL_PATH);
+         $ext = strtolower(pathinfo((string) $urlPath, PATHINFO_EXTENSION));
+    ----------- end diff -----------
+
+Applied rules:
+ * TernaryToElvisRector
+ * AddTypeToConstRector
+
+
+132) app/Traits/HasHouseholdScope.php:41
+
+    ---------- begin diff ----------
+@@ Line 41 @@
+      */
+     protected static function bootHasHouseholdScope(): void
+     {
+-        static::creating(function ($model) {
++        static::creating(function ($model): void {
+             $user = Auth::user();
+
+             // 1. If we have an authenticated user, prioritize their context
+@@ Line 66 @@
+         });
+
+         // 🛡️ The Sovereign Scope: Alvin & Ila see everything in the same household.
+-        static::addGlobalScope('household_scope', function (Builder $builder) {
++        static::addGlobalScope('household_scope', function (Builder $builder): void {
+             $user = Auth::user();
+             if ($user instanceof User) {
+                 if ($user->household_id) {
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+133) bootstrap/app.php:41
+
+    ---------- begin diff ----------
+@@ Line 41 @@
+     ->withExceptions(function (Exceptions $exceptions): void {
+         Integration::handles($exceptions);
+
+-        $exceptions->report(function (Throwable $e) {
++        $exceptions->report(function (Throwable $e): void {
+             Log::error('PRODUCTION_ERROR: '.$e->getMessage(), [
+-                'exception' => get_class($e),
++                'exception' => $e::class,
+                 'file' => $e->getFile(),
+                 'line' => $e->getLine(),
+                 'trace' => $e->getTraceAsString(),
+    ----------- end diff -----------
+
+Applied rules:
+ * ClassOnObjectRector
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+134) bootstrap/cache/packages.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+-<?php return array (
++<?php
++
++declare(strict_types=1);
++
++return  [
+   'akaunting/laravel-firewall' => 
+-  array (
++   [
+     'providers' => 
+-    array (
+-      0 => 'Akaunting\\Firewall\\Provider',
+-    ),
+-  ),
++     [
++      0 => \Akaunting\Firewall\Provider::class,
++    ],
++  ],
+   'barryvdh/laravel-ide-helper' => 
+-  array (
++   [
+     'providers' => 
+-    array (
+-      0 => 'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
+-    ),
+-  ),
++     [
++      0 => \Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
++    ],
++  ],
+   'jenssegers/agent' => 
+-  array (
++   [
+     'aliases' => 
+-    array (
+-      'Agent' => 'Jenssegers\\Agent\\Facades\\Agent',
+-    ),
++     [
++      'Agent' => \Jenssegers\Agent\Facades\Agent::class,
++    ],
+     'providers' => 
+-    array (
+-      0 => 'Jenssegers\\Agent\\AgentServiceProvider',
+-    ),
+-  ),
++     [
++      0 => \Jenssegers\Agent\AgentServiceProvider::class,
++    ],
++  ],
+   'laravel/sanctum' => 
+-  array (
++   [
+     'providers' => 
+-    array (
+-      0 => 'Laravel\\Sanctum\\SanctumServiceProvider',
+-    ),
+-  ),
++     [
++      0 => \Laravel\Sanctum\SanctumServiceProvider::class,
++    ],
++  ],
+   'laravel/socialite' => 
+-  array (
++   [
+     'aliases' => 
+-    array (
+-      'Socialite' => 'Laravel\\Socialite\\Facades\\Socialite',
+-    ),
++     [
++      'Socialite' => \Laravel\Socialite\Facades\Socialite::class,
++    ],
+     'providers' => 
+-    array (
+-      0 => 'Laravel\\Socialite\\SocialiteServiceProvider',
+-    ),
+-  ),
++     [
++      0 => \Laravel\Socialite\SocialiteServiceProvider::class,
++    ],
++  ],
+   'laravel/tinker' => 
+-  array (
++   [
+     'providers' => 
+-    array (
+-      0 => 'Laravel\\Tinker\\TinkerServiceProvider',
+-    ),
+-  ),
++     [
++      0 => \Laravel\Tinker\TinkerServiceProvider::class,
++    ],
++  ],
+   'nesbot/carbon' => 
+-  array (
++   [
+     'providers' => 
+-    array (
+-      0 => 'Carbon\\Laravel\\ServiceProvider',
+-    ),
+-  ),
++     [
++      0 => \Carbon\Laravel\ServiceProvider::class,
++    ],
++  ],
+   'nunomaduro/collision' => 
+-  array (
++   [
+     'providers' => 
+-    array (
+-      0 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+-    ),
+-  ),
++     [
++      0 => \NunoMaduro\Collision\Adapters\Laravel\CollisionServiceProvider::class,
++    ],
++  ],
+   'nunomaduro/phpinsights' => 
+-  array (
++   [
+     'providers' => 
+-    array (
+-      0 => 'NunoMaduro\\PhpInsights\\Application\\Adapters\\Laravel\\InsightsServiceProvider',
+-    ),
+-  ),
++     [
++      0 => \NunoMaduro\PhpInsights\Application\Adapters\Laravel\InsightsServiceProvider::class,
++    ],
++  ],
+   'nunomaduro/termwind' => 
+-  array (
++   [
+     'providers' => 
+-    array (
+-      0 => 'Termwind\\Laravel\\TermwindServiceProvider',
+-    ),
+-  ),
++     [
++      0 => \Termwind\Laravel\TermwindServiceProvider::class,
++    ],
++  ],
+   'pestphp/pest-plugin-laravel' => 
+-  array (
++   [
+     'providers' => 
+-    array (
+-      0 => 'Pest\\Laravel\\PestServiceProvider',
+-    ),
+-  ),
++     [
++      0 => \Pest\Laravel\PestServiceProvider::class,
++    ],
++  ],
+   'sentry/sentry-laravel' => 
+-  array (
++   [
+     'aliases' => 
+-    array (
+-      'Sentry' => 'Sentry\\Laravel\\Facade',
+-    ),
++     [
++      'Sentry' => \Sentry\Laravel\Facade::class,
++    ],
+     'providers' => 
+-    array (
+-      0 => 'Sentry\\Laravel\\ServiceProvider',
+-      1 => 'Sentry\\Laravel\\Tracing\\ServiceProvider',
+-    ),
+-  ),
++     [
++      0 => \Sentry\Laravel\ServiceProvider::class,
++      1 => \Sentry\Laravel\Tracing\ServiceProvider::class,
++    ],
++  ],
+   'spatie/laravel-activitylog' => 
+-  array (
++   [
+     'providers' => 
+-    array (
+-      0 => 'Spatie\\Activitylog\\ActivitylogServiceProvider',
+-    ),
+-  ),
++     [
++      0 => \Spatie\Activitylog\ActivitylogServiceProvider::class,
++    ],
++  ],
+   'spatie/laravel-honeypot' => 
+-  array (
++   [
+     'providers' => 
+-    array (
+-      0 => 'Spatie\\Honeypot\\HoneypotServiceProvider',
+-    ),
+-  ),
+-);
+\ No newline at end of file
++     [
++      0 => \Spatie\Honeypot\HoneypotServiceProvider::class,
++    ],
++  ],
++];
+    ----------- end diff -----------
+
+Applied rules:
+ * LongArrayToShortArrayRector
+ * StringClassNameToClassConstantRector
+ * SafeDeclareStrictTypesRector
+
+
+135) bootstrap/cache/services.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+-<?php return array (
++<?php
++
++declare(strict_types=1);
++
++return  [
+   'providers' => 
+-  array (
+-    0 => 'Illuminate\\Auth\\AuthServiceProvider',
+-    1 => 'Illuminate\\Broadcasting\\BroadcastServiceProvider',
+-    2 => 'Illuminate\\Bus\\BusServiceProvider',
+-    3 => 'Illuminate\\Cache\\CacheServiceProvider',
+-    4 => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    5 => 'Illuminate\\Concurrency\\ConcurrencyServiceProvider',
+-    6 => 'Illuminate\\Cookie\\CookieServiceProvider',
+-    7 => 'Illuminate\\Database\\DatabaseServiceProvider',
+-    8 => 'Illuminate\\Encryption\\EncryptionServiceProvider',
+-    9 => 'Illuminate\\Filesystem\\FilesystemServiceProvider',
+-    10 => 'Illuminate\\Foundation\\Providers\\FoundationServiceProvider',
+-    11 => 'Illuminate\\Hashing\\HashServiceProvider',
+-    12 => 'Illuminate\\Mail\\MailServiceProvider',
+-    13 => 'Illuminate\\Notifications\\NotificationServiceProvider',
+-    14 => 'Illuminate\\Pagination\\PaginationServiceProvider',
+-    15 => 'Illuminate\\Auth\\Passwords\\PasswordResetServiceProvider',
+-    16 => 'Illuminate\\Pipeline\\PipelineServiceProvider',
+-    17 => 'Illuminate\\Queue\\QueueServiceProvider',
+-    18 => 'Illuminate\\Redis\\RedisServiceProvider',
+-    19 => 'Illuminate\\Session\\SessionServiceProvider',
+-    20 => 'Illuminate\\Translation\\TranslationServiceProvider',
+-    21 => 'Illuminate\\Validation\\ValidationServiceProvider',
+-    22 => 'Illuminate\\View\\ViewServiceProvider',
+-    23 => 'Akaunting\\Firewall\\Provider',
+-    24 => 'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
+-    25 => 'Jenssegers\\Agent\\AgentServiceProvider',
+-    26 => 'Laravel\\Sanctum\\SanctumServiceProvider',
+-    27 => 'Laravel\\Socialite\\SocialiteServiceProvider',
+-    28 => 'Laravel\\Tinker\\TinkerServiceProvider',
+-    29 => 'Carbon\\Laravel\\ServiceProvider',
+-    30 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+-    31 => 'NunoMaduro\\PhpInsights\\Application\\Adapters\\Laravel\\InsightsServiceProvider',
+-    32 => 'Termwind\\Laravel\\TermwindServiceProvider',
+-    33 => 'Pest\\Laravel\\PestServiceProvider',
+-    34 => 'Sentry\\Laravel\\ServiceProvider',
+-    35 => 'Sentry\\Laravel\\Tracing\\ServiceProvider',
+-    36 => 'Spatie\\Activitylog\\ActivitylogServiceProvider',
+-    37 => 'Spatie\\Honeypot\\HoneypotServiceProvider',
+-    38 => 'App\\Providers\\AppServiceProvider',
+-    39 => 'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
+-    40 => 'App\\Providers\\AiServiceProvider',
+-    41 => 'App\\Providers\\MailServiceProvider',
+-    42 => 'Akaunting\\Firewall\\Provider',
+-  ),
++   [
++    0 => \Illuminate\Auth\AuthServiceProvider::class,
++    1 => \Illuminate\Broadcasting\BroadcastServiceProvider::class,
++    2 => \Illuminate\Bus\BusServiceProvider::class,
++    3 => \Illuminate\Cache\CacheServiceProvider::class,
++    4 => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    5 => \Illuminate\Concurrency\ConcurrencyServiceProvider::class,
++    6 => \Illuminate\Cookie\CookieServiceProvider::class,
++    7 => \Illuminate\Database\DatabaseServiceProvider::class,
++    8 => \Illuminate\Encryption\EncryptionServiceProvider::class,
++    9 => \Illuminate\Filesystem\FilesystemServiceProvider::class,
++    10 => \Illuminate\Foundation\Providers\FoundationServiceProvider::class,
++    11 => \Illuminate\Hashing\HashServiceProvider::class,
++    12 => \Illuminate\Mail\MailServiceProvider::class,
++    13 => \Illuminate\Notifications\NotificationServiceProvider::class,
++    14 => \Illuminate\Pagination\PaginationServiceProvider::class,
++    15 => \Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
++    16 => \Illuminate\Pipeline\PipelineServiceProvider::class,
++    17 => \Illuminate\Queue\QueueServiceProvider::class,
++    18 => \Illuminate\Redis\RedisServiceProvider::class,
++    19 => \Illuminate\Session\SessionServiceProvider::class,
++    20 => \Illuminate\Translation\TranslationServiceProvider::class,
++    21 => \Illuminate\Validation\ValidationServiceProvider::class,
++    22 => \Illuminate\View\ViewServiceProvider::class,
++    23 => \Akaunting\Firewall\Provider::class,
++    24 => \Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
++    25 => \Jenssegers\Agent\AgentServiceProvider::class,
++    26 => \Laravel\Sanctum\SanctumServiceProvider::class,
++    27 => \Laravel\Socialite\SocialiteServiceProvider::class,
++    28 => \Laravel\Tinker\TinkerServiceProvider::class,
++    29 => \Carbon\Laravel\ServiceProvider::class,
++    30 => \NunoMaduro\Collision\Adapters\Laravel\CollisionServiceProvider::class,
++    31 => \NunoMaduro\PhpInsights\Application\Adapters\Laravel\InsightsServiceProvider::class,
++    32 => \Termwind\Laravel\TermwindServiceProvider::class,
++    33 => \Pest\Laravel\PestServiceProvider::class,
++    34 => \Sentry\Laravel\ServiceProvider::class,
++    35 => \Sentry\Laravel\Tracing\ServiceProvider::class,
++    36 => \Spatie\Activitylog\ActivitylogServiceProvider::class,
++    37 => \Spatie\Honeypot\HoneypotServiceProvider::class,
++    38 => \App\Providers\AppServiceProvider::class,
++    39 => \Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
++    40 => \App\Providers\AiServiceProvider::class,
++    41 => \App\Providers\MailServiceProvider::class,
++    42 => \Akaunting\Firewall\Provider::class,
++  ],
+   'eager' => 
+-  array (
+-    0 => 'Illuminate\\Auth\\AuthServiceProvider',
+-    1 => 'Illuminate\\Cookie\\CookieServiceProvider',
+-    2 => 'Illuminate\\Database\\DatabaseServiceProvider',
+-    3 => 'Illuminate\\Encryption\\EncryptionServiceProvider',
+-    4 => 'Illuminate\\Filesystem\\FilesystemServiceProvider',
+-    5 => 'Illuminate\\Foundation\\Providers\\FoundationServiceProvider',
+-    6 => 'Illuminate\\Notifications\\NotificationServiceProvider',
+-    7 => 'Illuminate\\Pagination\\PaginationServiceProvider',
+-    8 => 'Illuminate\\Session\\SessionServiceProvider',
+-    9 => 'Illuminate\\View\\ViewServiceProvider',
+-    10 => 'Akaunting\\Firewall\\Provider',
+-    11 => 'Jenssegers\\Agent\\AgentServiceProvider',
+-    12 => 'Laravel\\Sanctum\\SanctumServiceProvider',
+-    13 => 'Carbon\\Laravel\\ServiceProvider',
+-    14 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+-    15 => 'NunoMaduro\\PhpInsights\\Application\\Adapters\\Laravel\\InsightsServiceProvider',
+-    16 => 'Termwind\\Laravel\\TermwindServiceProvider',
+-    17 => 'Pest\\Laravel\\PestServiceProvider',
+-    18 => 'Sentry\\Laravel\\ServiceProvider',
+-    19 => 'Sentry\\Laravel\\Tracing\\ServiceProvider',
+-    20 => 'Spatie\\Activitylog\\ActivitylogServiceProvider',
+-    21 => 'Spatie\\Honeypot\\HoneypotServiceProvider',
+-    22 => 'App\\Providers\\AppServiceProvider',
+-    23 => 'App\\Providers\\AiServiceProvider',
+-    24 => 'App\\Providers\\MailServiceProvider',
+-    25 => 'Akaunting\\Firewall\\Provider',
+-  ),
++   [
++    0 => \Illuminate\Auth\AuthServiceProvider::class,
++    1 => \Illuminate\Cookie\CookieServiceProvider::class,
++    2 => \Illuminate\Database\DatabaseServiceProvider::class,
++    3 => \Illuminate\Encryption\EncryptionServiceProvider::class,
++    4 => \Illuminate\Filesystem\FilesystemServiceProvider::class,
++    5 => \Illuminate\Foundation\Providers\FoundationServiceProvider::class,
++    6 => \Illuminate\Notifications\NotificationServiceProvider::class,
++    7 => \Illuminate\Pagination\PaginationServiceProvider::class,
++    8 => \Illuminate\Session\SessionServiceProvider::class,
++    9 => \Illuminate\View\ViewServiceProvider::class,
++    10 => \Akaunting\Firewall\Provider::class,
++    11 => \Jenssegers\Agent\AgentServiceProvider::class,
++    12 => \Laravel\Sanctum\SanctumServiceProvider::class,
++    13 => \Carbon\Laravel\ServiceProvider::class,
++    14 => \NunoMaduro\Collision\Adapters\Laravel\CollisionServiceProvider::class,
++    15 => \NunoMaduro\PhpInsights\Application\Adapters\Laravel\InsightsServiceProvider::class,
++    16 => \Termwind\Laravel\TermwindServiceProvider::class,
++    17 => \Pest\Laravel\PestServiceProvider::class,
++    18 => \Sentry\Laravel\ServiceProvider::class,
++    19 => \Sentry\Laravel\Tracing\ServiceProvider::class,
++    20 => \Spatie\Activitylog\ActivitylogServiceProvider::class,
++    21 => \Spatie\Honeypot\HoneypotServiceProvider::class,
++    22 => \App\Providers\AppServiceProvider::class,
++    23 => \App\Providers\AiServiceProvider::class,
++    24 => \App\Providers\MailServiceProvider::class,
++    25 => \Akaunting\Firewall\Provider::class,
++  ],
+   'deferred' => 
+-  array (
+-    'Illuminate\\Broadcasting\\BroadcastManager' => 'Illuminate\\Broadcasting\\BroadcastServiceProvider',
+-    'Illuminate\\Contracts\\Broadcasting\\Factory' => 'Illuminate\\Broadcasting\\BroadcastServiceProvider',
+-    'Illuminate\\Contracts\\Broadcasting\\Broadcaster' => 'Illuminate\\Broadcasting\\BroadcastServiceProvider',
+-    'Illuminate\\Bus\\Dispatcher' => 'Illuminate\\Bus\\BusServiceProvider',
+-    'Illuminate\\Contracts\\Bus\\Dispatcher' => 'Illuminate\\Bus\\BusServiceProvider',
+-    'Illuminate\\Contracts\\Bus\\QueueingDispatcher' => 'Illuminate\\Bus\\BusServiceProvider',
+-    'Illuminate\\Bus\\BatchRepository' => 'Illuminate\\Bus\\BusServiceProvider',
+-    'Illuminate\\Bus\\DatabaseBatchRepository' => 'Illuminate\\Bus\\BusServiceProvider',
+-    'cache' => 'Illuminate\\Cache\\CacheServiceProvider',
+-    'cache.store' => 'Illuminate\\Cache\\CacheServiceProvider',
+-    'cache.psr6' => 'Illuminate\\Cache\\CacheServiceProvider',
+-    'memcached.connector' => 'Illuminate\\Cache\\CacheServiceProvider',
+-    'Illuminate\\Cache\\RateLimiter' => 'Illuminate\\Cache\\CacheServiceProvider',
+-    'Illuminate\\Foundation\\Console\\AboutCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Cache\\Console\\ClearCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Cache\\Console\\ForgetCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ClearCompiledCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Auth\\Console\\ClearResetsCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ConfigCacheCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ConfigClearCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ConfigShowCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\DbCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\MonitorCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\PruneCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\ShowCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\TableCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\WipeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\DownCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\EnvironmentCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\EnvironmentDecryptCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\EnvironmentEncryptCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\EventCacheCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\EventClearCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\EventListCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Concurrency\\Console\\InvokeSerializedClosureCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\KeyGenerateCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\OptimizeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\OptimizeClearCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\PackageDiscoverCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Cache\\Console\\PruneStaleTagsCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\ClearCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\ListFailedCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\FlushFailedCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\ForgetFailedCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\ListenCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\MonitorCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\PauseCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\PruneBatchesCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\PruneFailedJobsCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\RestartCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\ResumeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\RetryCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\RetryBatchCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\WorkCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ReloadCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\RouteCacheCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\RouteClearCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\RouteListCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\DumpCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\Seeds\\SeedCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Console\\Scheduling\\ScheduleFinishCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Console\\Scheduling\\ScheduleListCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Console\\Scheduling\\ScheduleRunCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Console\\Scheduling\\ScheduleClearCacheCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Console\\Scheduling\\ScheduleTestCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Console\\Scheduling\\ScheduleWorkCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Console\\Scheduling\\ScheduleInterruptCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Console\\Scheduling\\SchedulePauseCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Console\\Scheduling\\ScheduleResumeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\ShowModelCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\StorageLinkCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\StorageUnlinkCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\UpCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ViewCacheCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ViewClearCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ApiInstallCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\BroadcastingInstallCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Cache\\Console\\CacheTableCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\CastMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ChannelListCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ChannelMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ClassMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ComponentMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ConfigMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ConfigPublishCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ConsoleMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Routing\\Console\\ControllerMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\DocsCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\EnumMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\EventGenerateCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\EventMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ExceptionMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\Factories\\FactoryMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\InterfaceMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\JobMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\JobMiddlewareMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\LangPublishCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ListenerMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\MailMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Routing\\Console\\MiddlewareMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ModelMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\NotificationMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Notifications\\Console\\NotificationTableCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ObserverMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\PolicyMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ProviderMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\FailedTableCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\TableCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Queue\\Console\\BatchesTableCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\RequestMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ResourceMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\RuleMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ScopeMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\Seeds\\SeederMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Session\\Console\\SessionTableCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ServeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\StubPublishCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\TestMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\TraitMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\VendorPublishCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Foundation\\Console\\ViewMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'migrator' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'migration.repository' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'migration.creator' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Migrations\\Migrator' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\Migrations\\MigrateCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\Migrations\\FreshCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\Migrations\\InstallCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\Migrations\\RefreshCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\Migrations\\ResetCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\Migrations\\RollbackCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\Migrations\\StatusCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Database\\Console\\Migrations\\MigrateMakeCommand' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'composer' => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+-    'Illuminate\\Concurrency\\ConcurrencyManager' => 'Illuminate\\Concurrency\\ConcurrencyServiceProvider',
+-    'hash' => 'Illuminate\\Hashing\\HashServiceProvider',
+-    'hash.driver' => 'Illuminate\\Hashing\\HashServiceProvider',
+-    'mail.manager' => 'Illuminate\\Mail\\MailServiceProvider',
+-    'mailer' => 'Illuminate\\Mail\\MailServiceProvider',
+-    'Illuminate\\Mail\\Markdown' => 'Illuminate\\Mail\\MailServiceProvider',
+-    'auth.password' => 'Illuminate\\Auth\\Passwords\\PasswordResetServiceProvider',
+-    'auth.password.broker' => 'Illuminate\\Auth\\Passwords\\PasswordResetServiceProvider',
+-    'Illuminate\\Contracts\\Pipeline\\Hub' => 'Illuminate\\Pipeline\\PipelineServiceProvider',
+-    'pipeline' => 'Illuminate\\Pipeline\\PipelineServiceProvider',
+-    'queue' => 'Illuminate\\Queue\\QueueServiceProvider',
+-    'queue.connection' => 'Illuminate\\Queue\\QueueServiceProvider',
+-    'queue.failer' => 'Illuminate\\Queue\\QueueServiceProvider',
+-    'queue.listener' => 'Illuminate\\Queue\\QueueServiceProvider',
+-    'queue.routes' => 'Illuminate\\Queue\\QueueServiceProvider',
+-    'queue.worker' => 'Illuminate\\Queue\\QueueServiceProvider',
+-    'redis' => 'Illuminate\\Redis\\RedisServiceProvider',
+-    'redis.connection' => 'Illuminate\\Redis\\RedisServiceProvider',
+-    'translator' => 'Illuminate\\Translation\\TranslationServiceProvider',
+-    'translation.loader' => 'Illuminate\\Translation\\TranslationServiceProvider',
+-    'validator' => 'Illuminate\\Validation\\ValidationServiceProvider',
+-    'validation.presence' => 'Illuminate\\Validation\\ValidationServiceProvider',
+-    'Illuminate\\Contracts\\Validation\\UncompromisedVerifier' => 'Illuminate\\Validation\\ValidationServiceProvider',
+-    'Barryvdh\\LaravelIdeHelper\\Console\\GeneratorCommand' => 'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
+-    'Barryvdh\\LaravelIdeHelper\\Console\\ModelsCommand' => 'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
+-    'Barryvdh\\LaravelIdeHelper\\Console\\MetaCommand' => 'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
+-    'Barryvdh\\LaravelIdeHelper\\Console\\EloquentCommand' => 'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
+-    'Laravel\\Socialite\\Contracts\\Factory' => 'Laravel\\Socialite\\SocialiteServiceProvider',
+-    'command.tinker' => 'Laravel\\Tinker\\TinkerServiceProvider',
+-  ),
++   [
++    \Illuminate\Broadcasting\BroadcastManager::class => \Illuminate\Broadcasting\BroadcastServiceProvider::class,
++    \Illuminate\Contracts\Broadcasting\Factory::class => \Illuminate\Broadcasting\BroadcastServiceProvider::class,
++    \Illuminate\Contracts\Broadcasting\Broadcaster::class => \Illuminate\Broadcasting\BroadcastServiceProvider::class,
++    \Illuminate\Bus\Dispatcher::class => \Illuminate\Bus\BusServiceProvider::class,
++    \Illuminate\Contracts\Bus\Dispatcher::class => \Illuminate\Bus\BusServiceProvider::class,
++    \Illuminate\Contracts\Bus\QueueingDispatcher::class => \Illuminate\Bus\BusServiceProvider::class,
++    \Illuminate\Bus\BatchRepository::class => \Illuminate\Bus\BusServiceProvider::class,
++    \Illuminate\Bus\DatabaseBatchRepository::class => \Illuminate\Bus\BusServiceProvider::class,
++    'cache' => \Illuminate\Cache\CacheServiceProvider::class,
++    'cache.store' => \Illuminate\Cache\CacheServiceProvider::class,
++    'cache.psr6' => \Illuminate\Cache\CacheServiceProvider::class,
++    'memcached.connector' => \Illuminate\Cache\CacheServiceProvider::class,
++    \Illuminate\Cache\RateLimiter::class => \Illuminate\Cache\CacheServiceProvider::class,
++    \Illuminate\Foundation\Console\AboutCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Cache\Console\ClearCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Cache\Console\ForgetCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ClearCompiledCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Auth\Console\ClearResetsCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ConfigCacheCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ConfigClearCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ConfigShowCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\DbCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\MonitorCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\PruneCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\ShowCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\TableCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\WipeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\DownCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\EnvironmentCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\EnvironmentDecryptCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\EnvironmentEncryptCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\EventCacheCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\EventClearCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\EventListCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Concurrency\Console\InvokeSerializedClosureCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\KeyGenerateCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\OptimizeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\OptimizeClearCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\PackageDiscoverCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Cache\Console\PruneStaleTagsCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\ClearCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\ListFailedCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\FlushFailedCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\ForgetFailedCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\ListenCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\MonitorCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\PauseCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\PruneBatchesCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\PruneFailedJobsCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\RestartCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\ResumeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\RetryCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\RetryBatchCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\WorkCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ReloadCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\RouteCacheCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\RouteClearCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\RouteListCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\DumpCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\Seeds\SeedCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Console\Scheduling\ScheduleFinishCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Console\Scheduling\ScheduleListCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Console\Scheduling\ScheduleRunCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Console\Scheduling\ScheduleClearCacheCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Console\Scheduling\ScheduleTestCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Console\Scheduling\ScheduleWorkCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Console\Scheduling\ScheduleInterruptCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Console\Scheduling\SchedulePauseCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Console\Scheduling\ScheduleResumeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\ShowModelCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\StorageLinkCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\StorageUnlinkCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\UpCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ViewCacheCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ViewClearCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ApiInstallCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\BroadcastingInstallCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Cache\Console\CacheTableCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\CastMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ChannelListCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ChannelMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ClassMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ComponentMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ConfigMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ConfigPublishCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ConsoleMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Routing\Console\ControllerMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\DocsCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\EnumMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\EventGenerateCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\EventMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ExceptionMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\Factories\FactoryMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\InterfaceMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\JobMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\JobMiddlewareMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\LangPublishCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ListenerMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\MailMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Routing\Console\MiddlewareMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ModelMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\NotificationMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Notifications\Console\NotificationTableCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ObserverMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\PolicyMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ProviderMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\FailedTableCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\TableCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Queue\Console\BatchesTableCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\RequestMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ResourceMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\RuleMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ScopeMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\Seeds\SeederMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Session\Console\SessionTableCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ServeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\StubPublishCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\TestMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\TraitMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\VendorPublishCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Foundation\Console\ViewMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    'migrator' => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    'migration.repository' => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    'migration.creator' => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Migrations\Migrator::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\Migrations\MigrateCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\Migrations\FreshCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\Migrations\InstallCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\Migrations\RefreshCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\Migrations\ResetCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\Migrations\RollbackCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\Migrations\StatusCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Database\Console\Migrations\MigrateMakeCommand::class => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    'composer' => \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
++    \Illuminate\Concurrency\ConcurrencyManager::class => \Illuminate\Concurrency\ConcurrencyServiceProvider::class,
++    'hash' => \Illuminate\Hashing\HashServiceProvider::class,
++    'hash.driver' => \Illuminate\Hashing\HashServiceProvider::class,
++    'mail.manager' => \Illuminate\Mail\MailServiceProvider::class,
++    'mailer' => \Illuminate\Mail\MailServiceProvider::class,
++    \Illuminate\Mail\Markdown::class => \Illuminate\Mail\MailServiceProvider::class,
++    'auth.password' => \Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
++    'auth.password.broker' => \Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
++    \Illuminate\Contracts\Pipeline\Hub::class => \Illuminate\Pipeline\PipelineServiceProvider::class,
++    'pipeline' => \Illuminate\Pipeline\PipelineServiceProvider::class,
++    'queue' => \Illuminate\Queue\QueueServiceProvider::class,
++    'queue.connection' => \Illuminate\Queue\QueueServiceProvider::class,
++    'queue.failer' => \Illuminate\Queue\QueueServiceProvider::class,
++    'queue.listener' => \Illuminate\Queue\QueueServiceProvider::class,
++    'queue.routes' => \Illuminate\Queue\QueueServiceProvider::class,
++    'queue.worker' => \Illuminate\Queue\QueueServiceProvider::class,
++    'redis' => \Illuminate\Redis\RedisServiceProvider::class,
++    'redis.connection' => \Illuminate\Redis\RedisServiceProvider::class,
++    'translator' => \Illuminate\Translation\TranslationServiceProvider::class,
++    'translation.loader' => \Illuminate\Translation\TranslationServiceProvider::class,
++    'validator' => \Illuminate\Validation\ValidationServiceProvider::class,
++    'validation.presence' => \Illuminate\Validation\ValidationServiceProvider::class,
++    \Illuminate\Contracts\Validation\UncompromisedVerifier::class => \Illuminate\Validation\ValidationServiceProvider::class,
++    \Barryvdh\LaravelIdeHelper\Console\GeneratorCommand::class => \Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
++    \Barryvdh\LaravelIdeHelper\Console\ModelsCommand::class => \Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
++    \Barryvdh\LaravelIdeHelper\Console\MetaCommand::class => \Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
++    \Barryvdh\LaravelIdeHelper\Console\EloquentCommand::class => \Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
++    \Laravel\Socialite\Contracts\Factory::class => \Laravel\Socialite\SocialiteServiceProvider::class,
++    'command.tinker' => \Laravel\Tinker\TinkerServiceProvider::class,
++  ],
+   'when' => 
+-  array (
+-    'Illuminate\\Broadcasting\\BroadcastServiceProvider' => 
+-    array (
+-    ),
+-    'Illuminate\\Bus\\BusServiceProvider' => 
+-    array (
+-    ),
+-    'Illuminate\\Cache\\CacheServiceProvider' => 
+-    array (
+-    ),
+-    'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider' => 
+-    array (
+-    ),
+-    'Illuminate\\Concurrency\\ConcurrencyServiceProvider' => 
+-    array (
+-    ),
+-    'Illuminate\\Hashing\\HashServiceProvider' => 
+-    array (
+-    ),
+-    'Illuminate\\Mail\\MailServiceProvider' => 
+-    array (
+-    ),
+-    'Illuminate\\Auth\\Passwords\\PasswordResetServiceProvider' => 
+-    array (
+-    ),
+-    'Illuminate\\Pipeline\\PipelineServiceProvider' => 
+-    array (
+-    ),
+-    'Illuminate\\Queue\\QueueServiceProvider' => 
+-    array (
+-    ),
+-    'Illuminate\\Redis\\RedisServiceProvider' => 
+-    array (
+-    ),
+-    'Illuminate\\Translation\\TranslationServiceProvider' => 
+-    array (
+-    ),
+-    'Illuminate\\Validation\\ValidationServiceProvider' => 
+-    array (
+-    ),
+-    'Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider' => 
+-    array (
+-    ),
+-    'Laravel\\Socialite\\SocialiteServiceProvider' => 
+-    array (
+-    ),
+-    'Laravel\\Tinker\\TinkerServiceProvider' => 
+-    array (
+-    ),
+-  ),
+-);
+\ No newline at end of file
++   [
++    \Illuminate\Broadcasting\BroadcastServiceProvider::class => 
++     [
++    ],
++    \Illuminate\Bus\BusServiceProvider::class => 
++     [
++    ],
++    \Illuminate\Cache\CacheServiceProvider::class => 
++     [
++    ],
++    \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class => 
++     [
++    ],
++    \Illuminate\Concurrency\ConcurrencyServiceProvider::class => 
++     [
++    ],
++    \Illuminate\Hashing\HashServiceProvider::class => 
++     [
++    ],
++    \Illuminate\Mail\MailServiceProvider::class => 
++     [
++    ],
++    \Illuminate\Auth\Passwords\PasswordResetServiceProvider::class => 
++     [
++    ],
++    \Illuminate\Pipeline\PipelineServiceProvider::class => 
++     [
++    ],
++    \Illuminate\Queue\QueueServiceProvider::class => 
++     [
++    ],
++    \Illuminate\Redis\RedisServiceProvider::class => 
++     [
++    ],
++    \Illuminate\Translation\TranslationServiceProvider::class => 
++     [
++    ],
++    \Illuminate\Validation\ValidationServiceProvider::class => 
++     [
++    ],
++    \Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class => 
++     [
++    ],
++    \Laravel\Socialite\SocialiteServiceProvider::class => 
++     [
++    ],
++    \Laravel\Tinker\TinkerServiceProvider::class => 
++     [
++    ],
++  ],
++];
+    ----------- end diff -----------
+
+Applied rules:
+ * LongArrayToShortArrayRector
+ * StringClassNameToClassConstantRector
+ * SafeDeclareStrictTypesRector
+
+
+136) bootstrap/firewall_autoload_patch.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ /**
+  * ── Akaunting Firewall + Dependencies Autoload Patch ───────────────────────
+  * Registers missing PSR-4 namespaces that are installed in vendor but absent
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+137) bootstrap/providers.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ use Akaunting\Firewall\Provider as FirewallServiceProvider;
+ use App\Providers\AiServiceProvider;
+ use App\Providers\AppServiceProvider;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+138) config/activitylog.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ use Spatie\Activitylog\Actions\CleanActivityLogAction;
+ use Spatie\Activitylog\Actions\LogActivityAction;
+ use Spatie\Activitylog\Models\Activity;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+139) config/app.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ return [
+
+     /*
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+140) config/auth.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ use App\Models\User;
+
+ return [
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+141) config/cache.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ use Illuminate\Support\Str;
+
+ return [
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+142) config/cors.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ return [
+
+     /*
+@@ Line 19 @@
+
+     'allowed_methods' => ['*'],
+
+-    'allowed_origins' => explode(',', env('CORS_ALLOWED_ORIGINS', 'https://dompet-kita-six.vercel.app,https://dompet-kita.vercel.app,http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000')),
++    'allowed_origins' => explode(',', (string) env('CORS_ALLOWED_ORIGINS', 'https://dompet-kita-six.vercel.app,https://dompet-kita.vercel.app,http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000')),
+
+     'allowed_origins_patterns' => [],
+    ----------- end diff -----------
+
+Applied rules:
+ * NullToStrictStringFuncCallArgRector
+ * SafeDeclareStrictTypesRector
+
+
+143) app/Http/Requests/UpdateAssetRequest.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Http\Requests;
+
+ use Illuminate\Contracts\Validation\ValidationRule;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+144) app/Http/Requests/UpdateTransactionRequest.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Http\Requests;
+
+ use App\Enums\TransactionType;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+145) app/Http/Resources/AssetResource.php:16
+
+    ---------- begin diff ----------
+@@ Line 16 @@
+      *
+      * @return array<string, mixed>
+      */
++    #[\Override]
+     public function toArray(Request $request): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+146) app/Http/Resources/AssetTransactionResource.php:16
+
+    ---------- begin diff ----------
+@@ Line 16 @@
+      *
+      * @return array<string, mixed>
+      */
++    #[\Override]
+     public function toArray(Request $request): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+147) app/Http/Resources/GoalResource.php:25
+
+    ---------- begin diff ----------
+@@ Line 25 @@
+      *
+      * @return array<string, mixed>
+      */
++    #[\Override]
+     public function toArray(Request $request): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+148) app/Http/Resources/HolidayResource.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Http\Resources;
+
+ use App\Models\Holiday;
+@@ Line 28 @@
+      *
+      * @return array<string, mixed>
+      */
++    #[\Override]
+     public function toArray(Request $request): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+ * SafeDeclareStrictTypesRector
+
+
+149) app/Http/Resources/LoanResource.php:30
+
+    ---------- begin diff ----------
+@@ Line 30 @@
+      *
+      * @return array<string, mixed>
+      */
++    #[\Override]
+     public function toArray(Request $request): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+150) app/Http/Resources/ScheduledTransactionResource.php:16
+
+    ---------- begin diff ----------
+@@ Line 16 @@
+      *
+      * @return array<string, mixed>
+      */
++    #[\Override]
+     public function toArray(Request $request): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+151) app/Http/Resources/TransactionResource.php:29
+
+    ---------- begin diff ----------
+@@ Line 29 @@
+      *
+      * @return array<string, mixed>
+      */
++    #[\Override]
+     public function toArray(Request $request): array
+     {
+         $receiptUrl = null;
+@@ Line 41 @@
+                         $this->receipt_url,
+                         now()->addMinutes(15)
+                     );
+-                } catch (\Exception $e) {
++                } catch (\Exception) {
+                     $receiptUrl = Storage::disk('storj')->url($this->receipt_url);
+                 }
+             }
+    ----------- end diff -----------
+
+Applied rules:
+ * RemoveUnusedVariableInCatchRector
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+152) app/Http/Resources/UserResource.php:33
+
+    ---------- begin diff ----------
+@@ Line 33 @@
+      * @param  Request  $request
+      * @return array<string, mixed>
+      */
++    #[\Override]
+     public function toArray($request): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+153) app/Http/Resources/WealthHistoryResource.php:17
+
+    ---------- begin diff ----------
+@@ Line 17 @@
+      *
+      * @return array<string, mixed>
+      */
++    #[\Override]
+     public function toArray(Request $request): array
+     {
+         // Check if $this->resource is an array
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+154) app/Models/Asset.php:117
+
+    ---------- begin diff ----------
+@@ Line 117 @@
+      *
+      * @return array<string, string>
+      */
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+155) app/Models/AssetPriceHistory.php:41
+
+    ---------- begin diff ----------
+@@ Line 41 @@
+     /**
+      * @return array<string, string>
+      */
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+156) app/Models/ChatHistory.php:33
+
+    ---------- begin diff ----------
+@@ Line 33 @@
+      *
+      * @return array<string, string>
+      */
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+157) app/Models/FinancialWisdom.php:34
+
+    ---------- begin diff ----------
+@@ Line 34 @@
+      *
+      * @return array<string, string>
+      */
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+158) app/Models/Goal.php:53
+
+    ---------- begin diff ----------
+@@ Line 53 @@
+      *
+      * @return array<string, string>
+      */
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+159) app/Exceptions/MailTransportException.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Exceptions;
+
+ use Exception;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+160) app/Exceptions/MarketServiceException.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Exceptions;
+
+ use Exception;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+161) app/Exceptions/PenpotException.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Exceptions;
+
+ use Exception;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+162) app/Http/Controllers/AIController.php:270
+
+    ---------- begin diff ----------
+@@ Line 270 @@
+         $cacheKey = "ai_insight_{$scopeId}";
+
+         /** @var array{title: string, insight: string} $data */
+-        $data = Cache::remember($cacheKey, 3600 * 4, function () use ($totalIncome, $totalExpense, $savings, $summaryText) {
+-            return $this->generateInsightAction->execute(
+-                (string) number_format((float) $totalIncome),
+-                (string) number_format((float) $totalExpense),
+-                (string) number_format((float) $savings),
+-                $summaryText
+-            );
+-        });
++        $data = Cache::remember($cacheKey, 3600 * 4, fn() => $this->generateInsightAction->execute(
++            (string) number_format((float) $totalIncome),
++            (string) number_format((float) $totalExpense),
++            (string) number_format((float) $savings),
++            $summaryText
++        ));
+
+         return [
+             'title' => $data['title'],
+    ----------- end diff -----------
+
+Applied rules:
+ * ClosureToArrowFunctionRector
+
+
+163) app/Http/Controllers/AuthController.php:19
+
+    ---------- begin diff ----------
+@@ Line 19 @@
+
+ class AuthController extends Controller
+ {
+-    protected RecordActivityAction $recordActivityAction;
+-
+-    protected SentinelService $sentinel;
+-
+-    public function __construct(RecordActivityAction $recordActivityAction, SentinelService $sentinel)
++    public function __construct(protected RecordActivityAction $recordActivityAction, protected SentinelService $sentinel)
+     {
+-        $this->recordActivityAction = $recordActivityAction;
+-        $this->sentinel = $sentinel;
+     }
+
+     /**
+@@ Line 160 @@
+
+             // 💌 Send 2FA Code via Email
+             try {
+-                Mail::raw("Protokol Keamanan Dompet Kita\n\nKode verifikasi login Anda: {$code}\nKode ini berlaku selama 10 menit. Pastikan kerahasiaan kode ini untuk menjaga keamanan aset Anda.", function ($message) use ($user) {
++                Mail::raw("Protokol Keamanan Dompet Kita\n\nKode verifikasi login Anda: {$code}\nKode ini berlaku selama 10 menit. Pastikan kerahasiaan kode ini untuk menjaga keamanan aset Anda.", function ($message) use ($user): void {
+                     $message->to($user->email)
+                         ->subject('Keamanan: Kode Verifikasi 2FA');
+                 });
+    ----------- end diff -----------
+
+Applied rules:
+ * ClassPropertyAssignToConstructorPromotionRector
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+164) app/Http/Controllers/Controller.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Http\Controllers;
+
+ /**
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+165) app/Http/Controllers/HolidayController.php:13
+
+    ---------- begin diff ----------
+@@ Line 13 @@
+
+ class HolidayController extends Controller
+ {
+-    private const IMAGE_PROVIDER = 'https://loremflickr.com/1200/800/%s,landscape,travel';
++    private const string IMAGE_PROVIDER = 'https://loremflickr.com/1200/800/%s,landscape,travel';
+
+     public function index(Request $request): AnonymousResourceCollection
+     {
+    ----------- end diff -----------
+
+Applied rules:
+ * AddTypeToConstRector
+
+
+166) app/Http/Controllers/LegacyController.php:85
+
+    ---------- begin diff ----------
+@@ Line 85 @@
+         $user = $request->user() ?? abort(401);
+         $password = (string) $request->input('password', '');
+
+-        $result = $this->generateReportAction->execute($user, $password ? $password : null);
++        $result = $this->generateReportAction->execute($user, $password ?: null);
+         $filename = (string) $result['filename'];
+
+         return response()->json([
+@@ Line 116 @@
+         /** @var User $user */
+         $user = $request->user() ?? abort(401);
+
+-        return response()->streamDownload(function () use ($user) {
++        return response()->streamDownload(function () use ($user): void {
+             $result = $this->generateReportAction->execute($user);
+             $filename = (string) $result['filename'];
+    ----------- end diff -----------
+
+Applied rules:
+ * TernaryToElvisRector
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+167) app/Http/Controllers/LoanController.php:162
+
+    ---------- begin diff ----------
+@@ Line 162 @@
+
+         // 1. Fetch loans active during or before this month
+         $loans = Loan::where('created_at', '<=', $endDate)
+-            ->where(function ($query) use ($startDate) {
++            ->where(function ($query) use ($startDate): void {
+                 $query->where('status', 'active')
+                     ->orWhere('updated_at', '>=', $startDate);
+             })
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+168) app/Http/Controllers/PartnerController.php:32
+
+    ---------- begin diff ----------
+@@ Line 32 @@
+             'email' => [
+                 'required',
+                 'email',
+-                function ($_attribute, $value, $fail) use ($inviter) {
++                function ($_attribute, $value, $fail) use ($inviter): void {
+                     if ($inviter->email === $value) {
+                         $fail('Anda tidak dapat mengundang diri sendiri.');
+                     }
+@@ Line 124 @@
+             return response()->json(['message' => 'Pengundang tidak ditemukan.'], 404);
+         }
+
+-        DB::transaction(function () use ($user, $inviter, $invitation) {
++        DB::transaction(function () use ($user, $inviter, $invitation): void {
+             // 1. Ensure Inviter has a Household
+             if (! $inviter->household_id) {
+                 $household = Household::create([
+@@ Line 169 @@
+
+         $partner = $user->partner;
+
+-        DB::transaction(function () use ($user, $partner) {
++        DB::transaction(function () use ($user, $partner): void {
+             // 1. Break partner link
+             if ($partner instanceof User) {
+                 $partner->update(['partner_id' => null]);
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+169) app/Http/Controllers/SocialAuthController.php:88
+
+    ---------- begin diff ----------
+@@ Line 88 @@
+             $token = $user->createToken('auth_token')->plainTextToken;
+
+             // Redirect to Frontend callback route
+-            $callbackUrl = $frontendUrl.'/auth/callback?token='.urlencode($token).($isNewUser ? '&is_new=1' : '');
++            $callbackUrl = $frontendUrl.'/auth/callback?token='.urlencode((string) $token).($isNewUser ? '&is_new=1' : '');
+
+             Log::info("SocialAuth: Login SUCCESS for {$user->email} via {$provider}");
+    ----------- end diff -----------
+
+Applied rules:
+ * NullToStrictStringFuncCallArgRector
+
+
+170) app/Http/Controllers/TransactionController.php:59
+
+    ---------- begin diff ----------
+@@ Line 59 @@
+
+             if ($request->filled('search')) {
+                 $search = (string) $request->input('search');
+-                $query->where(function ($q) use ($search) {
++                $query->where(function ($q) use ($search): void {
+                     $q->where('description', 'like', "%{$search}%")
+                         ->orWhere('category', 'like', "%{$search}%")
+                         ->orWhere('note', 'like', "%{$search}%");
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+171) app/Http/Controllers/WealthHistoryController.php:26
+
+    ---------- begin diff ----------
+@@ Line 26 @@
+
+         // Fetch historical data excluding current month
+         $histories = WealthHistory::query()
+-            ->where(function ($query) use ($now) {
++            ->where(function ($query) use ($now): void {
+                 $query->where('year', '<', $now->year)
+-                    ->orWhere(function ($q) use ($now) {
++                    ->orWhere(function ($q) use ($now): void {
+                         $q->where('year', $now->year)
+                             ->where('month', '<', $now->month);
+                     });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+172) app/Http/Requests/AI/AnalyzeReceiptRequest.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Http\Requests\AI;
+
+ use Illuminate\Contracts\Validation\ValidationRule;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+173) app/Http/Requests/StoreAssetRequest.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Http\Requests;
+
+ use Illuminate\Contracts\Validation\ValidationRule;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+174) app/Http/Requests/StoreTransactionRequest.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Http\Requests;
+
+ use App\Enums\TransactionType;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+175) app/Models/GoalTransaction.php:52
+
+    ---------- begin diff ----------
+@@ Line 52 @@
+         return $this->belongsTo(Asset::class);
+     }
+
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+176) app/Models/Holiday.php:59
+
+    ---------- begin diff ----------
+@@ Line 59 @@
+      *
+      * @return array<string, string>
+      */
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+177) app/Models/HolidayTransaction.php:52
+
+    ---------- begin diff ----------
+@@ Line 52 @@
+         return $this->belongsTo(Asset::class);
+     }
+
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+178) app/Models/Loan.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Models;
+
+ use App\Enums\LoanStatus;
+@@ Line 58 @@
+      *
+      * @return array<string, string>
+      */
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+ * SafeDeclareStrictTypesRector
+
+
+179) app/Models/LoginHistory.php:36
+
+    ---------- begin diff ----------
+@@ Line 36 @@
+      *
+      * @return array<string, string>
+      */
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+180) app/Models/PartnerInvitation.php:29
+
+    ---------- begin diff ----------
+@@ Line 29 @@
+      *
+      * @return array<string, string>
+      */
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+181) app/Models/ScheduledTransaction.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Models;
+
+ use App\Enums\RecurrenceFrequency;
+@@ Line 75 @@
+      *
+      * @return array<string, string>
+      */
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+ * SafeDeclareStrictTypesRector
+
+
+182) app/Models/Transaction.php:93
+
+    ---------- begin diff ----------
+@@ Line 93 @@
+      *
+      * @return array<string, string>
+      */
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+183) app/Models/TransactionInsight.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Models;
+
+ use App\Traits\HasHouseholdScope;
+@@ Line 43 @@
+      *
+      * @return array<string, string>
+      */
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+ * SafeDeclareStrictTypesRector
+
+
+184) app/Models/User.php:137
+
+    ---------- begin diff ----------
+@@ Line 137 @@
+     /**
+      * Send the email verification notification overriding Laravel default.
+      */
++    #[\Override]
+     public function sendEmailVerificationNotification(): void
+     {
+         $code = (string) random_int(100000, 999999);
+@@ Line 154 @@
+      *
+      * @return array<string, string>
+      */
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+185) app/Models/WealthHistory.php:34
+
+    ---------- begin diff ----------
+@@ Line 34 @@
+      *
+      * @return array<string, string>
+      */
++    #[\Override]
+     protected function casts(): array
+     {
+         return [
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+186) app/Notifications/ResetPasswordOTPNotification.php:12
+
+    ---------- begin diff ----------
+@@ Line 12 @@
+ {
+     use Queueable;
+
+-    public string $code;
+-
+     /**
+      * Create a new notification instance.
+      */
+-    public function __construct(string $code)
++    public function __construct(public string $code)
+     {
+-        $this->code = $code;
+     }
+
+     /**
+    ----------- end diff -----------
+
+Applied rules:
+ * ClassPropertyAssignToConstructorPromotionRector
+
+
+187) app/Notifications/VerifyEmailNotification.php:9
+
+    ---------- begin diff ----------
+@@ Line 9 @@
+
+ class VerifyEmailNotification extends VerifyEmail
+ {
+-    public string $code;
+-
+     /**
+      * Create a new notification instance.
+      */
+-    public function __construct(string $code)
++    public function __construct(public string $code)
+     {
+-        $this->code = $code;
+     }
+
+     /**
+      * Get the mail representation of the notification.
+      */
++    #[\Override]
+     public function toMail(mixed $notifiable): MailMessage
+     {
+         if ($notifiable instanceof User) {
+    ----------- end diff -----------
+
+Applied rules:
+ * ClassPropertyAssignToConstructorPromotionRector
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+188) app/Providers/AiServiceProvider.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Providers;
+
+ use App\Services\AI\AiProviderManager;
+@@ Line 14 @@
+     /**
+      * Register services.
+      */
++    #[\Override]
+     public function register(): void
+     {
+-        $this->app->singleton(AiProviderManager::class, function (): AiProviderManager {
++        $this->app->singleton(AiProviderManager::class, 
+             // Priority order: Groq (Primary) → OpenRouter (Fallback) → Gemini (Emergency)
+-            return new AiProviderManager([
+-                new GroqProvider,
+-                new OpenRouterProvider,
+-                new GeminiProvider,
+-            ]);
+-        });
++            fn(): AiProviderManager => new AiProviderManager([
++            new GroqProvider,
++            new OpenRouterProvider,
++            new GeminiProvider,
++        ]));
+
+         $this->app->singleton(QuantumInsightEngine::class);
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * ClosureToArrowFunctionRector
+ * AddOverrideAttributeToOverriddenMethodsRector
+ * SafeDeclareStrictTypesRector
+
+
+189) app/Providers/AppServiceProvider.php:24
+
+    ---------- begin diff ----------
+@@ Line 24 @@
+     /**
+      * Register any application services.
+      */
++    #[\Override]
+     public function register(): void
+     {
+         // ── Firewall Autoload Patch ────────────────────────────────────────────
+@@ Line 77 @@
+      */
+     private function bootRateLimiters(): void
+     {
+-        RateLimiter::for('api', function (Request $request): Limit {
+-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+-        });
++        RateLimiter::for('api', fn(Request $request): Limit => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
+
+         // AI Feature Limits
+-        RateLimiter::for('ai-insight', function (Request $request): array {
+-            return [
+-                Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()),
+-                Limit::perDay(100)->by($request->user()?->id ?: $request->ip()),
+-            ];
+-        });
++        RateLimiter::for('ai-insight', fn(Request $request): array => [
++            Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()),
++            Limit::perDay(100)->by($request->user()?->id ?: $request->ip()),
++        ]);
+
+-        RateLimiter::for('ai-chat', function (Request $request): array {
+-            return [
+-                Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()),
+-                Limit::perDay(50)->by($request->user()?->id ?: $request->ip()),
+-            ];
+-        });
++        RateLimiter::for('ai-chat', fn(Request $request): array => [
++            Limit::perMinute(10)->by($request->user()?->id ?: $request->ip()),
++            Limit::perDay(50)->by($request->user()?->id ?: $request->ip()),
++        ]);
+
+-        RateLimiter::for('ai-scan', function (Request $request): array {
+-            return [
+-                Limit::perMinute(3)->by($request->user()?->id ?: $request->ip()),
+-                Limit::perDay(30)->by($request->user()?->id ?: $request->ip()),
+-            ];
+-        });
++        RateLimiter::for('ai-scan', fn(Request $request): array => [
++            Limit::perMinute(3)->by($request->user()?->id ?: $request->ip()),
++            Limit::perDay(30)->by($request->user()?->id ?: $request->ip()),
++        ]);
+     }
+
+     /**
+@@ Line 116 @@
+         if (($this->app->environment('production') || $isSecure) && ! $this->app->environment('testing')) {
+             config(['logging.channels.stack.level' => 'info']);
+             URL::forceScheme('https');
+-            URL::forceRootUrl($appUrl ? $appUrl : null);
++            URL::forceRootUrl($appUrl ?: null);
+         }
+     }
+ }
+    ----------- end diff -----------
+
+Applied rules:
+ * TernaryToElvisRector
+ * ClosureToArrowFunctionRector
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+190) app/Providers/MailServiceProvider.php:12
+
+    ---------- begin diff ----------
+@@ Line 12 @@
+     /**
+      * Register any application services.
+      */
++    #[\Override]
+     public function register(): void {}
+
+     /**
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+191) app/Services/AI/AiProviderInterface.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Services\AI;
+
+ interface AiProviderInterface
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+192) app/Services/AI/AiProviderManager.php:12
+
+    ---------- begin diff ----------
+@@ Line 12 @@
+  */
+ class AiProviderManager
+ {
+-    /** @var array<AiProviderInterface> */
+-    protected array $providers = [];
+-
+     protected int $quarantineMinutes = 10;
+
+     protected int $errorThreshold = 3;
+@@ Line 22 @@
+     /**
+      * @param  array<AiProviderInterface>  $providers
+      */
+-    public function __construct(array $providers = [])
++    public function __construct(protected array $providers = [])
+     {
+-        $this->providers = $providers;
+     }
+
+     /**
+@@ Line 35 @@
+         $errors = [];
+
+         foreach ($this->providers as $provider) {
+-            if (! $provider->isAvailable() || $this->isQuarantined($provider)) {
++            if (! $provider->isAvailable()) {
+                 continue;
+             }
+-
++            if ($this->isQuarantined($provider)) {
++                continue;
++            }
+             try {
+                 $startTime = microtime(true);
+                 Log::info("Trying AI Provider: {$provider->getName()} for text generation.");
+@@ Line 74 @@
+         $errors = [];
+
+         foreach ($this->providers as $provider) {
+-            if (! $provider->isAvailable() || $this->isQuarantined($provider) || ! $provider->supportsVision()) {
++            if (! $provider->isAvailable()) {
+                 continue;
+             }
+-
++            if ($this->isQuarantined($provider)) {
++                continue;
++            }
++            if (! $provider->supportsVision()) {
++                continue;
++            }
+             try {
+                 $startTime = microtime(true);
+                 Log::info('Trying AI Provider (Vision): '.$provider->getName());
+@@ Line 110 @@
+         $errors = [];
+
+         foreach ($this->providers as $provider) {
+-            if (! $provider->isAvailable() || $this->isQuarantined($provider) || ! $provider->supportsAudio()) {
++            if (! $provider->isAvailable()) {
+                 continue;
+             }
+-
++            if ($this->isQuarantined($provider)) {
++                continue;
++            }
++            if (! $provider->supportsAudio()) {
++                continue;
++            }
+             try {
+                 $startTime = microtime(true);
+                 Log::info('Trying AI Provider (Audio): '.$provider->getName());
+    ----------- end diff -----------
+
+Applied rules:
+ * ChangeOrIfContinueToMultiContinueRector
+ * ClassPropertyAssignToConstructorPromotionRector
+
+
+193) app/Services/AI/GeminiProvider.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Services\AI;
+
+ use Exception;
+@@ Line 30 @@
+
+     public function isAvailable(): bool
+     {
+-        return ! empty($this->apiKey);
++        return $this->apiKey !== '' && $this->apiKey !== '0';
+     }
+
+     public function supportsVision(): bool
+    ----------- end diff -----------
+
+Applied rules:
+ * DisallowedEmptyRuleFixerRector
+ * SafeDeclareStrictTypesRector
+
+
+194) app/Services/AI/GroqProvider.php:29
+
+    ---------- begin diff ----------
+@@ Line 29 @@
+
+     public function isAvailable(): bool
+     {
+-        return ! empty($this->apiKey);
++        return $this->apiKey !== '' && $this->apiKey !== '0';
+     }
+
+     public function supportsVision(): bool
+    ----------- end diff -----------
+
+Applied rules:
+ * DisallowedEmptyRuleFixerRector
+
+
+195) app/Services/AI/LangSmithTracer.php:14
+
+    ---------- begin diff ----------
+@@ Line 14 @@
+  */
+ class LangSmithTracer
+ {
+-    private ?string $apiKey;
++    private readonly ?string $apiKey;
+
+-    private string $project;
++    private readonly string $project;
+
+     private string $baseUrl = 'https://api.smith.langchain.com';
+
+@@ Line 79 @@
+             'end_time' => $endTime,
+         ];
+
+-        if ($error) {
++        if ($error instanceof \Throwable) {
+             $payload['error'] = $error->getMessage();
+         }
+    ----------- end diff -----------
+
+Applied rules:
+ * ExplicitBoolCompareRector
+ * ReadOnlyPropertyRector
+
+
+196) app/Services/AI/OpenRouterProvider.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Services\AI;
+
+ use Illuminate\Support\Facades\Http;
+@@ Line 26 @@
+         $this->modelVision = is_string($modelVision) ? $modelVision : 'openai/gpt-4-vision-preview';
+
+         // Override with the smart auto-router
+-        if (str_contains($this->modelVision, 'gemini') || str_contains($this->modelVision, 'llama-3.2-11b') || empty($this->modelVision)) {
++        if (str_contains($this->modelVision, 'gemini') || str_contains($this->modelVision, 'llama-3.2-11b') || ($this->modelVision === '' || $this->modelVision === '0')) {
+             $this->modelVision = 'openrouter/free';
+         }
+     }
+@@ Line 38 @@
+
+     public function isAvailable(): bool
+     {
+-        return ! empty($this->apiKey);
++        return $this->apiKey !== '' && $this->apiKey !== '0';
+     }
+
+     public function supportsVision(): bool
+    ----------- end diff -----------
+
+Applied rules:
+ * DisallowedEmptyRuleFixerRector
+ * SafeDeclareStrictTypesRector
+
+
+197) app/Services/BudgetService.php:35
+
+    ---------- begin diff ----------
+@@ Line 35 @@
+     public function getBudgetCycleDates(?int $month = null, ?int $year = null, int $startDay = 1): array
+     {
+         $now = Carbon::now();
+-        $year = $year ?? $now->year;
++        $year ??= $now->year;
+
+         // Determine the target month number
+         $targetMonth = $month ?? $now->month;
+    ----------- end diff -----------
+
+Applied rules:
+ * NullCoalescingOperatorRector
+
+
+198) app/Services/Cfo/CfoAssistantService.php:22
+
+    ---------- begin diff ----------
+@@ Line 22 @@
+
+         /** @var ScheduledTransaction $scheduled */
+         foreach ($dueTransactions as $scheduled) {
+-            DB::transaction(function () use ($scheduled, &$processedCount) {
++            DB::transaction(function () use ($scheduled, &$processedCount): void {
+                 // If auto-execute is enabled, create the actual transaction
+                 if ($scheduled->is_auto_execute) {
+                     $this->executeTransaction($scheduled);
+@@ Line 66 @@
+      */
+     public function executeTransactionManually(ScheduledTransaction $scheduled): void
+     {
+-        DB::transaction(function () use ($scheduled) {
++        DB::transaction(function () use ($scheduled): void {
+             $this->executeTransaction($scheduled);
+             $this->updateNextDueDate($scheduled);
+         });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+199) app/Services/Cfo/QuantumInsightEngine.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+
+ class QuantumInsightEngine
+ {
+-    protected AiProviderManager $aiManager;
+-
+-    public function __construct(AiProviderManager $aiManager)
++    public function __construct(protected AiProviderManager $aiManager)
+     {
+-        $this->aiManager = $aiManager;
+     }
+
+     /**
+    ----------- end diff -----------
+
+Applied rules:
+ * ClassPropertyAssignToConstructorPromotionRector
+
+
+200) app/Services/FinancialIntelligenceService.php:10
+
+    ---------- begin diff ----------
+@@ Line 10 @@
+
+ class FinancialIntelligenceService
+ {
+-    private const CALCULATION_DAYS = 30;
++    private const int CALCULATION_DAYS = 30;
+
+-    private const SAFETY_THRESHOLD_DAYS = 15;
++    private const int SAFETY_THRESHOLD_DAYS = 15;
+
+-    private const WARNING_THRESHOLD_DAYS = 7;
++    private const int WARNING_THRESHOLD_DAYS = 7;
+
+-    private const CRITICAL_THRESHOLD_DAYS = 3;
++    private const int CRITICAL_THRESHOLD_DAYS = 3;
+
+-    private const HIGH_INCOME_THRESHOLD = 10000000;
++    private const int HIGH_INCOME_THRESHOLD = 10000000;
+
+     /**
+      * Prediction of when liquidity (Cash) will run out based on average spending.
+@@ Line 182 @@
+                 'usd_idr' => (float) ($market['currency_rates']['IDR'] ?? 16950.0),
+                 'gold_gram' => (float) $market['gold_antam_gram'],
+             ];
+-        } catch (\Throwable $e) {
++        } catch (\Throwable) {
+             return [
+                 'usd_idr' => 16950.0,
+                 'gold_gram' => 2525000.0,
+@@ Line 283 @@
+
+         $variance = 0.0;
+         foreach ($filtered as $v) {
+-            $variance += pow($v - $mean, 2);
++            $variance += ($v - $mean) ** 2;
+         }
+         $stdDev = sqrt($variance / ($count - 1));
+    ----------- end diff -----------
+
+Applied rules:
+ * PowToExpRector
+ * RemoveUnusedVariableInCatchRector
+ * AddTypeToConstRector
+
+
+201) app/Services/GeminiService.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Services;
+
+ use App\Services\AI\AiProviderManager;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+202) app/Services/LegacyService.php:24
+
+    ---------- begin diff ----------
+@@ Line 24 @@
+         User::where('is_legacy_triggered', false)
+             ->whereNotNull('last_active_at')
+             ->whereNotNull('partner_id')
+-            ->each(function (User $user) {
++            ->each(function (User $user): void {
+                 $threshold = (int) ($user->legacy_threshold_months ?: 6); // Default 6 months
+
+                 $lastActive = $user->last_active_at;
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+203) app/Services/MarketService.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+  */
+ class MarketService
+ {
+-    private const CACHE_KEY = 'market_rates';
++    private const string CACHE_KEY = 'market_rates';
+
+-    private const CACHE_TTL = 300; // 5 Minutes for Realtime Feel
++    private const int CACHE_TTL = 300; // 5 Minutes for Realtime Feel
+
+     // 2026 Sovereign Failover Constants
+-    private const FAILOVER_USD_IDR = 16950.0;
++    private const float FAILOVER_USD_IDR = 16950.0;
+
+-    private const FAILOVER_GOLD_ANTAM = 2525000.0;
++    private const float FAILOVER_GOLD_ANTAM = 2525000.0;
+
+     /**
+      * Get current market rates with robust caching and failover.
+    ----------- end diff -----------
+
+Applied rules:
+ * AddTypeToConstRector
+
+
+204) app/Services/Security/GoogleMailTransport.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Services\Security;
+
+ use App\Exceptions\MailTransportException;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+ [OK] 204 files have been changed by Rector                                                                            
 

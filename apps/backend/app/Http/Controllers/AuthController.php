@@ -19,9 +19,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
-    public function __construct(protected RecordActivityAction $recordActivityAction, protected SentinelService $sentinel)
-    {
-    }
+    public function __construct(protected RecordActivityAction $recordActivityAction, protected SentinelService $sentinel) {}
 
     /**
      * @OA\Post(
