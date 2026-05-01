@@ -18,7 +18,7 @@ class GoalFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'household_id' => fn (array $attributes) => User::find($attributes['user_id'])?->household_id ?? Household::factory(),
+            'household_id' => fn (array $attributes) => User::where('id', $attributes['user_id'])->value('household_id') ?? Household::factory(),
             'name' => $this->faker->words(3, true),
             'target_amount' => $this->faker->randomFloat(2, 1000, 100000),
             'current_amount' => $this->faker->randomFloat(2, 0, 1000),

@@ -23,7 +23,7 @@ class TransactionFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'household_id' => fn (array $attributes) => User::find($attributes['user_id'])?->household_id ?? Household::factory(),
+            'household_id' => fn (array $attributes) => User::where('id', $attributes['user_id'])->value('household_id') ?? Household::factory(),
             'date' => $this->faker->date(),
             'amount' => $this->faker->numberBetween(1000, 1000000),
             'category' => $this->faker->word(),

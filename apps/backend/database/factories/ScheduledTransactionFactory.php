@@ -7,6 +7,9 @@ use App\Models\ScheduledTransaction;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<ScheduledTransaction>
+ */
 class ScheduledTransactionFactory extends Factory
 {
     protected $model = ScheduledTransaction::class;
@@ -15,7 +18,7 @@ class ScheduledTransactionFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'household_id' => fn (array $attributes) => User::find($attributes['user_id'])?->household_id ?? Household::factory(),
+            'household_id' => fn (array $attributes) => User::where('id', $attributes['user_id'])->value('household_id') ?? Household::factory(),
             'description' => $this->faker->sentence(3),
             'amount' => $this->faker->numberBetween(10000, 500000),
             'type' => 'expense',

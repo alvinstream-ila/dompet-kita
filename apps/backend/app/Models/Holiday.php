@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property int $id
  * @property int $user_id
- * @property string|null $household_id
+ * @property string $household_id
  * @property string $destination
  * @property float $budget
  * @property float $funded_amount

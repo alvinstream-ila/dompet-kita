@@ -9,6 +9,9 @@ use App\Models\Loan;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<Loan>
+ */
 class LoanFactory extends Factory
 {
     protected $model = Loan::class;
@@ -17,7 +20,7 @@ class LoanFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'household_id' => fn (array $attributes) => User::find($attributes['user_id'])?->household_id ?? Household::factory(),
+            'household_id' => fn (array $attributes) => User::where('id', $attributes['user_id'])->value('household_id') ?? Household::factory(),
             'contact_name' => $this->faker->name(),
             'type' => LoanType::DEBT->value,
             'amount' => $this->faker->numberBetween(100000, 5000000),

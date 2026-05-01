@@ -18,7 +18,7 @@ class WealthHistoryFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'household_id' => fn (array $attributes) => User::find($attributes['user_id'])?->household_id ?? Household::factory(),
+            'household_id' => fn (array $attributes) => User::where('id', $attributes['user_id'])->value('household_id') ?? Household::factory(),
             'month' => $this->faker->numberBetween(1, 12),
             'year' => $this->faker->numberBetween(2020, 2026),
             'total_value' => $this->faker->randomFloat(2, 10000, 1000000),

@@ -18,7 +18,7 @@ class HolidayFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'household_id' => fn (array $attributes) => User::find($attributes['user_id'])?->household_id ?? Household::factory(),
+            'household_id' => fn (array $attributes) => User::where('id', $attributes['user_id'])->value('household_id') ?? Household::factory(),
             'destination' => $this->faker->city.', '.$this->faker->country,
             'budget' => $this->faker->randomFloat(2, 500, 5000),
             'funded_amount' => $this->faker->randomFloat(2, 0, 500),

@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property string $household_id
+ * @property int $month
+ * @property int $year
+ * @property float $total_value
+ */
 class WealthHistory extends Model
 {
     use HasFactory, HasHouseholdScope;

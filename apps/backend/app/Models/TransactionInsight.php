@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property string $id
  * @property int $user_id
- * @property string|null $household_id
+ * @property string $household_id
  * @property string $type
  * @property string $title
  * @property string $content

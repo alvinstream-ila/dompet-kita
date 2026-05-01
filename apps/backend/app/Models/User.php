@@ -30,6 +30,15 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property bool $is_legacy_triggered
  * @property int|null $partner_id
  * @property User|null $partner
+ * @property string|null $household_id
+ * @property Household|null $household
+ * @property int|null $budget_cycle_start
+ * @property int|null $large_expense_threshold
+ * @property int|null $monthly_budget_limit
+ * @property string|null $email_verification_code
+ * @property Carbon|null $email_verification_expires_at
+ * @property string|null $otp_reset_code
+ * @property Carbon|null $otp_reset_expires_at
  * @property bool $two_factor_enabled
  * @property string|null $two_factor_code
  * @property Carbon|null $two_factor_expires_at
@@ -37,7 +46,6 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property-read Collection<int, Loan> $loans
  * @property-read Collection<int, LegacyVaultReport> $reports
  * @property-read Collection<int, LoginHistory> $sessions
- * @property-read User|null $partner
  */
 class User extends Authenticatable implements MustVerifyEmail
 {

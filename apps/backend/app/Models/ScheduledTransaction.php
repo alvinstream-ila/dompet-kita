@@ -18,7 +18,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property string $id
  * @property int $user_id
- * @property string|null $household_id
+ * @property string $household_id
  * @property string $description
  * @property float $amount
  * @property TransactionType $type
