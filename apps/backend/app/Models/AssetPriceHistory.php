@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
+use App\Traits\HasHouseholdScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-use App\Traits\HasHouseholdScope;
 
 /**
  * @property int $id

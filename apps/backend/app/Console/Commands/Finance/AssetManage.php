@@ -7,7 +7,6 @@ namespace App\Console\Commands\Finance;
 use App\Actions\Finance\Asset\CreateAssetAction;
 use App\Actions\Finance\Asset\GetAssetSummaryAction;
 use App\Actions\Finance\Asset\UpdateAssetAction;
-use App\Models\Asset;
 use App\Models\User;
 use Exception;
 use Illuminate\Console\Command;

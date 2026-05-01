@@ -7,6 +7,7 @@ namespace App\Actions\Finance\Transaction;
 use App\Actions\BaseAction;
 use App\Enums\TransactionType;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Services\BudgetService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -29,7 +30,7 @@ class GetTransactionSummaryAction extends BaseAction
      *     period: array{start: string, end: string}
      * }
      */
-    public function execute(\App\Models\User $user, ?int $month, ?int $year, int $budgetCycleStart): array
+    public function execute(User $user, ?int $month, ?int $year, int $budgetCycleStart): array
     {
         $dates = $this->budgetService->getBudgetCycleDates($month, $year, $budgetCycleStart);
         $targetMonth = $month ?? $dates['start']->month;

@@ -85,7 +85,7 @@ class GetSystemStatusAction extends BaseAction
             $memberIds = User::where('household_id', $householdId)->pluck('id');
             $alertsQuery->where(function ($q) use ($memberIds, $householdId) {
                 $q->whereIn('causer_id', $memberIds)
-                  ->orWhere('properties->household_id', $householdId);
+                    ->orWhere('properties->household_id', $householdId);
             });
         } else {
             $alertsQuery->where('causer_id', $user->id);

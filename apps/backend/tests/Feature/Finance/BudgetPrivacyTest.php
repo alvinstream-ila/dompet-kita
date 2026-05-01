@@ -2,12 +2,12 @@
 
 namespace Tests\Feature\Finance;
 
+use App\Enums\TransactionType;
 use App\Models\Budget;
 use App\Models\Household;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\BudgetService;
-use App\Enums\TransactionType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -20,7 +20,7 @@ class BudgetPrivacyTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->budgetService = new BudgetService();
+        $this->budgetService = new BudgetService;
     }
 
     /**
@@ -66,7 +66,7 @@ class BudgetPrivacyTest extends TestCase
         // 4. Check User A's budget usage (Acting as User A)
         $this->actingAs($userA);
         $usageA = $this->budgetService->getBudgetUsage($userA);
-        
+
         $foodUsageA = collect($usageA)->firstWhere('category', $category);
         $this->assertNotNull($foodUsageA);
         $this->assertEquals(0, $foodUsageA['used'], 'User A should not see User B\'s transactions from a different household.');
@@ -80,7 +80,7 @@ class BudgetPrivacyTest extends TestCase
             'type' => TransactionType::EXPENSE,
             'date' => now(),
         ]);
-        
+
         $usageAUpdated = $this->budgetService->getBudgetUsage($userA);
         $foodUsageAUpdated = collect($usageAUpdated)->firstWhere('category', $category);
         $this->assertNotNull($foodUsageAUpdated);

@@ -5,6 +5,7 @@ namespace App\Traits;
 use App\Enums\TransactionType;
 use App\Models\Transaction;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Trait AccountingJournalist
@@ -12,7 +13,8 @@ use Carbon\Carbon;
  *
  * @property int $id
  * @property int $user_id
- * @mixin \Illuminate\Database\Eloquent\Model
+ *
+ * @mixin Model
  */
 trait AccountingJournalist
 {
@@ -74,10 +76,10 @@ trait AccountingJournalist
         // Find exact context match, or fallback to the legacy one (which has no context yet)
         /** @var Transaction|null $transaction */
         $transaction = $transactions->first(function (Transaction $t) use ($context) {
-                return isset($t->metadata['journal_context']) && $t->metadata['journal_context'] === $context;
-            })
+            return isset($t->metadata['journal_context']) && $t->metadata['journal_context'] === $context;
+        })
             ?? $transactions->first(function (Transaction $t) {
-                return !isset($t->metadata['journal_context']);
+                return ! isset($t->metadata['journal_context']);
             });
 
         $mergedMetadata = array_merge($transaction ? ($transaction->metadata ?? []) : [], $metadata, [

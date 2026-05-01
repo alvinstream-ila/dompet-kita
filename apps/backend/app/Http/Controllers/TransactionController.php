@@ -17,10 +17,10 @@ use App\Services\BudgetService;
 use App\Traits\HasApiResponses;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 
@@ -186,8 +186,8 @@ class TransactionController extends Controller
 
         $html = view('reports.financial_monthly', $viewData)->render();
 
-        $tempDir = storage_path('app/mpdf/' . $user->id);
-        if (!is_dir($tempDir)) {
+        $tempDir = storage_path('app/mpdf/'.$user->id);
+        if (! is_dir($tempDir)) {
             mkdir($tempDir, 0755, true);
         }
 

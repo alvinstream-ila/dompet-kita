@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\TransactionType;
 use App\Models\Budget;
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 
 /**
@@ -82,14 +84,14 @@ class BudgetService
      *
      * @return array<int, array{id: string, category: string, limit: float, used: float, remaining: float, percentage: float, status: string}>
      */
-    public function getBudgetUsage(\App\Models\User $user, ?int $month = null, ?int $year = null, int $startDay = 1): array
+    public function getBudgetUsage(User $user, ?int $month = null, ?int $year = null, int $startDay = 1): array
     {
         $dates = $this->getBudgetCycleDates($month, $year, $startDay);
 
         return Budget::query()->get()->map(function (Budget $budget) use ($dates): array {
             $used = (float) Transaction::where('category', $budget->category)
                 ->whereBetween('date', [$dates['start'], $dates['end']])
-                ->where('type', \App\Enums\TransactionType::EXPENSE)
+                ->where('type', TransactionType::EXPENSE)
                 ->sum('amount');
 
             $limit = (float) $budget->limit;

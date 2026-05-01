@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Household>
+ * @extends Factory<Household>
  */
 class HouseholdFactory extends Factory
 {
@@ -22,7 +22,7 @@ class HouseholdFactory extends Factory
     {
         return [
             'id' => (string) Str::uuid(),
-            'name' => $this->faker->lastName . ' Household',
+            'name' => $this->faker->lastName.' Household',
             'owner_id' => 0, // Placeholder for tests, update manually if needed
         ];
     }

@@ -63,7 +63,7 @@ class LoanController extends Controller
 
         $validated['user_id'] = $user->id;
         $validated['household_id'] = $user->household_id;
- 
+
         $loan = Loan::create($validated);
 
         return $this->success(new LoanResource($loan), 'Instrumen kewajiban/piutang baru telah diarsip.', 201);

@@ -7,6 +7,7 @@ use App\Models\Asset;
 use App\Models\Transaction;
 use App\Notifications\LargeExpenseNotification;
 use App\Traits\ClearsFinancialCache;
+use Illuminate\Support\Facades\DB;
 
 class TransactionObserver
 {
@@ -47,7 +48,7 @@ class TransactionObserver
 
         // Handle Asset balance changes if amount, type, or asset_id changed
         if ($transaction->wasChanged(['amount', 'type', 'asset_id'])) {
-            \Illuminate\Support\Facades\DB::transaction(function () use ($transaction): void {
+            DB::transaction(function () use ($transaction): void {
                 // 1. Reverse old transaction effect
                 $oldAssetId = $transaction->getOriginal('asset_id');
                 $oldAmount = (float) $transaction->getOriginal('amount');

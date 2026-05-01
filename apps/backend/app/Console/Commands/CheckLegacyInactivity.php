@@ -48,7 +48,7 @@ class CheckLegacyInactivity extends Command
             $cutoffDate = Carbon::now()->subMonths($thresholdMonths);
 
             // Case 1: Already in Grace Period
-            if ($user->legacy_grace_start_at instanceof \Illuminate\Support\Carbon) {
+            if ($user->legacy_grace_start_at instanceof Carbon) {
                 $daysElapsed = $user->legacy_grace_start_at->diffInDays(Carbon::now());
 
                 if ($daysElapsed >= 7) {

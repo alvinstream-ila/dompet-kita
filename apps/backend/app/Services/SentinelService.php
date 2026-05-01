@@ -32,7 +32,7 @@ class SentinelService
                     'level' => $level,
                     'household_id' => $context['household_id'] ?? auth()->user()?->household_id ?? null,
                 ]));
-            
+
             if (isset($context['causer'])) {
                 $act->causedBy($context['causer']);
             }

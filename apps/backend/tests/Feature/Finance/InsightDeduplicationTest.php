@@ -3,7 +3,6 @@
 namespace Tests\Feature\Finance;
 
 use App\Models\Household;
-use App\Models\Transaction;
 use App\Models\TransactionInsight;
 use App\Models\User;
 use App\Services\Cfo\QuantumInsightEngine;
@@ -25,14 +24,14 @@ class InsightDeduplicationTest extends TestCase
         $household = Household::create([
             'id' => (string) Str::uuid(),
             'name' => 'Sovereign Lab',
-            'owner_id' => $alvin->id
+            'owner_id' => $alvin->id,
         ]);
         $alvin->update(['household_id' => $household->id]);
-        
+
         /** @var User $ila */
         $ila = User::factory()->create([
             'name' => 'Ila',
-            'household_id' => $household->id
+            'household_id' => $household->id,
         ]);
 
         // 2. Mock AI finding
@@ -41,7 +40,7 @@ class InsightDeduplicationTest extends TestCase
             'title' => 'Struktur Modal Optimal',
             'content' => 'Data menunjukkan efisiensi tinggi.',
             'impact_value' => 100,
-            'action_url' => '/transactions'
+            'action_url' => '/transactions',
         ];
 
         $engine = app(QuantumInsightEngine::class);
@@ -63,7 +62,7 @@ class InsightDeduplicationTest extends TestCase
 
         // 5. Verification: Count should still be 1
         $this->assertEquals(1, TransactionInsight::count(), 'Insight should be deduplicated at household level.');
-        
+
         // 6. Verify visibility: Ila can see Alvin's insight via the correct endpoint
         $response = $this->getJson(self::ENDPOINT);
         $response->assertStatus(200);
@@ -79,7 +78,7 @@ class InsightDeduplicationTest extends TestCase
         $h1 = Household::create([
             'id' => (string) Str::uuid(),
             'name' => 'Household A',
-            'owner_id' => $userA->id
+            'owner_id' => $userA->id,
         ]);
         $userA->update(['household_id' => $h1->id]);
 
@@ -88,7 +87,7 @@ class InsightDeduplicationTest extends TestCase
         $h2 = Household::create([
             'id' => (string) Str::uuid(),
             'name' => 'Household B',
-            'owner_id' => $userB->id
+            'owner_id' => $userB->id,
         ]);
         $userB->update(['household_id' => $h2->id]);
 
@@ -96,7 +95,7 @@ class InsightDeduplicationTest extends TestCase
             'type' => 'trend',
             'title' => 'Unique Insight',
             'content' => 'Content',
-            'impact_value' => 0
+            'impact_value' => 0,
         ];
 
         $engine = app(QuantumInsightEngine::class);
@@ -112,7 +111,7 @@ class InsightDeduplicationTest extends TestCase
 
         // 4. Verification: Should have 2 insights total (isolated)
         $this->assertEquals(2, TransactionInsight::withoutGlobalScopes()->count());
-        
+
         // 5. Check visibility via correct endpoint
         $this->actingAs($userA);
         $this->getJson(self::ENDPOINT)->assertJsonCount(1);

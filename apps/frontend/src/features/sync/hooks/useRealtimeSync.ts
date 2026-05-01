@@ -172,7 +172,7 @@ export function useRealtimeSync() {
       });
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase?.removeChannel(channel);
     };
   }, [user, queryClient]);
 }

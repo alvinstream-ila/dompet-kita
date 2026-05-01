@@ -18,6 +18,7 @@ class SecurityBugFixTest extends TestCase
     use RefreshDatabase;
 
     private const RESET_EMAIL = 'reset@example.com';
+
     private const SUDO_TEST_ROUTE = '/api/test/ai-health';
 
     public function test_email_verification_code_is_hashed_and_verifiable(): void

@@ -97,7 +97,7 @@ class PerformSecurityAuditAction extends BaseAction
              JOIN pg_namespace n ON n.oid = c.relnamespace
              WHERE n.nspname = 'public'
              AND relname = ANY(?)",
-            ['{' . implode(',', $householdTables) . '}']
+            ['{'.implode(',', $householdTables).'}']
         );
 
         foreach ($rlsStatus as $tableRow) {

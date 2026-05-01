@@ -323,7 +323,7 @@ class AuthController extends Controller
         Cache::forget("sudo_mode_{$user->id}");
 
         $token = $user->currentAccessToken();
-        if ($token instanceof \Laravel\Sanctum\PersonalAccessToken) {
+        if ($token instanceof PersonalAccessToken) {
             $token->delete();
         }
 

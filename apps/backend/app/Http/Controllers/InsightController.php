@@ -7,7 +7,6 @@ namespace App\Http\Controllers;
 use App\Models\TransactionInsight;
 use App\Models\User;
 use App\Services\Cfo\QuantumInsightEngine;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

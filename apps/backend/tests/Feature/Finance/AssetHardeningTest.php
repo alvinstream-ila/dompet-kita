@@ -3,10 +3,10 @@
 namespace Tests\Feature\Finance;
 
 use App\Actions\Finance\Asset\FundAssetAction;
-use App\Actions\Finance\Asset\WithdrawAssetAction;
 use App\Actions\Finance\Tax\CalculateTaxAction;
 use App\Enums\AssetType;
 use App\Models\Asset;
+use App\Models\Household;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\BudgetService;
@@ -23,16 +23,16 @@ class AssetHardeningTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // 1. Create household first
-        $household = \App\Models\Household::factory()->create([
-            'name' => 'Test Household'
+        $household = Household::factory()->create([
+            'name' => 'Test Household',
         ]);
 
         // 2. Create user with custom budget_cycle_start and household_id
         $this->user = User::factory()->create([
             'budget_cycle_start' => 25,
-            'household_id' => $household->id
+            'household_id' => $household->id,
         ]);
 
         // 3. Update household owner
@@ -84,7 +84,7 @@ class AssetHardeningTest extends TestCase
         // Verify Transaction count (should be 2: one for each asset created/updated)
         // The important part is that no NEW manual transaction was created by the action.
         $this->assertEquals(2, Transaction::count(), 'Internal transfer should only maintain existing asset journals.');
-        
+
         // Verify total amount in ledger is still 1M
         $this->assertEquals(1000000, Transaction::sum('amount'));
     }
@@ -154,7 +154,7 @@ class AssetHardeningTest extends TestCase
     public function test_budget_cycle_respects_custom_start_day(): void
     {
         $service = app(BudgetService::class);
-        
+
         // If today is May 1st and startDay is 25th
         // The current cycle should start on April 25th and end on May 24th
         $fixedDate = Carbon::create(2026, 5, 1);

@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Holiday;
+use App\Models\Household;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,9 +17,9 @@ class HolidayFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => \App\Models\User::factory(),
-            'household_id' => fn (array $attributes) => \App\Models\User::find($attributes['user_id'])?->household_id ?? \App\Models\Household::factory(),
-            'destination' => $this->faker->city . ', ' . $this->faker->country,
+            'user_id' => User::factory(),
+            'household_id' => fn (array $attributes) => User::find($attributes['user_id'])?->household_id ?? Household::factory(),
+            'destination' => $this->faker->city.', '.$this->faker->country,
             'budget' => $this->faker->randomFloat(2, 500, 5000),
             'funded_amount' => $this->faker->randomFloat(2, 0, 500),
             'start_date' => $this->faker->dateTimeBetween('+1 month', '+2 months'),

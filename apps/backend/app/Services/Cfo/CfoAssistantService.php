@@ -40,7 +40,7 @@ class CfoAssistantService
 
                 // Refresh the model to get the updated next_due_date for the while loop condition
                 $scheduled->refresh();
-                
+
                 // Safety break to prevent infinite loops if updateNextDueDate fails to advance the date
                 if ($scheduled->status === ScheduleStatus::FINISHED) {
                     break;

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
@@ -40,7 +41,7 @@ use Spatie\Activitylog\Support\LogOptions;
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, LogsActivity, Notifiable;
 
     /**
@@ -147,7 +148,7 @@ class User extends Authenticatable implements MustVerifyEmail
         $code = (string) random_int(100000, 999999);
 
         $this->update([
-            'email_verification_code' => \Illuminate\Support\Facades\Hash::make($code),
+            'email_verification_code' => Hash::make($code),
             'email_verification_expires_at' => now()->addMinutes(60),
         ]);
 

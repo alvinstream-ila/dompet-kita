@@ -13,7 +13,7 @@ class BudgetServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new BudgetService();
+        $this->service = new BudgetService;
     }
 
     /**
@@ -73,11 +73,11 @@ class BudgetServiceTest extends TestCase
         // Today is 2024-05-15. Cycle starts on 20th.
         // Current cycle should be 2024-04-20 to 2024-05-19 (approx).
         Carbon::setTestNow('2024-05-15');
-        
+
         $dates = $this->service->getBudgetCycleDates(null, null, 20);
 
         $this->assertEquals('2024-04-20', $dates['start']->toDateString());
-        
+
         Carbon::setTestNow(); // Reset
     }
 }

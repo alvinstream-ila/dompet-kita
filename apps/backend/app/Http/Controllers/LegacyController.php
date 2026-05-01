@@ -26,7 +26,7 @@ class LegacyController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -47,7 +47,7 @@ class LegacyController extends Controller
     public function updateSettings(Request $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -73,7 +73,7 @@ class LegacyController extends Controller
     public function heartbeat(Request $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -91,7 +91,7 @@ class LegacyController extends Controller
     public function triggerSnapshot(Request $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
         $password = (string) $request->input('password', '');
@@ -112,7 +112,7 @@ class LegacyController extends Controller
     public function download(Request $request, string|int $id): StreamedResponse
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -121,7 +121,7 @@ class LegacyController extends Controller
             ->where('household_id', $user->household_id)
             ->findOrFail((int) $id);
 
-        $obscuredName = 'Legacy_Snapshot_' . substr(hash('sha256', (string)$report->id), 0, 12) . '.pdf';
+        $obscuredName = 'Legacy_Snapshot_'.substr(hash('sha256', (string) $report->id), 0, 12).'.pdf';
 
         return Storage::disk($report->disk)->download($report->storage_path, $obscuredName);
     }
@@ -132,7 +132,7 @@ class LegacyController extends Controller
     public function generateStream(Request $request): StreamedResponse
     {
         $user = $request->user();
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             abort(401);
         }
 
@@ -147,7 +147,7 @@ class LegacyController extends Controller
                     fclose($stream);
                 }
             }
-        }, "Legacy_Financial_Archive.pdf", [
+        }, 'Legacy_Financial_Archive.pdf', [
             'Content-Type' => 'application/pdf',
         ]);
     }

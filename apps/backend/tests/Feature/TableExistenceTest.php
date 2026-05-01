@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Enums\TransactionType;
 use App\Models\Transaction;
 use App\Models\User;
-use App\Enums\TransactionType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -16,7 +16,7 @@ class TableExistenceTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAs($user);
-        
+
         Transaction::create([
             'user_id' => $user->id,
             'amount' => 100,

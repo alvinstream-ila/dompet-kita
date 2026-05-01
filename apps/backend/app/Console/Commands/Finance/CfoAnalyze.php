@@ -45,7 +45,7 @@ class CfoAnalyze extends Command
             }
 
             /** @var User|null $user */
-            $user = \App\Models\User::find($userId);
+            $user = User::find($userId);
             if (! $user) {
                 $this->error("User with ID {$userId} not found.");
 

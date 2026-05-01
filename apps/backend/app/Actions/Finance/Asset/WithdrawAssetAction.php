@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Actions\Finance\Asset;
 
 use App\Actions\BaseAction;
-use App\Enums\TransactionType;
 use App\Exceptions\InsufficientAssetBalanceException;
 use App\Models\Asset;
 use App\Models\AssetTransaction;

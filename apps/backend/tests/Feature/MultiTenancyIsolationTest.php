@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Models\Asset;
-use App\Models\Household;
-use App\Models\Loan;
-use App\Models\ScheduledTransaction;
-use App\Models\LegacyVaultReport;
 use App\Models\Goal;
 use App\Models\Holiday;
+use App\Models\Household;
+use App\Models\LegacyVaultReport;
+use App\Models\Loan;
+use App\Models\ScheduledTransaction;
 use App\Models\TransactionInsight;
-use App\Models\WealthHistory;
 use App\Models\User;
+use App\Models\WealthHistory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class MultiTenancyIsolationTest extends TestCase
@@ -84,16 +84,16 @@ class MultiTenancyIsolationTest extends TestCase
         $household1 = Household::factory()->create();
         $user1 = User::factory()->create(['household_id' => $household1->id]);
         $household1->update(['owner_id' => $user1->id]);
-        
+
         // 🛡️ Activate Sudo Mode for User 1
-        \Illuminate\Support\Facades\Cache::put("sudo_mode_{$user1->id}", true, 900);
+        Cache::put("sudo_mode_{$user1->id}", true, 900);
 
         $report1 = LegacyVaultReport::create([
             'household_id' => $household1->id,
             'user_id' => $user1->id,
             'storage_path' => 'test1.pdf',
             'filename' => 'test1.pdf',
-            'disk' => 'local'
+            'disk' => 'local',
         ]);
 
         $household2 = Household::factory()->create();
@@ -104,7 +104,7 @@ class MultiTenancyIsolationTest extends TestCase
             'user_id' => $user2->id,
             'storage_path' => 'test2.pdf',
             'filename' => 'test2.pdf',
-            'disk' => 'local'
+            'disk' => 'local',
         ]);
 
         $response = $this->actingAs($user1)->getJson("/api/legacy/download/{$report2->id}");
@@ -174,26 +174,26 @@ class MultiTenancyIsolationTest extends TestCase
         $user1 = User::factory()->create(['household_id' => $household1->id]);
         $household1->update(['owner_id' => $user1->id]);
         WealthHistory::factory()->create([
-            'household_id' => $household1->id, 
+            'household_id' => $household1->id,
             'user_id' => $user1->id,
             'year' => 2025,
-            'month' => 1
+            'month' => 1,
         ]);
 
         $household2 = Household::factory()->create();
         $user2 = User::factory()->create(['household_id' => $household2->id]);
         $household2->update(['owner_id' => $user2->id]);
         WealthHistory::factory()->create([
-            'household_id' => $household2->id, 
+            'household_id' => $household2->id,
             'user_id' => $user2->id,
             'year' => 2025,
-            'month' => 1
+            'month' => 1,
         ]);
 
         $response = $this->actingAs($user1)->getJson('/api/wealth-history');
 
         $response->assertStatus(200);
-        // It returns an array of history + current month point. 
+        // It returns an array of history + current month point.
         // We expect only 2 points (1 historical from H1, 1 current from H1)
         $response->assertJsonCount(2);
     }

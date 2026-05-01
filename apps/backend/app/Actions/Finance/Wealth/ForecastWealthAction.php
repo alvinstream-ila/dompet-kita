@@ -6,7 +6,10 @@ namespace App\Actions\Finance\Wealth;
 
 use App\Actions\AI\GetWealthAdviceAction;
 use App\Actions\BaseAction;
+use App\Enums\TransactionType;
 use App\Models\Asset;
+use App\Models\Loan;
+use App\Models\Transaction;
 use App\Models\User;
 use App\Services\MarketService;
 use Carbon\Carbon;
@@ -50,7 +53,7 @@ class ForecastWealthAction extends BaseAction
         $currentAssets = (float) $assetQuery->sum('value');
 
         // 2. Loans (Fix: No longer hardcoded to 0)
-        $loanQuery = \App\Models\Loan::query();
+        $loanQuery = Loan::query();
         if ($householdId) {
             $loanQuery->where('household_id', $householdId);
         } else {
@@ -65,7 +68,7 @@ class ForecastWealthAction extends BaseAction
         $market = $this->marketService->getRates();
         $netWorth = $currentAssets - $currentLoans;
 
-        /** @var \Illuminate\Support\Collection<int, array{month: string, estimated_net_worth: float|int}> $projection */
+        /** @var Collection<int, array{month: string, estimated_net_worth: float|int}> $projection */
         $projection = collect([]);
         $runningWealth = $netWorth > 0 ? $netWorth : 0.0;
 
@@ -78,7 +81,7 @@ class ForecastWealthAction extends BaseAction
         for ($i = 1; $i <= $months; $i++) {
             // Formula: (Current + Savings) * (1 + Growth)
             $runningWealth = ($runningWealth + $avgMonthlySavings) * (1 + $monthlyGrowth);
-            
+
             $projection->push([
                 'month' => (string) Carbon::now()->addMonths($i)->format('M Y'),
                 'estimated_net_worth' => (float) max(0, $runningWealth),
@@ -113,8 +116,8 @@ class ForecastWealthAction extends BaseAction
     private function calculateAvgMonthlySavings(User $user): float
     {
         $sixMonthsAgo = Carbon::now()->subMonths(6)->startOfMonth();
-        
-        $query = \App\Models\Transaction::query()
+
+        $query = Transaction::query()
             ->where('date', '>=', $sixMonthsAgo);
 
         if ($user->household_id) {
@@ -123,18 +126,18 @@ class ForecastWealthAction extends BaseAction
             $query->where('user_id', $user->id);
         }
 
-        $totals = $query->toBase()->selectRaw("
+        $totals = $query->toBase()->selectRaw('
                 SUM(CASE WHEN type = ? THEN amount ELSE 0 END) as income,
                 SUM(CASE WHEN type = ? THEN amount ELSE 0 END) as expense
-            ", [\App\Enums\TransactionType::INCOME->value, \App\Enums\TransactionType::EXPENSE->value])
+            ', [TransactionType::INCOME->value, TransactionType::EXPENSE->value])
             ->first();
 
-        if (!$totals) {
+        if (! $totals) {
             return 0.0;
         }
 
         $totalSavings = (float) ($totals->income ?? 0) - (float) ($totals->expense ?? 0);
-        
+
         return (float) max(0, $totalSavings / 6);
     }
 }

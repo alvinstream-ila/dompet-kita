@@ -109,7 +109,7 @@ class QuantumInsightEngine
     {
         $jsonSummary = json_encode($summary);
 
-        return "Anda adalah Sovereign CFO Strategic Intelligence. ".
+        return 'Anda adalah Sovereign CFO Strategic Intelligence. '.
                'Gunakan prinsip ekonomi makro dan manajemen kekayaan institusional untuk menganalisis data berikut: '.$jsonSummary.
                "\n\nInstruksi Analisis Strategis:".
                "\n1. Liquidity Layering: Evaluasi cadangan kas berdasarkan model 3-layer (Short-term buffer, Medium-term tax/obligations, Long-term wealth).".

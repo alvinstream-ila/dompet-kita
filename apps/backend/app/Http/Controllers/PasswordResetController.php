@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\ResetPasswordOTPNotification;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -35,7 +36,7 @@ class PasswordResetController extends Controller
         ]);
 
         // Send Notification with plain code
-        $user->notify(new \App\Notifications\ResetPasswordOTPNotification($code));
+        $user->notify(new ResetPasswordOTPNotification($code));
 
         Log::info('Sent Premium OTP Reset to: '.$request->string('email'));
 

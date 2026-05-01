@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Household;
 use App\Models\ScheduledTransaction;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ScheduledTransactionFactory extends Factory
@@ -12,8 +14,8 @@ class ScheduledTransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => \App\Models\User::factory(),
-            'household_id' => fn (array $attributes) => \App\Models\User::find($attributes['user_id'])?->household_id ?? \App\Models\Household::factory(),
+            'user_id' => User::factory(),
+            'household_id' => fn (array $attributes) => User::find($attributes['user_id'])?->household_id ?? Household::factory(),
             'description' => $this->faker->sentence(3),
             'amount' => $this->faker->numberBetween(10000, 500000),
             'type' => 'expense',

@@ -6,8 +6,8 @@ namespace App\Actions\AI;
 
 use App\Actions\BaseAction;
 use App\Models\User;
-use App\Services\FinancialIntelligenceService;
 use App\Services\AI\AiProviderManager;
+use App\Services\FinancialIntelligenceService;
 use Exception;
 use Illuminate\Support\Facades\Log;
 

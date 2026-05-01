@@ -22,7 +22,7 @@ return new class extends Migration
         foreach ($usersWithoutHousehold as $user) {
             $household = Household::create([
                 'id' => (string) Str::uuid(),
-                'name' => $user->name . "'s Household",
+                'name' => $user->name."'s Household",
                 'owner_id' => $user->id,
             ]);
 

@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace App\Actions\Finance;
 
-use App\Models\User;
 use App\Actions\BaseAction;
 use App\Exceptions\CfoAnalysisException;
 use App\Models\Asset;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Services\AI\AiProviderManager;
 use Exception;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class PerformCfoAnalysisAction extends BaseAction
 {
@@ -50,10 +51,10 @@ class PerformCfoAnalysisAction extends BaseAction
 
         $monthlyData = $this->groupMonthlyData($transactions);
         $totalAssets = $this->calculateTotalAssets($user);
-        
+
         $metrics = $this->computeCfoMetrics($monthlyData, $user, $totalAssets);
         $categories = $this->getCategoryBreakdown($transactions, $month);
-        
+
         /** @var array{income: float, expense: float}|null $currentMonthData */
         $currentMonthData = $monthlyData->get($month);
         $advice = $this->generateCfoAdvice($month, $metrics, $currentMonthData, $categories);
@@ -73,17 +74,17 @@ class PerformCfoAnalysisAction extends BaseAction
     private function getTransactions(User $user, Carbon $start, Carbon $end): \Illuminate\Database\Eloquent\Collection
     {
         $query = Transaction::withoutGlobalScopes()->whereBetween('date', [$start, $end]);
-        
+
         return $user->household_id
             ? $query->where('household_id', $user->household_id)->get()
             : $query->where('user_id', $user->id)->get();
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Collection<int, Transaction> $transactions
-     * @return \Illuminate\Support\Collection<string, array{income: float, expense: float}>
+     * @param  \Illuminate\Database\Eloquent\Collection<int, Transaction>  $transactions
+     * @return Collection<string, array{income: float, expense: float}>
      */
-    private function groupMonthlyData(\Illuminate\Database\Eloquent\Collection $transactions): \Illuminate\Support\Collection
+    private function groupMonthlyData(\Illuminate\Database\Eloquent\Collection $transactions): Collection
     {
         return $transactions->groupBy(fn (Transaction $t): string => Carbon::parse($t->date)->format('Y-m'))
             ->map(fn (\Illuminate\Database\Eloquent\Collection $group): array => [
@@ -100,12 +101,12 @@ class PerformCfoAnalysisAction extends BaseAction
         } else {
             $query->where('user_id', $user->id);
         }
-        
+
         return (float) $query->sum('value');
     }
 
     /**
-     * @param \Illuminate\Support\Collection<string, array{income: float, expense: float}> $monthlyData
+     * @param  Collection<string, array{income: float, expense: float}>  $monthlyData
      * @return array{
      *     permanent_income: float,
      *     volatility: float,
@@ -113,14 +114,14 @@ class PerformCfoAnalysisAction extends BaseAction
      *     total_assets: float
      * }
      */
-    private function computeCfoMetrics(\Illuminate\Support\Collection $monthlyData, User $user, float $totalAssets): array
+    private function computeCfoMetrics(Collection $monthlyData, User $user, float $totalAssets): array
     {
         $totalIncome = (float) $monthlyData->sum('income');
         $avgExpense = (float) $monthlyData->sum('expense') / 6;
-        
+
         /** @var array<int, float> $incomes */
         $incomes = $monthlyData->pluck('income')->toArray();
-        
+
         // Calculate liquid assets for runway
         $assetQuery = Asset::withoutGlobalScopes();
         if ($user->household_id) {
@@ -141,7 +142,7 @@ class PerformCfoAnalysisAction extends BaseAction
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Collection<int, Transaction> $transactions
+     * @param  \Illuminate\Database\Eloquent\Collection<int, Transaction>  $transactions
      * @return array<string, float>
      */
     private function getCategoryBreakdown(\Illuminate\Database\Eloquent\Collection $transactions, string $month): array
@@ -159,8 +160,8 @@ class PerformCfoAnalysisAction extends BaseAction
      *     runway: float,
      *     total_assets: float
      * } $metrics
-     * @param array{income: float, expense: float}|null $currentMonth
-     * @param array<string, float> $categories
+     * @param  array{income: float, expense: float}|null  $currentMonth
+     * @param  array<string, float>  $categories
      */
     private function generateCfoAdvice(string $month, array $metrics, ?array $currentMonth, array $categories): string
     {
@@ -169,12 +170,12 @@ class PerformCfoAnalysisAction extends BaseAction
 
             METRIK UTAMA:
             - Target Analisis: {$month}
-            - Permanent Income (6-mo avg): Rp ".number_format($metrics['permanent_income'])."
-            - Income Volatility: ".round($metrics['volatility'] * 100, 2)."% (CV)
-            - Current Month Income: Rp ".number_format($currentMonth['income'] ?? 0)."
-            - Current Month Expense: Rp ".number_format($currentMonth['expense'] ?? 0)."
-            - Financial Runway (Liquid): ".round($metrics['runway'], 1)." bulan
-            - Total Wealth: Rp ".number_format($metrics['total_assets'])."
+            - Permanent Income (6-mo avg): Rp ".number_format($metrics['permanent_income']).'
+            - Income Volatility: '.round($metrics['volatility'] * 100, 2).'% (CV)
+            - Current Month Income: Rp '.number_format($currentMonth['income'] ?? 0).'
+            - Current Month Expense: Rp '.number_format($currentMonth['expense'] ?? 0).'
+            - Financial Runway (Liquid): '.round($metrics['runway'], 1).' bulan
+            - Total Wealth: Rp '.number_format($metrics['total_assets'])."
             - Detail Kategori ({$month}): ".json_encode($categories)."
 
             INSTRUKSI KHUSUS:

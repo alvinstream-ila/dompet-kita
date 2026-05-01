@@ -2,9 +2,10 @@
 
 namespace Tests\Feature\Finance;
 
-use App\Actions\Finance\PerformCfoAnalysisAction;
-use App\Actions\Finance\GetWealthStatusAction;
 use App\Actions\Finance\GetFinancialReportAction;
+use App\Actions\Finance\GetWealthStatusAction;
+use App\Actions\Finance\PerformCfoAnalysisAction;
+use App\Enums\AssetType;
 use App\Models\Asset;
 use App\Models\Household;
 use App\Models\Transaction;
@@ -12,6 +13,7 @@ use App\Models\User;
 use App\Services\AI\AiProviderManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
+use Mockery\Expectation;
 use Tests\TestCase;
 
 class MultiTenantSecurityTest extends TestCase
@@ -19,8 +21,11 @@ class MultiTenantSecurityTest extends TestCase
     use RefreshDatabase;
 
     protected User $userA;
+
     protected User $userB;
+
     protected Household $householdA;
+
     protected Household $householdB;
 
     protected function setUp(): void
@@ -46,7 +51,7 @@ class MultiTenantSecurityTest extends TestCase
     public function test_cfo_analysis_isolation(): void
     {
         $this->actingAs($this->userA);
-        
+
         // 1. Create data in HH A
         Transaction::factory()->create([
             'user_id' => $this->userA->id,
@@ -66,12 +71,12 @@ class MultiTenantSecurityTest extends TestCase
 
         // 3. Mock AI Provider to see what data is being sent
         $mockAi = Mockery::mock(AiProviderManager::class);
-        /** @var \Mockery\Expectation $expectation */
+        /** @var Expectation $expectation */
         $expectation = $mockAi->expects('generateText');
         $expectation->once()
             ->with(Mockery::on(function (string $prompt): bool {
                 // The prompt should contain the 1M income but NOT the 50M income
-                return str_contains($prompt, '1000000') && !str_contains($prompt, '50000000');
+                return str_contains($prompt, '1000000') && ! str_contains($prompt, '50000000');
             }))
             ->andReturn(json_encode(['findings' => []]));
 
@@ -94,7 +99,7 @@ class MultiTenantSecurityTest extends TestCase
             'user_id' => $this->userA->id,
             'household_id' => $this->householdA->id,
             'name' => 'Account A',
-            'type' => \App\Enums\AssetType::CASH,
+            'type' => AssetType::CASH,
             'value' => 1000000,
         ]);
 
@@ -103,7 +108,7 @@ class MultiTenantSecurityTest extends TestCase
             'user_id' => $this->userB->id,
             'household_id' => $this->householdB->id,
             'name' => 'Account B',
-            'type' => \App\Enums\AssetType::CASH,
+            'type' => AssetType::CASH,
             'value' => 999000000,
         ]);
 

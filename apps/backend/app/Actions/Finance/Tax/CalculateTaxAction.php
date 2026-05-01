@@ -53,7 +53,7 @@ class CalculateTaxAction extends BaseAction
             ->whereBetween('date', [$startOfYear, $endOfYear])
             ->where(function ($query) {
                 $query->whereNull('metadata->auto_journal')
-                      ->orWhere('metadata->auto_journal', false);
+                    ->orWhere('metadata->auto_journal', false);
             })
             ->sum('amount');
 

@@ -6,6 +6,7 @@ namespace App\Actions\Security\DeadMansSwitch;
 
 use App\Actions\AI\GetLegacyAdviceAction;
 use App\Actions\BaseAction;
+use App\Enums\LoanStatus;
 use App\Models\Asset;
 use App\Models\Goal;
 use App\Models\LegacyVaultReport;
@@ -40,11 +41,11 @@ class GenerateReportAction extends BaseAction
             ],
             'financial_summary' => [
                 'total_assets' => (float) Asset::where('user_id', $user->id)->sum('value'),
-                'total_loans' => (float) Loan::where('user_id', $user->id)->where('status', \App\Enums\LoanStatus::ACTIVE)->sum('amount'),
+                'total_loans' => (float) Loan::where('user_id', $user->id)->where('status', LoanStatus::ACTIVE)->sum('amount'),
                 'total_goals' => (float) Goal::where('user_id', $user->id)->where('status', 'active')->sum('target_amount'),
             ],
             'asset_details' => Asset::where('user_id', $user->id)->get(['name', 'value'])->toArray(),
-            'active_loans' => Loan::where('user_id', $user->id)->where('status', \App\Enums\LoanStatus::ACTIVE)->get(['contact_name', 'amount', 'due_date'])->toArray(),
+            'active_loans' => Loan::where('user_id', $user->id)->where('status', LoanStatus::ACTIVE)->get(['contact_name', 'amount', 'due_date'])->toArray(),
         ];
 
         // AI Advice
@@ -74,12 +75,12 @@ class GenerateReportAction extends BaseAction
         $mpdf->WriteHTML($html);
 
         // Apply Encryption if password is provided (Fallback to a slightly less obvious key)
-        $encryptionKey = $password ?? ($user->email . '@vault');
+        $encryptionKey = $password ?? ($user->email.'@vault');
         $mpdf->SetProtection(['copy', 'print'], $encryptionKey, $encryptionKey);
 
         $timestamp = date('Y_m_d_His');
         $random = Str::random(12);
-        $hashedId = substr(hash('sha256', (string)$user->id), 0, 16);
+        $hashedId = substr(hash('sha256', (string) $user->id), 0, 16);
         $filename = "legacy/vault_{$hashedId}_{$timestamp}_{$random}.pdf";
 
         // Save to Storj (Sovereign Cloud)
