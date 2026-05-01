@@ -8,6 +8,7 @@ use App\Enums\RecurrenceFrequency;
 use App\Enums\ScheduleStatus;
 use App\Enums\TransactionType;
 use App\Traits\HasHouseholdScope;
+use Database\Factories\ScheduledTransactionFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -37,7 +38,7 @@ use Illuminate\Support\Carbon;
  */
 class ScheduledTransaction extends Model
 {
-    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\ScheduledTransactionFactory> */
+    /** @use HasFactory<ScheduledTransactionFactory> */
     use HasFactory, HasHouseholdScope, HasUuids;
 
     /**

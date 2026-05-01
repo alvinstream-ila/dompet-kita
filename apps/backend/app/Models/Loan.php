@@ -9,6 +9,7 @@ use App\Enums\LoanType;
 use App\Traits\AccountingJournalist;
 use App\Traits\HasHouseholdScope;
 use Carbon\Carbon;
+use Database\Factories\LoanFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
@@ -31,7 +32,7 @@ use Spatie\Activitylog\Support\LogOptions;
  */
 class Loan extends Model
 {
-    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\LoanFactory> */
+    /** @use HasFactory<LoanFactory> */
     use AccountingJournalist, HasFactory, HasHouseholdScope, LogsActivity;
 
     /**

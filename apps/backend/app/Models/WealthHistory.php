@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasHouseholdScope;
+use Database\Factories\WealthHistoryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class WealthHistory extends Model
 {
-    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\WealthHistoryFactory> */
+    /** @use HasFactory<WealthHistoryFactory> */
     use HasFactory, HasHouseholdScope;
 
     /**

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Traits\HasHouseholdScope;
+use Database\Factories\TransactionInsightFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class TransactionInsight extends Model
 {
-    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\TransactionInsightFactory> */
+    /** @use HasFactory<TransactionInsightFactory> */
     use HasFactory, HasHouseholdScope, HasUuids;
 
     /**

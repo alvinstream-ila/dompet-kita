@@ -6,6 +6,7 @@ use App\Enums\AssetType;
 use App\Traits\AccountingJournalist;
 use App\Traits\HasHouseholdScope;
 use Carbon\Carbon;
+use Database\Factories\AssetFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,7 +33,7 @@ use Spatie\Activitylog\Support\LogOptions;
  */
 class Asset extends Model
 {
-    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\AssetFactory> */
+    /** @use HasFactory<AssetFactory> */
     use AccountingJournalist, HasFactory, HasHouseholdScope, LogsActivity;
 
     protected $fillable = [

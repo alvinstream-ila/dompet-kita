@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -35,7 +36,7 @@ class SentinelService
 
             if (isset($context['causer'])) {
                 $causer = $context['causer'];
-                if ($causer instanceof \Illuminate\Database\Eloquent\Model || is_int($causer) || is_string($causer)) {
+                if ($causer instanceof Model || is_int($causer) || is_string($causer)) {
                     $act->causedBy($causer);
                 }
             }

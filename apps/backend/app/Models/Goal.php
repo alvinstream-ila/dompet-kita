@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\AccountingJournalist;
 use App\Traits\HasHouseholdScope;
 use Carbon\Carbon;
+use Database\Factories\GoalFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Goal extends Model
 {
-    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\GoalFactory> */
+    /** @use HasFactory<GoalFactory> */
     use AccountingJournalist, HasFactory, HasHouseholdScope;
 
     /**
