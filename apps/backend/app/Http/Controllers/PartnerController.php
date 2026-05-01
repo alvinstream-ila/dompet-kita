@@ -37,14 +37,20 @@ class PartnerController extends Controller
                     }
                     if ($inviter->partner_id) {
                         $fail('Anda sudah terhubung dengan partner lain. Harap lepaskan tautan terlebih dahulu.');
+
+                        return;
                     }
 
                     $invitee = User::where('email', $value)->first();
                     if (! $invitee instanceof User || ! $invitee->email_verified_at) {
                         $fail('Email partner belum terdaftar atau belum diverifikasi.');
+
+                        return;
                     }
                     if ($invitee->partner_id) {
                         $fail('Partner yang Anda undang sudah terhubung dengan orang lain.');
+
+                        return;
                     }
                 },
             ],

@@ -250,7 +250,7 @@ class LoanController extends Controller
 
         // Fetch all relevant repayments for these loans up to the specified date in one query
         $repayments = Transaction::query()
-            ->where('household_id', $loans->first()?->household_id) // Explicit scoping
+            ->where('household_id', $loans->first()->household_id) // Explicit scoping
             ->where('metadata->source_type', Loan::class)
             ->whereIn('metadata->loan_id', $loanIds)
             ->where('date', '<=', $date->toDateString())

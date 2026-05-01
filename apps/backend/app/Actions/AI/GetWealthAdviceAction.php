@@ -8,14 +8,12 @@ use App\Actions\BaseAction;
 use App\Models\User;
 use App\Services\AI\AiProviderManager;
 use App\Services\FinancialIntelligenceService;
-use App\Services\Security\PrivacyFilter;
 use Exception;
 
 class GetWealthAdviceAction extends BaseAction
 {
     public function __construct(
         private readonly AiProviderManager $manager,
-        private readonly PrivacyFilter $filter,
         private readonly FinancialIntelligenceService $intelService
     ) {}
 

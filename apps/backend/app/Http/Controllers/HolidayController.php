@@ -126,7 +126,7 @@ class HolidayController extends Controller
             ]);
 
             // 2. (Accounting Protocol) Deduct from Asset if specified (Household Scoped)
-            if (! empty($validated['asset_id'])) {
+            if (! empty($validated['asset_id']) && $user instanceof User) {
                 /** @var Asset $asset */
                 $asset = Asset::where('household_id', $user->household_id)
                     ->findOrFail($validated['asset_id']);

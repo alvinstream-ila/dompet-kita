@@ -7,14 +7,12 @@ namespace App\Actions\AI;
 use App\Actions\BaseAction;
 use App\Models\User;
 use App\Services\AI\AiProviderManager;
-use App\Services\Security\PrivacyFilter;
 use Exception;
 
 class GetTaxAdviceAction extends BaseAction
 {
     public function __construct(
-        private readonly AiProviderManager $manager,
-        private readonly PrivacyFilter $filter
+        private readonly AiProviderManager $manager
     ) {}
 
     /**
