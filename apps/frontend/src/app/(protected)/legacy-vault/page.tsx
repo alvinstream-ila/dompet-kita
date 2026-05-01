@@ -47,6 +47,7 @@ export default function LegacyVaultPage() {
   // Sync threshold when user data loads
   useEffect(() => {
     if (user?.legacy_threshold_months) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setThreshold(user.legacy_threshold_months);
     }
   }, [user?.legacy_threshold_months]);
