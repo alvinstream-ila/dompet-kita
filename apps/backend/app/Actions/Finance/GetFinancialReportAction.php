@@ -24,12 +24,20 @@ class GetFinancialReportAction extends BaseAction
      *     top_spending: Collection<int, Transaction>
      * }
      */
-    public function execute(string $monthStr, ?User $user = null): array
+    public function execute(string $monthStr, User $user): array
     {
         $month = Carbon::parse($monthStr);
 
-        $query = Transaction::whereMonth('date', $month->month)
-            ->whereYear('date', $month->year);
+        $query = Transaction::query();
+
+        if ($user->household_id) {
+            $query->where('household_id', $user->household_id);
+        } else {
+            $query->where('user_id', $user->id);
+        }
+
+        // Respect budget cycles (Sovereign Principle)
+        $query->filterByPeriod($month->month, $month->year);
 
         $txs = $query->get();
 

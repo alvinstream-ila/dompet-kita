@@ -75,6 +75,15 @@ trait HasHouseholdScope
                     // Fallback to personal scope if not in a household
                     $builder->where('user_id', $user->id);
                 }
+            } else {
+                // 🛡️ Security Lockdown: If no authenticated context exists, deny access by default.
+                // However, we allow access in Console/CLI context (scheduled tasks, background workers)
+                // as long as they are intentional.
+                if (app()->runningInConsole()) {
+                    return;
+                }
+
+                $builder->whereRaw('1 = 0');
             }
         });
     }

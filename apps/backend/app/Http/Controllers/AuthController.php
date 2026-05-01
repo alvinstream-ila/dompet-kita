@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Actions\Security\DeadMansSwitch\RecordActivityAction;
+use App\Models\Household;
 use App\Models\LoginHistory;
 use App\Models\User;
 use App\Services\SentinelService;
@@ -11,9 +14,11 @@ use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -50,11 +55,24 @@ class AuthController extends Controller
         ]);
 
         /** @var User $user */
-        $user = User::create([
-            'name' => (string) $request->string('name'),
-            'email' => (string) $request->string('email'),
-            'password' => Hash::make((string) $request->string('password')),
-        ]);
+        $user = DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name' => (string) $request->string('name'),
+                'email' => (string) $request->string('email'),
+                'password' => Hash::make((string) $request->string('password')),
+            ]);
+
+            // 🛡️ Create Solo Household immediately to ensure data sovereignty
+            $household = Household::create([
+                'id' => (string) Str::uuid(),
+                'name' => "Household of {$user->name}",
+                'owner_id' => $user->id,
+            ]);
+
+            $user->update(['household_id' => $household->id]);
+
+            return $user;
+        });
 
         // 🕵️ Log initial registration access
         LoginHistory::create([
@@ -304,9 +322,10 @@ class AuthController extends Controller
 
         Cache::forget("sudo_mode_{$user->id}");
 
-        /** @var PersonalAccessToken $token */
         $token = $user->currentAccessToken();
-        $token->delete();
+        if ($token instanceof \Laravel\Sanctum\PersonalAccessToken) {
+            $token->delete();
+        }
 
         return \response()->json([
             'message' => 'Sesi diakhiri secara aman.',

@@ -18,23 +18,34 @@ class CfoAssistantService
     public function processScheduledTransactions(): int
     {
         $processedCount = 0;
-        $dueTransactions = ScheduledTransaction::active()->due()->get();
+        $dueTransactions = ScheduledTransaction::withoutGlobalScopes()->active()->due()->get();
 
         /** @var ScheduledTransaction $scheduled */
         foreach ($dueTransactions as $scheduled) {
-            DB::transaction(function () use ($scheduled, &$processedCount): void {
-                // If auto-execute is enabled, create the actual transaction
-                if ($scheduled->is_auto_execute) {
-                    $this->executeTransaction($scheduled);
-                } else {
-                    // Placeholder: In production, we would send a notification here
-                    Log::info("CFO Sentinel: Scheduled transaction '{$scheduled->description}' is due but needs manual approval.");
-                }
+            // Robust Catch-up Protocol:
+            // If the system was offline for multiple cycles, we must catch up ALL missed transactions.
+            while (Carbon::parse($scheduled->next_due_date)->isPast()) {
+                DB::transaction(function () use ($scheduled, &$processedCount): void {
+                    // If auto-execute is enabled, create the actual transaction
+                    if ($scheduled->is_auto_execute) {
+                        $this->executeTransaction($scheduled);
+                    } else {
+                        Log::info("CFO Sentinel: Scheduled transaction '{$scheduled->description}' is due but needs manual approval.");
+                    }
 
-                // Update the scheduled record for the next cycle
-                $this->updateNextDueDate($scheduled);
-                $processedCount++;
-            });
+                    // Update the scheduled record for the next cycle
+                    $this->updateNextDueDate($scheduled);
+                    $processedCount++;
+                });
+
+                // Refresh the model to get the updated next_due_date for the while loop condition
+                $scheduled->refresh();
+                
+                // Safety break to prevent infinite loops if updateNextDueDate fails to advance the date
+                if ($scheduled->status === ScheduleStatus::FINISHED) {
+                    break;
+                }
+            }
         }
 
         return $processedCount;
@@ -48,11 +59,15 @@ class CfoAssistantService
         Transaction::create([
             'user_id' => $scheduled->user_id,
             'household_id' => $scheduled->household_id,
+            'asset_id' => $scheduled->asset_id,
             'amount' => $scheduled->amount,
             'type' => $scheduled->type,
             'category' => $scheduled->category,
             'description' => "CFO Auto: {$scheduled->description}",
-            'date' => now(), // Execute on current date
+            // Use next_due_date as the transaction date for historical accuracy.
+            // This ensures catch-up transactions appear on the correct date in reports,
+            // not all grouped on the day the catch-up was processed.
+            'date' => Carbon::parse($scheduled->next_due_date)->toDateString(),
         ]);
 
         $scheduled->last_executed_at = now();

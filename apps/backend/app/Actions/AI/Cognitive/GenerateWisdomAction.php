@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\AI\Cognitive;
 
 use App\Actions\AI\ChatWithAiAction;
@@ -19,15 +21,15 @@ class GenerateWisdomAction
     {
         try {
             // Can be decoupled further eventually, using it via DI for now.
-            $prediction = $this->finIntel->predictLiquidityCrisis();
-            $rebalance = $this->finIntel->generateRebalanceAdvice();
+            $prediction = $this->finIntel->predictLiquidityCrisis($user);
+            $rebalance = $this->finIntel->generateRebalanceAdvice($user);
 
-            $prompt = "Sebagai Sovereign CFO Partner (Strategist Finansial Premium), berikan 1 kalimat insight bijak dan strategis:\n";
+            $prompt = "Role: Sovereign CFO Partner (Elite Institutional Strategist). Berikan 1 kalimat insight bijak dan strategis berdasarkan data berikut:\n";
             $prompt .= "- Likuiditas: {$prediction['status']} (Rp ".number_format((float) $prediction['current_cash'], 0, ',', '.').")\n";
             $prompt .= '- Burn rate harian: Rp '.number_format((float) $prediction['burn_rate'], 0, ',', '.')."\n";
             $prompt .= "- Sisa hari dana: {$prediction['days_remaining']} hari\n";
             $prompt .= '- Saran Rebalance: '.count($rebalance)." saran aktif.\n";
-            $prompt .= "Fokus pada efisiensi modal dan mitigasi risiko. Gunakan nada bicara elit, tenang, dan data-driven. JANGAN gunakan kata 'Sayang' atau bahasa kasual.";
+            $prompt .= "Fokus pada efisiensi modal dan mitigasi risiko. Gunakan nada bicara elit, tenang, dan data-driven. JANGAN gunakan kata 'Sayang' atau bahasa kasual. NO EMOJIS.";
 
             $wisdomText = $this->chatWithAiAction->execute($prompt, '');
 

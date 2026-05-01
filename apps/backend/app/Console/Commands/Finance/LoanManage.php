@@ -16,7 +16,7 @@ class LoanManage extends Command
      *
      * @var string
      */
-    protected $signature = 'app:loan-manage {action} {--debtor=} {--amount=} {--id=}';
+    protected $signature = 'app:loan-manage {action} {--debtor=} {--amount=} {--id=} {--user=}';
 
     /**
      * The console command description.
@@ -32,18 +32,26 @@ class LoanManage extends Command
     {
         try {
             $subAction = $this->argument('action');
-            $defaultUser = User::find(1);
+            $userId = $this->option('user');
 
-            if (! $defaultUser) {
-                $this->error('Primary user (ID 1) not found.');
+            if (! $userId) {
+                $this->error('User ID required via --user flag.');
+
+                return 1;
+            }
+
+            $user = User::find($userId);
+
+            if (! $user) {
+                $this->error("User with ID {$userId} not found.");
 
                 return 1;
             }
 
             return match ($subAction) {
-                'record' => $this->handleRecord($action, $defaultUser),
-                'list' => $this->handleList($action, $defaultUser),
-                'mark_paid' => $this->handleMarkPaid($action),
+                'record' => $this->handleRecord($action, $user),
+                'list' => $this->handleList($action, $user),
+                'mark_paid' => $this->handleMarkPaid($action, $user),
                 default => $this->handleInvalidAction((string) $subAction),
             };
         } catch (Exception $e) {
@@ -93,7 +101,7 @@ class LoanManage extends Command
         return 0;
     }
 
-    private function handleMarkPaid(ManageLoanAction $action): int
+    private function handleMarkPaid(ManageLoanAction $action, User $user): int
     {
         $id = $this->option('id');
         if (! $id) {
@@ -102,7 +110,7 @@ class LoanManage extends Command
             return 1;
         }
 
-        $action->markAsPaid((int) $id);
+        $action->markAsPaid($user, (int) $id);
         $this->info("✅ Loan {$id} marked as paid.");
 
         return 0;

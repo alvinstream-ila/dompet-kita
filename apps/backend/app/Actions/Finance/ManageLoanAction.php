@@ -18,33 +18,54 @@ class ManageLoanAction extends BaseAction
      */
     public function record(User $user, array $data): Loan
     {
-        $data['user_id'] = $user->id;
-        $data['status'] ??= 'pending';
+        // 🛡️ Sovereign Security Gate: Explicitly allow only specific fields
+        $payload = [
+            'user_id' => $user->id,
+            'household_id' => $user->household_id,
+            'name' => $data['name'] ?? 'Unnamed Loan',
+            'amount' => (float) ($data['amount'] ?? 0.0),
+            'interest_rate' => (float) ($data['interest_rate'] ?? 0.0),
+            'due_date' => $data['due_date'] ?? null,
+            'status' => 'pending', // Always start as pending
+            'type' => $data['type'] ?? 'debt',
+        ];
 
-        return Loan::create($data);
+        return Loan::create($payload);
     }
 
     /**
-     * List all loans.
+     * List all loans for a user.
+     * A user MUST be provided — never returns global data.
      *
      * @return Collection<int, Loan>
      */
-    public function list(?User $user = null): Collection
+    public function list(User $user): Collection
     {
-        $query = Loan::orderBy('created_at', 'desc');
-        if ($user instanceof User) {
+        $query = Loan::query();
+        if ($user->household_id) {
+            $query->where('household_id', $user->household_id);
+        } else {
             $query->where('user_id', $user->id);
         }
 
-        return $query->get();
+        return $query->orderBy('created_at', 'desc')
+            ->get();
     }
 
     /**
      * Mark a loan as paid.
      */
-    public function markAsPaid(int $id): bool
+    public function markAsPaid(User $user, int $id): bool
     {
-        $loan = Loan::findOrFail($id);
+        $query = Loan::query();
+
+        if ($user->household_id) {
+            $query->where('household_id', $user->household_id);
+        } else {
+            $query->where('user_id', $user->id);
+        }
+
+        $loan = $query->findOrFail($id);
 
         return $loan->update(['status' => 'paid']);
     }

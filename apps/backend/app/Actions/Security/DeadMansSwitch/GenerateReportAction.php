@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Security\DeadMansSwitch;
 
 use App\Actions\AI\GetLegacyAdviceAction;
@@ -38,11 +40,11 @@ class GenerateReportAction extends BaseAction
             ],
             'financial_summary' => [
                 'total_assets' => (float) Asset::where('user_id', $user->id)->sum('value'),
-                'total_loans' => (float) Loan::where('user_id', $user->id)->where('is_paid', false)->sum('amount'),
-                'total_goals' => (float) Goal::where('user_id', $user->id)->where('is_completed', false)->sum('target_amount'),
+                'total_loans' => (float) Loan::where('user_id', $user->id)->where('status', \App\Enums\LoanStatus::ACTIVE)->sum('amount'),
+                'total_goals' => (float) Goal::where('user_id', $user->id)->where('status', 'active')->sum('target_amount'),
             ],
             'asset_details' => Asset::where('user_id', $user->id)->get(['name', 'value'])->toArray(),
-            'active_loans' => Loan::where('user_id', $user->id)->where('is_paid', false)->get(['debtor', 'amount', 'due_date'])->toArray(),
+            'active_loans' => Loan::where('user_id', $user->id)->where('status', \App\Enums\LoanStatus::ACTIVE)->get(['contact_name', 'amount', 'due_date'])->toArray(),
         ];
 
         // AI Advice
@@ -71,13 +73,14 @@ class GenerateReportAction extends BaseAction
 
         $mpdf->WriteHTML($html);
 
-        // Apply Encryption if password is provided
-        $encryptionKey = $password ?? $user->email;
+        // Apply Encryption if password is provided (Fallback to a slightly less obvious key)
+        $encryptionKey = $password ?? ($user->email . '@vault');
         $mpdf->SetProtection(['copy', 'print'], $encryptionKey, $encryptionKey);
 
         $timestamp = date('Y_m_d_His');
-        $random = Str::random(8);
-        $filename = "legacy/vault_{$user->id}_{$timestamp}_{$random}.pdf";
+        $random = Str::random(12);
+        $hashedId = substr(hash('sha256', (string)$user->id), 0, 16);
+        $filename = "legacy/vault_{$hashedId}_{$timestamp}_{$random}.pdf";
 
         // Save to Storj (Sovereign Cloud)
         Storage::disk('storj')->put($filename, $mpdf->Output('', 'S'));
@@ -85,6 +88,7 @@ class GenerateReportAction extends BaseAction
         // Record in database archive
         LegacyVaultReport::create([
             'user_id' => $user->id,
+            'household_id' => $user->household_id,
             'filename' => 'Snapshot Finansial #'.(LegacyVaultReport::where('user_id', $user->id)->count() + 101),
             'storage_path' => $filename,
             'disk' => 'storj',

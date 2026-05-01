@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Finance\Wealth;
 
 use App\Actions\BaseAction;
@@ -26,7 +28,13 @@ class SimulatePurchaseAction extends BaseAction
         $lastItem = $projection->last();
         $originalFinalWealth = $lastItem ? (float) $lastItem['estimated_net_worth'] : 1.0;
 
-        $goals = Goal::where('user_id', $user->id)->get();
+        $goalsQuery = Goal::query();
+        if ($user->household_id) {
+            $goalsQuery->where('household_id', $user->household_id);
+        } else {
+            $goalsQuery->where('user_id', $user->id);
+        }
+        $goals = $goalsQuery->get();
 
         return [
             'purchase_amount' => $amount,

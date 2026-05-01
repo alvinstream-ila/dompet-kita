@@ -40,7 +40,7 @@ use Spatie\Activitylog\Support\LogOptions;
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<UserFactory> */
+    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, LogsActivity, Notifiable;
 
     /**
@@ -67,6 +67,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'industry_sector',
         'email_verification_code',
         'email_verification_expires_at',
+        'otp_reset_code',
+        'otp_reset_expires_at',
     ];
 
     /**
@@ -77,6 +79,8 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_code',
+        'otp_reset_code',
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -143,7 +147,7 @@ class User extends Authenticatable implements MustVerifyEmail
         $code = (string) random_int(100000, 999999);
 
         $this->update([
-            'email_verification_code' => $code,
+            'email_verification_code' => \Illuminate\Support\Facades\Hash::make($code),
             'email_verification_expires_at' => now()->addMinutes(60),
         ]);
 
@@ -166,6 +170,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'is_legacy_triggered' => 'boolean',
             'two_factor_enabled' => 'boolean',
             'two_factor_expires_at' => 'datetime',
+            'otp_reset_expires_at' => 'datetime',
             'household_id' => 'string',
         ];
     }

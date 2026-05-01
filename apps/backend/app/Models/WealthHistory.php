@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Traits\HasHouseholdScope;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WealthHistory extends Model
 {
-    use HasHouseholdScope;
+    use HasFactory, HasHouseholdScope;
 
     /**
      * @var list<string>

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\TransactionInsight;
@@ -31,7 +33,7 @@ class InsightController extends Controller
     }
 
     /**
-     * @return Collection<int, TransactionInsight>
+     * @return JsonResponse
      */
     public function index(Request $request)
     {
@@ -40,9 +42,12 @@ class InsightController extends Controller
             abort(401);
         }
 
-        return TransactionInsight::where('status', '!=', 'archived')
+        $insights = TransactionInsight::where('household_id', $user->household_id)
+            ->where('status', '!=', 'archived')
             ->latest()
             ->get();
+
+        return response()->json($insights);
     }
 
     /**

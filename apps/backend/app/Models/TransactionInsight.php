@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Traits\HasHouseholdScope;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -21,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class TransactionInsight extends Model
 {
-    use HasHouseholdScope, HasUuids;
+    use HasFactory, HasHouseholdScope, HasUuids;
 
     /**
      * The attributes that are mass assignable.

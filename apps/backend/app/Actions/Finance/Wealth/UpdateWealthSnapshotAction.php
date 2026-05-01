@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Finance\Wealth;
 
 use App\Actions\BaseAction;
@@ -15,8 +17,15 @@ class UpdateWealthSnapshotAction extends BaseAction
         $year = \now()->year;
         $householdId = $user->household_id;
 
-        // Aggregate total value of ALL assets in the household
-        $total = Asset::where('household_id', $householdId)->sum('value');
+        // Aggregate total value of ALL assets in the household (or user if no household yet)
+        $query = Asset::query();
+        if ($householdId) {
+            $query->where('household_id', $householdId);
+        } else {
+            $query->where('user_id', $user->id);
+        }
+
+        $total = $query->sum('value');
 
         return WealthHistory::updateOrCreate(
             [

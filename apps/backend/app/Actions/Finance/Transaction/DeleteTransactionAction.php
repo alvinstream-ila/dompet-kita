@@ -11,16 +11,13 @@ use Illuminate\Support\Facades\DB;
 
 class DeleteTransactionAction extends BaseAction
 {
-    use ClearsTransactionCache;
-
     public function execute(User $user, Transaction $transaction): bool
     {
-        return (bool) DB::transaction(function () use ($user, $transaction) {
-            $deleted = $transaction->delete();
+        // 🛡️ Defense in Depth: Ensure transaction belongs to user's household
+        abort_unless($transaction->household_id === $user->household_id, 403, 'Anda tidak memiliki akses ke transaksi ini.');
 
-            $this->clearTransactionCache($user);
-
-            return $deleted;
+        return (bool) DB::transaction(function () use ($transaction) {
+            return $transaction->delete();
         });
     }
 }

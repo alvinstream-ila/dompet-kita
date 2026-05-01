@@ -79,7 +79,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setUser(user);
 
     // 🛡️ Centralized Settings Sync (Essential for Manual Login)
-    useSettingsStore.getState().syncWithUser(user);
+    // fire-and-forget: we don't block the login for this sync.
+    // The UI will re-render when settings resolve. If sync fails, defaults are used.
+    void useSettingsStore.getState().syncWithUser(user);
   }, []);
 
   const logout = React.useCallback(async () => {

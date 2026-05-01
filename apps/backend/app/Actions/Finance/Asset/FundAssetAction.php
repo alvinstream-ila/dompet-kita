@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Finance\Asset;
 
 use App\Actions\BaseAction;
@@ -27,6 +29,7 @@ class FundAssetAction extends BaseAction
             // 1. Create Transaction for the Target Asset
             AssetTransaction::create([
                 'user_id' => $user->id,
+                'household_id' => $user->household_id,
                 'asset_id' => $asset->id,
                 'source_asset_id' => $sourceAssetId,
                 'amount' => $amount,
@@ -47,12 +50,20 @@ class FundAssetAction extends BaseAction
             $journalDescription = "Top up investasi: {$asset->name}";
 
             if ($sourceAssetId) {
-                $sourceAsset = Asset::where('user_id', $user->id)->findOrFail($sourceAssetId);
+                $sourceAssetQuery = Asset::query();
+                if ($user->household_id) {
+                    $sourceAssetQuery->where('household_id', $user->household_id);
+                } else {
+                    $sourceAssetQuery->where('user_id', $user->id);
+                }
+                $sourceAsset = $sourceAssetQuery->findOrFail($sourceAssetId);
+
                 $journalDescription = "Investasi: {$asset->name} (dari {$sourceAsset->name})";
 
                 // We record a withdrawal for the source asset
                 AssetTransaction::create([
                     'user_id' => $user->id,
+                    'household_id' => $user->household_id,
                     'asset_id' => $sourceAsset->id,
                     'amount' => $amount,
                     'type' => 'withdrawal',
@@ -64,13 +75,9 @@ class FundAssetAction extends BaseAction
                 $sourceAsset->decrement('invested_capital', $amount);
             }
 
-            // 4. Record as Expense in main ledger (Hot Money) for visibility
-            $asset->recordJournal(
-                $amount,
-                TransactionType::EXPENSE,
-                'Investment',
-                $journalDescription
-            );
+            // 4. Ledger recording is now handled by AssetObserver automatically
+            // to ensure invested_capital is always synchronized with the Hot Money ledger.
+            // Manual recordJournal here would cause double-counting.
 
             return $asset->fresh() ?? $asset;
         });

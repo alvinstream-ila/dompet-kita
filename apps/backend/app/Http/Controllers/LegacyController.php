@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Actions\Security\DeadMansSwitch\GenerateReportAction;
@@ -23,10 +25,13 @@ class LegacyController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        /** @var User $user */
-        $user = $request->user() ?? abort(401);
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
 
-        $reports = LegacyVaultReport::where('user_id', $user->id)
+        $reports = LegacyVaultReport::query()
+            ->where('household_id', $user->household_id)
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -41,8 +46,10 @@ class LegacyController extends Controller
      */
     public function updateSettings(Request $request): JsonResponse
     {
-        /** @var User $user */
-        $user = $request->user() ?? abort(401);
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
 
         $validated = $request->validate([
             'legacy_threshold_months' => 'required|integer|min:1|max:60',
@@ -65,8 +72,10 @@ class LegacyController extends Controller
      */
     public function heartbeat(Request $request): JsonResponse
     {
-        /** @var User $user */
-        $user = $request->user() ?? abort(401);
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
 
         $this->recordActivityAction->execute($user);
 
@@ -81,8 +90,10 @@ class LegacyController extends Controller
      */
     public function triggerSnapshot(Request $request): JsonResponse
     {
-        /** @var User $user */
-        $user = $request->user() ?? abort(401);
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
         $password = (string) $request->input('password', '');
 
         $result = $this->generateReportAction->execute($user, $password ?: null);
@@ -100,12 +111,19 @@ class LegacyController extends Controller
      */
     public function download(Request $request, string|int $id): StreamedResponse
     {
-        /** @var User $user */
-        $user = $request->user() ?? abort(401);
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
 
-        $report = LegacyVaultReport::where('user_id', $user->id)->findOrFail($id);
+        /** @var LegacyVaultReport $report */
+        $report = LegacyVaultReport::query()
+            ->where('household_id', $user->household_id)
+            ->findOrFail((int) $id);
 
-        return Storage::disk($report->disk)->download($report->storage_path, "Legacy_Snapshot_{$report->id}.pdf");
+        $obscuredName = 'Legacy_Snapshot_' . substr(hash('sha256', (string)$report->id), 0, 12) . '.pdf';
+
+        return Storage::disk($report->disk)->download($report->storage_path, $obscuredName);
     }
 
     /**
@@ -113,18 +131,23 @@ class LegacyController extends Controller
      */
     public function generateStream(Request $request): StreamedResponse
     {
-        /** @var User $user */
-        $user = $request->user() ?? abort(401);
+        $user = $request->user();
+        if (!$user instanceof User) {
+            abort(401);
+        }
 
         return response()->streamDownload(function () use ($user): void {
             $result = $this->generateReportAction->execute($user);
             $filename = (string) $result['filename'];
 
-            // Generate the output again but stream it directly to avoid extra disk reads
-            // Note: GenerateReportAction already saved it to Storj.
-            // For immediate download, we can read it back or use the action result.
-            echo Storage::disk('storj')->get($filename);
-        }, "Legacy_Report_{$user->name}_{$user->id}.pdf", [
+            $stream = Storage::disk('storj')->readStream($filename);
+            if ($stream) {
+                fpassthru($stream);
+                if (is_resource($stream)) {
+                    fclose($stream);
+                }
+            }
+        }, "Legacy_Financial_Archive.pdf", [
             'Content-Type' => 'application/pdf',
         ]);
     }

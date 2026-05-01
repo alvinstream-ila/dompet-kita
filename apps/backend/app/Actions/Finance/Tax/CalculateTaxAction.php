@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Finance\Tax;
 
 use App\Actions\BaseAction;
@@ -45,10 +47,14 @@ class CalculateTaxAction extends BaseAction
         $startOfYear = Carbon::create($year, 1, 1)?->startOfDay() ?? throw new \InvalidArgumentException("Invalid year: {$year}");
         $endOfYear = Carbon::create($year, 12, 31)?->endOfDay() ?? throw new \InvalidArgumentException("Invalid year: {$year}");
 
-        // Sum income (Income type transactions)
-        $totalIncome = (float) Transaction::where('user_id', $user->id)
+        // Sum income (Income type transactions) across the entire household
+        $totalIncome = (float) Transaction::where('household_id', $user->household_id)
             ->where('type', TransactionType::INCOME)
             ->whereBetween('date', [$startOfYear, $endOfYear])
+            ->where(function ($query) {
+                $query->whereNull('metadata->auto_journal')
+                      ->orWhere('metadata->auto_journal', false);
+            })
             ->sum('amount');
 
         // Apply PTKP Logic (Upped for 2026 Sovereign Standards)

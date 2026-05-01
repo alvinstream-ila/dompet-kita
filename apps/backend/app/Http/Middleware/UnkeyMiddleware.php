@@ -26,8 +26,14 @@ class UnkeyMiddleware
             $response = $this->errorResponse('Otentikasi gagal: API Key diperlukan.', 401);
         } else {
             try {
-                $cacheKey = 'unkey_verify_'.md5($key);
-                $data = Cache::remember($cacheKey, 300, function () use ($key) {
+                $cacheKey = 'unkey_verify_'.md5((string) $key);
+
+                // 🛡️ SECURITY: Never cache failed/error responses.
+                // Caching errors would block legitimate users for 5 min if Unkey
+                // has a transient outage. Only cache confirmed valid responses.
+                $data = Cache::get($cacheKey);
+
+                if ($data === null) {
                     $unkeyRes = Http::withHeaders([
                         'Content-Type' => 'application/json',
                         'User-Agent' => 'DompetKita-Auth/1.0 (Unkey)',
@@ -40,16 +46,22 @@ class UnkeyMiddleware
                         ]);
 
                     if ($unkeyRes->failed()) {
-                        return ['error' => true, 'status' => $unkeyRes->status()];
+                        // Do NOT cache error responses — fail open with a 500
+                        Log::error('UNKEY_VERIFICATION_FAILED', ['status' => $unkeyRes->status()]);
+                        $response = $this->errorResponse('Terjadi kesalahan pada sistem otentikasi. Silakan coba lagi.', 500);
+
+                        return $response;
                     }
 
-                    return $unkeyRes->json();
-                });
+                    $data = $unkeyRes->json();
 
-                if (isset($data['error'])) {
-                    Log::error('UNKEY_VERIFICATION_FAILED', ['status' => $data['status']]);
-                    $response = $this->errorResponse('Terjadi kesalahan pada sistem otentikasi. Silakan coba lagi.', 500);
-                } elseif (! ($data['valid'] ?? false)) {
+                    // Only cache if valid — invalid keys must be re-checked to support key revocation
+                    if ($data['valid'] ?? false) {
+                        Cache::put($cacheKey, $data, 300);
+                    }
+                }
+
+                if (! ($data['valid'] ?? false)) {
                     $response = $this->errorResponse(
                         'Otentikasi gagal: API Key tidak valid.',
                         401,

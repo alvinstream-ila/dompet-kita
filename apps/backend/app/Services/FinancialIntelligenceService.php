@@ -1,15 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Enums\AssetType;
 use App\Enums\TransactionType;
 use App\Models\Asset;
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 
 class FinancialIntelligenceService
 {
+    public function __construct(
+        protected BudgetService $budgetService
+    ) {}
+
     private const int CALCULATION_DAYS = 30;
 
     private const int SAFETY_THRESHOLD_DAYS = 15;
@@ -25,23 +32,33 @@ class FinancialIntelligenceService
      *
      * @return array{status: string, days_remaining: float, current_cash: float, burn_rate: float, message: string}
      */
-    public function predictLiquidityCrisis(): array
+    public function predictLiquidityCrisis(User $user, int $budgetCycleStart = 1): array
     {
         // 1. Calculate Total Liquid Cash from Assets (Cash & Bank)
-        // Scoped to household automatically via HasHouseholdScope
-        $liquidAssets = Asset::whereIn('type', [AssetType::CASH, AssetType::BANK])
+        // Manual scoping to ensure reliability in background contexts (avoid 1=0 scope lockdown)
+        $liquidAssets = (float) Asset::query()
+            ->withoutGlobalScopes()
+            ->where('household_id', $user->household_id)
+            ->whereIn('type', [AssetType::CASH, AssetType::BANK])
             ->sum('value');
 
         // 2. Determine Budget Cycle (Current Month)
-        $startOfMonth = Carbon::now()->startOfMonth();
-        $endOfMonth = Carbon::now()->endOfMonth();
+        $dates = $this->budgetService->getBudgetCycleDates(null, null, $budgetCycleStart);
+        $startOfMonth = $dates['start'];
+        $endOfMonth = $dates['end'];
 
         // 3. Calculate Total Income & Expense for this month
-        $monthlyIncome = Transaction::where('type', TransactionType::INCOME)
+        $monthlyIncome = (float) Transaction::query()
+            ->withoutGlobalScopes()
+            ->where('household_id', $user->household_id)
+            ->where('type', TransactionType::INCOME)
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->sum('amount');
 
-        $monthlyExpense = Transaction::where('type', TransactionType::EXPENSE)
+        $monthlyExpense = (float) Transaction::query()
+            ->withoutGlobalScopes()
+            ->where('household_id', $user->household_id)
+            ->where('type', TransactionType::EXPENSE)
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->sum('amount');
 
@@ -51,19 +68,25 @@ class FinancialIntelligenceService
 
         // 4. Calculate Average Daily Expense (Last 30 days) for Burn Rate
         $thirtyDaysAgo = Carbon::now()->subDays(self::CALCULATION_DAYS);
-        $firstTxDate = Transaction::where('type', TransactionType::EXPENSE)
+        $firstTxDate = Transaction::query()
+            ->withoutGlobalScopes()
+            ->where('household_id', $user->household_id)
+            ->where('type', TransactionType::EXPENSE)
             ->where('date', '>=', $thirtyDaysAgo)
             ->min('date');
 
         $usageDays = is_string($firstTxDate)
             ? max(1, min(self::CALCULATION_DAYS, (int) Carbon::parse($firstTxDate)->diffInDays(Carbon::now()) + 1))
-            : self::CALCULATION_DAYS;
+            : (int) self::CALCULATION_DAYS;
 
-        $totalHistoryExpense = Transaction::where('type', TransactionType::EXPENSE)
+        $totalHistoryExpense = (float) Transaction::query()
+            ->withoutGlobalScopes()
+            ->where('household_id', $user->household_id)
+            ->where('type', TransactionType::EXPENSE)
             ->where('date', '>=', $thirtyDaysAgo)
             ->sum('amount');
 
-        $dailyBurnRate = $totalHistoryExpense / $usageDays;
+        $dailyBurnRate = (float) ($totalHistoryExpense / $usageDays);
 
         if ($dailyBurnRate <= 0) {
             return [
@@ -113,9 +136,9 @@ class FinancialIntelligenceService
      *
      * @return array<int, array{action: string, amount?: float, reason: string}>
      */
-    public function generateRebalanceAdvice(): array
+    public function generateRebalanceAdvice(User $user, int $budgetCycleStart = 1): array
     {
-        $prediction = $this->predictLiquidityCrisis();
+        $prediction = $this->predictLiquidityCrisis($user, $budgetCycleStart);
 
         // Safety Buffer: Minimal 2x monthly burn in Cash
         $monthlyNeed = $prediction['burn_rate'] * 30;
@@ -151,9 +174,9 @@ class FinancialIntelligenceService
      *
      * @return array{simulated_cash: float, impact_on_liquidity_days: float, days_remaining_simulated: float, is_risky: bool}
      */
-    public function simulateFinancialImpact(float $amount): array
+    public function simulateFinancialImpact(User $user, float $amount, int $budgetCycleStart = 1): array
     {
-        $prediction = $this->predictLiquidityCrisis();
+        $prediction = $this->predictLiquidityCrisis($user, $budgetCycleStart);
 
         $simulatedCash = max(0.0, $prediction['current_cash'] - $amount);
         $burnRate = $prediction['burn_rate'];
@@ -176,6 +199,7 @@ class FinancialIntelligenceService
     public function getCurrentMarketContext(): array
     {
         try {
+            /** @var array{currency_rates: array<string, float>, gold_antam_gram: float} $market */
             $market = app(MarketService::class)->getRates();
 
             return [
@@ -203,7 +227,7 @@ class FinancialIntelligenceService
      *   recommendation_framework: string
      * }
      */
-    public function getSovereignMetrics(): array
+    public function getSovereignMetrics(User $user): array
     {
         $months = 6;
         $monthlyData = [];
@@ -212,11 +236,17 @@ class FinancialIntelligenceService
             $start = now()->subMonths($i)->startOfMonth();
             $end = now()->subMonths($i)->endOfMonth();
 
-            $income = (float) Transaction::where('type', TransactionType::INCOME)
+            $income = (float) Transaction::query()
+                ->withoutGlobalScopes()
+                ->where('household_id', $user->household_id)
+                ->where('type', TransactionType::INCOME)
                 ->whereBetween('date', [$start, $end])
                 ->sum('amount');
 
-            $expense = (float) Transaction::where('type', TransactionType::EXPENSE)
+            $expense = (float) Transaction::query()
+                ->withoutGlobalScopes()
+                ->where('household_id', $user->household_id)
+                ->where('type', TransactionType::EXPENSE)
                 ->whereBetween('date', [$start, $end])
                 ->sum('amount');
 
@@ -234,7 +264,10 @@ class FinancialIntelligenceService
 
         $savingsRate = $avgIncome > 0 ? ($avgIncome - $avgExpense) / $avgIncome * 100 : 0;
 
-        $liquidAssets = (float) Asset::whereIn('type', [AssetType::CASH, AssetType::BANK])
+        $liquidAssets = (float) Asset::query()
+            ->withoutGlobalScopes()
+            ->where('household_id', $user->household_id)
+            ->whereIn('type', [AssetType::CASH, AssetType::BANK])
             ->sum('value');
 
         $liquidityRatio = $avgExpense > 0 ? $liquidAssets / $avgExpense : 99.0;

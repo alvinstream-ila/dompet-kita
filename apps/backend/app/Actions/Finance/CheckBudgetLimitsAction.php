@@ -12,7 +12,7 @@ use App\Models\User;
 class CheckBudgetLimitsAction extends BaseAction
 {
     /**
-     * Check budget spending for a user.
+     * Check current-month budget spending for a user.
      *
      * @return array{
      *     spending: float,
@@ -21,19 +21,21 @@ class CheckBudgetLimitsAction extends BaseAction
      *     status: string
      * }
      */
-    public function execute(string $userName, float $limit): array
+    public function execute(User $user, float $limit): array
     {
-        // Search for user by name to scope the spending
-        $user = User::where('name', 'like', "%{$userName}%")->first();
-
-        // For now, based on command logic, we sum all expenses
-        $query = Transaction::where('type', TransactionType::EXPENSE);
-
-        if ($user instanceof User) {
+        // Scope to current calendar month to make the check meaningful.
+        // Summing all-time expenses against a monthly limit would always be over-budget.
+        $query = Transaction::query();
+        if ($user->household_id) {
+            $query->where('household_id', $user->household_id);
+        } else {
             $query->where('user_id', $user->id);
         }
 
-        $spending = (float) $query->sum('amount');
+        $spending = (float) $query->where('type', TransactionType::EXPENSE)
+            ->whereMonth('date', now()->month)
+            ->whereYear('date', now()->year)
+            ->sum('amount');
 
         $percentage = $limit > 0 ? $spending / $limit * 100 : 0;
 

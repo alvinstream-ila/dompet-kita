@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Actions\Security\DeadMansSwitch\GenerateReportAction;
@@ -46,7 +48,7 @@ class CheckLegacyInactivity extends Command
             $cutoffDate = Carbon::now()->subMonths($thresholdMonths);
 
             // Case 1: Already in Grace Period
-            if ($user->legacy_grace_start_at) {
+            if ($user->legacy_grace_start_at instanceof \Illuminate\Support\Carbon) {
                 $daysElapsed = $user->legacy_grace_start_at->diffInDays(Carbon::now());
 
                 if ($daysElapsed >= 7) {
@@ -93,13 +95,14 @@ class CheckLegacyInactivity extends Command
             $notificationData = [
                 'filename' => $filename,
                 'financial_summary' => $reportData['financial_summary'],
-                'vault_url' => config('app.frontend_url').'/legacy-vault/claim?token='.bin2hex(random_bytes(16)), // @phpstan-ignore binaryOp.invalid
+                'vault_url' => (string) config('app.frontend_url', '').'/legacy-vault/claim?token='.bin2hex(random_bytes(16)),
 
             ];
 
             // 3. Notify Partner (Internal or External)
-            if ($user->partner) {
-                $user->partner->notify(new LegacyTriggerNotification($user, $notificationData));
+            $partner = $user->partner;
+            if ($partner instanceof User) {
+                $partner->notify(new LegacyTriggerNotification($user, $notificationData));
             } elseif ($user->legacy_partner_email) {
                 // Logic for external email notification can be added here
                 Log::info("Sending legacy trigger to external email: {$user->legacy_partner_email}");

@@ -130,8 +130,18 @@ jobs:
           DB_PASSWORD: password
         run: php artisan test --env=testing
 
-      - name: 🏗️ Build Production Bundle
+      - name: 🏗️ Build Production Bundle (Frontend)
         working-directory: ./apps/frontend
+        # 🛡️ CI-ENV: Inject build-time env vars required by Next.js static analysis.
+        # These are safe placeholder values — real secrets are injected at deploy time (Railway/Vercel).
+        # Without these, prerender of pages that access NEXT_PUBLIC_* will crash with
+        # 'supabaseUrl missing' or similar errors.
+        env:
+          NEXT_PUBLIC_API_URL: https://placeholder.example.com
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder_anon_key_for_build_only
+          NEXT_PUBLIC_SENTRY_DSN: https://placeholder@o0.ingest.sentry.io/0
+          ARCJET_KEY: ajkey_placeholder_for_ci_build
         run: npm run build
 
   # ─── 🔬 SONARQUBE CLOUD COGNITIVE ANALYSIS ────────────────────────────────
@@ -175,7 +185,10 @@ jobs:
             --coverage-clover=coverage/clover.xml \
             --log-junit=coverage/junit.xml \
             --env=testing || true
-          # Allow test failures — SonarQube analysis should still run
+          # ⚠️ INTENTIONAL: || true here is deliberate.
+          # SonarQube analysis should always run, even if tests fail, so that
+          # coverage data (however incomplete) is still uploaded for tracking.
+          # Test failures are already enforced and reported by the sentinel-gate job above.
 
       - name: 🔬 Run SonarCloud Analysis
         uses: SonarSource/sonarcloud-github-action@master

@@ -16,9 +16,8 @@ export function useRealtimeSync() {
   const { user } = useAuth();
 
   useEffect(() => {
-    // If no user or no household, we can't filter the sync.
-    // However, Supabase RLS will still protect the data.
-    if (!user) return;
+    // 🛡️ Skip if Supabase is not configured or user is not logged in
+    if (!user || !supabase) return;
 
     const householdId = user.household_id;
 

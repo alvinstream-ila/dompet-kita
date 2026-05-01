@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Household;
@@ -18,9 +20,6 @@ class PartnerController extends Controller
     /**
      * Send an invitation to a partner.
      */
-    /**
-     * Send an invitation to a partner.
-     */
     public function invite(Request $request): JsonResponse
     {
         $inviter = $request->user();
@@ -32,7 +31,7 @@ class PartnerController extends Controller
             'email' => [
                 'required',
                 'email',
-                function ($_attribute, $value, $fail) use ($inviter): void {
+                function (string $_, mixed $value, \Closure $fail) use ($inviter): void {
                     if ($inviter->email === $value) {
                         $fail('Anda tidak dapat mengundang diri sendiri.');
                     }
@@ -43,6 +42,9 @@ class PartnerController extends Controller
                     $invitee = User::where('email', $value)->first();
                     if (! $invitee instanceof User || ! $invitee->email_verified_at) {
                         $fail('Email partner belum terdaftar atau belum diverifikasi.');
+                    }
+                    if ($invitee->partner_id) {
+                        $fail('Partner yang Anda undang sudah terhubung dengan orang lain.');
                     }
                 },
             ],
@@ -125,6 +127,11 @@ class PartnerController extends Controller
         }
 
         DB::transaction(function () use ($user, $inviter, $invitation): void {
+            // 🛡️ Final Security Check: Ensure neither is already partnered (Race condition protection)
+            if ($user->partner_id || $inviter->partner_id) {
+                throw new \Exception('Salah satu pihak sudah terhubung dengan partner lain.');
+            }
+
             // 1. Ensure Inviter has a Household
             if (! $inviter->household_id) {
                 $household = Household::create([
@@ -133,6 +140,8 @@ class PartnerController extends Controller
                     'owner_id' => $inviter->id,
                 ]);
                 $inviter->update(['household_id' => $household->id]);
+                // 🛡️ Critical: Refresh the model so household_id is available in memory
+                $inviter->refresh();
 
                 // Also migrate inviter's existing records to the new household
                 $this->reassignUserRecordsToHousehold($inviter->id, (string) $inviter->household_id);
@@ -220,6 +229,11 @@ class PartnerController extends Controller
             'holiday_transactions',
             'chat_histories',
             'wealth_histories',
+            'financial_wisdoms',
+            'legacy_vault_reports',
+            'login_histories',
+            'asset_price_histories',
+            'firewall_logs',
         ];
 
         foreach ($financeTables as $table) {

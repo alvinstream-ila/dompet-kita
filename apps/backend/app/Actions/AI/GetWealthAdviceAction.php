@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\AI;
 
 use App\Actions\BaseAction;
@@ -12,9 +14,9 @@ use Exception;
 class GetWealthAdviceAction extends BaseAction
 {
     public function __construct(
-        protected AiProviderManager $manager,
-        protected PrivacyFilter $filter,
-        protected FinancialIntelligenceService $intelService
+        private readonly AiProviderManager $manager,
+        private readonly PrivacyFilter $filter,
+        private readonly FinancialIntelligenceService $intelService
     ) {}
 
     /**
@@ -22,21 +24,20 @@ class GetWealthAdviceAction extends BaseAction
      */
     public function execute(User $user, array $data): string
     {
-        $maskedName = $this->filter->mask($user->name);
-        $sovereign = $this->intelService->getSovereignMetrics();
+        $sovereign = $this->intelService->getSovereignMetrics($user);
 
-        $prompt = "Identitas: Anda adalah 'Sovereign Wealth Strategist', konsultan kekayaan visioner dan strategis untuk {$maskedName}.
+        $prompt = "Identitas: Anda adalah 'Sovereign Wealth Strategist', konsultan kekayaan visioner dan strategis untuk klien Executive.
             
             Snapshot Kekayaan (Proyeksi 12 Bulan):
-            - Net Worth Sekarang: Rp ".number_format($data['netWorth'], 0, ',', '.').'
-            - Rata-rata Tabungan: Rp '.number_format($data['savings'], 0, ',', '.').'
-            - Estimasi Net Worth (Final): Rp '.number_format($data['projected'], 0, ',', '.').'
-            
+            - Net Worth Sekarang: Rp ".number_format($data['netWorth'], 0, ',', '.')."\n"
+            .'            - Rata-rata Tabungan: Rp '.number_format($data['savings'], 0, ',', '.')."\n"
+            .'            - Estimasi Net Worth (Final): Rp '.number_format($data['projected'], 0, ',', '.')."\n"
+            .'            
             Metrik Sovereign (Intelejen Historis):
-            - Income Volatility: '.($sovereign['income_volatility'] * 100).'%
-            - Expense Volatility: '.($sovereign['expense_volatility'] * 100).'%
-            - Liquidity Ratio: '.$sovereign['liquidity_ratio'].'x
-            - Recommendation Framework: '.$sovereign['recommendation_framework']."
+            - Income Volatility: '.($sovereign['income_volatility'] * 100)."%\n"
+            .'            - Expense Volatility: '.($sovereign['expense_volatility'] * 100)."%\n"
+            ."            - Liquidity Ratio: {$sovereign['liquidity_ratio']}x
+            - Recommendation Framework: {$sovereign['recommendation_framework']}
             
             Prinsip Strategis:
             1. Integritas Ekonomi: Gunakan logika dari Modigliani Life-Cycle Hypothesis (smoothing konsumsi) dan Modern Portfolio Theory (diversifikasi aset).

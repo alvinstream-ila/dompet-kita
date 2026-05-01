@@ -132,7 +132,7 @@ export default function FamilyHubPage() {
       const res = await api.post('/partner/unlink');
       toast.success(res.data.message || 'Berhasil melepas partner! ❤️');
       // Force refresh data
-      window.location.reload();
+      globalThis.location.reload();
     };
 
     try {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Actions\Finance\Asset\CreateAssetAction;
@@ -38,7 +40,9 @@ class AssetController extends Controller
             abort(401);
         }
 
-        $assets = Asset::orderBy('type')
+        $assets = Asset::query()
+            ->where('household_id', $user->household_id)
+            ->orderBy('type')
             ->get();
 
         return AssetResource::collection($assets);

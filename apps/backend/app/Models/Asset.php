@@ -7,6 +7,7 @@ use App\Traits\AccountingJournalist;
 use App\Traits\HasHouseholdScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -31,7 +32,7 @@ use Spatie\Activitylog\Support\LogOptions;
  */
 class Asset extends Model
 {
-    use AccountingJournalist, HasHouseholdScope, LogsActivity;
+    use AccountingJournalist, HasFactory, HasHouseholdScope, LogsActivity;
 
     protected $fillable = [
         'user_id',
@@ -62,8 +63,6 @@ class Asset extends Model
     }
 
     /**
-     * The transactions associated with this asset.
-     *
      * @return HasMany<AssetTransaction, $this>
      */
     public function transactions(): HasMany
@@ -72,8 +71,6 @@ class Asset extends Model
     }
 
     /**
-     * The price history of this asset.
-     *
      * @return HasMany<AssetPriceHistory, $this>
      */
     public function priceHistories(): HasMany

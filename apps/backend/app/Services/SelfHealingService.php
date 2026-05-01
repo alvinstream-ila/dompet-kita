@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Asset;
@@ -7,13 +9,14 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Services\AI\AiProviderManager;
 
 /**
  * SelfHealingService: Automated system diagnosis and repair protocol.
  */
 class SelfHealingService
 {
-    public function __construct(protected GeminiService $gemini) {}
+    public function __construct(protected AiProviderManager $aiManager) {}
 
     /**
      * Run system-wide health check.
@@ -63,7 +66,7 @@ class SelfHealingService
         $prompt = "Anda adalah Sovereign CFO Strategic Intelligence. Analisis log sistem berikut dan berikan diagnosa serta solusi teknis yang tepat: \n\n".$context;
 
         try {
-            return $this->gemini->generateText($prompt);
+            return $this->aiManager->generateText($prompt);
         } catch (\Exception $e) {
             Log::error('SelfHealing AI Error: '.$e->getMessage());
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
@@ -40,8 +42,8 @@ class MarketService
                     ->get('https://api.frankfurter.app/latest?from=USD');
 
                 $fxData = $fxResponse->successful() ? (array) $fxResponse->json() : [];
-                $currencyRates = $fxData['rates'] ?? ['IDR' => config('services.market.failover.usd_idr')];
-                assert(is_array($currencyRates));
+                /** @var array<string, float> $currencyRates */
+                $currencyRates = (array) ($fxData['rates'] ?? ['IDR' => (float) config('services.market.failover.usd_idr')]);
 
                 // 2. Gold: Antam Scraper (Indonesia Retail)
                 $goldAntam = $this->scrapeAntam();
@@ -50,9 +52,9 @@ class MarketService
                 $goldPulse = $this->getCryptoPrice('PAXGUSDT');
 
                 return [
-                    'currency_rates' => array_map(fn ($val): float => is_numeric($val) ? (float) $val : 0.0, $currencyRates),
-                    'gold_antam_gram' => $this->validatePrice($goldAntam, 'gold_antam') ? $goldAntam : config('services.market.failover.gold_antam'),
-                    'gold_global_oz' => $this->validatePrice($goldPulse, 'gold_global') ? $goldPulse : 2400.0,
+                    'currency_rates' => array_map(fn ($val): float => (float) $val, $currencyRates),
+                    'gold_antam_gram' => $this->validatePrice($goldAntam, 'gold_antam') ? (float) $goldAntam : (float) config('services.market.failover.gold_antam'),
+                    'gold_global_oz' => $this->validatePrice($goldPulse, 'gold_global') ? (float) $goldPulse : 2400.0,
                     'inflation_rate' => 0.035, // Default 3.5%
                     'last_updated' => now()->toIso8601String(),
                 ];
@@ -60,8 +62,8 @@ class MarketService
                 Log::warning('MarketService Failover Triggered: '.$e->getMessage());
 
                 return [
-                    'currency_rates' => ['IDR' => config('services.market.failover.usd_idr')],
-                    'gold_antam_gram' => config('services.market.failover.gold_antam'),
+                    'currency_rates' => ['IDR' => (float) config('services.market.failover.usd_idr')],
+                    'gold_antam_gram' => (float) config('services.market.failover.gold_antam'),
                     'gold_global_oz' => 2400.0,
                     'inflation_rate' => 0.035,
                     'last_updated' => now()->toIso8601String(),
@@ -131,9 +133,7 @@ class MarketService
                         ->withHeaders(['User-Agent' => config('services.market.user_agent')])
                         ->get($url);
                     if ($response->successful()) {
-                        $priceData = $response->json('price');
-
-                        return is_numeric($priceData) ? (float) $priceData : null;
+                        return (float) $response->json('price');
                     }
                 } catch (\Exception $e) {
                     Log::warning("Binance Fetch Failed for {$symbol} on {$url}: ".$e->getMessage());
@@ -206,9 +206,18 @@ class MarketService
     {
         $rates = $this->getRates();
 
+        if ($from === $to) {
+            return 1.0;
+        }
+
         // Standardized to IDR base for now as per app logic
         if ($to === 'IDR' && isset($rates['currency_rates'][$from])) {
-            return $rates['currency_rates'][$from];
+            return (float) $rates['currency_rates'][$from];
+        }
+
+        // Inverse calculation if target is not IDR
+        if ($from === 'IDR' && isset($rates['currency_rates'][$to])) {
+            return 1.0 / (float) $rates['currency_rates'][$to];
         }
 
         return 1.0;

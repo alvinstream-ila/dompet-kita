@@ -19,6 +19,7 @@ class ManageHolidayPlanAction extends BaseAction
     public function create(User $user, array $data): Holiday
     {
         $data['user_id'] = $user->id;
+        $data['household_id'] = $user->household_id;
         $data['spent'] ??= 0;
         $data['status'] ??= 'planning';
 
@@ -34,7 +35,11 @@ class ManageHolidayPlanAction extends BaseAction
     {
         $query = Holiday::query();
         if ($user instanceof User) {
-            $query->where('user_id', $user->id);
+            if ($user->household_id) {
+                $query->where('household_id', $user->household_id);
+            } else {
+                $query->where('user_id', $user->id);
+            }
         }
 
         return $query->get();

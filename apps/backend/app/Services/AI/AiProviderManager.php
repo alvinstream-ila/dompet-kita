@@ -26,6 +26,7 @@ class AiProviderManager
      */
     public function generateText(string $prompt): string
     {
+        $prompt = $this->sanitizePrompt($prompt);
         $errors = [];
 
         foreach ($this->providers as $provider) {
@@ -67,6 +68,7 @@ class AiProviderManager
      */
     public function generateFromImage(string $prompt, string $base64Image, string $mimeType): string
     {
+        $prompt = $this->sanitizePrompt($prompt);
         $errors = [];
 
         foreach ($this->providers as $provider) {
@@ -108,6 +110,7 @@ class AiProviderManager
      */
     public function generateFromAudio(string $prompt, string $base64Audio, string $mimeType): string
     {
+        $prompt = $this->sanitizePrompt($prompt);
         $errors = [];
 
         foreach ($this->providers as $provider) {
@@ -224,5 +227,19 @@ class AiProviderManager
         Log::warning("AI Failover Decision: Error '{$message}' triggered failover.");
 
         return true;
+    }
+
+    /**
+     * Sanitizes prompts to prevent PII leakage to third-party AI providers.
+     */
+    protected function sanitizePrompt(string $prompt): string
+    {
+        // Simple regex patterns for common PII
+        $patterns = [
+            '/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/' => '[EMAIL_REDACTED]', // Emails
+            '/(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/' => '[PHONE_REDACTED]', // Phone numbers
+        ];
+
+        return preg_replace(array_keys($patterns), array_values($patterns), $prompt);
     }
 }

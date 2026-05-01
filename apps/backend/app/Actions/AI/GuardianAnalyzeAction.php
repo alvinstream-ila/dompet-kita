@@ -7,7 +7,7 @@ namespace App\Actions\AI;
 use App\Actions\BaseAction;
 use App\Models\User;
 use App\Services\FinancialIntelligenceService;
-use App\Services\GeminiService;
+use App\Services\AI\AiProviderManager;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
@@ -15,7 +15,7 @@ class GuardianAnalyzeAction extends BaseAction
 {
     public function __construct(
         private readonly FinancialIntelligenceService $intel,
-        private readonly GeminiService $gemini
+        private readonly AiProviderManager $aiManager
     ) {}
 
     /**
@@ -37,7 +37,7 @@ class GuardianAnalyzeAction extends BaseAction
     {
         try {
             // 1. Predict Crisis
-            $prediction = $this->intel->predictLiquidityCrisis();
+            $prediction = $this->intel->predictLiquidityCrisis($user);
 
             $result = [
                 'status' => (string) $prediction['status'],
@@ -52,22 +52,21 @@ class GuardianAnalyzeAction extends BaseAction
             if ($result['status'] !== 'safe') {
                 // 2. Consult AI if status is not safe
                 $advicePrompt = sprintf(
-                    'Guardian AI Alert! Status for user %s is %s. Current cash: Rp %s. Daily burn rate: Rp %s. Cash will run out in approx %s days. Provide 1 immediate action to fix this and 1 preventive step in Indonesian (Elegant & Tactical).',
-                    $user->name,
+                    'Role: Sovereign Financial Auditor. Status is %s. Current cash: Rp %s. Daily burn rate: Rp %s. Cash will run out in approx %s days. Provide 1 immediate action to fix this and 1 preventive step in Indonesian (Elegant & Tactical). NO EMOJIS.',
                     $result['status'],
                     number_format($result['current_cash']),
                     number_format($result['burn_rate']),
                     $result['days_remaining']
                 );
 
-                $result['ai_advice'] = $this->gemini->analyzeFinancials($advicePrompt);
+                $result['ai_advice'] = $this->aiManager->generateText($advicePrompt);
 
                 // Log critical event
                 Log::channel('single')->warning("CRITICAL LIQUIDITY ALERT - User {$user->id}: {$result['message']}");
             } else {
                 // Check Rebalancing opportunities if safe
                 /** @var array<int, array{action: string, amount?: float, reason: string}> $rebalancing */
-                $rebalancing = $this->intel->generateRebalanceAdvice();
+                $rebalancing = $this->intel->generateRebalanceAdvice($user);
 
                 /** @var array<int, array{action: string, reason: string}> $opportunities */
                 $opportunities = array_values(array_filter($rebalancing, fn (array $adv): bool => $adv['action'] === 'INVEST'));

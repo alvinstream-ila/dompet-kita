@@ -5,8 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+use App\Traits\HasHouseholdScope;
+
 class LoginHistory extends Model
 {
+    use HasHouseholdScope;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -14,6 +18,7 @@ class LoginHistory extends Model
      */
     protected $fillable = [
         'user_id',
+        'household_id',
         'ip_address',
         'user_agent',
         'login_at',

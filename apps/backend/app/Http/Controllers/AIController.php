@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Actions\AI\AnalyzeReceiptAction;
@@ -134,8 +136,8 @@ class AIController extends Controller
         }
 
         try {
-            $prediction = $this->intelService->predictLiquidityCrisis();
-            $rebalance = $this->intelService->generateRebalanceAdvice();
+            $prediction = $this->intelService->predictLiquidityCrisis($user);
+            $rebalance = $this->intelService->generateRebalanceAdvice($user);
 
             return $this->success([
                 'prediction' => $prediction,

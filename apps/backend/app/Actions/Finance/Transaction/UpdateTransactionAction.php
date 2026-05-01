@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Finance\Transaction;
 
 use App\Actions\BaseAction;
@@ -9,20 +11,17 @@ use Illuminate\Support\Facades\DB;
 
 class UpdateTransactionAction extends BaseAction
 {
-    use ClearsTransactionCache;
-
     /**
      * @param  array<string, mixed>  $data
      */
     public function execute(User $user, Transaction $transaction, array $data): Transaction
     {
-        return DB::transaction(function () use ($user, $transaction, $data): Transaction {
-            $this->clearTransactionCache($user);
+        // 🛡️ Defense in Depth: Ensure transaction belongs to user's household
+        abort_unless($transaction->household_id === $user->household_id, 403, 'Anda tidak memiliki akses ke transaksi ini.');
 
+        return DB::transaction(function () use ($transaction, $data): Transaction {
             $transaction->update($data);
             $transaction->refresh();
-
-            $this->clearTransactionCache($user);
 
             return $transaction;
         });

@@ -17,7 +17,7 @@ class FinancialReport extends Command
      *
      * @var string
      */
-    protected $signature = 'app:financial-report {month? : Month in YYYY-MM format}';
+    protected $signature = 'app:financial-report {month? : Month in YYYY-MM format} {--user= : The User ID to generate report for}';
 
     /**
      * The console command description.
@@ -33,9 +33,23 @@ class FinancialReport extends Command
     {
         try {
             $monthStr = $this->argument('month') ?: Carbon::now()->format('Y-m');
-            $defaultUser = User::find(1);
+            $userId = $this->option('user');
 
-            $result = $action->execute((string) $monthStr, $defaultUser);
+            if (! $userId) {
+                $this->error('User ID required via --user flag.');
+
+                return 1;
+            }
+
+            $user = User::find($userId);
+
+            if (! $user instanceof User) {
+                $this->error("User (ID: {$userId}) not found.");
+
+                return 1;
+            }
+
+            $result = $action->execute((string) $monthStr, $user);
 
             $this->info("### 📑 Monthly Report: {$result['month_name']}");
             $this->line('**Total Income:** Rp '.number_format($result['income'], 0, ',', '.'));

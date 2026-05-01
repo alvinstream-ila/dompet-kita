@@ -44,16 +44,12 @@ export default function LegacyVaultPage() {
     user?.legacy_threshold_months || 6
   );
 
-  // Sync threshold when user data loads (Adjusting state while rendering)
-  const [prevLegacyThreshold, setPrevLegacyThreshold] = useState(
-    user?.legacy_threshold_months
-  );
-  if (user?.legacy_threshold_months !== prevLegacyThreshold) {
-    setPrevLegacyThreshold(user?.legacy_threshold_months);
+  // Sync threshold when user data loads
+  useEffect(() => {
     if (user?.legacy_threshold_months) {
       setThreshold(user.legacy_threshold_months);
     }
-  }
+  }, [user?.legacy_threshold_months]);
 
   const fetchReports = useCallback(async () => {
     try {
@@ -71,7 +67,7 @@ export default function LegacyVaultPage() {
     fetchReports();
   }, [fetchReports]);
 
-  const handleHeartbeat = async () => {
+  const handleHeartbeat = useCallback(async () => {
     setIsSyncing(true);
     try {
       await api.post('/legacy/heartbeat');
@@ -83,9 +79,9 @@ export default function LegacyVaultPage() {
     } finally {
       setIsSyncing(false);
     }
-  };
+  }, []);
 
-  const handleUpdateThreshold = async (val: number) => {
+  const handleUpdateThreshold = useCallback(async (val: number) => {
     const action = async () => {
       await api.patch('/legacy/settings', {
         legacy_threshold_months: val,
@@ -102,9 +98,9 @@ export default function LegacyVaultPage() {
         toast.error('Gagal memperbarui threshold 🥺');
       }
     }
-  };
+  }, []);
 
-  const handleTriggerSnapshot = async () => {
+  const handleTriggerSnapshot = useCallback(async () => {
     const action = async () => {
       setIsSyncing(true);
       try {
@@ -124,9 +120,9 @@ export default function LegacyVaultPage() {
         toast.error('Gagal membangkitkan snapshot 🥺');
       }
     }
-  };
+  }, [fetchReports]);
 
-  const handleDownload = async (id: number) => {
+  const handleDownload = useCallback(async (id: number) => {
     try {
       const response = await api.get(`/legacy/download/${id}`, {
         responseType: 'blob',
@@ -138,13 +134,14 @@ export default function LegacyVaultPage() {
       document.body.appendChild(link);
       link.click();
       link.remove();
+      globalThis.URL.revokeObjectURL(url);
     } catch (error: unknown) {
       if (!(error as ApiError).response?.data?.sudo_required) {
         console.error('Download failed:', error);
         toast.error('Gagal mendownload snapshot 🥺');
       }
     }
-  };
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },

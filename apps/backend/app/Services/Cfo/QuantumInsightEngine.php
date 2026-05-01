@@ -24,7 +24,8 @@ class QuantumInsightEngine
         $endDate = Carbon::now();
         $startDate = Carbon::now()->subDays(30);
 
-        $query = Transaction::whereBetween('date', [$startDate, $endDate]);
+        $query = Transaction::withoutGlobalScopes()
+            ->whereBetween('date', [$startDate, $endDate]);
 
         if ($user->household_id) {
             $query->where('household_id', $user->household_id);
@@ -108,7 +109,7 @@ class QuantumInsightEngine
     {
         $jsonSummary = json_encode($summary);
 
-        return "Anda adalah Sovereign CFO Strategic Intelligence untuk {$userName}. ".
+        return "Anda adalah Sovereign CFO Strategic Intelligence. ".
                'Gunakan prinsip ekonomi makro dan manajemen kekayaan institusional untuk menganalisis data berikut: '.$jsonSummary.
                "\n\nInstruksi Analisis Strategis:".
                "\n1. Liquidity Layering: Evaluasi cadangan kas berdasarkan model 3-layer (Short-term buffer, Medium-term tax/obligations, Long-term wealth).".
@@ -136,10 +137,18 @@ class QuantumInsightEngine
      */
     protected function persistInsight(User $user, array $finding): void
     {
-        // Avoid duplicate active insights with same title in last 7 days
-        $exists = TransactionInsight::where('title', $finding['title'])
-            ->where('created_at', '>=', now()->subDays(7))
-            ->exists();
+        // Avoid duplicate active insights with same title in last 7 days for the whole household
+        $query = TransactionInsight::withoutGlobalScopes()
+            ->where('title', $finding['title'])
+            ->where('created_at', '>=', now()->subDays(7));
+
+        if ($user->household_id) {
+            $query->where('household_id', $user->household_id);
+        } else {
+            $query->where('user_id', $user->id);
+        }
+
+        $exists = $query->exists();
 
         if (! $exists) {
             TransactionInsight::create([

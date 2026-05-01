@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Resources\HolidayResource;
@@ -22,7 +24,8 @@ class HolidayController extends Controller
             abort(401);
         }
 
-        $holidays = Holiday::orderBy('created_at', 'desc')
+        $holidays = Holiday::where('household_id', $user->household_id)
+            ->orderBy('created_at', 'desc')
             ->get();
 
         return HolidayResource::collection($holidays);
@@ -50,6 +53,7 @@ class HolidayController extends Controller
             $validated['image_url'] = $this->generateImageUrl((string) $request->string('destination'));
         }
 
+        $validated['household_id'] = $user->household_id;
         $holiday = Holiday::create($validated);
 
         return new HolidayResource($holiday);
@@ -121,13 +125,11 @@ class HolidayController extends Controller
                 'transaction_date' => $validated['date'],
             ]);
 
-            // 2. Update Holiday Funded Amount
-            $holiday->increment('funded_amount', $validated['amount']);
-
-            // 3. (Accounting Protocol) Deduct from Asset if specified
+            // 2. (Accounting Protocol) Deduct from Asset if specified (Household Scoped)
             if (! empty($validated['asset_id'])) {
                 /** @var Asset $asset */
-                $asset = Asset::findOrFail($validated['asset_id']);
+                $asset = Asset::where('household_id', $user->household_id)
+                    ->findOrFail($validated['asset_id']);
                 $asset->decrement('value', (float) $validated['amount']);
             }
 

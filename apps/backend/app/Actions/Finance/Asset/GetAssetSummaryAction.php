@@ -24,7 +24,11 @@ class GetAssetSummaryAction extends BaseAction
         $query = Asset::query();
 
         if ($user instanceof User) {
-            $query->where('user_id', $user->id);
+            if ($user->household_id) {
+                $query->where('household_id', $user->household_id);
+            } else {
+                $query->where('user_id', $user->id);
+            }
         }
 
         $assets = $query->get();

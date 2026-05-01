@@ -34,12 +34,15 @@ const aj = arcjet({
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip security for public assets and static files
+  // Skip security for public assets, static files, and internal infrastructure routes
   const isPublicAsset =
     pathname.startsWith('/_next') ||
     pathname.includes('/api/') ||
     pathname.includes('.') ||
-    pathname === '/manifest.json';
+    pathname === '/manifest.json' ||
+    // 🛡️ Sentry tunnel: must bypass rate limiting or crash storms will drop reports
+    pathname === '/monitoring' ||
+    pathname === '/favicon.ico';
 
   if (isPublicAsset) {
     return NextResponse.next();

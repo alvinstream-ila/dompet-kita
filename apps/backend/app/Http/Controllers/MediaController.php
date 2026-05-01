@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -52,7 +55,10 @@ class MediaController extends Controller
         try {
             $file = $request->file('file');
             $fileName = Str::random(16).'-'.time().'.'.$file->getClientOriginalExtension();
-            $folder = 'receipts';
+            /** @var User $user */
+            $user = $request->user();
+            $householdId = $user->household_id ?? $user->id;
+            $folder = "receipts/{$householdId}";
             $filePath = "{$folder}/{$fileName}";
 
             // Default to 'storj' (high reliability) if available, otherwise fallback to local/public

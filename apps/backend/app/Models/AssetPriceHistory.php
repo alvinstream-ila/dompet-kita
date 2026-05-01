@@ -6,17 +6,23 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+use App\Traits\HasHouseholdScope;
+
 /**
  * @property int $id
  * @property int $user_id
+ * @property int $household_id
  * @property int $asset_id
  * @property float $price
  * @property Carbon $recorded_at
  */
 class AssetPriceHistory extends Model
 {
+    use HasHouseholdScope;
+
     protected $fillable = [
         'user_id',
+        'household_id',
         'asset_id',
         'price',
         'recorded_at',

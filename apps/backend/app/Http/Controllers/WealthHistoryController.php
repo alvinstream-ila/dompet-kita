@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Resources\WealthHistoryResource;
@@ -24,8 +26,8 @@ class WealthHistoryController extends Controller
 
         $now = Carbon::now();
 
-        // Fetch historical data excluding current month
-        $histories = WealthHistory::query()
+        // Fetch historical data excluding current month (Household Scoped)
+        $histories = WealthHistory::where('household_id', $user->household_id)
             ->where(function ($query) use ($now): void {
                 $query->where('year', '<', $now->year)
                     ->orWhere(function ($q) use ($now): void {
@@ -41,8 +43,8 @@ class WealthHistoryController extends Controller
         // Convert histories to resource collection and then to array
         $historyData = WealthHistoryResource::collection($histories->reverse())->toArray($request);
 
-        // Always add current real asset sum as the latest point
-        $currentWealth = Asset::sum('value');
+        // Always add current real asset sum as the latest point (Household Scoped)
+        $currentWealth = Asset::where('household_id', $user->household_id)->sum('value');
 
         // Append current month data using the Resource to keep it consistent
         $nowResource = new WealthHistoryResource([

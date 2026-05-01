@@ -58,9 +58,9 @@ export default function GlobalError({
             : 'Terjadi kesalahan tak terduga saat mencoba sinkronisasi dompet Anda. Jangan khawatir, data Anda tetap aman.'}
         </p>
 
-        {/* Diagnostic info for developers */}
-        {(process.env.NODE_ENV === 'development' ||
-          error.message.length < 100) && (
+        {/* 🛡️ SECURITY: Raw error messages are NEVER shown in production.
+				    error.digest is a safe opaque reference Sentry can cross-reference. */}
+        {process.env.NODE_ENV === 'development' && (
           <div className="mb-8 rounded-xl bg-slate-900/5 p-3 text-left">
             <p className="line-clamp-3 font-mono text-[11px] font-medium text-slate-600">
               Error: {error.message}

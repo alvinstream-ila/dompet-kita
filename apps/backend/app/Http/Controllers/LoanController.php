@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enums\LoanType;
@@ -31,7 +33,9 @@ class LoanController extends Controller
             abort(401);
         }
 
-        $loans = Loan::orderBy('created_at', 'desc')
+        $loans = Loan::query()
+            ->where('household_id', $user->household_id)
+            ->orderBy('created_at', 'desc')
             ->get();
 
         return LoanResource::collection($loans);
@@ -57,6 +61,9 @@ class LoanController extends Controller
             abort(401);
         }
 
+        $validated['user_id'] = $user->id;
+        $validated['household_id'] = $user->household_id;
+ 
         $loan = Loan::create($validated);
 
         return $this->success(new LoanResource($loan), 'Instrumen kewajiban/piutang baru telah diarsip.', 201);
@@ -105,7 +112,7 @@ class LoanController extends Controller
         $month = $request->integer('month', now()->month);
         $year = $request->integer('year', now()->year);
 
-        $reportData = $this->prepareReportData($month, $year);
+        $reportData = $this->prepareReportData($user, $month, $year);
 
         // Handle PDF Format
         if ($request->query('format') === 'pdf') {
@@ -155,21 +162,25 @@ class LoanController extends Controller
      *   carry_over: array{items: array<int, array<string, mixed>>, total_piutang: float, total_hutang: float}
      * }
      */
-    private function prepareReportData(int $month, int $year): array
+    private function prepareReportData(User $user, int $month, int $year): array
     {
         $startDate = Carbon::create($year, $month, 1)?->startOfMonth() ?? now()->startOfMonth();
         $endDate = $startDate->copy()->endOfMonth();
 
-        // 1. Fetch loans active during or before this month
-        $loans = Loan::where('created_at', '<=', $endDate)
+        // 1. Fetch loans active during or before this month (Household Scoped)
+        $loans = Loan::query()
+            ->where('household_id', $user->household_id)
+            ->where('created_at', '<=', $endDate)
             ->where(function ($query) use ($startDate): void {
                 $query->where('status', 'active')
                     ->orWhere('updated_at', '>=', $startDate);
             })
             ->get();
 
-        // 2. Fetch all transactions linked to loans in this month
-        $transactions = Transaction::whereBetween('date', [$startDate, $endDate])
+        // 2. Fetch all transactions linked to loans in this month (Household Scoped)
+        $transactions = Transaction::query()
+            ->where('household_id', $user->household_id)
+            ->whereBetween('date', [$startDate, $endDate])
             ->whereNotNull('metadata')
             ->get()
             ->filter(function (Transaction $t): bool {
@@ -239,6 +250,7 @@ class LoanController extends Controller
 
         // Fetch all relevant repayments for these loans up to the specified date in one query
         $repayments = Transaction::query()
+            ->where('household_id', $loans->first()?->household_id) // Explicit scoping
             ->where('metadata->source_type', Loan::class)
             ->whereIn('metadata->loan_id', $loanIds)
             ->where('date', '<=', $date->toDateString())

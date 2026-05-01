@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Finance\Wealth;
 
 use App\Actions\AI\GetWealthAdviceAction;
@@ -36,30 +38,47 @@ class ForecastWealthAction extends BaseAction
      */
     public function execute(User $user, int $months = 12): array
     {
-        $currentAssets = (float) Asset::where('user_id', $user->id)
-            ->sum('value');
+        $householdId = $user->household_id;
 
-        // Zero loans for investment projection focus
-        $currentLoans = 0;
+        // 1. Assets
+        $assetQuery = Asset::query();
+        if ($householdId) {
+            $assetQuery->where('household_id', $householdId);
+        } else {
+            $assetQuery->where('user_id', $user->id);
+        }
+        $currentAssets = (float) $assetQuery->sum('value');
 
-        // [ASP-v2] Market Intelligence: Get USD/IDR and Gold Rates dynamically
+        // 2. Loans (Fix: No longer hardcoded to 0)
+        $loanQuery = \App\Models\Loan::query();
+        if ($householdId) {
+            $loanQuery->where('household_id', $householdId);
+        } else {
+            $loanQuery->where('user_id', $user->id);
+        }
+        $currentLoans = (float) $loanQuery->where('status', '!=', 'paid')->sum('amount');
+
+        // 3. Savings (Fix: Calculate historical avg monthly savings)
+        $avgMonthlySavings = $this->calculateAvgMonthlySavings($user);
+
+        // 4. Market Context
         $market = $this->marketService->getRates();
-
         $netWorth = $currentAssets - $currentLoans;
 
-        // Fixed to 0 per user request: "Focus only on existing asset growth"
-        $avgMonthlySavings = 0.0;
-
-        /** @var Collection<int, array{month: string, estimated_net_worth: float|int}> $projection */
+        /** @var \Illuminate\Support\Collection<int, array{month: string, estimated_net_worth: float|int}> $projection */
         $projection = collect([]);
         $runningWealth = $netWorth > 0 ? $netWorth : 0.0;
 
-        $inflationRate = (float) $market['inflation_rate'];
-        $inflationMonthly = $inflationRate / 12;
+        // Projections
+        // We assume a conservative asset growth rate that roughly offsets inflation + 2%
+        // to show "Nominal" value growth, which is more intuitive for users.
+        $annualGrowth = 0.055; // 5.5% annual growth (typical conservative portfolio)
+        $monthlyGrowth = $annualGrowth / 12;
 
         for ($i = 1; $i <= $months; $i++) {
-            // [ASP-v2] Adjusted for Inflation (Using real-time inflation proxy)
-            $runningWealth = ($runningWealth + $avgMonthlySavings) * (1 - $inflationMonthly);
+            // Formula: (Current + Savings) * (1 + Growth)
+            $runningWealth = ($runningWealth + $avgMonthlySavings) * (1 + $monthlyGrowth);
+            
             $projection->push([
                 'month' => (string) Carbon::now()->addMonths($i)->format('M Y'),
                 'estimated_net_worth' => (float) max(0, $runningWealth),
@@ -86,5 +105,36 @@ class ForecastWealthAction extends BaseAction
             'projection' => $projection,
             'advice' => $advice,
         ];
+    }
+
+    /**
+     * Calculate average monthly savings over the last 6 months.
+     */
+    private function calculateAvgMonthlySavings(User $user): float
+    {
+        $sixMonthsAgo = Carbon::now()->subMonths(6)->startOfMonth();
+        
+        $query = \App\Models\Transaction::query()
+            ->where('date', '>=', $sixMonthsAgo);
+
+        if ($user->household_id) {
+            $query->where('household_id', $user->household_id);
+        } else {
+            $query->where('user_id', $user->id);
+        }
+
+        $totals = $query->toBase()->selectRaw("
+                SUM(CASE WHEN type = ? THEN amount ELSE 0 END) as income,
+                SUM(CASE WHEN type = ? THEN amount ELSE 0 END) as expense
+            ", [\App\Enums\TransactionType::INCOME->value, \App\Enums\TransactionType::EXPENSE->value])
+            ->first();
+
+        if (!$totals) {
+            return 0.0;
+        }
+
+        $totalSavings = (float) ($totals->income ?? 0) - (float) ($totals->expense ?? 0);
+        
+        return (float) max(0, $totalSavings / 6);
     }
 }

@@ -35,10 +35,10 @@ class BudgetService
     public function getBudgetCycleDates(?int $month = null, ?int $year = null, int $startDay = 1): array
     {
         $now = Carbon::now();
-        $year ??= $now->year;
+        $year ??= (int) $now->year;
 
         // Determine the target month number
-        $targetMonth = $month ?? $now->month;
+        $targetMonth = $month ?? (int) $now->month;
 
         // If no month is provided (automatic mode), we check if we are currently
         // before the startDay. If so, the current "active" cycle actually started last month.
@@ -55,11 +55,15 @@ class BudgetService
             $year++;
         }
 
-        $start = Carbon::createFromDate($year, $targetMonth, $startDay)->startOfDay();
-        $end = $start->copy()->addMonth()->subSecond();
+        // 🛡️ Date Integrity: Clamp startDay to the actual last day of the target month.
+        // This prevents April 31 from becoming May 1.
+        $daysInMonth = (int) Carbon::createFromDate($year, $targetMonth, 1)->daysInMonth;
+        $clampedDay = min($startDay, $daysInMonth);
+
+        $start = Carbon::createFromDate($year, $targetMonth, $clampedDay)->startOfDay();
+        $end = $start->copy()->addMonthNoOverflow()->subSecond();
 
         // If startDay is 1, we still want to ensure it's a clean calendar month
-        // (though createFromDate with 1 and addMonth usually does this anyway)
         if ($startDay === 1) {
             return [
                 'start' => $start->copy()->startOfMonth(),
@@ -74,19 +78,18 @@ class BudgetService
     }
 
     /**
-     * Calculate budget consumption for a specific user.
+     * Calculate budget consumption for a specific user/household and period.
      *
      * @return array<int, array{id: string, category: string, limit: float, used: float, remaining: float, percentage: float, status: string}>
      */
-    public function getBudgetUsage(): array
+    public function getBudgetUsage(\App\Models\User $user, ?int $month = null, ?int $year = null, int $startDay = 1): array
     {
-        $cycle = $this->getCurrentCycleDates();
-        $budgets = Budget::get();
+        $dates = $this->getBudgetCycleDates($month, $year, $startDay);
 
-        return $budgets->map(function (Budget $budget) use ($cycle): array {
+        return Budget::query()->get()->map(function (Budget $budget) use ($dates): array {
             $used = (float) Transaction::where('category', $budget->category)
-                ->whereBetween('date', [$cycle['start'], $cycle['end']])
-                ->where('type', 'expense')
+                ->whereBetween('date', [$dates['start'], $dates['end']])
+                ->where('type', \App\Enums\TransactionType::EXPENSE)
                 ->sum('amount');
 
             $limit = (float) $budget->limit;

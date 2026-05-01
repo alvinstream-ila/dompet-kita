@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasHouseholdScope;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -25,7 +26,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Holiday extends Model
 {
-    use HasHouseholdScope;
+    use HasFactory, HasHouseholdScope;
 
     /**
      * @var list<string>

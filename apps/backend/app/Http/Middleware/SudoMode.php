@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -18,9 +20,12 @@ class SudoMode
         $user = $request->user();
 
         if ($user) {
-            $lastSudoAt = Cache::get("sudo_mode_{$user->id}");
+            // 🛡️ The cache TTL (set to 15 min in AuthController::sudoConfirm) is the sole
+            // expiry mechanism. If the key exists, sudo is still active. No addMinutes() check
+            // is needed here — that was dead code since it could never be true while cache is alive.
+            $sudoIsActive = Cache::has("sudo_mode_{$user->id}");
 
-            if (! $lastSudoAt || ! is_string($lastSudoAt) || now()->diffInMinutes($lastSudoAt) > 15) {
+            if (! $sudoIsActive) {
                 if ($request->expectsJson()) {
                     return response()->json([
                         'message' => 'Konfirmasi keamanan diperlukan untuk melanjutkan aksi ini. Silakan lakukan otentikasi ulang.',
@@ -28,7 +33,6 @@ class SudoMode
                     ], 403);
                 }
 
-                // Standard fallback for non-JSON requests
                 return abort(403, 'Sudo mode required.');
             }
         }

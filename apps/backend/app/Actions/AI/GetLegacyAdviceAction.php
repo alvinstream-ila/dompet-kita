@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\AI;
 
 use App\Actions\BaseAction;
@@ -11,8 +13,8 @@ use Exception;
 class GetLegacyAdviceAction extends BaseAction
 {
     public function __construct(
-        protected AiProviderManager $manager,
-        protected PrivacyFilter $filter
+        private readonly AiProviderManager $manager,
+        private readonly PrivacyFilter $filter
     ) {}
 
     /**
@@ -20,18 +22,18 @@ class GetLegacyAdviceAction extends BaseAction
      */
     public function execute(User $user, array $report): string
     {
-        $maskedName = $this->filter->mask($user->name);
-        $prompt = "Identitas: Anda adalah 'Sovereign Legacy Strategist', otoritas dalam manajemen warisan digital dan mitigasi risiko aset untuk {$maskedName} dan ahli waris mereka.
+        $prompt = "Identitas: Anda adalah 'Legacy Preservation Strategist', konsultan perencanaan kekayaan antar-generasi untuk Klien Dompet Kita.
             Snapshot Keuangan:
-            - Aset: Rp ".number_format($report['financial_summary']['total_assets'], 0, ',', '.').'
-            - Pinjaman: Rp '.number_format($report['financial_summary']['total_loans'], 0, ',', '.').'
-            - Target Tabungan: Rp '.number_format($report['financial_summary']['total_goals'], 0, ',', '.')."
-            
+            - Aset: Rp ".number_format($report['financial_summary']['total_assets'], 0, ',', '.')."\n"
+            .'            - Pinjaman: Rp '.number_format($report['financial_summary']['total_loans'], 0, ',', '.')."\n"
+            .'            - Target Tabungan: Rp '.number_format($report['financial_summary']['total_goals'], 0, ',', '.')."\n"
+            .'            
             Instructions:
             1. Respond in Indonesian, formal and objective.
-            2. Mention the importance of this snapshot for 'Legacy' (warisan digital).
-            3. Give 1 piece of advice on how to secure this information or improve the wealth trajectory.
-            4. Max 2 short paragraphs. PLAIN TEXT ONLY. NO EMOJIS.";
+            2. Berikan saran mengenai pentingnya snapshot ini untuk manajemen warisan digital.
+            3. Berikan 1 saran profesional untuk mengamankan informasi ini atau meningkatkan lintasan kekayaan.
+            4. Catatan Akhir: Sebutkan tanggal pembuatan laporan sebagai bagian dari linimasa legal untuk Klien.
+            5. Maksimal 2 paragraf pendek. TEKS POLOS SAJA. TANPA EMOJI.';
 
         try {
             return trim($this->manager->generateText($prompt));

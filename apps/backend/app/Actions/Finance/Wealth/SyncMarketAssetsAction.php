@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Finance\Wealth;
 
 use App\Actions\BaseAction;
@@ -24,7 +26,8 @@ class SyncMarketAssetsAction extends BaseAction
         /** @var array{updated: int, alerts: int} $stats */
         $stats = ['updated' => 0, 'alerts' => 0];
 
-        Asset::marketSynced()
+        Asset::withoutGlobalScopes()
+            ->marketSynced()
             ->each(function (Asset $asset) use ($market, &$stats): void {
                 if ($asset->quantity <= 0) {
                     return;
@@ -163,6 +166,7 @@ class SyncMarketAssetsAction extends BaseAction
             activity('sentinel')
                 ->performedOn($asset)
                 ->withProperties([
+                    'household_id' => $asset->household_id,
                     'old_value' => $oldValue,
                     'new_value' => $newValue,
                     'change_percent' => round($changePercent, 2),

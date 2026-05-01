@@ -28,6 +28,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property string|null $receipt_url
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ * @property int|null $asset_id
  * @property array<string, mixed>|null $metadata
  * @property float $total // Dynamic field for aggregate queries
  */

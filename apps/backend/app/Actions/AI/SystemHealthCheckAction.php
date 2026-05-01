@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\AI;
 
 use App\Actions\BaseAction;
-use App\Services\GeminiService;
+use App\Services\AI\AiProviderManager;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Redis;
 class SystemHealthCheckAction extends BaseAction
 {
     public function __construct(
-        private readonly GeminiService $gemini
+        private readonly AiProviderManager $aiManager
     ) {}
 
     /**
@@ -60,7 +60,11 @@ class SystemHealthCheckAction extends BaseAction
     private function checkRedis(): array
     {
         try {
-            Redis::connection()->ping();
+            $pong = Redis::connection()->ping();
+            // Assert we got a real PONG response (some drivers return '+PONG' or true)
+            if ($pong !== '+PONG' && $pong !== true && $pong !== 1) {
+                return ['status' => 'error', 'message' => 'Redis responded with unexpected value: '.json_encode($pong)];
+            }
 
             return ['status' => 'safe', 'message' => 'Redis is reachable.'];
         } catch (Exception $e) {
@@ -74,10 +78,10 @@ class SystemHealthCheckAction extends BaseAction
     private function checkAiProvider(): array
     {
         try {
-            // Simple ping-like check for Gemini
-            $this->gemini->analyzeFinancials("Respond with 'OK' if you can hear me.");
+            // Simple ping-like check for AI system
+            $this->aiManager->generateText("Respond with 'OK' if you can hear me.");
 
-            return ['status' => 'safe', 'message' => 'Gemini AI is operational.'];
+            return ['status' => 'safe', 'message' => 'AI System is operational.'];
         } catch (Exception $e) {
             return ['status' => 'error', 'message' => 'AI Provider Communication Error: '.$e->getMessage()];
         }

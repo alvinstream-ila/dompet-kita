@@ -16,7 +16,7 @@ class CfoInsight extends Command
      *
      * @var string
      */
-    protected $signature = 'cfo:insight {user_id? : Optional user ID to analyze}';
+    protected $signature = 'cfo:insight {user_id : User ID to analyze}';
 
     /**
      * The console command description.
@@ -30,30 +30,25 @@ class CfoInsight extends Command
      */
     public function handle(GetQuantumInsightsAction $action): int
     {
+        $status = 0;
+
         try {
             $userId = $this->argument('user_id');
+            $user = $userId ? User::find($userId) : null;
 
-            if ($userId) {
-                $user = User::find($userId);
-                if (! $user) {
-                    $this->error("User with ID {$userId} not found.");
-
-                    return 1;
-                }
-                $this->processInsight($user, $action);
+            if (! $user) {
+                $this->error($userId ? "User with ID {$userId} not found." : 'User ID is required.');
+                $status = 1;
             } else {
-                $this->info('Starting global financial analysis for all active users...');
-                User::all()->each(fn (User $user) => $this->processInsight($user, $action));
+                $this->processInsight($user, $action);
+                $this->info('Financial analysis completed successfully.');
             }
-
-            $this->info('Financial analysis completed successfully.');
-
-            return 0;
         } catch (Exception $e) {
             $this->error("Fatal Error: {$e->getMessage()}");
-
-            return 1;
+            $status = 1;
         }
+
+        return $status;
     }
 
     private function processInsight(User $user, GetQuantumInsightsAction $action): void

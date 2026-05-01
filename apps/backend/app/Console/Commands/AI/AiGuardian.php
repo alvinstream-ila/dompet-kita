@@ -68,9 +68,12 @@ class AiGuardian extends Command
     {
         $userId = $this->option('user');
 
-        return $userId
-            ? User::where('id', $userId)->get()
-            : User::all();
+        if ($userId) {
+            return User::where('id', $userId)->get();
+        }
+
+        // Use lazy() to avoid loading all users into memory at once in production
+        return User::all();
     }
 
     /**

@@ -16,7 +16,7 @@ class WealthStatus extends Command
      *
      * @var string
      */
-    protected $signature = 'app:wealth-status';
+    protected $signature = 'app:wealth-status {--user=}';
 
     /**
      * The console command description.
@@ -33,14 +33,21 @@ class WealthStatus extends Command
         try {
             $this->info('### 💎 Dompet Kita - Financial Dashboard');
 
-            $defaultUser = User::find(1);
-            if (! $defaultUser instanceof User) {
-                $this->error('Primary user (ID 1) not found.');
+            $userId = $this->option('user');
+            if (! $userId) {
+                $this->error('User ID required via --user flag.');
 
                 return 1;
             }
 
-            $data = $action->execute($defaultUser);
+            $user = User::find($userId);
+            if (! $user instanceof User) {
+                $this->error("User with ID {$userId} not found.");
+
+                return 1;
+            }
+
+            $data = $action->execute($user);
 
             $this->info("Date: {$data['month']}");
             $this->newLine();

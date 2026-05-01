@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Finance\Transaction;
 
 use App\Actions\BaseAction;
@@ -27,12 +29,17 @@ class GetTransactionSummaryAction extends BaseAction
      *     period: array{start: string, end: string}
      * }
      */
-    public function execute(int $userId, ?int $month, ?int $year, int $budgetCycleStart): array
+    public function execute(\App\Models\User $user, ?int $month, ?int $year, int $budgetCycleStart): array
     {
-        $version = (int) Cache::get("transaction_summary_version_{$userId}", 1);
-        $cacheKey = "transaction_summary_{$userId}_".($month ?? 'all').'_'.($year ?? 'all')."_{$budgetCycleStart}_v{$version}";
+        $dates = $this->budgetService->getBudgetCycleDates($month, $year, $budgetCycleStart);
+        $targetMonth = $month ?? $dates['start']->month;
+        $targetYear = $year ?? $dates['start']->year;
+        $scopeId = $user->household_id ?? $user->id;
 
-        return Cache::remember($cacheKey, 600, function () use ($month, $year, $budgetCycleStart): array {
+        $version = (int) Cache::get("transaction_summary_version_{$scopeId}", 1);
+        $cacheKey = "transaction_summary_{$scopeId}_{$targetMonth}_{$targetYear}_{$budgetCycleStart}_v{$version}";
+
+        return Cache::remember($cacheKey, 600, function () use ($dates, $month, $year): array {
             $selectSum = DB::raw('SUM(amount) as total');
 
             // Helper to extract amount from summary collection
@@ -44,10 +51,10 @@ class GetTransactionSummaryAction extends BaseAction
             };
 
             // 1. Budget Cycle Dates (Tied to salary/gajian date)
-            $dates = $this->budgetService->getBudgetCycleDates($month, $year, $budgetCycleStart);
             $startDate = $dates['start'];
             $endDate = $dates['end'];
 
+            // 🛡️ Sovereign Global Scope handles isolation (HasHouseholdScope).
             $summary = Transaction::query()
                 ->whereBetween('date', [$startDate, $endDate])
                 ->select('type', $selectSum)

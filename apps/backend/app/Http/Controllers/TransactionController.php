@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Actions\Finance\Transaction\DeleteTransactionAction;
@@ -14,7 +16,8 @@ use App\Models\User;
 use App\Services\BudgetService;
 use App\Traits\HasApiResponses;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -34,9 +37,6 @@ class TransactionController extends Controller
     /**
      * List all transactions with period filtering and pagination.
      */
-    /**
-     * List all transactions with period filtering and pagination.
-     */
     public function index(Request $request): JsonResponse
     {
         try {
@@ -46,10 +46,11 @@ class TransactionController extends Controller
             }
 
             // Standardizing month indexing: PHP uses 1-12. Frontend also sends 1-12.
-            $month = $request->filled('month') ? (int) $request->integer('month') : (int) now()->month;
-            $year = $request->filled('year') ? (int) $request->integer('year') : (int) now()->year;
+            $month = $request->filled('month') ? (int) $request->integer('month') : null;
+            $year = $request->filled('year') ? (int) $request->integer('year') : null;
             $startDay = (int) ($request->integer('budget_cycle_start') ?: 1);
 
+            // 🛡️ Sovereign Privacy Gate: Always scope to the authenticated user first.
             $query = Transaction::query()
                 ->filterByPeriod($month, $year, $startDay);
 
@@ -78,8 +79,8 @@ class TransactionController extends Controller
                     'period' => [
                         'start' => $dates['start']->toDateString(),
                         'end' => $dates['end']->toDateString(),
-                        'month' => $month,
-                        'year' => $year,
+                        'month' => $month ?? (int) $dates['start']->month,
+                        'year' => $year ?? (int) $dates['start']->year,
                         'budget_cycle_start' => $startDay,
                     ],
                 ],
@@ -111,19 +112,17 @@ class TransactionController extends Controller
             $year = $request->filled('year') ? (int) $request->integer('year') : null;
             $budgetCycleStart = (int) ($request->integer('budget_cycle_start') ?: 1);
 
-            /**
-             * @return array{
+            /** @var array{
              *     income: float,
              *     expense: float,
              *     balance: float,
              *     cumulative_balance: float,
              *     calendar_income: float,
              *     calendar_expense: float,
-             *     recentTransactions: Collection<int, Transaction>,
+             *     recentTransactions: EloquentCollection<int, Transaction>,
              *     period: array{start: string, end: string}
-             * }
-             */
-            $data = $action->execute($user->id, $month, $year, $budgetCycleStart);
+             * } $data */
+            $data = $action->execute($user, $month, $year, $budgetCycleStart);
 
             return $this->success([
                 'income' => $data['income'],
@@ -179,16 +178,21 @@ class TransactionController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        $month = $request->integer('month', now()->month);
-        $year = $request->filled('year') ? (int) $request->integer('year') : (int) date('Y');
+        $month = $request->filled('month') ? (int) $request->integer('month') : null;
+        $year = $request->filled('year') ? (int) $request->integer('year') : null;
         $budgetCycleStart = (int) ($request->integer('budget_cycle_start') ?: 1);
 
         $viewData = $this->prepareTransactionReportData($user, $month, $year, $budgetCycleStart, $action);
 
         $html = view('reports.financial_monthly', $viewData)->render();
 
+        $tempDir = storage_path('app/mpdf/' . $user->id);
+        if (!is_dir($tempDir)) {
+            mkdir($tempDir, 0755, true);
+        }
+
         $mpdf = new Mpdf([
-            'tempDir' => storage_path('app/mpdf'),
+            'tempDir' => $tempDir,
             'margin_left' => 0,
             'margin_right' => 0,
             'margin_top' => 0,
@@ -197,7 +201,11 @@ class TransactionController extends Controller
 
         $mpdf->WriteHTML($html);
 
-        $fileName = "Monthly_Statement_{$year}_{$month}.pdf";
+        $period = $this->budgetService->getBudgetCycleDates($month, $year, $budgetCycleStart);
+        $computedMonth = $month ?? $period['start']->month;
+        $computedYear = $year ?? $period['start']->year;
+
+        $fileName = "Monthly_Statement_{$computedYear}_{$computedMonth}.pdf";
 
         return response($mpdf->Output($fileName, 'S'), 200, [
             'Content-Type' => 'application/pdf',
@@ -210,12 +218,13 @@ class TransactionController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        $month = $request->integer('month', now()->month);
-        $year = $request->filled('year') ? (int) $request->integer('year') : (int) date('Y');
+        $month = $request->filled('month') ? (int) $request->integer('month') : null;
+        $year = $request->filled('year') ? (int) $request->integer('year') : null;
         $budgetCycleStart = (int) ($request->integer('budget_cycle_start') ?: 1);
 
         $period = $this->budgetService->getBudgetCycleDates($month, $year, $budgetCycleStart);
 
+        // 🛡️ Sovereign Privacy Gate: Scope to authenticated user only.
         $transactions = Transaction::query()
             ->where('household_id', $user->household_id)
             ->whereBetween('date', [$period['start'], $period['end']])
@@ -248,19 +257,20 @@ class TransactionController extends Controller
      * @return array{
      *   user: User,
      *   summary: array{category_breakdown: array<int, array{type: string, category: string, amount: float}>},
-     *   transactions: Collection<int, Transaction>,
-     *   categories: \Illuminate\Support\Collection<int, array{type: string, category: string, amount: float}>,
+     *   transactions: EloquentCollection<int, Transaction>,
+     *   categories: SupportCollection<int, array{type: string, category: string, amount: float}>,
      *   period_label: string
      * }
      */
-    private function prepareTransactionReportData(User $user, int $month, int $year, int $budgetCycleStart, GetTransactionSummaryAction $action): array
+    private function prepareTransactionReportData(User $user, ?int $month, ?int $year, int $budgetCycleStart, GetTransactionSummaryAction $action): array
     {
         /** @var array{category_breakdown: array<int, array{type: string, category: string, amount: float}>} $summaryData */
-        $summaryData = $action->execute($user->id, $month, $year, $budgetCycleStart);
+        $summaryData = $action->execute($user, $month, $year, $budgetCycleStart);
 
         /** @var array{start: Carbon, end: Carbon} $period */
         $period = $this->budgetService->getBudgetCycleDates($month, $year, $budgetCycleStart);
 
+        // 🛡️ Sovereign Privacy Gate: Scope to authenticated user only.
         $transactions = Transaction::query()
             ->where('household_id', $user->household_id)
             ->whereBetween('date', [$period['start'], $period['end']])

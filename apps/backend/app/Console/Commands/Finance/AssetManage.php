@@ -19,7 +19,7 @@ class AssetManage extends Command
      *
      * @var string
      */
-    protected $signature = 'app:asset-manage {action=list} {--name=} {--type=} {--value=} {--id=}';
+    protected $signature = 'app:asset-manage {action=list} {--name=} {--type=} {--value=} {--id=} {--user=}';
 
     /**
      * The console command description.
@@ -38,18 +38,26 @@ class AssetManage extends Command
     ): int {
         try {
             $action = $this->argument('action');
-            $defaultUser = User::find(1); // Default for CLI
+            $userId = $this->option('user');
 
-            if (! $defaultUser) {
-                $this->error('Primary user (ID 1) not found.');
+            if (! $userId) {
+                $this->error('User ID required via --user flag.');
+
+                return 1;
+            }
+
+            $user = User::find($userId);
+
+            if (! $user) {
+                $this->error("User with ID {$userId} not found.");
 
                 return 1;
             }
 
             return match ($action) {
-                'add' => $this->handleAdd($createAssetAction, $defaultUser),
-                'list' => $this->handleList($getAssetSummaryAction, $defaultUser),
-                'update' => $this->handleUpdate($updateAssetAction, $defaultUser),
+                'add' => $this->handleAdd($createAssetAction, $user),
+                'list' => $this->handleList($getAssetSummaryAction, $user),
+                'update' => $this->handleUpdate($updateAssetAction, $user),
                 default => $this->handleInvalidAction($action),
             };
         } catch (Exception $e) {
@@ -114,7 +122,7 @@ class AssetManage extends Command
             return 1;
         }
 
-        $asset = Asset::find($id);
+        $asset = $user->assets()->find($id);
         if (! $asset) {
             $this->error("Asset with ID {$id} not found.");
 

@@ -39,7 +39,7 @@ class BackupDatabaseAction extends BaseAction
         $encryptedPath = storage_path("app/{$encryptedFilename}");
         $this->encrypt($tempPath, $encryptedPath, $encryptionKey);
 
-        // 3. Upload
+        // 3. Upload using streaming to avoid memory exhaustion on large files
         $this->upload($encryptedPath, "backups/{$encryptedFilename}");
 
         // 4. Cleanup
@@ -58,7 +58,8 @@ class BackupDatabaseAction extends BaseAction
 
     private function export(string $dbUrl, string $path): void
     {
-        $command = "pg_dump \"{$dbUrl}\" > \"{$path}\"";
+        // escapeshellarg prevents shell injection when DB URL contains special chars
+        $command = sprintf('pg_dump %s > %s', escapeshellarg($dbUrl), escapeshellarg($path));
         exec($command, $output, $returnVar);
 
         if ($returnVar !== 0) {
@@ -68,7 +69,13 @@ class BackupDatabaseAction extends BaseAction
 
     private function encrypt(string $source, string $dest, string $key): void
     {
-        $command = "openssl enc -aes-256-cbc -salt -in \"{$source}\" -out \"{$dest}\" -k \"{$key}\" -pbkdf2";
+        // escapeshellarg on every variable prevents injection from config values
+        $command = sprintf(
+            'openssl enc -aes-256-cbc -salt -in %s -out %s -k %s -pbkdf2',
+            escapeshellarg($source),
+            escapeshellarg($dest),
+            escapeshellarg($key),
+        );
         exec($command, $output, $returnVar);
 
         if ($returnVar !== 0) {
@@ -79,11 +86,16 @@ class BackupDatabaseAction extends BaseAction
 
     private function upload(string $path, string $remotePath): void
     {
-        $content = file_get_contents($path);
-        if ($content === false) {
-            throw new Exception('Failed to read encrypted backup file.');
+        // Use a stream resource to avoid loading the entire file into memory
+        $stream = fopen($path, 'r');
+        if ($stream === false) {
+            throw new Exception('Failed to open encrypted backup file for streaming upload.');
         }
 
-        Storage::disk('storj')->put($remotePath, $content);
+        try {
+            Storage::disk('storj')->put($remotePath, $stream);
+        } finally {
+            fclose($stream);
+        }
     }
 }

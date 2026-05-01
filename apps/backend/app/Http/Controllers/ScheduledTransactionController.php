@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ScheduledTransactionResource;
@@ -25,7 +27,9 @@ class ScheduledTransactionController extends Controller
             abort(401);
         }
 
-        $scheduled = ScheduledTransaction::latest()
+        $scheduled = ScheduledTransaction::query()
+            ->where('household_id', $user->household_id)
+            ->latest()
             ->get();
 
         return ScheduledTransactionResource::collection($scheduled);
@@ -52,6 +56,8 @@ class ScheduledTransactionController extends Controller
         }
 
         $validated['status'] = 'active';
+        $validated['user_id'] = $user->id;
+        $validated['household_id'] = $user->household_id;
 
         $scheduled = ScheduledTransaction::create($validated);
 

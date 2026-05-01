@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Actions\Finance;
 
+use App\Models\User;
 use App\Actions\BaseAction;
 use App\Exceptions\CfoAnalysisException;
 use App\Models\Asset;
 use App\Models\Transaction;
-use App\Services\GeminiService;
+use App\Services\AI\AiProviderManager;
 use Exception;
 use Illuminate\Support\Carbon;
 
 class PerformCfoAnalysisAction extends BaseAction
 {
     public function __construct(
-        private readonly GeminiService $gemini
+        private readonly AiProviderManager $aiManager
     ) {}
 
     /**
@@ -36,59 +37,144 @@ class PerformCfoAnalysisAction extends BaseAction
      *
      * @throws Exception
      */
-    public function execute(string $month): array
+    public function execute(User $user, string $month): array
     {
         $currentDate = Carbon::parse($month.'-01');
         $startDate = $currentDate->copy()->subMonths(5)->startOfMonth();
         $endDate = $currentDate->copy()->endOfMonth();
 
-        // 1. Fetch Transactions for the last 6 months
-        $transactions = Transaction::whereBetween('date', [$startDate, $endDate])->get();
-
+        $transactions = $this->getTransactions($user, $startDate, $endDate);
         if ($transactions->isEmpty()) {
             throw new CfoAnalysisException("No transaction data found for the period {$startDate->format('Y-m')} to {$month}.");
         }
 
-        // 2. Calculate Monthly Metrics
-        $monthlyData = $transactions->groupBy(fn ($t): string => Carbon::parse($t->date)->format('Y-m'))
-            ->map(fn ($group): array => [
+        $monthlyData = $this->groupMonthlyData($transactions);
+        $totalAssets = $this->calculateTotalAssets($user);
+        
+        $metrics = $this->computeCfoMetrics($monthlyData, $user, $totalAssets);
+        $categories = $this->getCategoryBreakdown($transactions, $month);
+        
+        /** @var array{income: float, expense: float}|null $currentMonthData */
+        $currentMonthData = $monthlyData->get($month);
+        $advice = $this->generateCfoAdvice($month, $metrics, $currentMonthData, $categories);
+
+        return [
+            'month' => $month,
+            'metrics' => $metrics,
+            'summary' => (array) ($currentMonthData ?? ['income' => 0.0, 'expense' => 0.0]),
+            'categories' => $categories,
+            'advice' => $advice,
+        ];
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, Transaction>
+     */
+    private function getTransactions(User $user, Carbon $start, Carbon $end): \Illuminate\Database\Eloquent\Collection
+    {
+        $query = Transaction::withoutGlobalScopes()->whereBetween('date', [$start, $end]);
+        
+        return $user->household_id
+            ? $query->where('household_id', $user->household_id)->get()
+            : $query->where('user_id', $user->id)->get();
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Collection<int, Transaction> $transactions
+     * @return \Illuminate\Support\Collection<string, array{income: float, expense: float}>
+     */
+    private function groupMonthlyData(\Illuminate\Database\Eloquent\Collection $transactions): \Illuminate\Support\Collection
+    {
+        return $transactions->groupBy(fn (Transaction $t): string => Carbon::parse($t->date)->format('Y-m'))
+            ->map(fn (\Illuminate\Database\Eloquent\Collection $group): array => [
                 'income' => (float) $group->where('type', 'income')->sum('amount'),
                 'expense' => (float) $group->where('type', 'expense')->sum('amount'),
             ]);
+    }
 
+    private function calculateTotalAssets(User $user): float
+    {
+        $query = Asset::withoutGlobalScopes();
+        if ($user->household_id) {
+            $query->where('household_id', $user->household_id);
+        } else {
+            $query->where('user_id', $user->id);
+        }
+        
+        return (float) $query->sum('value');
+    }
+
+    /**
+     * @param \Illuminate\Support\Collection<string, array{income: float, expense: float}> $monthlyData
+     * @return array{
+     *     permanent_income: float,
+     *     volatility: float,
+     *     runway: float,
+     *     total_assets: float
+     * }
+     */
+    private function computeCfoMetrics(\Illuminate\Support\Collection $monthlyData, User $user, float $totalAssets): array
+    {
         $totalIncome = (float) $monthlyData->sum('income');
-        $permanentIncome = $totalIncome / 6;
         $avgExpense = (float) $monthlyData->sum('expense') / 6;
-
-        // Calculate Income Volatility (Coefficient of Variation)
+        
         /** @var array<int, float> $incomes */
         $incomes = $monthlyData->pluck('income')->toArray();
-        $volatility = $this->calculateCV($incomes);
-
-        // 3. Fetch Asset Data for Liquidity/Runway
-        $liquidAssets = (float) Asset::whereIn('type', ['cash', 'bank', 'e-wallet'])->sum('value');
-        $totalAssets = (float) Asset::sum('value');
+        
+        // Calculate liquid assets for runway
+        $assetQuery = Asset::withoutGlobalScopes();
+        if ($user->household_id) {
+            $assetQuery->where('household_id', $user->household_id);
+        } else {
+            $assetQuery->where('user_id', $user->id);
+        }
+        $liquidAssets = (float) $assetQuery->whereIn('type', ['cash', 'bank', 'e-wallet'])->sum('value');
 
         $burnRate = $avgExpense > 0 ? $avgExpense : 1;
-        $runway = $liquidAssets / $burnRate;
 
-        // 4. Current Month specific data
-        $currentMonthData = $transactions->filter(fn ($t): bool => Carbon::parse($t->date)->format('Y-m') === $month);
-        /** @var array<string, float> $categories */
-        $categories = $currentMonthData->groupBy('category')->map(fn ($g): float => (float) $g->sum('amount'))->all();
+        return [
+            'permanent_income' => $totalIncome / 6,
+            'volatility' => $this->calculateCV($incomes),
+            'runway' => $liquidAssets / $burnRate,
+            'total_assets' => $totalAssets,
+        ];
+    }
 
-        // 5. Build Sophisticated Prompt
-        $prompt = "Identitas: Anda adalah 'Sovereign CFO Partner', penasihat keuangan elit untuk Alvin & Ila.
+    /**
+     * @param \Illuminate\Database\Eloquent\Collection<int, Transaction> $transactions
+     * @return array<string, float>
+     */
+    private function getCategoryBreakdown(\Illuminate\Database\Eloquent\Collection $transactions, string $month): array
+    {
+        return $transactions->filter(fn (Transaction $t): bool => Carbon::parse($t->date)->format('Y-m') === $month)
+            ->groupBy('category')
+            ->map(fn (\Illuminate\Database\Eloquent\Collection $g): float => (float) $g->sum('amount'))
+            ->all();
+    }
+
+    /**
+     * @param array{
+     *     permanent_income: float,
+     *     volatility: float,
+     *     runway: float,
+     *     total_assets: float
+     * } $metrics
+     * @param array{income: float, expense: float}|null $currentMonth
+     * @param array<string, float> $categories
+     */
+    private function generateCfoAdvice(string $month, array $metrics, ?array $currentMonth, array $categories): string
+    {
+        $prompt = "Identitas: Anda adalah 'Sovereign CFO Partner', penasihat keuangan elit.
             Tugas: Berikan analisis strategis berdasarkan data finansial 6 bulan terakhir.
 
             METRIK UTAMA:
             - Target Analisis: {$month}
-            - Permanent Income (6-mo avg): Rp ".number_format($permanentIncome).'
-            - Income Volatility: '.round($volatility * 100, 2).'% (CV)
-            - Current Month Income: Rp '.number_format($monthlyData[$month]['income'] ?? 0).'
-            - Current Month Expense: Rp '.number_format($monthlyData[$month]['expense'] ?? 0).'
-            - Financial Runway (Liquid): '.round($runway, 1).' bulan
-            - Total Wealth: Rp '.number_format($totalAssets)."
+            - Permanent Income (6-mo avg): Rp ".number_format($metrics['permanent_income'])."
+            - Income Volatility: ".round($metrics['volatility'] * 100, 2)."% (CV)
+            - Current Month Income: Rp ".number_format($currentMonth['income'] ?? 0)."
+            - Current Month Expense: Rp ".number_format($currentMonth['expense'] ?? 0)."
+            - Financial Runway (Liquid): ".round($metrics['runway'], 1)." bulan
+            - Total Wealth: Rp ".number_format($metrics['total_assets'])."
             - Detail Kategori ({$month}): ".json_encode($categories)."
 
             INSTRUKSI KHUSUS:
@@ -98,20 +184,7 @@ class PerformCfoAnalysisAction extends BaseAction
             4. Nada bicara: Elit, Tenang, Data-Driven, dan Profesional. NO marking/lebay.
             5. Berikan 3 poin strategi yang benar-benar kritis dan tajam.";
 
-        $advice = $this->gemini->analyzeFinancials($prompt);
-
-        return [
-            'month' => $month,
-            'metrics' => [
-                'permanent_income' => $permanentIncome,
-                'volatility' => $volatility,
-                'runway' => $runway,
-                'total_assets' => $totalAssets,
-            ],
-            'summary' => (array) ($monthlyData[$month] ?? ['income' => 0.0, 'expense' => 0.0]),
-            'categories' => $categories,
-            'advice' => $advice,
-        ];
+        return $this->aiManager->generateText($prompt);
     }
 
     /**

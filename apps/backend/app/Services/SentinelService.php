@@ -25,6 +25,21 @@ class SentinelService
 
         Log::log($level, $payload, $context);
 
+        // 🛡️ Persist to Activity Log for UI Dashboards and Multi-Tenancy Audit
+        if (function_exists('activity')) {
+            $act = activity('sentinel')
+                ->withProperties(array_merge($context, [
+                    'level' => $level,
+                    'household_id' => $context['household_id'] ?? auth()->user()?->household_id ?? null,
+                ]));
+            
+            if (isset($context['causer'])) {
+                $act->causedBy($context['causer']);
+            }
+
+            $act->log($message);
+        }
+
         if (config('services.telegram.bot_token') && config('services.telegram.chat_id')) {
             return $this->sendToTelegram($payload);
         }

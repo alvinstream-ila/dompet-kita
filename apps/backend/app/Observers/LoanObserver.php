@@ -23,11 +23,13 @@ class LoanObserver
         $type = $loan->type === LoanType::DEBT ? TransactionType::INCOME : TransactionType::EXPENSE;
         $label = $loan->type === LoanType::DEBT ? 'Utang' : 'Piutang';
 
-        $loan->recordJournal(
+        $loan->syncJournal(
+            'loan_creation',
             (float) $loan->amount,
             $type,
             'Pinjaman',
-            "Pencatatan {$label} baru dari/ke: {$loan->contact_name}"
+            "Pencatatan {$label} baru dari/ke: {$loan->contact_name}",
+            $loan->created_at
         );
 
         $this->invalidateFinancialCache($loan->user_id);
@@ -38,20 +40,39 @@ class LoanObserver
      */
     public function updated(Loan $loan): void
     {
-        // Check if the loan was just marked as paid
-        if ($loan->isDirty('status') && $loan->status === LoanStatus::PAID) {
+        // Only re-sync the creation journal if core financial data changed.
+        // This guards against redundant I/O on minor updates (e.g. changing due_date).
+        if ($loan->wasChanged(['amount', 'type', 'contact_name'])) {
+            $createType = $loan->type === LoanType::DEBT ? TransactionType::INCOME : TransactionType::EXPENSE;
+            $createLabel = $loan->type === LoanType::DEBT ? 'Utang' : 'Piutang';
+
+            $loan->syncJournal(
+                'loan_creation',
+                (float) $loan->amount,
+                $createType,
+                'Pinjaman',
+                "Pencatatan {$createLabel} baru dari/ke: {$loan->contact_name}",
+                $loan->created_at
+            );
+        }
+
+        // Check if the loan is paid
+        if ($loan->status === LoanStatus::PAID) {
             // When a loan is paid:
             // Settling Utang (Paying back) = Money Out = EXPENSE
             // Settling Piutang (Receiving money) = Money In = INCOME
             $type = $loan->type === LoanType::DEBT ? TransactionType::EXPENSE : TransactionType::INCOME;
             $label = $loan->type === LoanType::DEBT ? 'Pelunasan Utang' : 'Penerimaan Piutang';
 
-            $loan->recordJournal(
+            $loan->syncJournal(
+                'loan_settlement',
                 (float) $loan->amount, // Use the full amount for settlement journal
                 $type,
                 'Pinjaman',
                 "{$label} dari/ke: {$loan->contact_name}"
             );
+        } else {
+            $loan->removeJournal('loan_settlement');
         }
 
         $this->invalidateFinancialCache($loan->user_id);
@@ -62,6 +83,11 @@ class LoanObserver
      */
     public function deleted(Loan $loan): void
     {
+        // Remove all journal entries linked to this loan to prevent phantom records
+        // from appearing in the user's financial dashboard after deletion.
+        $loan->removeJournal('loan_creation');
+        $loan->removeJournal('loan_settlement');
+
         $this->invalidateFinancialCache($loan->user_id);
     }
 }

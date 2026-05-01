@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Resources\GoalResource;
@@ -26,7 +28,8 @@ class GoalController extends Controller
             abort(401);
         }
 
-        $goals = Goal::orderBy('deadline', 'asc')
+        $goals = Goal::where('household_id', $user->household_id)
+            ->orderBy('deadline', 'asc')
             ->get();
 
         return GoalResource::collection($goals);
@@ -52,6 +55,7 @@ class GoalController extends Controller
             abort(401);
         }
 
+        $validated['household_id'] = $user->household_id;
         $goal = Goal::create($validated);
 
         return $this->success(new GoalResource($goal), 'Objektif finansial strategis baru telah diinisialisasi.', 201);
@@ -109,14 +113,25 @@ class GoalController extends Controller
                 'date' => $validated['date'],
             ]);
 
-            // 2. Update Goal Balance
-            $goal->increment('current_amount', $validated['amount']);
-
-            // 3. (Accounting Protocol) Deduct from Asset if specified
+            // 2. (Accounting Protocol) Deduct from Asset if specified (Household Scoped)
             if (! empty($validated['asset_id'])) {
-                $asset = Asset::findOrFail($validated['asset_id']);
+                $asset = Asset::where('household_id', $user->household_id)
+                    ->findOrFail($validated['asset_id']);
                 assert($asset instanceof Asset);
+
+                // Record the withdrawal in asset history
+                $asset->transactions()->create([
+                    'user_id' => $user->id,
+                    'amount' => $validated['amount'],
+                    'type' => 'withdrawal',
+                    'description' => "Alokasi ke goal: {$goal->name}",
+                    'transaction_date' => $validated['date'],
+                ]);
+
                 $asset->decrement('value', $validated['amount']);
+                // Capital adjustment: reducing capital proportionally
+                $capitalReduction = min($asset->invested_capital, $validated['amount']);
+                $asset->decrement('invested_capital', $capitalReduction);
             }
 
             return $this->success(

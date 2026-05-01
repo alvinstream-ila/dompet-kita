@@ -1,21 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\AI;
 
 use App\Actions\BaseAction;
 use App\Models\User;
 use App\Services\AI\AiProviderManager;
 use App\Services\FinancialIntelligenceService;
-use App\Services\Security\PrivacyFilter;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 class GenerateInsightAction extends BaseAction
 {
     public function __construct(
-        protected AiProviderManager $manager,
-        protected PrivacyFilter $filter,
-        protected FinancialIntelligenceService $intelService
+        private readonly AiProviderManager $manager,
+        private readonly FinancialIntelligenceService $intelService
     ) {}
 
     /**
@@ -23,11 +24,13 @@ class GenerateInsightAction extends BaseAction
      */
     public function execute(string $incomeStr, string $expenseStr, string $savingsStr, string $summaryText): array
     {
+        // SECURITY: Never fall back to an arbitrary user — throw if unauthenticated.
         $user = Auth::user();
         if (! $user instanceof User) {
-            $user = User::firstOrFail();
+            throw new RuntimeException('GenerateInsightAction requires an authenticated user context.');
         }
-        $sovereign = $this->intelService->getSovereignMetrics();
+
+        $sovereign = $this->intelService->getSovereignMetrics($user);
 
         $prompt = <<<PROMPT
 Role: Sovereign CFO Partner (Elite Institutional Strategist).
@@ -55,7 +58,7 @@ PROMPT;
             Log::error('AI_INSIGHT_ERROR: '.$e->getMessage());
 
             return [
-                'title' => 'Sovereign Insight ✨',
+                'title' => 'Sovereign Insight',
                 'insight' => 'Sistem sedang memproses data transaksi untuk menghasilkan rekomendasi strategis. Mohon tunggu sejenak.',
             ];
         }
@@ -69,13 +72,13 @@ PROMPT;
             Log::error('AI_INSIGHT_PARSING_FAILED', ['raw' => $jsonText]);
 
             return [
-                'title' => 'Sovereign Insight ✨',
+                'title' => 'Sovereign Insight',
                 'insight' => 'Sistem sedang memproses data transaksi untuk menghasilkan rekomendasi strategis. Mohon tunggu sejenak.',
             ];
         }
 
         return [
-            'title' => is_string($data['title'] ?? null) ? $data['title'] : 'Sovereign Intelligence ✨',
+            'title' => is_string($data['title'] ?? null) ? $data['title'] : 'Sovereign Intelligence',
             'insight' => is_string($data['insight'] ?? null) ? $data['insight'] : 'Data transaksi telah dianalisis. Semua parameter keuangan berada dalam batas operasional yang ditentukan.',
         ];
     }

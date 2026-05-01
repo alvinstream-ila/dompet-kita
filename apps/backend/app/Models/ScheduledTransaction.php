@@ -10,6 +10,7 @@ use App\Enums\TransactionType;
 use App\Traits\HasHouseholdScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
@@ -35,7 +36,7 @@ use Illuminate\Support\Carbon;
  */
 class ScheduledTransaction extends Model
 {
-    use HasHouseholdScope, HasUuids;
+    use HasFactory, HasHouseholdScope, HasUuids;
 
     /**
      * @var list<string>
@@ -43,6 +44,7 @@ class ScheduledTransaction extends Model
     protected $fillable = [
         'user_id',
         'household_id',
+        'asset_id',
         'description',
         'amount',
         'type',
@@ -89,5 +91,13 @@ class ScheduledTransaction extends Model
             'recurrence' => RecurrenceFrequency::class,
             'status' => ScheduleStatus::class,
         ];
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Asset, $this>
+     */
+    public function asset(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Asset::class);
     }
 }

@@ -29,10 +29,10 @@ function findTransactionInCache(
 
   for (const [, data] of allTxs) {
     if (!data) continue;
-    for (const page of data.pages) {
-      const found = page.items.find((t) => t.id === transactionId);
-      if (found) return found;
-    }
+    const found = data.pages
+      .flatMap((page) => page.items)
+      .find((t) => t.id === transactionId);
+    if (found) return found;
   }
   return undefined;
 }
