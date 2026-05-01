@@ -37,6 +37,7 @@ use Illuminate\Support\Carbon;
  */
 class ScheduledTransaction extends Model
 {
+    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\ScheduledTransactionFactory> */
     use HasFactory, HasHouseholdScope, HasUuids;
 
     /**

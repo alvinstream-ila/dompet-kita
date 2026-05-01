@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class WealthHistory extends Model
 {
+    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\WealthHistoryFactory> */
     use HasFactory, HasHouseholdScope;
 
     /**

@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Holiday extends Model
 {
+    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\HolidayFactory> */
     use HasFactory, HasHouseholdScope;
 
     /**

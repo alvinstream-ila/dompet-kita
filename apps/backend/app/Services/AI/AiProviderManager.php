@@ -240,6 +240,8 @@ class AiProviderManager
             '/(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/' => '[PHONE_REDACTED]', // Phone numbers
         ];
 
-        return preg_replace(array_keys($patterns), array_values($patterns), $prompt);
+        $result = preg_replace(array_keys($patterns), array_values($patterns), $prompt);
+
+        return is_string($result) ? $result : $prompt;
     }
 }

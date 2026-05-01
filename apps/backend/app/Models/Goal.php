@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Goal extends Model
 {
+    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\GoalFactory> */
     use AccountingJournalist, HasFactory, HasHouseholdScope;
 
     /**

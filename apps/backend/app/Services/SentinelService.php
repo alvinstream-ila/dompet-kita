@@ -30,11 +30,14 @@ class SentinelService
             $act = activity('sentinel')
                 ->withProperties(array_merge($context, [
                     'level' => $level,
-                    'household_id' => $context['household_id'] ?? auth()->user()?->household_id ?? null,
+                    'household_id' => $context['household_id'] ?? auth()->user()->household_id ?? null,
                 ]));
 
             if (isset($context['causer'])) {
-                $act->causedBy($context['causer']);
+                $causer = $context['causer'];
+                if ($causer instanceof \Illuminate\Database\Eloquent\Model || is_int($causer) || is_string($causer)) {
+                    $act->causedBy($causer);
+                }
             }
 
             $act->log($message);

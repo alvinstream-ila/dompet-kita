@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class TransactionInsight extends Model
 {
+    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\TransactionInsightFactory> */
     use HasFactory, HasHouseholdScope, HasUuids;
 
     /**

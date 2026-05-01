@@ -31,6 +31,7 @@ use Spatie\Activitylog\Support\LogOptions;
  */
 class Loan extends Model
 {
+    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\LoanFactory> */
     use AccountingJournalist, HasFactory, HasHouseholdScope, LogsActivity;
 
     /**

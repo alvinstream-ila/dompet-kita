@@ -32,6 +32,7 @@ use Spatie\Activitylog\Support\LogOptions;
  */
 class Asset extends Model
 {
+    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\AssetFactory> */
     use AccountingJournalist, HasFactory, HasHouseholdScope, LogsActivity;
 
     protected $fillable = [
