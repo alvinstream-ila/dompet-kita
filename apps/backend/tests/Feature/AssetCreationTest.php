@@ -2,11 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Models\Household;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Laravel\Sanctum\Sanctum;
+use Tests\TestCase;
 
 class AssetCreationTest extends TestCase
 {
@@ -15,9 +14,9 @@ class AssetCreationTest extends TestCase
     public function test_user_can_create_asset(): void
     {
         $user = User::factory()->create([
-            'email' => 'alvinnostream@gmail.com'
+            'email' => 'alvinnostream@gmail.com',
         ]);
-        
+
         Sanctum::actingAs($user);
 
         $response = $this->postJson('/api/assets', [
@@ -30,7 +29,7 @@ class AssetCreationTest extends TestCase
         ]);
 
         if ($response->status() !== 201) {
-             \Log::error('Asset Creation Failed in Test: ' . $response->getContent());
+            \Log::error('Asset Creation Failed in Test: '.$response->getContent());
         }
 
         $response->assertStatus(201);
