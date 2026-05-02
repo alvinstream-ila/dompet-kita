@@ -41,11 +41,15 @@ class MarketService
         // This ensures only one process hits the external APIs at a time.
         $lock = Cache::lock('market_rates_update_lock', 60);
 
-        return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () use ($lock): array {
+        /** @var array{currency_rates: array<string, float>, gold_antam_gram: float, gold_global_oz: float, gold_global_gram: float, inflation_rate: float, last_updated: string} $rates */
+        $rates = Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () use ($lock): array {
             try {
                 // Attempt to acquire lock, if fails, return stale data if available
                 if (! $lock->get()) {
-                    return Cache::get(self::STALE_CACHE_KEY) ?? $this->handleGetRatesFailure(new \Exception('Could not acquire update lock.'));
+                    /** @var array{currency_rates: array<string, float>, gold_antam_gram: float, gold_global_oz: float, gold_global_gram: float, inflation_rate: float, last_updated: string}|null $staleData */
+                    $staleData = Cache::get(self::STALE_CACHE_KEY);
+
+                    return $staleData ?? $this->handleGetRatesFailure(new \Exception('Could not acquire update lock.'));
                 }
 
                 $currencyRates = $this->fetchForexRates();
@@ -72,7 +76,7 @@ class MarketService
                 return $data;
             } catch (\Exception $e) {
                 // Fix 137: Improved error handling for 429/failures
-                if ($e instanceof RequestException && $e->response?->status() === 429) {
+                if ($e instanceof RequestException && $e->response->status() === 429) {
                     Log::warning('MarketService: Rate limit hit (429). Returning stale data.');
                 }
 
@@ -81,6 +85,8 @@ class MarketService
                 $lock->release();
             }
         });
+
+        return $rates;
     }
 
     /**
@@ -111,6 +117,10 @@ class MarketService
             }
         }
 
+        if (empty($fxData)) {
+            throw new \RuntimeException('MarketService: All forex endpoints failed to provide rates.');
+        }
+
         /** @var array<string, float> $currencyRates */
         $currencyRates = (array) ($fxData['rates'] ?? []);
 
@@ -135,12 +145,14 @@ class MarketService
      */
     private function handleGetRatesFailure(\Exception $e): array
     {
-        // 🛡️ Fix 119: Attempt to return stale data first
+        Log::info('MarketService: handleGetRatesFailure called. Checking for key: '.self::STALE_CACHE_KEY);
         if (Cache::has(self::STALE_CACHE_KEY)) {
-            Log::info('MarketService: Using stale data for failover.');
-
-            return Cache::get(self::STALE_CACHE_KEY);
+            Log::info('MarketService: Stale cache FOUND.');
+            /** @var array{currency_rates: array<string, float>, gold_antam_gram: float, gold_global_oz: float, gold_global_gram: float, inflation_rate: float, last_updated: string} $staleData */
+            $staleData = Cache::get(self::STALE_CACHE_KEY);
+            return $staleData;
         }
+        Log::warning('MarketService: Stale cache NOT FOUND.');
 
         // 🛡️ Fix 107: Mask potentially sensitive info in logs
         $cleanMessage = preg_replace('/(key|token|secret|password)=[^&\s]+/i', '$1=****', $e->getMessage());

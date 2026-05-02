@@ -7,13 +7,10 @@ namespace App\Actions\Finance;
 use App\Actions\BaseAction;
 use App\Jobs\Cfo\GenerateQuantumInsightsJob;
 use App\Models\User;
-use App\Services\Cfo\QuantumInsightEngine;
 
 class GetQuantumInsightsAction extends BaseAction
 {
-    public function __construct(
-        private readonly QuantumInsightEngine $engine
-    ) {}
+    public function __construct() {}
 
     /**
      * Generate insights for a specific user.

@@ -182,7 +182,7 @@ class PartnerController extends Controller
             $invitation->update(['status' => 'accepted']);
 
             // 🛡️ Switch Logic: Invalidate current user's Sudo Mode when joining a new household
-            Cache::forget("sudo_mode_{$user->id}_{$user->currentAccessToken()?->id}");
+            Cache::forget("sudo_mode_{$user->id}_{$user->currentAccessToken()->id}");
         });
 
         return response()->json([

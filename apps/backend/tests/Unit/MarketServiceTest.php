@@ -10,7 +10,7 @@ use Tests\TestCase;
 class MarketServiceTest extends TestCase
 {
     /** @test */
-    public function test_it_calculates_cross_rates_using_usd_pivot()
+    public function test_it_calculates_cross_rates_using_usd_pivot(): void
     {
         Cache::flush();
 
@@ -33,7 +33,7 @@ class MarketServiceTest extends TestCase
     }
 
     /** @test */
-    public function test_it_handles_oz_to_gram_conversion_for_global_gold()
+    public function test_it_handles_oz_to_gram_conversion_for_global_gold(): void
     {
         Cache::flush();
 
@@ -53,7 +53,7 @@ class MarketServiceTest extends TestCase
     }
 
     /** @test */
-    public function test_it_uses_stale_cache_on_api_failure()
+    public function test_it_uses_stale_cache_on_api_failure(): void
     {
         Cache::flush();
 

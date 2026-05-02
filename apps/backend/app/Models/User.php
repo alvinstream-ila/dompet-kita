@@ -42,6 +42,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property bool $two_factor_enabled
  * @property string|null $two_factor_code
  * @property Carbon|null $two_factor_expires_at
+ * @property Carbon|null $email_verified_at
  * @property-read Collection<int, Asset> $assets
  * @property-read Collection<int, Loan> $loans
  * @property-read Collection<int, LegacyVaultReport> $reports

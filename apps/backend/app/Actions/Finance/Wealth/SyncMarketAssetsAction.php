@@ -75,7 +75,7 @@ class SyncMarketAssetsAction extends BaseAction
 
     /**
      * @param  array<string, mixed>  $market
-     * @param  array<int, int>  $syncedTodayIds
+     * @param  array<int, mixed>  $syncedTodayIds
      * @param  array{updated: int, alerts: int}  $stats
      */
     private function syncAsset(Asset $asset, array $market, array $syncedTodayIds, array &$stats): void

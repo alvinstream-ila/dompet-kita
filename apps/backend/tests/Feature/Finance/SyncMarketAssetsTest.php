@@ -31,7 +31,7 @@ class SyncMarketAssetsTest extends TestCase
     }
 
     /** @test */
-    public function test_it_skips_sync_on_weekends_for_stocks()
+    public function test_it_skips_sync_on_weekends_for_stocks(): void
     {
         // Mock a Sunday
         Carbon::setTestNow(Carbon::parse('2026-05-03 10:00:00')); // Sunday
@@ -49,7 +49,7 @@ class SyncMarketAssetsTest extends TestCase
         ]);
 
         $action = new SyncMarketAssetsAction(new MarketService);
-        $action->execute($this->user);
+        $action->execute();
 
         $this->assertEquals(0, AssetPriceHistory::count());
 
@@ -57,7 +57,7 @@ class SyncMarketAssetsTest extends TestCase
     }
 
     /** @test */
-    public function test_it_creates_price_history_with_high_precision()
+    public function test_it_creates_price_history_with_high_precision(): void
     {
         // Mock a Monday
         Carbon::setTestNow(Carbon::parse('2026-05-04 10:00:00')); // Monday
@@ -97,7 +97,7 @@ class SyncMarketAssetsTest extends TestCase
     }
 
     /** @test */
-    public function test_it_prevents_concurrent_syncs_using_lock()
+    public function test_it_prevents_concurrent_syncs_using_lock(): void
     {
         Cache::put('sync_market_assets_lock', true, 60);
 
@@ -114,7 +114,7 @@ class SyncMarketAssetsTest extends TestCase
         ]);
 
         $action = new SyncMarketAssetsAction(new MarketService);
-        $action->execute($this->user);
+        $action->execute();
 
         // Should skip because lock is present
         $this->assertEquals(0, AssetPriceHistory::count());

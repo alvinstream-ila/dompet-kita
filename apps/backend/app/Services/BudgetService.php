@@ -69,7 +69,7 @@ class BudgetService
         }
 
         $daysInNextMonth = (int) Carbon::createFromDate($nextYear, $nextMonth, 1)->daysInMonth;
-        $actualNextStartDay = min($startDay, $daysInNextMonth);
+        $actualNextStartDay = min($actualStartDay, $daysInNextMonth);
         $nextStart = Carbon::createFromDate($nextYear, $nextMonth, $actualNextStartDay)->startOfDay();
 
         $end = $nextStart->copy()->subSecond();

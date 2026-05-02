@@ -20,17 +20,18 @@ class HouseholdLifecycleTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function enableSudo(User $user)
+    protected function enableSudo(User $user): void
     {
         $fingerprint = sha1('127.0.0.1'.'Symfony');
         Cache::put("sudo_mode_{$user->id}_default", $fingerprint, now()->addMinutes(10));
     }
 
-    public function test_it_prevents_joining_a_household_that_is_already_full()
+    public function test_it_prevents_joining_a_household_that_is_already_full(): void
     {
         // 1. Setup a full household (2 members)
         $inviter = User::factory()->create();
         $household = $inviter->household;
+        assert($household instanceof Household);
         $existingPartner = User::factory()->create(['household_id' => $household->id, 'partner_id' => $inviter->id]);
         $inviter->update(['partner_id' => $existingPartner->id]);
 
@@ -46,13 +47,12 @@ class HouseholdLifecycleTest extends TestCase
         ]);
 
         // 3. Create a third user who tries to accept
-        /** @var User|Authenticatable $invitee */
         $invitee = User::factory()->create(['email' => $inviteeEmail]);
+        assert($invitee instanceof User);
 
         // Bypass Sudo for accept
         $this->enableSudo($invitee);
 
-        /** @var User|Authenticatable $invitee */
         $response = $this->actingAs($invitee)
             ->postJson('/api/partner/accept', ['token' => 'test-token']);
 
@@ -60,14 +60,15 @@ class HouseholdLifecycleTest extends TestCase
         $response->assertJsonValidationErrors(['household' => 'Household sudah mencapai kapasitas maksimal.']);
     }
 
-    public function test_it_cleans_up_orphaned_households_on_unlink()
+    public function test_it_cleans_up_orphaned_households_on_unlink(): void
     {
         // 1. Setup a partnered household
-        /** @var User|Authenticatable $user1 */
         $user1 = User::factory()->create();
+        assert($user1 instanceof User);
         $household = $user1->household;
-        /** @var User|Authenticatable $user2 */
+        assert($household instanceof Household);
         $user2 = User::factory()->create(['household_id' => $household->id, 'partner_id' => $user1->id]);
+        assert($user2 instanceof User);
         $user1->update(['partner_id' => $user2->id]);
 
         $this->assertDatabaseHas('households', ['id' => $household->id]);
@@ -76,7 +77,6 @@ class HouseholdLifecycleTest extends TestCase
         $this->enableSudo($user1);
 
         // 2. Unlink
-        /** @var User|Authenticatable $user1 */
         $response = $this->actingAs($user1)->postJson('/api/partner/unlink');
         $response->assertStatus(200);
 
@@ -92,7 +92,7 @@ class HouseholdLifecycleTest extends TestCase
         $this->assertDatabaseHas('households', ['id' => $user2->household_id]);
     }
 
-    public function test_it_prevents_currency_change_if_assets_exist()
+    public function test_it_prevents_currency_change_if_assets_exist(): void
     {
         $household = new Household;
         $household->id = (string) Str::uuid();
@@ -121,7 +121,6 @@ class HouseholdLifecycleTest extends TestCase
         // Bypass Sudo for profile update
         $this->enableSudo($user);
 
-        /** @var User|Authenticatable $user */
         $response = $this->actingAs($user)->putJson('/api/user/profile', [
             'name' => 'Alvin New',
             'currency_format' => 'USD',
@@ -131,19 +130,18 @@ class HouseholdLifecycleTest extends TestCase
         $response->assertJsonFragment(['message' => 'Mata uang tidak dapat diubah karena Anda sudah memiliki aset terdaftar.']);
     }
 
-    public function test_it_masks_partner_email_in_privacy_mode()
+    public function test_it_masks_partner_email_in_privacy_mode(): void
     {
-        /** @var User|Authenticatable $user1 */
         $user1 = User::factory()->create(['is_privacy_mode' => true]);
-        /** @var User|Authenticatable $user2 */
+        assert($user1 instanceof User);
         $user2 = User::factory()->create(['email' => 'secret_partner@example.com']);
+        assert($user2 instanceof User);
         $user1->update(['partner_id' => $user2->id]);
         $user2->update(['partner_id' => $user1->id]);
 
         // Bypass Sudo for profile update (using update to get UserResource)
         $this->enableSudo($user1);
 
-        /** @var User|Authenticatable $user1 */
         $response = $this->actingAs($user1)->putJson('/api/user/profile', [
             'name' => $user1->name,
         ]);
