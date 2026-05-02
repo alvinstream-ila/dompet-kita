@@ -37,33 +37,42 @@ class BudgetService
     public function getBudgetCycleDates(?int $month = null, ?int $year = null, int $startDay = 1): array
     {
         $now = Carbon::now();
-        $year ??= (int) $now->year;
-
-        // Determine the target month number
-        $targetMonth = $month ?? (int) $now->month;
+        
+        // Use a Carbon instance to handle arithmetic safely across year boundaries
+        $targetDate = Carbon::createFromDate(
+            $year ?? (int) $now->year,
+            $month ?? (int) $now->month,
+            1
+        );
 
         // If no month is provided (automatic mode), we check if we are currently
         // before the startDay. If so, the current "active" cycle actually started last month.
         if ($month === null && $startDay > 1 && $now->day < $startDay) {
-            $targetMonth--;
+            $targetDate->subMonth();
         }
 
-        // Handle year wrap-around
-        if ($targetMonth <= 0) {
-            $targetMonth = 12 + $targetMonth;
-            $year--;
-        } elseif ($targetMonth > 12) {
-            $targetMonth -= 12;
-            $year++;
+        $year = (int) $targetDate->year;
+        $targetMonth = (int) $targetDate->month;
+
+        // 🛡️ Date Integrity: Determine the actual start date for the target cycle.
+        $daysInTargetMonth = (int) Carbon::createFromDate($year, $targetMonth, 1)->daysInMonth;
+        $actualStartDay = min($startDay, $daysInTargetMonth);
+        $start = Carbon::createFromDate($year, $targetMonth, $actualStartDay)->startOfDay();
+
+        // 🛡️ Fix 61/84: To prevent "lost days", the end of the cycle is the second before 
+        // the start of the NEXT cycle.
+        $nextMonth = $targetMonth + 1;
+        $nextYear = $year;
+        if ($nextMonth > 12) {
+            $nextMonth = 1;
+            $nextYear++;
         }
 
-        // 🛡️ Date Integrity: Clamp startDay to the actual last day of the target month.
-        // This prevents April 31 from becoming May 1.
-        $daysInMonth = (int) Carbon::createFromDate($year, $targetMonth, 1)->daysInMonth;
-        $clampedDay = min($startDay, $daysInMonth);
-
-        $start = Carbon::createFromDate($year, $targetMonth, $clampedDay)->startOfDay();
-        $end = $start->copy()->addMonthNoOverflow()->subSecond();
+        $daysInNextMonth = (int) Carbon::createFromDate($nextYear, $nextMonth, 1)->daysInMonth;
+        $actualNextStartDay = min($startDay, $daysInNextMonth);
+        $nextStart = Carbon::createFromDate($nextYear, $nextMonth, $actualNextStartDay)->startOfDay();
+        
+        $end = $nextStart->copy()->subSecond();
 
         // If startDay is 1, we still want to ensure it's a clean calendar month
         if ($startDay === 1) {
@@ -84,19 +93,24 @@ class BudgetService
      *
      * @return array<int, array{id: string, category: string, limit: float, used: float, remaining: float, percentage: float, status: string}>
      */
-    public function getBudgetUsage(User $user, ?int $month = null, ?int $year = null, int $startDay = 1): array
+    public function getBudgetUsage(?int $month = null, ?int $year = null, int $startDay = 1): array
     {
         $dates = $this->getBudgetCycleDates($month, $year, $startDay);
 
-        return Budget::query()->get()->map(function (Budget $budget) use ($dates): array {
-            $used = (float) Transaction::where('category', $budget->category)
-                ->whereBetween('date', [$dates['start'], $dates['end']])
-                ->where('type', TransactionType::EXPENSE)
-                ->sum('amount');
+        // 🚀 Optimization: Single query to fetch all category sums in the period (N+1 fix)
+        $usage = Transaction::query()
+            ->whereBetween('date', [$dates['start'], $dates['end']])
+            ->where('type', TransactionType::EXPENSE)
+            ->selectRaw('category, SUM(amount) as total')
+            ->groupBy('category')
+            ->pluck('total', 'category');
+
+        return Budget::query()->get()->map(function (Budget $budget) use ($usage): array {
+            $used = (float) ($usage[$budget->category] ?? 0);
 
             $limit = (float) $budget->limit;
-            $remaining = max(0, $limit - $used);
-            $percentage = $limit > 0 ? $used / $limit * 100 : 0;
+            $remaining = max(0.0, $limit - $used);
+            $percentage = $limit > 0 ? ($used / $limit) * 100 : 0;
 
             return [
                 'id' => (string) $budget->id,

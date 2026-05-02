@@ -36,6 +36,10 @@ class SecurityHeaders
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
         }
 
+        // Strip internal technology disclosure
+        $response->headers->remove('X-Powered-By');
+        header_remove('X-Powered-By');
+
         return $response;
     }
 }

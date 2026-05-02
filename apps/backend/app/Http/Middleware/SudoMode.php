@@ -20,12 +20,13 @@ class SudoMode
         $user = $request->user();
 
         if ($user) {
-            // 🛡️ The cache TTL (set to 15 min in AuthController::sudoConfirm) is the sole
-            // expiry mechanism. If the key exists, sudo is still active. No addMinutes() check
-            // is needed here — that was dead code since it could never be true while cache is alive.
-            $sudoIsActive = Cache::has("sudo_mode_{$user->id}");
+            $token = $request->user()?->currentAccessToken();
+            $tokenId = $token instanceof \Laravel\Sanctum\PersonalAccessToken ? $token->id : 'default';
+            
+            $fingerprint = sha1($request->ip().$request->userAgent());
+            $storedFingerprint = Cache::get("sudo_mode_{$user->id}_{$tokenId}");
 
-            if (! $sudoIsActive) {
+            if (! $storedFingerprint || $storedFingerprint !== $fingerprint) {
                 if ($request->expectsJson()) {
                     return response()->json([
                         'message' => 'Konfirmasi keamanan diperlukan untuk melanjutkan aksi ini. Silakan lakukan otentikasi ulang.',

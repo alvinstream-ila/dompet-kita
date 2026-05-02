@@ -226,7 +226,6 @@ class TransactionController extends Controller
 
         // 🛡️ Sovereign Privacy Gate: Scope to authenticated user only.
         $transactions = Transaction::query()
-            ->where('household_id', $user->household_id)
             ->whereBetween('date', [$period['start'], $period['end']])
             ->orderBy('date', 'desc')
             ->get();
@@ -272,7 +271,6 @@ class TransactionController extends Controller
 
         // 🛡️ Sovereign Privacy Gate: Scope to authenticated user only.
         $transactions = Transaction::query()
-            ->where('household_id', $user->household_id)
             ->whereBetween('date', [$period['start'], $period['end']])
             ->orderBy('date', 'desc')
             ->get();

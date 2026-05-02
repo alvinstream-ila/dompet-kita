@@ -44,7 +44,9 @@ class UserResource extends JsonResource
             'full_name' => $this->full_name,
             'avatar_url' => $this->avatar_url,
             'partner_name' => $this->partner_name ?? $this->partner?->name,
-            'partner_email' => $this->partner?->email,
+            'partner_email' => $this->is_privacy_mode && $this->partner?->email
+                ? preg_replace('/(?<=.{2}).(?=.*@)/', '*', (string) $this->partner->email)
+                : $this->partner?->email,
             'large_expense_threshold' => (float) $this->large_expense_threshold,
             'anniversary_date' => $this->anniversary_date,
             'timezone' => $this->timezone ?? 'Asia/Jakarta',

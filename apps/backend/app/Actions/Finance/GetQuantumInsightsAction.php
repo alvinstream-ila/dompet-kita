@@ -19,6 +19,6 @@ class GetQuantumInsightsAction extends BaseAction
      */
     public function execute(User $user): void
     {
-        $this->engine->generateInsights($user);
+        \App\Jobs\Cfo\GenerateQuantumInsightsJob::dispatch($user);
     }
 }

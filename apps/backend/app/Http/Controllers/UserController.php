@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Asset;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -44,6 +45,16 @@ class UserController extends Controller
             return \response()->json(['message' => 'Unauthenticated'], 401);
         }
         $validated = $request->validated();
+
+        // 🛡️ Financial Integrity: Prevent currency change if assets already exist
+        if (isset($validated['currency_format']) && $validated['currency_format'] !== $user->currency_format) {
+            $hasAssets = Asset::exists(); // Auto-scoped to household
+            if ($hasAssets) {
+                return \response()->json([
+                    'message' => 'Mata uang tidak dapat diubah karena Anda sudah memiliki aset terdaftar.',
+                ], 422);
+            }
+        }
 
         $user->update($validated);
 

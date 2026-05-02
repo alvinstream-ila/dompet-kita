@@ -48,19 +48,18 @@ class FinancialIntelligenceService
         $endOfMonth = $dates['end'];
 
         // 3. Calculate Total Income & Expense for this month
-        $monthlyIncome = (float) Transaction::query()
+        $summary = Transaction::query()
             ->withoutGlobalScopes()
             ->where('household_id', $user->household_id)
-            ->where('type', TransactionType::INCOME)
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
-            ->sum('amount');
+            ->selectRaw('
+                SUM(CASE WHEN type = ? THEN amount ELSE 0 END) as income,
+                SUM(CASE WHEN type = ? THEN amount ELSE 0 END) as expense
+            ', [TransactionType::INCOME->value, TransactionType::EXPENSE->value])
+            ->first();
 
-        $monthlyExpense = (float) Transaction::query()
-            ->withoutGlobalScopes()
-            ->where('household_id', $user->household_id)
-            ->where('type', TransactionType::EXPENSE)
-            ->whereBetween('date', [$startOfMonth, $endOfMonth])
-            ->sum('amount');
+        $monthlyIncome = (float) ($summary->income ?? 0);
+        $monthlyExpense = (float) ($summary->expense ?? 0);
 
         // Total available liquidity is current liquid assets + net flow of this month
         $currentMonthNet = (float) $monthlyIncome - (float) $monthlyExpense;
@@ -236,19 +235,19 @@ class FinancialIntelligenceService
             $start = now()->subMonths($i)->startOfMonth();
             $end = now()->subMonths($i)->endOfMonth();
 
-            $income = (float) Transaction::query()
+            // Combined query to halve the number of hits to the database
+            $summary = Transaction::query()
                 ->withoutGlobalScopes()
                 ->where('household_id', $user->household_id)
-                ->where('type', TransactionType::INCOME)
                 ->whereBetween('date', [$start, $end])
-                ->sum('amount');
+                ->selectRaw('
+                    SUM(CASE WHEN type = ? THEN amount ELSE 0 END) as total_income,
+                    SUM(CASE WHEN type = ? THEN amount ELSE 0 END) as total_expense
+                ', [TransactionType::INCOME->value, TransactionType::EXPENSE->value])
+                ->first();
 
-            $expense = (float) Transaction::query()
-                ->withoutGlobalScopes()
-                ->where('household_id', $user->household_id)
-                ->where('type', TransactionType::EXPENSE)
-                ->whereBetween('date', [$start, $end])
-                ->sum('amount');
+            $income = (float) ($summary->total_income ?? 0);
+            $expense = (float) ($summary->total_expense ?? 0);
 
             $monthlyData[] = ['income' => $income, 'expense' => $expense];
         }

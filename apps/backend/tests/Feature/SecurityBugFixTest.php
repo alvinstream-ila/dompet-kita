@@ -118,9 +118,9 @@ class SecurityBugFixTest extends TestCase
         $passResponse->assertStatus(200);
 
         // 4. Test Timeout (Simulate expired sudo — forget the key, mirroring real TTL expiry)
-        // The SudoMode middleware uses Cache::has() exclusively; real expiry happens via TTL.
+        // The SudoMode middleware uses Cache::get() and fingerprinting; real expiry happens via TTL.
         // In tests we simulate expiry by deleting the key directly.
-        Cache::forget("sudo_mode_{$user->id}");
+        Cache::forget("sudo_mode_{$user->id}_default");
 
         $timeoutResponse = $this->actingAs($user)->getJson(self::SUDO_TEST_ROUTE);
         $timeoutResponse->assertStatus(403);

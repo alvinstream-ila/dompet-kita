@@ -29,11 +29,11 @@ use Spatie\Honeypot\ProtectAgainstSpam;
 // ─── Internal Guard (Firewall v7.1.18) ───────────────────────────────────────
 // All routes wrapped in firewall.all for SQLi, XSS, LFI, RFI, PHP & Bot protection
 Route::middleware('firewall.all')->group(function (): void {
-    Route::post('/login', [AuthController::class, 'login'])->middleware(['throttle:5,1', ProtectAgainstSpam::class]);
-    Route::post('/verify-2fa', [AuthController::class, 'verify2fa'])->middleware('throttle:5,1');
-    Route::post('/register', [AuthController::class, 'register'])->middleware(['throttle:3,1', ProtectAgainstSpam::class]);
-    Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->middleware(['throttle:3,1', ProtectAgainstSpam::class]);
-    Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.reset')->middleware(['throttle:3,1', ProtectAgainstSpam::class]);
+    Route::post('/login', [AuthController::class, 'login'])->middleware(['throttle:auth', ProtectAgainstSpam::class]);
+    Route::post('/verify-2fa', [AuthController::class, 'verify2fa'])->middleware('throttle:auth');
+    Route::post('/register', [AuthController::class, 'register'])->middleware(['throttle:registration', ProtectAgainstSpam::class]);
+    Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->middleware(['throttle:password-reset', ProtectAgainstSpam::class]);
+    Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.reset')->middleware(['throttle:password-reset', ProtectAgainstSpam::class]);
 
     Route::middleware('auth:sanctum')->post('/sudo/confirm', [AuthController::class, 'sudoConfirm']);
 
@@ -150,9 +150,10 @@ Route::middleware('firewall.all')->group(function (): void {
         Route::delete('/ai/quantum-insights/{insight}', [InsightController::class, 'destroy']);
 
         Route::post('/media/upload', [MediaController::class, 'upload'])->middleware('throttle:media-upload');
+        Route::get('/media/serve', [MediaController::class, 'serve'])->name('media.serve')->middleware('signed');
 
         // Partner Sync (Family Hub)
-        Route::post('/partner/invite', [PartnerController::class, 'invite'])->middleware('sudo');
+        Route::post('/partner/invite', [PartnerController::class, 'invite'])->middleware(['sudo', 'throttle:invitation']);
         Route::get('/partner/invitation/{token}', [PartnerController::class, 'getInvitation']);
         Route::post('/partner/accept', [PartnerController::class, 'accept'])->middleware('sudo');
         Route::post('/partner/unlink', [PartnerController::class, 'unlink'])->middleware('sudo');

@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property string $id (UUID)
@@ -18,7 +20,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Household extends Model
 {
     /** @use HasFactory<HouseholdFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, LogsActivity, SoftDeletes;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'owner_id'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
+
 
     /**
      * Disable auto-incrementing since we use UUIDs.

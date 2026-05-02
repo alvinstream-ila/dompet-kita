@@ -34,7 +34,7 @@ class WealthHistoryResource extends JsonResource
 
         return [
             'month' => $date instanceof Carbon ? $date->format('M') : 'N/A',
-            'value' => (int) $this->total_value,
+            'value' => (float) $this->total_value,
             'year' => (int) $this->year,
             'raw_month' => (int) $this->month,
         ];

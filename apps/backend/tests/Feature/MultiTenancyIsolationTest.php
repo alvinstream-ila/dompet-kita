@@ -34,6 +34,7 @@ class MultiTenancyIsolationTest extends TestCase
         $household2->update(['owner_id' => $user2->id]);
         Asset::factory()->create(['household_id' => $household2->id, 'name' => 'House 2', 'user_id' => $user2->id]);
 
+        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson('/api/assets');
 
         $response->assertStatus(200)
@@ -53,6 +54,7 @@ class MultiTenancyIsolationTest extends TestCase
         $household2->update(['owner_id' => $user2->id]);
         Loan::factory()->create(['household_id' => $household2->id, 'contact_name' => 'Loan 2', 'user_id' => $user2->id]);
 
+        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson('/api/loans');
 
         $response->assertStatus(200)
@@ -72,6 +74,7 @@ class MultiTenancyIsolationTest extends TestCase
         $household2->update(['owner_id' => $user2->id]);
         ScheduledTransaction::factory()->create(['household_id' => $household2->id, 'description' => 'Sched 2', 'user_id' => $user2->id]);
 
+        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson('/api/scheduled-transactions');
 
         $response->assertStatus(200)
@@ -85,10 +88,11 @@ class MultiTenancyIsolationTest extends TestCase
         $user1 = User::factory()->create(['household_id' => $household1->id]);
         $household1->update(['owner_id' => $user1->id]);
 
-        // 🛡️ Activate Sudo Mode for User 1
-        Cache::put("sudo_mode_{$user1->id}", true, 900);
+        // 🛡️ Activate Sudo Mode for User 1 (Matching SudoMode middleware logic)
+        $fingerprint = sha1('127.0.0.1' . 'Symfony'); // Default IP/UA in tests
+        Cache::put("sudo_mode_{$user1->id}_default", $fingerprint, 900);
 
-        $report1 = LegacyVaultReport::create([
+        LegacyVaultReport::create([
             'household_id' => $household1->id,
             'user_id' => $user1->id,
             'storage_path' => 'test1.pdf',
@@ -107,6 +111,7 @@ class MultiTenancyIsolationTest extends TestCase
             'disk' => 'local',
         ]);
 
+        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson("/api/legacy/download/{$report2->id}");
         $response->assertStatus(404);
     }
@@ -123,6 +128,7 @@ class MultiTenancyIsolationTest extends TestCase
         $household2->update(['owner_id' => $user2->id]);
         Goal::factory()->create(['household_id' => $household2->id, 'name' => 'Goal 2', 'user_id' => $user2->id]);
 
+        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson('/api/goals');
 
         $response->assertStatus(200)
@@ -142,6 +148,7 @@ class MultiTenancyIsolationTest extends TestCase
         $household2->update(['owner_id' => $user2->id]);
         Holiday::factory()->create(['household_id' => $household2->id, 'destination' => 'Paris', 'user_id' => $user2->id]);
 
+        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson('/api/holidays');
 
         $response->assertStatus(200)
@@ -161,6 +168,7 @@ class MultiTenancyIsolationTest extends TestCase
         $household2->update(['owner_id' => $user2->id]);
         TransactionInsight::factory()->create(['household_id' => $household2->id, 'title' => 'Insight 2', 'user_id' => $user2->id]);
 
+        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson('/api/ai/quantum-insights');
 
         $response->assertStatus(200)
@@ -190,6 +198,7 @@ class MultiTenancyIsolationTest extends TestCase
             'month' => 1,
         ]);
 
+        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson('/api/wealth-history');
 
         $response->assertStatus(200);

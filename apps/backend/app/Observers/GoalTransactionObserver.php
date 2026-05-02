@@ -56,7 +56,18 @@ class GoalTransactionObserver
     {
         $amount = $customAmount ?? (float) $transaction->amount;
         $type = $customType ?? $transaction->type;
-        $goal = $transaction->goal;
+        
+        // 🛡️ Fix 62: If we are removing (rolling back), we must check if the goal_id was changed.
+        // If it was, we need to affect the ORIGINAL goal, not the current one.
+        $goalId = ($action === 'remove' && $transaction->wasChanged('goal_id'))
+            ? $transaction->getOriginal('goal_id')
+            : $transaction->goal_id;
+
+        $goal = \App\Models\Goal::where('id', $goalId)->lockForUpdate()->first();
+
+        if (! $goal) {
+            return;
+        }
 
         if ($action === 'add') {
             if ($type === 'deposit') {

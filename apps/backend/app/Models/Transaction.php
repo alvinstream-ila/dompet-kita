@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -18,6 +19,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property int $id
  * @property int $user_id
  * @property string $household_id
+ * @property string|null $reference_number
  * @property Carbon $date
  * @property float $amount
  * @property string $category
@@ -35,7 +37,7 @@ use Spatie\Activitylog\Support\LogOptions;
 class Transaction extends Model
 {
     /** @use HasFactory<TransactionFactory> */
-    use HasFactory, HasHouseholdScope, LogsActivity;
+    use HasFactory, HasHouseholdScope, LogsActivity, SoftDeletes;
 
     /**
      * @var list<string>
@@ -43,6 +45,7 @@ class Transaction extends Model
     protected $fillable = [
         'user_id',
         'household_id',
+        'reference_number',
         'amount',
         'type',
         'category',
@@ -102,7 +105,7 @@ class Transaction extends Model
             'is_ai_generated' => 'boolean',
             'metadata' => 'array',
             'type' => TransactionType::class,
-            'amount' => 'decimal:2',
+            'amount' => 'decimal:4',
         ];
     }
 }

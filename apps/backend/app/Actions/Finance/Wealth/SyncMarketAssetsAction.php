@@ -8,6 +8,8 @@ use App\Actions\BaseAction;
 use App\Enums\AssetType;
 use App\Models\Asset;
 use App\Services\MarketService;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class SyncMarketAssetsAction extends BaseAction
 {
@@ -22,30 +24,60 @@ class SyncMarketAssetsAction extends BaseAction
      */
     public function execute(): array
     {
-        $market = $this->marketService->getRates();
-        /** @var array{updated: int, alerts: int} $stats */
-        $stats = ['updated' => 0, 'alerts' => 0];
+        // 🛡️ Fix 116: Prevent multiple sync jobs from running concurrently
+        $lock = Cache::lock('sync_market_assets_lock', 300); // 5 minute lock
+        
+        if (!$lock->get()) {
+            Log::warning('SyncMarketAssetsAction: Sync already in progress, skipping.');
+            return ['updated' => 0, 'alerts' => 0];
+        }
 
-        Asset::withoutGlobalScopes()
-            ->marketSynced()
-            ->each(function (Asset $asset) use ($market, &$stats): void {
-                if ($asset->quantity <= 0) {
-                    return;
-                }
+        try {
+            $market = $this->marketService->getRates();
+            /** @var array{updated: int, alerts: int} $stats */
+            $stats = ['updated' => 0, 'alerts' => 0];
 
-                $this->syncAsset($asset, $market, $stats);
-            });
+            // 🛡️ Fix 105: Bulk lookup of assets that already have today's price history to avoid N+1
+            $today = now()->toDateString();
+            $syncedTodayIds = \App\Models\AssetPriceHistory::withoutGlobalScopes()
+                ->whereDate('recorded_at', $today)
+                ->pluck('asset_id')
+                ->toArray();
 
-        return $stats;
+            // 🛡️ Fix 111: Check if market is likely closed (Weekend check for stocks)
+            $isWeekend = now()->isWeekend();
+
+            Asset::withoutGlobalScopes()
+                ->marketSynced()
+                ->chunk(100, function (\Illuminate\Database\Eloquent\Collection $assets) use ($market, $syncedTodayIds, $isWeekend, &$stats): void {
+                    foreach ($assets as $asset) {
+                        if ($asset->quantity <= 0) {
+                            continue;
+                        }
+
+                        // Skip stocks/investments on weekends as markets are closed
+                        if ($isWeekend && in_array($asset->type, [AssetType::STOCK, AssetType::INVESTMENT])) {
+                            continue;
+                        }
+
+                        $this->syncAsset($asset, $market, $syncedTodayIds, $stats);
+                    }
+                });
+
+            return $stats;
+        } finally {
+            $lock->release();
+        }
     }
 
     /**
      * @param  array<string, mixed>  $market
+     * @param  array<int, int>  $syncedTodayIds
      * @param  array{updated: int, alerts: int}  $stats
      */
-    private function syncAsset(Asset $asset, array $market, array &$stats): void
+    private function syncAsset(Asset $asset, array $market, array $syncedTodayIds, array &$stats): void
     {
-        $oldValue = $asset->value;
+        $oldValue = (float) $asset->value;
         $unitPrice = $this->resolveUnitPrice($asset, $market);
 
         // Safety Guard: Don't update with zero price (API failure/Outlier)
@@ -67,12 +99,15 @@ class SyncMarketAssetsAction extends BaseAction
         }
 
         // 2. Record Price History (Once Per Day per Asset)
-        $this->recordDailyHistory($asset, $unitPrice);
+        // Check bulk lookup result instead of N+1 query
+        if (!in_array($asset->id, $syncedTodayIds)) {
+            $this->recordDailyHistory($asset, $unitPrice);
+        }
     }
 
     /**
      * Resolve the unit price (price per 1 unit) from market data.
-     *
+     * 
      * @param  array<string, mixed>  $market
      */
     private function resolveUnitPrice(Asset $asset, array $market): float
@@ -83,13 +118,21 @@ class SyncMarketAssetsAction extends BaseAction
         switch ($asset->type) {
             case AssetType::INVESTMENT:
             case AssetType::COMMODITY:
-                $price = $symbol === 'GRAM' ? (float) ($market['gold_antam_gram'] ?? 0.0) : 0.0;
+                // Fix 93/94/113: Improved Gold Price Resolution (Gram vs Oz)
+                if ($symbol === 'GRAM' || $symbol === 'GR') {
+                    $price = (float) ($market['gold_antam_gram'] ?? 0.0);
+                } elseif ($symbol === 'OZ' || $symbol === 'PAXG') {
+                    $price = (float) ($market['gold_global_oz'] ?? 0.0);
+                    // If the user's asset quantity is in GRAM but they use Global Spot ticker, convert price to Gram
+                    if ($asset->unit === 'GRAM') {
+                        $price = (float) ($market['gold_global_gram'] ?? 0.0);
+                    }
+                }
                 break;
 
             case AssetType::CASH:
-                if (in_array($symbol, ['USD', 'SGD', 'EUR', 'JPY', 'GBP', 'AUD'])) {
-                    $price = $this->marketService->getRate($symbol, 'IDR');
-                }
+                // Fix 118: Expanded currency support
+                $price = $this->marketService->getRate($symbol, 'IDR');
                 break;
 
             case AssetType::STOCK:
@@ -97,7 +140,10 @@ class SyncMarketAssetsAction extends BaseAction
                 break;
 
             case AssetType::CRYPTO:
-                $price = (float) $this->marketService->getCryptoPrice($symbol);
+                // Fix 142: Convert Crypto (USD base) to IDR
+                $cryptoPriceUsd = (float) $this->marketService->getCryptoPrice($symbol);
+                $usdToIdr = $this->marketService->getRate('USD', 'IDR');
+                $price = $cryptoPriceUsd * $usdToIdr;
                 break;
 
             default:
@@ -127,27 +173,19 @@ class SyncMarketAssetsAction extends BaseAction
         return $price;
     }
 
-    /**
-     * Store price history point (Daily Granularity).
-     */
     private function recordDailyHistory(Asset $asset, float $unitPrice): void
     {
         if ($unitPrice <= 0) {
             return;
         }
 
-        // Check if we already have a record for today
-        $existsForToday = $asset->priceHistories()
-            ->whereDate('recorded_at', now()->toDateString())
-            ->exists();
-
-        if (! $existsForToday) {
-            $asset->priceHistories()->create([
-                'user_id' => $asset->user_id,
-                'price' => $unitPrice,
-                'recorded_at' => now(),
-            ]);
-        }
+        // 🛡️ Performance: Redundant check removed as it's handled by bulk lookup in execute()
+        $asset->priceHistories()->create([
+            'user_id' => $asset->user_id,
+            'household_id' => $asset->household_id,
+            'price' => $unitPrice,
+            'recorded_at' => now(),
+        ]);
     }
 
     /**

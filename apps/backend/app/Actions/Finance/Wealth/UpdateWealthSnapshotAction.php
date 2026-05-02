@@ -8,14 +8,20 @@ use App\Actions\BaseAction;
 use App\Models\Asset;
 use App\Models\User;
 use App\Models\WealthHistory;
+use App\Services\MarketService;
 
 class UpdateWealthSnapshotAction extends BaseAction
 {
+    public function __construct(
+        protected MarketService $marketService
+    ) {}
+
     public function execute(User $user): WealthHistory
     {
         $month = \now()->month;
         $year = \now()->year;
         $householdId = $user->household_id;
+        $baseCurrency = $user->currency_format ?: 'IDR';
 
         // Aggregate total value of ALL assets in the household (or user if no household yet)
         $query = Asset::query();
@@ -25,7 +31,20 @@ class UpdateWealthSnapshotAction extends BaseAction
             $query->where('user_id', $user->id);
         }
 
-        $total = $query->sum('value');
+        $assets = $query->get();
+        $total = 0.0;
+
+        foreach ($assets as $asset) {
+            $assetValue = (float) $asset->value;
+            $assetCurrency = $asset->currency ?: 'IDR';
+
+            if ($assetCurrency !== $baseCurrency) {
+                $rate = $this->marketService->getRate($assetCurrency, $baseCurrency);
+                $assetValue *= $rate;
+            }
+
+            $total += $assetValue;
+        }
 
         return WealthHistory::updateOrCreate(
             [
@@ -34,7 +53,7 @@ class UpdateWealthSnapshotAction extends BaseAction
                 'year' => $year,
             ],
             [
-                'total_value' => (float) $total,
+                'total_value' => $total,
                 'user_id' => $user->id, // Track who performed the latest update
             ]
         );

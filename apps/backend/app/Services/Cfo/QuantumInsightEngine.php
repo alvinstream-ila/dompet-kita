@@ -18,15 +18,25 @@ class QuantumInsightEngine
      */
     public function generateInsights(User $user): void
     {
+        // 🛡️ Fix 128: Per-household Rate Limiting (Once per 12 hours)
+        $rateLimitKey = "quantum_insights_limit_".($user->household_id ?? "u_".$user->id);
+        if (\Illuminate\Support\Facades\Cache::has($rateLimitKey)) {
+            Log::info("Quantum Insight Engine: Rate limit active for {$rateLimitKey}. Skipping.");
+            return;
+        }
+
         Log::info("Quantum Insight Engine: Started analysis for User {$user->id}");
 
         // 1. Core Data Gathering (Last 30 Days)
         $endDate = Carbon::now();
         $startDate = Carbon::now()->subDays(30);
 
-        $query = Transaction::withoutGlobalScopes()
+        // Fix 130: Enforce strict tenant isolation by respecting global scopes
+        $query = Transaction::query()
             ->whereBetween('date', [$startDate, $endDate]);
 
+        // If household ID is present, we rely on the global scope if possible, 
+        // but here we manually bind to the specific user's household for double-safety
         if ($user->household_id) {
             $query->where('household_id', $user->household_id);
         } else {
@@ -58,7 +68,7 @@ class QuantumInsightEngine
         ];
 
         // 3. AI Cognitive Reasoning Prompt
-        $prompt = $this->buildAnalysisPrompt($user->name, $summary);
+        $prompt = $this->buildAnalysisPrompt($user, $summary);
 
         try {
             $aiResponse = $this->aiManager->generateText($prompt);
@@ -94,6 +104,9 @@ class QuantumInsightEngine
                 foreach ($insights['findings'] as $finding) {
                     $this->persistInsight($user, $finding);
                 }
+                
+                // Set rate limit after successful generation (Fix 128)
+                \Illuminate\Support\Facades\Cache::put($rateLimitKey, true, now()->addHours(12));
             } else {
                 Log::info('Quantum Insight Engine: No findings key in AI response.');
             }
@@ -105,11 +118,12 @@ class QuantumInsightEngine
     /**
      * @param  array<string, mixed>  $summary
      */
-    protected function buildAnalysisPrompt(string $userName, array $summary): string
+    protected function buildAnalysisPrompt(User $user, array $summary): string
     {
         $jsonSummary = json_encode($summary);
 
-        return 'Anda adalah Sovereign CFO Strategic Intelligence. '.
+        return "SOVEREIGN DATA BOUNDARY AUDIT: Data is isolated to User: {$user->id}. Cross-tenant leak detection is active.\n\n".
+               'Anda adalah Sovereign CFO Strategic Intelligence. '.
                'Gunakan prinsip ekonomi makro dan manajemen kekayaan institusional untuk menganalisis data berikut: '.$jsonSummary.
                "\n\nInstruksi Analisis Strategis:".
                "\n1. Liquidity Layering: Evaluasi cadangan kas berdasarkan model 3-layer (Short-term buffer, Medium-term tax/obligations, Long-term wealth).".
@@ -117,6 +131,7 @@ class QuantumInsightEngine
                "\n3. Stress-Testing: Lakukan simulasi terhadap skenario 'Worst Case' (penurunan income 30-50%) dan apakah struktur biaya saat ini masih resilien.".
                "\n4. Capital Efficiency: Identifikasi 'Idle Cash' yang bisa dioptimalkan menjadi aset produktif dengan mempertimbangkan Opportunity Cost.".
                "\n5. Tax & Leverage: Berikan saran mengenai efisiensi pajak dan penggunaan leverage (hutang) yang strategis.".
+               "\n6. 🛡️ Data Sovereignty: Pastikan rekomendasi hanya merujuk pada data yang disediakan. Dilarang berhalusinasi tentang aset yang tidak terdaftar.".
                "\n\nOUTPUT FORMAT: Strict JSON only.".
                "\n{".
                "\n  \"findings\": [".
@@ -137,8 +152,8 @@ class QuantumInsightEngine
      */
     protected function persistInsight(User $user, array $finding): void
     {
-        // Avoid duplicate active insights with same title in last 7 days for the whole household
-        $query = TransactionInsight::withoutGlobalScopes()
+        // Fix 130: Tenant isolation for insights
+        $query = TransactionInsight::query()
             ->where('title', $finding['title'])
             ->where('created_at', '>=', now()->subDays(7));
 

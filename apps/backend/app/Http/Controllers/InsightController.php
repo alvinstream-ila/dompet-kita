@@ -16,17 +16,17 @@ class InsightController extends Controller
     /**
      * @return JsonResponse
      */
-    public function generate(Request $request, QuantumInsightEngine $engine)
+    public function generate(Request $request)
     {
         $user = $request->user();
         if (! $user instanceof User) {
             abort(401);
         }
 
-        $engine->generateInsights($user);
+        \App\Jobs\Cfo\GenerateQuantumInsightsJob::dispatch($user);
 
         return response()->json([
-            'message' => 'Analisis data finansial selesai. Pola baru telah diidentifikasi.',
+            'message' => 'Analisis data finansial telah dimulai di latar belakang. Pola baru akan muncul segera.',
             'success' => true,
         ]);
     }
@@ -41,7 +41,7 @@ class InsightController extends Controller
             abort(401);
         }
 
-        $insights = TransactionInsight::where('household_id', $user->household_id)
+        $insights = TransactionInsight::query()
             ->where('status', '!=', 'archived')
             ->latest()
             ->get();

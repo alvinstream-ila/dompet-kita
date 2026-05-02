@@ -1,3 +1,47 @@
+ ------ ---------------------------------------------------------------------------------------------------------- 
+  Line   app\Http\Controllers\PartnerController.php                                                                
+ ------ ---------------------------------------------------------------------------------------------------------- 
+  190    Call to static method forget() on an unknown class App\Http\Controllers\Cache.                            
+         🪪  class.notFound                                                                                        
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols                                      
+  190    Using nullsafe property access on non-nullable type Laravel\Sanctum\PersonalAccessToken. Use -> instead.  
+         🪪  nullsafe.neverNull                                                                                    
+ ------ ---------------------------------------------------------------------------------------------------------- 
 
- [OK] No errors                                                                                                        
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  Line   tests\Feature\HouseholdLifecycleTest.php                                                                       
+ ------ --------------------------------------------------------------------------------------------------------------- 
+  20     Method Tests\Feature\HouseholdLifecycleTest::enableSudo() has no return type specified.                        
+         🪪  missingType.return                                                                                         
+  26     Method Tests\Feature\HouseholdLifecycleTest::test_it_prevents_joining_a_household_that_is_already_full() has   
+         no return type specified.                                                                                      
+         🪪  missingType.return                                                                                         
+  31     Cannot access property $id on App\Models\Household|null.                                                       
+         🪪  property.nonObject                                                                                         
+  38     Cannot access property $id on App\Models\Household|null.                                                       
+         🪪  property.nonObject                                                                                         
+  59     Method Tests\Feature\HouseholdLifecycleTest::test_it_cleans_up_orphaned_households_on_unlink() has no return   
+         type specified.                                                                                                
+         🪪  missingType.return                                                                                         
+  66     Cannot access property $id on App\Models\Household|null.                                                       
+         🪪  property.nonObject                                                                                         
+  69     Cannot access property $id on App\Models\Household|null.                                                       
+         🪪  property.nonObject                                                                                         
+  79     Cannot access property $id on App\Models\Household|null.                                                       
+         🪪  property.nonObject                                                                                         
+  84     Cannot access property $id on App\Models\Household|null.                                                       
+         🪪  property.nonObject                                                                                         
+  85     Cannot access property $id on App\Models\Household|null.                                                       
+         🪪  property.nonObject                                                                                         
+  90     Method Tests\Feature\HouseholdLifecycleTest::test_it_prevents_currency_change_if_assets_exist() has no return  
+         type specified.                                                                                                
+         🪪  missingType.return                                                                                         
+  104    Property App\Models\User::$email_verified_at (string|null) does not accept Illuminate\Support\Carbon.          
+         🪪  assign.propertyType                                                                                        
+  129    Method Tests\Feature\HouseholdLifecycleTest::test_it_masks_partner_email_in_privacy_mode() has no return type  
+         specified.                                                                                                     
+         🪪  missingType.return                                                                                         
+ ------ --------------------------------------------------------------------------------------------------------------- 
+
+ [ERROR] Found 15 errors                                                                                               
 

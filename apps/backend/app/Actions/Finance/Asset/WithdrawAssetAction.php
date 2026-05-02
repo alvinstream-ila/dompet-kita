@@ -21,6 +21,9 @@ class WithdrawAssetAction extends BaseAction
     public function execute(User $user, Asset $asset, array $data): Asset
     {
         return DB::transaction(function () use ($user, $asset, $data): Asset {
+            // 🛡️ Concurrency Lock: Ensure no other process modifies this asset during withdrawal.
+            $asset = Asset::where('id', $asset->id)->lockForUpdate()->firstOrFail();
+
             $amount = (float) $data['amount'];
             $recipientAssetId = $data['recipient_asset_id'] ?? null;
             $description = $data['description'] ?? 'Pencairan aset';
@@ -61,7 +64,7 @@ class WithdrawAssetAction extends BaseAction
                 } else {
                     $recipientAssetQuery->where('user_id', $user->id);
                 }
-                $recipientAsset = $recipientAssetQuery->findOrFail($recipientAssetId);
+                $recipientAsset = $recipientAssetQuery->lockForUpdate()->findOrFail($recipientAssetId);
 
                 $journalDescription = "Pencairan: {$asset->name} (ke {$recipientAsset->name})";
 

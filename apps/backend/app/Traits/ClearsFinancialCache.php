@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Log;
 trait ClearsFinancialCache
 {
     /**
-     * Invalidate the user's financial dashboard cache.
-     * If the user belongs to a household, all members' caches are invalidated.
+     * Invalidate the financial dashboard cache for the given user's scope.
+     * If the user belongs to a household, the household-level cache is invalidated.
      */
     protected function invalidateFinancialCache(int|User $userOrId): void
     {
@@ -25,37 +25,8 @@ trait ClearsFinancialCache
             return;
         }
 
-        $singleId = (int) $user->id;
-
-        // 🏠 Sovereign Household Sync: If in a household, invalidate for everyone.
-        if ($user->household_id) {
-            /** @var array<int> $householdIds */
-            $householdIds = User::where('household_id', $user->household_id)
-                ->pluck('id')
-                ->map(fn (mixed $id): int => (int) $id)
-                ->all();
-
-            foreach ($householdIds as $id) {
-                $this->bumpUserCacheVersion((int) $id);
-            }
-
-            return;
-        }
-
-        $this->bumpUserCacheVersion($singleId);
-    }
-
-    /**
-     * Helper to increment the version key and clear related insights.
-     */
-    private function bumpUserCacheVersion(int $userId): void
-    {
-        $user = User::find($userId);
-        if (! $user) {
-            return;
-        }
-
-        $versionKey = "transaction_summary_version_{$userId}";
+        $scopeId = $user->household_id ?? $user->id;
+        $versionKey = "transaction_summary_version_{$scopeId}";
 
         try {
             if (! Cache::has($versionKey)) {
@@ -64,14 +35,12 @@ trait ClearsFinancialCache
                 Cache::increment($versionKey);
             }
 
-            // 🤖 Clear AI Insights.
-            // If in a household, we clear the household-level insight cache.
-            $scopeId = $user->household_id ?? $user->id;
+            // 🤖 Clear AI Insights (Household or User level).
             Cache::forget("ai_insight_{$scopeId}");
 
-            Log::debug("Financial cache invalidated for user [{$userId}] (Scope: [{$scopeId}]). Version incremented.");
+            Log::debug("Financial cache invalidated for scope [{$scopeId}] (User: [{$user->id}]). Version incremented.");
         } catch (\Exception $e) {
-            Log::error("Failed to invalidate financial cache for user [{$userId}]: ".$e->getMessage());
+            Log::error("Failed to invalidate financial cache for scope [{$scopeId}]: ".$e->getMessage());
         }
     }
 }

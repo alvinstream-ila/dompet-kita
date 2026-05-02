@@ -2,13 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\HasHouseholdScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PartnerInvitation extends Model
 {
+    use HasHouseholdScope;
+
     protected $fillable = [
         'inviter_id',
+        'household_id',
         'email',
         'token',
         'status',

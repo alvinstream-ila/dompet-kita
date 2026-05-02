@@ -58,6 +58,7 @@ class GetTransactionSummaryAction extends BaseAction
             // 🛡️ Sovereign Global Scope handles isolation (HasHouseholdScope).
             $summary = Transaction::query()
                 ->whereBetween('date', [$startDate, $endDate])
+                ->where('category', '!=', 'Transfer')
                 ->select('type', $selectSum)
                 ->groupBy('type')
                 ->get();
@@ -69,6 +70,7 @@ class GetTransactionSummaryAction extends BaseAction
             $calendarDates = $this->budgetService->getBudgetCycleDates($month, $year, 1);
             $calendarSummary = Transaction::query()
                 ->whereBetween('date', [$calendarDates['start'], $calendarDates['end']])
+                ->where('category', '!=', 'Transfer')
                 ->select('type', $selectSum)
                 ->groupBy('type')
                 ->get();
@@ -78,6 +80,7 @@ class GetTransactionSummaryAction extends BaseAction
 
             // 3. Cumulative Balance (All-time Net Worth calculation)
             $cumulativeSummary = Transaction::query()
+                ->where('category', '!=', 'Transfer')
                 ->select('type', $selectSum)
                 ->groupBy('type')
                 ->get();
@@ -93,6 +96,7 @@ class GetTransactionSummaryAction extends BaseAction
 
             $categoryBreakdown = Transaction::query()
                 ->whereBetween('date', [$startDate, $endDate])
+                ->where('category', '!=', 'Transfer')
                 ->select('type', 'category', $selectSum)
                 ->groupBy('type', 'category')
                 ->get()

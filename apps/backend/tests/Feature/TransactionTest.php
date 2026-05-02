@@ -105,7 +105,7 @@ class TransactionTest extends TestCase
             ->deleteJson("/api/transactions/{$transaction->id}");
 
         $response->assertStatus(200);
-        $this->assertDatabaseMissing('transactions', ['id' => $transaction->id]);
+        $this->assertSoftDeleted('transactions', ['id' => $transaction->id]);
     }
 
     public function test_user_can_see_transaction_summary(): void

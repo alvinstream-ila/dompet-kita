@@ -50,7 +50,7 @@ class AssetPriceHistory extends Model
     protected function casts(): array
     {
         return [
-            'price' => 'float',
+            'price' => 'decimal:8',
             'recorded_at' => 'datetime',
         ];
     }

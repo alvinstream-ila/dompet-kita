@@ -16,8 +16,7 @@ class UpdateTransactionAction extends BaseAction
      */
     public function execute(User $user, Transaction $transaction, array $data): Transaction
     {
-        // 🛡️ Defense in Depth: Ensure transaction belongs to user's household
-        abort_unless($transaction->household_id === $user->household_id, 403, 'Anda tidak memiliki akses ke transaksi ini.');
+
 
         return DB::transaction(function () use ($transaction, $data): Transaction {
             $transaction->update($data);

@@ -5,10 +5,11 @@ namespace App\Models;
 use App\Traits\HasHouseholdScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AssetTransaction extends Model
 {
-    use HasHouseholdScope;
+    use HasHouseholdScope, SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -22,7 +23,7 @@ class AssetTransaction extends Model
     ];
 
     protected $casts = [
-        'amount' => 'float',
+        'amount' => 'decimal:4',
         'transaction_date' => 'datetime',
     ];
 

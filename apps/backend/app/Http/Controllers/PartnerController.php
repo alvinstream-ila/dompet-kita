@@ -11,12 +11,16 @@ use App\Notifications\PartnerInvitationNotification;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class PartnerController extends Controller
 {
+    private const INVITATION_SUCCESS_MESSAGE = 'Undangan partner berhasil dikirim.';
+
     /**
      * Send an invitation to a partner.
      */
@@ -34,30 +38,28 @@ class PartnerController extends Controller
                 function (string $_, mixed $value, \Closure $fail) use ($inviter): void {
                     if ($inviter->email === $value) {
                         $fail('Anda tidak dapat mengundang diri sendiri.');
-                    }
-                    if ($inviter->partner_id) {
-                        $fail('Anda sudah terhubung dengan partner lain. Harap lepaskan tautan terlebih dahulu.');
-
-                        return;
-                    }
-
-                    $invitee = User::where('email', $value)->first();
-                    if (! $invitee instanceof User || ! $invitee->email_verified_at) {
-                        $fail('Email partner belum terdaftar atau belum diverifikasi.');
-
-                        return;
-                    }
-                    if ($invitee->partner_id) {
-                        $fail('Partner yang Anda undang sudah terhubung dengan orang lain.');
-
-                        return;
+                    } elseif ($inviter->partner_id) {
+                        $fail('Anda sudah terhubung dengan partner lain.');
                     }
                 },
             ],
         ]);
 
         $inviteeEmail = (string) $request->string('email');
-        $invitee = User::where('email', $inviteeEmail)->firstOrFail();
+        $invitee = User::where('email', $inviteeEmail)->first();
+
+        // 🛡️ Enumeration Protection: Silent fail if user doesn't exist or isn't verified
+        if (! $invitee instanceof User || ! $invitee->email_verified_at) {
+            return response()->json([
+                'message' => self::INVITATION_SUCCESS_MESSAGE,
+            ]);
+        }
+
+        if ($invitee->partner_id) {
+            return response()->json([
+                'message' => self::INVITATION_SUCCESS_MESSAGE,
+            ]);
+        }
 
         // 4. Create Invitation
         /** @var PartnerInvitation $invitation */
@@ -73,7 +75,7 @@ class PartnerController extends Controller
         $invitee->notify(new PartnerInvitationNotification($inviter, (string) $invitation->token));
 
         return response()->json([
-            'message' => 'Undangan partner berhasil dikirim.',
+            'message' => self::INVITATION_SUCCESS_MESSAGE,
         ]);
     }
 
@@ -82,7 +84,9 @@ class PartnerController extends Controller
      */
     public function getInvitation(string $token): JsonResponse
     {
-        $invitation = PartnerInvitation::with('inviter')
+        // 🛡️ Scope Bypass: Invitation must be found by token across all households
+        $invitation = PartnerInvitation::withoutGlobalScopes()
+            ->with('inviter')
             ->where('token', $token)
             ->where('status', 'pending')
             ->where('expires_at', '>', Carbon::now())
@@ -108,17 +112,18 @@ class PartnerController extends Controller
      */
     public function accept(Request $request): JsonResponse
     {
-        $request->validate(['token' => 'required']);
-
+        $request->validate(['token' => 'required|string']);
         $token = (string) $request->string('token');
 
-        $invitation = PartnerInvitation::where('token', $token)
+        $invitation = PartnerInvitation::withoutGlobalScopes()
+            ->where('token', $token)
             ->where('status', 'pending')
             ->where('expires_at', '>', Carbon::now())
+            ->lockForUpdate()
             ->first();
 
         if (! $invitation instanceof PartnerInvitation) {
-            return response()->json(['message' => 'Proses aktivasi gagal. Token tidak valid atau kedaluwarsa.'], 404);
+            abort(404, 'Proses aktivasi gagal. Token tidak valid atau kedaluwarsa.');
         }
 
         $user = $request->user();
@@ -126,16 +131,26 @@ class PartnerController extends Controller
             abort(401);
         }
 
-        $inviter = User::find($invitation->inviter_id);
+        if ($user->email !== $invitation->email) {
+            abort(403, 'Undangan ini dikirim untuk email lain.');
+        }
 
+        $inviter = User::find($invitation->inviter_id);
         if (! $inviter instanceof User) {
-            return response()->json(['message' => 'Pengundang tidak ditemukan.'], 404);
+            abort(404, 'Pengundang tidak ditemukan.');
+        }
+
+        if ($inviter->household_id && User::where('household_id', $inviter->household_id)->count() >= 2) {
+            throw ValidationException::withMessages([
+                'household' => ['Household sudah mencapai kapasitas maksimal.'],
+            ]);
         }
 
         DB::transaction(function () use ($user, $inviter, $invitation): void {
-            // 🛡️ Final Security Check: Ensure neither is already partnered (Race condition protection)
             if ($user->partner_id || $inviter->partner_id) {
-                throw new \Exception('Salah satu pihak sudah terhubung dengan partner lain.');
+                throw ValidationException::withMessages([
+                    'partner' => ['Salah satu pihak sudah terhubung dengan partner lain.'],
+                ]);
             }
 
             // 1. Ensure Inviter has a Household
@@ -165,6 +180,9 @@ class PartnerController extends Controller
 
             // 4. Mark as accepted
             $invitation->update(['status' => 'accepted']);
+
+            // 🛡️ Switch Logic: Invalidate current user's Sudo Mode when joining a new household
+            Cache::forget("sudo_mode_{$user->id}_{$user->currentAccessToken()?->id}");
         });
 
         return response()->json([
@@ -182,9 +200,10 @@ class PartnerController extends Controller
             abort(401);
         }
 
+        $oldHouseholdId = $user->household_id;
         $partner = $user->partner;
 
-        DB::transaction(function () use ($user, $partner): void {
+        DB::transaction(function () use ($user, $partner, $oldHouseholdId): void {
             // 1. Break partner link
             if ($partner instanceof User) {
                 $partner->update(['partner_id' => null]);
@@ -209,6 +228,14 @@ class PartnerController extends Controller
             ]);
             $user->update(['household_id' => $userHousehold->id]);
             $this->reassignUserRecordsToHousehold($user->id, $userHousehold->id);
+
+            // 🛡️ Orphaned Ledger Cleanup: Delete the old household if it's now empty
+            if ($oldHouseholdId) {
+                $stillHasUsers = User::where('household_id', $oldHouseholdId)->exists();
+                if (! $stillHasUsers) {
+                    Household::where('id', $oldHouseholdId)->delete();
+                }
+            }
         });
 
         return response()->json([

@@ -17,7 +17,6 @@ class StoreTransactionAction extends BaseAction
     public function execute(User $user, array $data): Transaction
     {
         $data['user_id'] = $user->id;
-        $data['household_id'] = $user->household_id;
 
         return DB::transaction(function () use ($data) {
             return Transaction::create($data);

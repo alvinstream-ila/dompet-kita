@@ -34,7 +34,6 @@ class LoanController extends Controller
         }
 
         $loans = Loan::query()
-            ->where('household_id', $user->household_id)
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -62,9 +61,8 @@ class LoanController extends Controller
         }
 
         $validated['user_id'] = $user->id;
-        $validated['household_id'] = $user->household_id;
 
-        $loan = Loan::create($validated);
+        $loan = \DB::transaction(fn () => Loan::create($validated));
 
         return $this->success(new LoanResource($loan), 'Instrumen kewajiban/piutang baru telah diarsip.', 201);
     }
@@ -96,7 +94,7 @@ class LoanController extends Controller
             'status' => 'sometimes|in:active,paid',
         ]);
 
-        $loan->update($validated);
+        \DB::transaction(fn () => $loan->update($validated));
 
         return $this->success(new LoanResource($loan), 'Parameter instrumen pinjaman telah diperbarui.');
     }
@@ -147,7 +145,7 @@ class LoanController extends Controller
     {
         $this->authorize('delete', $loan);
 
-        $loan->delete();
+        \DB::transaction(fn () => $loan->delete());
 
         return $this->success(null, 'Instrumen pinjaman telah dihapus dari sistem.', 204);
     }
@@ -167,9 +165,8 @@ class LoanController extends Controller
         $startDate = Carbon::create($year, $month, 1)?->startOfMonth() ?? now()->startOfMonth();
         $endDate = $startDate->copy()->endOfMonth();
 
-        // 1. Fetch loans active during or before this month (Household Scoped)
+        // 1. Fetch loans active during or before this month (Automated Scoping)
         $loans = Loan::query()
-            ->where('household_id', $user->household_id)
             ->where('created_at', '<=', $endDate)
             ->where(function ($query) use ($startDate): void {
                 $query->where('status', 'active')
@@ -177,9 +174,8 @@ class LoanController extends Controller
             })
             ->get();
 
-        // 2. Fetch all transactions linked to loans in this month (Household Scoped)
+        // 2. Fetch all transactions linked to loans in this month (Automated Scoping)
         $transactions = Transaction::query()
-            ->where('household_id', $user->household_id)
             ->whereBetween('date', [$startDate, $endDate])
             ->whereNotNull('metadata')
             ->get()
@@ -248,12 +244,12 @@ class LoanController extends Controller
         // Gather loan IDs as strings to prevent Postgres json = integer type mismatch
         $loanIds = $loans->pluck('id')->map(fn ($id): string => (string) $id)->toArray();
 
-        // Fetch all relevant repayments for these loans up to the specified date in one query
+        // Fetch only necessary columns to reduce memory footprint
         $repayments = Transaction::query()
-            ->where('household_id', $loans->first()->household_id) // Explicit scoping
             ->where('metadata->source_type', Loan::class)
             ->whereIn('metadata->loan_id', $loanIds)
             ->where('date', '<=', $date->toDateString())
+            ->select(['id', 'amount', 'type', 'metadata', 'date'])
             ->get()
             ->groupBy(function ($t): string {
                 /** @var array<string, mixed>|null $metadata */

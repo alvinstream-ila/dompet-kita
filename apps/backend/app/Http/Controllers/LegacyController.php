@@ -31,7 +31,7 @@ class LegacyController extends Controller
         }
 
         $reports = LegacyVaultReport::query()
-            ->where('household_id', $user->household_id)
+
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -118,7 +118,7 @@ class LegacyController extends Controller
 
         /** @var LegacyVaultReport $report */
         $report = LegacyVaultReport::query()
-            ->where('household_id', $user->household_id)
+
             ->findOrFail((int) $id);
 
         $obscuredName = 'Legacy_Snapshot_'.substr(hash('sha256', (string) $report->id), 0, 12).'.pdf';

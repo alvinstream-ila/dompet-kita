@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Household;
 use App\Models\User;
 use Exception;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
@@ -54,36 +56,52 @@ class SocialAuthController extends Controller
 
         try {
             $isNewUser = false;
-            if ($user) {
-                // Update User for existing account
-                $user->update([
-                    'social_id' => $socialUser->getId(),
-                    'social_type' => $provider,
-                    'avatar_url' => $user->avatar_url ?? $socialUser->getAvatar(),
-                    'email_verified_at' => $user->email_verified_at ?? \now(),
-                ]);
-            } else {
-                // Create New User with Unique Username
-                $isNewUser = true;
-                $sourceName = $socialUser->getName() ?? $socialUser->getNickname() ?? 'user';
-                $username = $this->generateUniqueUsername((string) $sourceName);
+            $user = DB::transaction(function () use ($socialUser, $provider, &$isNewUser) {
+                $user = User::where('email', $socialUser->getEmail())->lockForUpdate()->first();
 
-                $user = User::create([
-                    'name' => $username,
-                    'email' => $socialUser->getEmail(),
-                    'social_id' => $socialUser->getId(),
-                    'social_type' => $provider,
-                    'avatar_url' => $socialUser->getAvatar(),
-                    'password' => null,
-                    'email_verified_at' => \now(),
-                ]);
+                if ($user) {
+                    // Update User for existing account
+                    $user->update([
+                        'social_id' => $socialUser->getId(),
+                        'social_type' => $provider,
+                        'avatar_url' => $user->avatar_url ?? $socialUser->getAvatar(),
+                        'email_verified_at' => $user->email_verified_at ?? \now(),
+                    ]);
+                } else {
+                    // Create New User with Unique Username
+                    $isNewUser = true;
+                    $sourceName = $socialUser->getName() ?? $socialUser->getNickname() ?? 'user';
+                    $username = $this->generateUniqueUsername((string) $sourceName);
 
+                    $user = User::create([
+                        'name' => $username,
+                        'email' => $socialUser->getEmail(),
+                        'social_id' => $socialUser->getId(),
+                        'social_type' => $provider,
+                        'avatar_url' => $socialUser->getAvatar(),
+                        'password' => null,
+                        'email_verified_at' => \now(),
+                    ]);
+
+                    // 🛡️ Create Solo Household immediately to ensure data sovereignty
+                    $household = Household::create([
+                        'id' => (string) Str::uuid(),
+                        'name' => "Household of {$user->name}",
+                        'owner_id' => $user->id,
+                    ]);
+
+                    $user->update(['household_id' => $household->id]);
+                }
+
+                return $user;
+            });
+
+            if ($isNewUser) {
                 // New User - this triggers events like SendEmailVerificationNotification
                 try {
                     event(new Registered($user));
                 } catch (Exception $e) {
                     Log::error('Event Registered failed: '.$e->getMessage());
-                    // Don't fail the whole login just because of an email error
                 }
             }
 

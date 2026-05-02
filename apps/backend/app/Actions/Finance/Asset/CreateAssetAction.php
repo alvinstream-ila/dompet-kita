@@ -22,7 +22,6 @@ class CreateAssetAction extends BaseAction
     {
         return \DB::transaction(function () use ($user, $data) {
             $data['user_id'] = $user->id;
-            $data['household_id'] = $user->household_id;
 
             if (! isset($data['invested_capital'])) {
                 $data['invested_capital'] = $data['value'] ?? 0;

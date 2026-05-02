@@ -41,7 +41,7 @@ class AssetController extends Controller
         }
 
         $assets = Asset::query()
-            ->where('household_id', $user->household_id)
+            ->with(['previousDayPrice'])
             ->orderBy('type')
             ->get();
 
@@ -107,7 +107,7 @@ class AssetController extends Controller
         }
 
         $validated = $request->validate([
-            'amount' => 'required|numeric|min:0.01',
+            'amount' => 'required|numeric|min:0.00000001',
             'quantity' => 'sometimes|numeric|min:0',
             'source_asset_id' => 'sometimes|nullable|exists:assets,id',
             'description' => 'sometimes|nullable|string|max:255',
@@ -133,7 +133,7 @@ class AssetController extends Controller
         }
 
         $validated = $request->validate([
-            'amount' => 'required|numeric|min:0.01',
+            'amount' => 'required|numeric|min:0.00000001',
             'recipient_asset_id' => 'sometimes|nullable|exists:assets,id',
             'description' => 'sometimes|nullable|string|max:255',
         ]);

@@ -23,7 +23,7 @@ class AssetTransactionResource extends JsonResource
             'id' => $this->id,
             'asset_id' => $this->asset_id,
             'source_asset' => new AssetResource($this->whenLoaded('sourceAsset')),
-            'amount' => $this->amount,
+            'amount' => (float) $this->amount,
             'type' => $this->type,
             'description' => $this->description,
             'transaction_date' => $this->transaction_date->toIso8601String(),

@@ -17,6 +17,19 @@ class UpdateUserRequest extends FormRequest
     }
 
     /**
+     * Sanitize input to prevent XSS.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'name' => $this->name ? strip_tags((string) $this->name) : null,
+            'full_name' => $this->full_name ? strip_tags((string) $this->full_name) : null,
+            'partner_name' => $this->partner_name ? strip_tags((string) $this->partner_name) : null,
+            'industry_sector' => $this->industry_sector ? strip_tags((string) $this->industry_sector) : null,
+        ]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, ValidationRule|array<mixed>|string>

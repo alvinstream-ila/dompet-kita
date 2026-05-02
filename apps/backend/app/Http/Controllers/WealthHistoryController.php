@@ -27,8 +27,7 @@ class WealthHistoryController extends Controller
         $now = Carbon::now();
 
         // Fetch historical data excluding current month (Household Scoped)
-        $histories = WealthHistory::where('household_id', $user->household_id)
-            ->where(function ($query) use ($now): void {
+        $histories = WealthHistory::where(function ($query) use ($now): void {
                 $query->where('year', '<', $now->year)
                     ->orWhere(function ($q) use ($now): void {
                         $q->where('year', $now->year)
@@ -44,7 +43,7 @@ class WealthHistoryController extends Controller
         $historyData = WealthHistoryResource::collection($histories->reverse())->toArray($request);
 
         // Always add current real asset sum as the latest point (Household Scoped)
-        $currentWealth = Asset::where('household_id', $user->household_id)->sum('value');
+        $currentWealth = Asset::sum('value');
 
         // Append current month data using the Resource to keep it consistent
         $nowResource = new WealthHistoryResource([

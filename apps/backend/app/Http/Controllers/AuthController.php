@@ -154,6 +154,11 @@ class AuthController extends Controller
             'status' => 'success',
         ]);
 
+        // 🛡️ Regenerate session to prevent fixation
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
+
         $this->sentinel->notify(
             "Akses authorized. Sentinel mengonfirmasi integritas sesi dari IP: `{$request->ip()}`.",
             'info',
@@ -320,10 +325,9 @@ class AuthController extends Controller
             return \response()->json(['message' => 'Unauthenticated'], 401);
         }
 
-        Cache::forget("sudo_mode_{$user->id}");
-
         $token = $user->currentAccessToken();
         if ($token instanceof PersonalAccessToken) {
+            Cache::forget("sudo_mode_{$user->id}_{$token->id}");
             $token->delete();
         }
 
@@ -358,8 +362,10 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $userId = $user->id;
-        Cache::put("sudo_mode_{$userId}", now(), now()->addMinutes(15));
+        $token = $user->currentAccessToken();
+        $tokenId = $token instanceof PersonalAccessToken ? $token->id : 'default';
+        $fingerprint = sha1($request->ip().$request->userAgent());
+        Cache::put("sudo_mode_{$user->id}_{$tokenId}", $fingerprint, now()->addMinutes(15));
 
         $this->sentinel->notify(
             "Protokol Sudo diaktifkan. Jendela otoritas tinggi terbuka selama 15 menit oleh IP: `{$request->ip()}`",

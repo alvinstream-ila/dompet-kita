@@ -54,10 +54,14 @@ class MediaController extends Controller
 
         try {
             $file = $request->file('file');
-            $fileName = Str::random(16).'-'.time().'.'.$file->getClientOriginalExtension();
+            $extension = $file->extension(); // 🛡️ Guessed by server based on MIME
+            $fileName = Str::random(32).'-'.time().'.'.$extension;
             /** @var User $user */
             $user = $request->user();
-            $householdId = $user->household_id ?? $user->id;
+            $householdId = (string) ($user->household_id ?? $user->id);
+            // 🛡️ Sanitize householdId for path safety
+            $householdId = preg_replace('/[^a-zA-Z0-9_\-]/', '', $householdId);
+            
             $folder = "receipts/{$householdId}";
             $filePath = "{$folder}/{$fileName}";
 
@@ -93,5 +97,48 @@ class MediaController extends Controller
                 'message' => 'Gagal mengunggah aman: '.$e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * Serve a protected file.
+     * This method is called via a signed URL to prevent unauthorized access.
+     */
+    public function serve(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse|\Illuminate\Http\Response
+    {
+        // 🛡️ Signed URL Verification is handled by middleware, but we double-check path integrity
+        $path = (string) $request->query('path');
+        if (! $path || str_contains($path, '..')) {
+            abort(404);
+        }
+
+        /** @var User $user */
+        $user = $request->user();
+        if (! $user instanceof User) {
+            abort(401);
+        }
+
+        // 🛡️ Sovereign Multi-Tenancy check: Ensure the path belongs to the user's household
+        $householdId = (string) ($user->household_id ?? $user->id);
+        $householdId = preg_replace('/[^a-zA-Z0-9_\-]/', '', $householdId);
+
+        // Files are stored in 'receipts/{householdId}/{filename}'
+        if (! str_starts_with($path, "receipts/{$householdId}/")) {
+            // Log attempt to access file from another household
+            Log::warning('🛡️ Unauthorized Media Access Attempt', [
+                'user_id' => $user->id,
+                'attempted_path' => $path,
+                'household_id' => $householdId,
+                'ip' => $request->ip(),
+            ]);
+            abort(403, 'Akses ditolak: File ini bukan milik Household Anda.');
+        }
+
+        $diskName = (string) (config('filesystems.disks.storj.key') ? 'storj' : config('filesystems.default', 'public'));
+        
+        if (! Storage::disk($diskName)->exists($path)) {
+            abort(404);
+        }
+
+        return Storage::disk($diskName)->response($path);
     }
 }

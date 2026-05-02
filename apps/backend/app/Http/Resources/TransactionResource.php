@@ -37,13 +37,19 @@ class TransactionResource extends JsonResource
             if (str_starts_with($this->receipt_url, 'http')) {
                 $receiptUrl = $this->receipt_url;
             } else {
+                $diskName = (string) (config('filesystems.disks.storj.key') ? 'storj' : config('filesystems.default', 'public'));
                 try {
-                    $receiptUrl = Storage::disk('storj')->temporaryUrl(
+                    $receiptUrl = Storage::disk($diskName)->temporaryUrl(
                         $this->receipt_url,
                         now()->addMinutes(15)
                     );
                 } catch (\Exception) {
-                    $receiptUrl = Storage::disk('storj')->url($this->receipt_url);
+                    // 🛡️ Security Fallback: Generate a signed URL to our own API
+                    $receiptUrl = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+                        'media.serve',
+                        now()->addMinutes(15),
+                        ['path' => $this->receipt_url]
+                    );
                 }
             }
         }

@@ -28,8 +28,7 @@ class GoalController extends Controller
             abort(401);
         }
 
-        $goals = Goal::where('household_id', $user->household_id)
-            ->orderBy('deadline', 'asc')
+        $goals = Goal::orderBy('deadline', 'asc')
             ->get();
 
         return GoalResource::collection($goals);
@@ -42,8 +41,8 @@ class GoalController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string',
-            'target_amount' => 'required|numeric',
-            'current_amount' => 'required|numeric',
+            'target_amount' => 'required|numeric|min:0',
+            'current_amount' => 'required|numeric|min:0',
             'deadline' => 'nullable|date',
             'category' => 'nullable|string',
             'icon' => 'nullable|string',
@@ -55,7 +54,7 @@ class GoalController extends Controller
             abort(401);
         }
 
-        $validated['household_id'] = $user->household_id;
+
         $goal = Goal::create($validated);
 
         return $this->success(new GoalResource($goal), 'Objektif finansial strategis baru telah diinisialisasi.', 201);
@@ -70,8 +69,8 @@ class GoalController extends Controller
 
         $validated = $request->validate([
             'name' => 'sometimes|string',
-            'target_amount' => 'sometimes|numeric',
-            'current_amount' => 'sometimes|numeric',
+            'target_amount' => 'sometimes|numeric|min:0',
+            'current_amount' => 'sometimes|numeric|min:0',
             'deadline' => 'sometimes|nullable|date',
             'category' => 'sometimes|nullable|string',
             'icon' => 'sometimes|nullable|string',
@@ -97,6 +96,10 @@ class GoalController extends Controller
             'date' => 'required|date',
         ]);
 
+        if (in_array($goal->status, ['completed', 'cancelled'])) {
+            return $this->error('Gagal mengalokasikan dana: Objektif ini sudah selesai atau dibatalkan.', 422);
+        }
+
         return DB::transaction(function () use ($validated, $goal, $request): JsonResponse {
             $user = $request->user();
             if (! $user instanceof User) {
@@ -115,8 +118,7 @@ class GoalController extends Controller
 
             // 2. (Accounting Protocol) Deduct from Asset if specified (Household Scoped)
             if (! empty($validated['asset_id'])) {
-                $asset = Asset::where('household_id', $user->household_id)
-                    ->findOrFail($validated['asset_id']);
+                $asset = Asset::findOrFail($validated['asset_id']);
                 assert($asset instanceof Asset);
 
                 // Record the withdrawal in asset history

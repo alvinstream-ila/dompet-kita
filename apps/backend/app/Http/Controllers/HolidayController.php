@@ -24,8 +24,7 @@ class HolidayController extends Controller
             abort(401);
         }
 
-        $holidays = Holiday::where('household_id', $user->household_id)
-            ->orderBy('created_at', 'desc')
+        $holidays = Holiday::orderBy('created_at', 'desc')
             ->get();
 
         return HolidayResource::collection($holidays);
@@ -35,8 +34,8 @@ class HolidayController extends Controller
     {
         $validated = $request->validate([
             'destination' => 'required|string',
-            'budget' => 'required|numeric',
-            'spent' => 'nullable|numeric',
+            'budget' => 'required|numeric|min:0',
+            'spent' => 'nullable|numeric|min:0',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
             'status' => 'required|in:planning,booked,completed,cancelled',
@@ -53,7 +52,7 @@ class HolidayController extends Controller
             $validated['image_url'] = $this->generateImageUrl((string) $request->string('destination'));
         }
 
-        $validated['household_id'] = $user->household_id;
+
         $holiday = Holiday::create($validated);
 
         return new HolidayResource($holiday);
@@ -72,8 +71,8 @@ class HolidayController extends Controller
 
         $validated = $request->validate([
             'destination' => 'sometimes|string',
-            'budget' => 'sometimes|numeric',
-            'spent' => 'sometimes|numeric',
+            'budget' => 'sometimes|numeric|min:0',
+            'spent' => 'sometimes|numeric|min:0',
             'start_date' => 'sometimes|nullable|date',
             'end_date' => 'sometimes|nullable|date',
             'status' => 'sometimes|in:planning,booked,completed,cancelled',
@@ -113,6 +112,10 @@ class HolidayController extends Controller
             'date' => 'required|date',
         ]);
 
+        if (in_array($holiday->status, ['completed', 'cancelled'])) {
+            return response()->json(['message' => 'Gagal alokasi dana: Hari libur/rekreasi ini sudah selesai atau dibatalkan.'], 422);
+        }
+
         return DB::transaction(function () use ($validated, $holiday, $user) {
             // 1. Create the Holiday Transaction
             $holiday->transactions()->create([
@@ -128,8 +131,7 @@ class HolidayController extends Controller
             // 2. (Accounting Protocol) Deduct from Asset if specified (Household Scoped)
             if (! empty($validated['asset_id']) && $user instanceof User) {
                 /** @var Asset $asset */
-                $asset = Asset::where('household_id', $user->household_id)
-                    ->findOrFail($validated['asset_id']);
+                $asset = Asset::findOrFail($validated['asset_id']);
                 $asset->decrement('value', (float) $validated['amount']);
             }
 

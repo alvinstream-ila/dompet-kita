@@ -29,7 +29,7 @@ class GetWealthStatusAction extends BaseAction
     {
         $now = Carbon::now();
 
-        // 1. Transaction Summary (Tenant-Aware)
+        // 1. Transaction Summary (Tenant-Aware) - Optimized for Performance
         $txQuery = Transaction::whereMonth('date', $now->month)
             ->whereYear('date', $now->year);
 
@@ -39,9 +39,8 @@ class GetWealthStatusAction extends BaseAction
             $txQuery->where('user_id', $user->id);
         }
 
-        $txs = $txQuery->get();
-        $income = (float) ($txs->where('type', 'income')->sum('amount') ?: 0.0);
-        $expense = (float) ($txs->where('type', 'expense')->sum('amount') ?: 0.0);
+        $income = (float) ($txQuery->clone()->where('type', 'income')->sum('amount') ?: 0.0);
+        $expense = (float) ($txQuery->clone()->where('type', 'expense')->sum('amount') ?: 0.0);
 
         // 2. Asset & Goals (Tenant-Aware)
         $assetQuery = Asset::query();
@@ -65,10 +64,9 @@ class GetWealthStatusAction extends BaseAction
         $totalGoals = (float) $goalQuery->sum('current_amount');
         $totalHolidayFunds = (float) $holidayQuery->sum('funded_amount');
 
-        // 3. Loans & Debts
-        $loans = $loanQuery->get();
-        $debts = (float) ($loans->where('type', 'utang')->sum('remaining_amount') ?: 0.0);
-        $receivables = (float) ($loans->where('type', 'piutang')->sum('remaining_amount') ?: 0.0);
+        // 3. Loans & Debts - Optimized for Performance
+        $debts = (float) ($loanQuery->clone()->where('type', 'utang')->sum('remaining_amount') ?: 0.0);
+        $receivables = (float) ($loanQuery->clone()->where('type', 'piutang')->sum('remaining_amount') ?: 0.0);
 
         return [
             'month' => $now->toFormattedDateString(),

@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -34,13 +36,14 @@ use Spatie\Activitylog\Support\LogOptions;
 class Asset extends Model
 {
     /** @use HasFactory<AssetFactory> */
-    use AccountingJournalist, HasFactory, HasHouseholdScope, LogsActivity;
+    use AccountingJournalist, HasFactory, HasHouseholdScope, LogsActivity, SoftDeletes;
 
     protected $fillable = [
         'user_id',
         'household_id',
         'name',
         'type',
+        'currency',
         'quantity',
         'unit',
         'is_market_synced',
@@ -81,6 +84,16 @@ class Asset extends Model
     }
 
     /**
+     * @return HasOne<AssetPriceHistory, $this>
+     */
+    public function previousDayPrice(): HasOne
+    {
+        return $this->hasOne(AssetPriceHistory::class)
+            ->whereDate('recorded_at', '<', now()->toDateString())
+            ->latestOfMany('recorded_at');
+    }
+
+    /**
      * Scope for assets that should be synced with market rates.
      *
      * @param  Builder<Asset>  $query
@@ -98,11 +111,10 @@ class Asset extends Model
     {
         $currentPrice = $this->quantity > 0 ? $this->value / $this->quantity : 0;
 
-        // Get the latest history record before today
-        $previousRecord = $this->priceHistories()
-            ->whereDate('recorded_at', '<', now()->toDateString())
-            ->orderByDesc('recorded_at')
-            ->first();
+        // Use eager-loaded relationship if available
+        $previousRecord = $this->relationLoaded('previousDayPrice')
+            ? $this->previousDayPrice
+            : $this->previousDayPrice()->first();
 
         if (! $previousRecord || $previousRecord->price <= 0) {
             return 0.0;
@@ -122,11 +134,12 @@ class Asset extends Model
         return [
             'name' => 'encrypted',
             'type' => AssetType::class,
-            'value' => 'float',
-            'quantity' => 'float',
+            'currency' => 'string',
+            'value' => 'decimal:4',
+            'quantity' => 'decimal:18',
             'is_market_synced' => 'boolean',
             'last_synced_at' => 'datetime',
-            'invested_capital' => 'float',
+            'invested_capital' => 'decimal:4',
         ];
     }
 }

@@ -49,7 +49,7 @@ class WealthHistory extends Model
     protected function casts(): array
     {
         return [
-            'total_value' => 'encrypted:decimal:2',
+            'total_value' => 'decimal:4',
             'month' => 'integer',
             'year' => 'integer',
         ];

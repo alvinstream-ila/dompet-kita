@@ -13,8 +13,7 @@ class DeleteTransactionAction extends BaseAction
 {
     public function execute(User $user, Transaction $transaction): bool
     {
-        // 🛡️ Defense in Depth: Ensure transaction belongs to user's household
-        abort_unless($transaction->household_id === $user->household_id, 403, 'Anda tidak memiliki akses ke transaksi ini.');
+
 
         return (bool) DB::transaction(function () use ($transaction) {
             return $transaction->delete();

@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Database\Factories\HolidayFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -28,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Holiday extends Model
 {
     /** @use HasFactory<HolidayFactory> */
-    use HasFactory, HasHouseholdScope;
+    use HasFactory, HasHouseholdScope, SoftDeletes;
 
     /**
      * @var list<string>
@@ -66,9 +67,9 @@ class Holiday extends Model
     protected function casts(): array
     {
         return [
-            'budget' => 'decimal:2',
-            'funded_amount' => 'decimal:2',
-            'spent' => 'decimal:2',
+            'budget' => 'decimal:4',
+            'funded_amount' => 'decimal:4',
+            'spent' => 'decimal:4',
             'start_date' => 'date',
             'end_date' => 'date',
         ];

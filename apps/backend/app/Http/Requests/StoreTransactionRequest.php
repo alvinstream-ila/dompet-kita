@@ -35,6 +35,7 @@ class StoreTransactionRequest extends FormRequest
             'description' => ['required', 'string', 'max:255'],
             'note' => ['nullable', 'string', 'max:1000'],
             'receipt_url' => ['nullable', 'string', 'max:2048'],
+            'asset_id' => ['nullable', 'integer', 'exists:assets,id'],
         ];
     }
 }

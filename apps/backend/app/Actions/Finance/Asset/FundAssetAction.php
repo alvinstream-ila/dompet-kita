@@ -20,6 +20,9 @@ class FundAssetAction extends BaseAction
     public function execute(User $user, Asset $asset, array $data): Asset
     {
         return DB::transaction(function () use ($user, $asset, $data): Asset {
+            // 🛡️ Concurrency Lock: Ensure no other process modifies this asset during funding.
+            $asset = Asset::where('id', $asset->id)->lockForUpdate()->firstOrFail();
+
             $amount = (float) $data['amount'];
             $quantityChange = (float) ($data['quantity'] ?? 0.0);
             $sourceAssetId = $data['source_asset_id'] ?? null;
@@ -55,7 +58,7 @@ class FundAssetAction extends BaseAction
                 } else {
                     $sourceAssetQuery->where('user_id', $user->id);
                 }
-                $sourceAsset = $sourceAssetQuery->findOrFail($sourceAssetId);
+                $sourceAsset = $sourceAssetQuery->lockForUpdate()->findOrFail($sourceAssetId);
 
                 $journalDescription = "Investasi: {$asset->name} (dari {$sourceAsset->name})";
 

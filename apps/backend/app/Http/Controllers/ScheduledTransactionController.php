@@ -28,7 +28,6 @@ class ScheduledTransactionController extends Controller
         }
 
         $scheduled = ScheduledTransaction::query()
-            ->where('household_id', $user->household_id)
             ->latest()
             ->get();
 
@@ -57,7 +56,6 @@ class ScheduledTransactionController extends Controller
 
         $validated['status'] = 'active';
         $validated['user_id'] = $user->id;
-        $validated['household_id'] = $user->household_id;
 
         $scheduled = ScheduledTransaction::create($validated);
 

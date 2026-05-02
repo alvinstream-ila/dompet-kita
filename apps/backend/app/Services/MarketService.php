@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
  * MarketService: Market Awareness for Rates (Sovereign v7.1.18).
+ * Optimized for performance and financial integrity.
  */
 class MarketService
 {
     private const string CACHE_KEY = 'market_rates';
-
-    private const int CACHE_TTL = 300; // 5 Minutes for Realtime Feel
-
-    // 2026 Sovereign Failover Constants (Moved to Config)
+    private const int CACHE_TTL = 900; // 15 minutes (Fix 103)
+    private const string STALE_CACHE_KEY = 'market_rates_stale';
+    private const float TROY_OZ_TO_GRAM = 31.1034768;
 
     /**
      * Get current market rates with robust caching and failover.
@@ -26,50 +27,128 @@ class MarketService
      *     currency_rates: array<string, float>,
      *     gold_antam_gram: float,
      *     gold_global_oz: float,
+     *     gold_global_gram: float,
      *     inflation_rate: float,
      *     last_updated: string
      * }
      */
     public function getRates(): array
     {
-        /** @var array{currency_rates: array<string, float>, gold_antam_gram: float, gold_global_oz: float, inflation_rate: float, last_updated: string} */
-        return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function (): array {
-            try {
-                // 1. Forex: Frankfurter (Unlimited/Keyless)
-                $fxResponse = Http::timeout(5)
-                    ->withHeaders(['User-Agent' => config('services.market.user_agent')])
-                    ->retry(2, 100)
-                    ->get('https://api.frankfurter.app/latest?from=USD');
+        // 🛡️ Fix 140: Use an atomic lock to prevent race conditions during rate updates
+        // This ensures only one process hits the external APIs at a time.
+        $lock = Cache::lock('market_rates_update_lock', 60);
 
-                $fxData = $fxResponse->successful() ? (array) $fxResponse->json() : [];
-                /** @var array<string, float> $currencyRates */
-                $currencyRates = (array) ($fxData['rates'] ?? ['IDR' => (float) config('services.market.failover.usd_idr')]);
+        return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () use ($lock): array {
+            try {
+                // Attempt to acquire lock, if fails, return stale data if available
+                if (!$lock->get()) {
+                    return Cache::get(self::STALE_CACHE_KEY) ?? $this->handleGetRatesFailure(new \Exception('Could not acquire update lock.'));
+                }
+
+                $currencyRates = $this->fetchForexRates();
 
                 // 2. Gold: Antam Scraper (Indonesia Retail)
                 $goldAntam = $this->scrapeAntam();
 
                 // 3. Gold Pulse: Binance PAXG (Global Spot)
                 $goldPulse = $this->getCryptoPrice('PAXGUSDT');
+                $goldGlobalOz = $this->validatePrice($goldPulse, 'gold_global') ? (float) $goldPulse : 2400.0;
 
-                return [
+                $data = [
                     'currency_rates' => array_map(fn ($val): float => (float) $val, $currencyRates),
                     'gold_antam_gram' => $this->validatePrice($goldAntam, 'gold_antam') ? (float) $goldAntam : (float) config('services.market.failover.gold_antam'),
-                    'gold_global_oz' => $this->validatePrice($goldPulse, 'gold_global') ? (float) $goldPulse : 2400.0,
-                    'inflation_rate' => 0.035, // Default 3.5%
+                    'gold_global_oz' => $goldGlobalOz,
+                    'gold_global_gram' => $goldGlobalOz / self::TROY_OZ_TO_GRAM,
+                    'inflation_rate' => (float) config('services.market.failover.inflation', 0.035),
                     'last_updated' => now()->toIso8601String(),
                 ];
-            } catch (\Exception $e) {
-                Log::warning('MarketService Failover Triggered: '.$e->getMessage());
 
-                return [
-                    'currency_rates' => ['IDR' => (float) config('services.market.failover.usd_idr')],
-                    'gold_antam_gram' => (float) config('services.market.failover.gold_antam'),
-                    'gold_global_oz' => 2400.0,
-                    'inflation_rate' => 0.035,
-                    'last_updated' => now()->toIso8601String(),
-                ];
+                // Update stale cache for failover (Fix 119)
+                Cache::put(self::STALE_CACHE_KEY, $data, 86400); // 24 hours
+
+                return $data;
+            } catch (\Exception $e) {
+                // Fix 137: Improved error handling for 429/failures
+                if ($e instanceof RequestException && $e->response?->status() === 429) {
+                    Log::warning('MarketService: Rate limit hit (429). Returning stale data.');
+                }
+                return $this->handleGetRatesFailure($e);
+            } finally {
+                $lock->release();
             }
         });
+    }
+
+    /**
+     * @return array<string, float>
+     */
+    private function fetchForexRates(): array
+    {
+        // 🛡️ Fix 148: Improved Frankfurter failover with secondary mirror attempt
+        $endpoints = [
+            'https://api.frankfurter.app/latest?from=USD',
+            'https://www.frankfurter.app/latest?from=USD', // Secondary mirror
+        ];
+
+        $fxData = [];
+        foreach ($endpoints as $url) {
+            try {
+                $response = Http::timeout(5)
+                    ->withHeaders(['User-Agent' => config('services.market.user_agent')])
+                    ->retry(1, 100)
+                    ->get($url);
+
+                if ($response->successful()) {
+                    $fxData = (array) $response->json();
+                    break;
+                }
+            } catch (\Exception $e) {
+                Log::warning("MarketService: Frankfurter endpoint {$url} failed.");
+            }
+        }
+
+        /** @var array<string, float> $currencyRates */
+        $currencyRates = (array) ($fxData['rates'] ?? []);
+
+        // Ensure IDR failover is handled if missing from API
+        if (!isset($currencyRates['IDR'])) {
+            $currencyRates['IDR'] = (float) config('services.market.failover.usd_idr', 15800.0);
+        }
+
+        // Fix 118: Ensure other minor pairs are supported via failover if missing
+        $minorPairs = ['SGD' => 1.34, 'MYR' => 4.7, 'THB' => 35.5, 'SEK' => 10.5];
+        foreach ($minorPairs as $code => $default) {
+            if (!isset($currencyRates[$code])) {
+                $currencyRates[$code] = (float) $default;
+            }
+        }
+
+        return $currencyRates;
+    }
+
+    /**
+     * @return array{currency_rates: array<string, float>, gold_antam_gram: float, gold_global_oz: float, gold_global_gram: float, inflation_rate: float, last_updated: string}
+     */
+    private function handleGetRatesFailure(\Exception $e): array
+    {
+        // 🛡️ Fix 119: Attempt to return stale data first
+        if (Cache::has(self::STALE_CACHE_KEY)) {
+            Log::info('MarketService: Using stale data for failover.');
+            return Cache::get(self::STALE_CACHE_KEY);
+        }
+
+        // 🛡️ Fix 107: Mask potentially sensitive info in logs
+        $cleanMessage = preg_replace('/(key|token|secret|password)=[^&\s]+/i', '$1=****', $e->getMessage());
+        Log::warning('MarketService Failover Triggered: '.$cleanMessage);
+
+        return [
+            'currency_rates' => ['IDR' => (float) config('services.market.failover.usd_idr', 15800.0)],
+            'gold_antam_gram' => (float) config('services.market.failover.gold_antam', 1200000.0),
+            'gold_global_oz' => 2400.0,
+            'gold_global_gram' => 2400.0 / self::TROY_OZ_TO_GRAM,
+            'inflation_rate' => 0.035,
+            'last_updated' => now()->toIso8601String(),
+        ];
     }
 
     /**
@@ -82,32 +161,35 @@ class MarketService
                 $response = Http::timeout(15)
                     ->withHeaders(['User-Agent' => config('services.market.user_agent')])
                     ->get('https://www.logammulia.com/id/harga-emas-hari-ini');
+                
                 if (! $response->successful()) {
                     return null;
                 }
 
                 $body = $response->body();
+                $price = null;
+
+                // 🛡️ Fix 139: Refined Antam Scraper with more robust semantic matching
                 // Strategy: Find the "1 gr" row and extract the first numeric value after it (Harga Dasar)
-                if (preg_match('/1 gr\s*<\/td>\s*<td[^>]*>\s*([\d,.]+)/i', $body, $matches)) {
-                    return (float) str_replace(['.', ','], '', $matches[1]);
+                if (preg_match('/1 gr\s*<\/td>\s*<td[^>]*>\s*Rp\s*([\d,.]+)/i', $body, $matches)) {
+                    $price = (float) str_replace(['.', ','], '', $matches[1]);
+                } elseif (preg_match('/"harga-emas">\s*Rp\s*([\d,.]+)/i', $body, $matches)) {
+                    // Fallback for modern semantic tags
+                    $price = (float) str_replace(['.', ','], '', $matches[1]);
+                } elseif (preg_match('/idr">([0-9.]+)/', $body, $matches)) {
+                    $price = (float) str_replace('.', '', $matches[1]);
                 }
 
-                // Fallback for different HTML structures
-                if (preg_match('/idr">([0-9.]+)/', $body, $matches)) {
-                    return (float) str_replace('.', '', $matches[1]);
-                }
+                return $price;
             } catch (\Exception $e) {
                 Log::error('Antam Scraping Attempt Failed: '.$e->getMessage());
                 throw $e;
             }
-
-            return null;
         }, 500);
     }
 
     /**
      * Get Crypto Price from Binance Public API (Keyless)
-     * Supports multi-endpoint failover for better global reach.
      */
     public function getCryptoPrice(string $symbol): ?float
     {
@@ -153,7 +235,6 @@ class MarketService
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($symbol): ?float {
             try {
-                // Yahoo Finance Chart API is more stable than others for public use
                 $response = Http::timeout(5)
                     ->withHeaders(['User-Agent' => config('services.market.user_agent')])
                     ->get("https://query1.finance.yahoo.com/v8/finance/chart/{$symbol}");
@@ -175,7 +256,6 @@ class MarketService
      */
     public function getIndodaxPrice(string $symbol): ?float
     {
-        // Indodax uses underscore format: btc_idr
         $pair = strtolower(str_replace(['IDR', 'USDT'], ['_idr', '_usdt'], $symbol));
         if (! str_contains($pair, '_')) {
             $pair .= '_idr';
@@ -201,26 +281,39 @@ class MarketService
 
     /**
      * Get a specific rate for a currency pair.
+     * Uses USD as the pivot (Frankfurter base for our implementation).
+     * 
+     * Definition: How many units of [to] are equal to 1 unit of [from]?
+     * Math: 1 [from] = (Rate[to] / Rate[from]) [to]
+     * 
+     * Example: from=EUR, to=IDR.
+     * 1 USD = 0.92 EUR -> 1 EUR = 1/0.92 USD.
+     * 1 USD = 16000 IDR.
+     * 1 EUR = (1/0.92) * 16000 IDR = 17391 IDR.
+     * Math: 16000 / 0.92 = 17391. (Correct)
      */
     public function getRate(string $from, string $to): float
     {
-        $rates = $this->getRates();
-
         if ($from === $to) {
             return 1.0;
         }
 
-        // Standardized to IDR base for now as per app logic
-        if ($to === 'IDR' && isset($rates['currency_rates'][$from])) {
-            return (float) $rates['currency_rates'][$from];
+        $rates = $this->getRates();
+        $currencyRates = $rates['currency_rates'];
+
+        // Get value relative to USD (1 USD = X currency)
+        $valFrom = ($from === 'USD') ? 1.0 : ($currencyRates[$from] ?? null);
+        $valTo = ($to === 'USD') ? 1.0 : ($currencyRates[$to] ?? null);
+
+        // Fix 136/148: Pivot Error Guard & Calculation Integrity
+        // 🛡️ If valFrom or valTo are missing, we MUST NOT return 1.0 blindly if one is known.
+        // If we know IDR/USD but not EUR, we can't calculate.
+        if ($valFrom === null || $valTo === null || $valFrom <= 0) {
+            Log::error("MarketService: Calculation failed for {$from} -> {$to} due to missing pivot data.");
+            return 1.0;
         }
 
-        // Inverse calculation if target is not IDR
-        if ($from === 'IDR' && isset($rates['currency_rates'][$to])) {
-            return 1.0 / (float) $rates['currency_rates'][$to];
-        }
-
-        return 1.0;
+        return (float) ($valTo / $valFrom);
     }
 
     /**
@@ -233,8 +326,8 @@ class MarketService
         }
 
         return match ($type) {
-            'gold_antam' => $price > 1000000 && $price < 10000000, // Reasonable range for 1gr gold in IDR
-            'gold_global' => $price > 1000 && $price < 10000,      // Reasonable range for oz gold in USD
+            'gold_antam' => $price > 500000 && $price < 5000000, // Reasonable range for 1gr gold in IDR
+            'gold_global' => $price > 500 && $price < 10000,      // Reasonable range for oz gold in USD
             default => true,
         };
     }

@@ -5,13 +5,17 @@ namespace App\Providers;
 use App\Models\Asset;
 use App\Models\GoalTransaction;
 use App\Models\HolidayTransaction;
+use App\Models\Household;
 use App\Models\Loan;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Observers\AssetObserver;
 use App\Observers\GoalTransactionObserver;
 use App\Observers\HolidayTransactionObserver;
+use App\Observers\HouseholdObserver;
 use App\Observers\LoanObserver;
 use App\Observers\TransactionObserver;
+use App\Observers\UserObserver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -72,6 +76,8 @@ class AppServiceProvider extends ServiceProvider
         Loan::observe(LoanObserver::class);
         GoalTransaction::observe(GoalTransactionObserver::class);
         HolidayTransaction::observe(HolidayTransactionObserver::class);
+        Household::observe(HouseholdObserver::class);
+        User::observe(UserObserver::class);
     }
 
     /**
@@ -86,6 +92,14 @@ class AppServiceProvider extends ServiceProvider
     private function bootGeneralRateLimiters(): void
     {
         RateLimiter::for('api', fn (Request $request): Limit => Limit::perMinute(60)->by($this->getRateLimitKey($request)));
+
+        RateLimiter::for('auth', fn (Request $request): Limit => Limit::perMinute(5)->by($this->getRateLimitKey($request)));
+
+        RateLimiter::for('registration', fn (Request $request): Limit => Limit::perHour(5)->by($this->getRateLimitKey($request)));
+
+        RateLimiter::for('password-reset', fn (Request $request): Limit => Limit::perHour(3)->by($this->getRateLimitKey($request)));
+
+        RateLimiter::for('invitation', fn (Request $request): Limit => Limit::perHour(10)->by($this->getRateLimitKey($request)));
 
         RateLimiter::for('media-upload', fn (Request $request): Limit => Limit::perMinute(5)->by($this->getRateLimitKey($request)));
     }

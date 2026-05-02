@@ -1,4 +1,734 @@
 
- [ERROR] Your config already enables dead code set.                                                                    
-         Remove "->withDeadCodeLevel()" as it only duplicates it, or remove dead code set.                             
+29 files with changes
+=====================
+
+1) app/Actions/AI/SystemHealthCheckAction.php:62
+
+    ---------- begin diff ----------
+@@ Line 62 @@
+         try {
+             $pong = Redis::connection()->ping();
+             // Assert we got a real PONG response (some drivers return '+PONG' or true)
+-            if ($pong !== '+PONG' && $pong !== true && $pong !== 1) {
++            if (!in_array($pong, ['+PONG', true, 1], true)) {
+                 return ['status' => 'error', 'message' => 'Redis responded with unexpected value: '.json_encode($pong)];
+             }
+    ----------- end diff -----------
+
+Applied rules:
+ * RepeatedAndNotEqualToNotInArrayRector
+
+
+2) app/Actions/Finance/Tax/CalculateTaxAction.php:51
+
+    ---------- begin diff ----------
+@@ Line 51 @@
+         $totalIncome = (float) Transaction::where('household_id', $user->household_id)
+             ->where('type', TransactionType::INCOME)
+             ->whereBetween('date', [$startOfYear, $endOfYear])
+-            ->where(function ($query) {
++            ->where(function ($query): void {
+                 $query->whereNull('metadata->auto_journal')
+                     ->orWhere('metadata->auto_journal', false);
+             })
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+3) app/Actions/Finance/Transaction/DeleteTransactionAction.php:15
+
+    ---------- begin diff ----------
+@@ Line 15 @@
+     {
+
+
+-        return (bool) DB::transaction(function () use ($transaction) {
+-            return $transaction->delete();
+-        });
++        return (bool) DB::transaction(fn() => $transaction->delete());
+     }
+ }
+    ----------- end diff -----------
+
+Applied rules:
+ * ClosureToArrowFunctionRector
+
+
+4) app/Actions/Finance/Transaction/StoreTransactionAction.php:18
+
+    ---------- begin diff ----------
+@@ Line 18 @@
+     {
+         $data['user_id'] = $user->id;
+
+-        return DB::transaction(function () use ($data) {
+-            return Transaction::create($data);
+-        });
++        return DB::transaction(fn() => Transaction::create($data));
+     }
+ }
+    ----------- end diff -----------
+
+Applied rules:
+ * ClosureToArrowFunctionRector
+
+
+5) database/factories/HouseholdFactory.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace Database\Factories;
+
+ use App\Models\Household;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+6) database/migrations/2026_05_01_123546_add_household_id_to_legacy_and_login_tables.php:8
+
+    ---------- begin diff ----------
+@@ Line 8 @@
+ {
+     public function up(): void
+     {
+-        Schema::table('legacy_vault_reports', function (Blueprint $table) {
++        Schema::table('legacy_vault_reports', function (Blueprint $table): void {
+             $table->foreignUuid('household_id')->nullable()->after('id')->constrained()->onDelete('cascade');
+         });
+
+-        Schema::table('login_histories', function (Blueprint $table) {
++        Schema::table('login_histories', function (Blueprint $table): void {
+             $table->foreignUuid('household_id')->nullable()->after('id')->constrained()->onDelete('cascade');
+         });
+     }
+@@ Line 19 @@
+
+     public function down(): void
+     {
+-        Schema::table('legacy_vault_reports', function (Blueprint $table) {
++        Schema::table('legacy_vault_reports', function (Blueprint $table): void {
+             $table->dropForeign(['household_id']);
+             $table->dropColumn('household_id');
+         });
+
+-        Schema::table('login_histories', function (Blueprint $table) {
++        Schema::table('login_histories', function (Blueprint $table): void {
+             $table->dropForeign(['household_id']);
+             $table->dropColumn('household_id');
+         });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+7) database/migrations/2026_05_01_123641_add_household_id_to_asset_price_and_firewall_tables.php:8
+
+    ---------- begin diff ----------
+@@ Line 8 @@
+ {
+     public function up(): void
+     {
+-        Schema::table('asset_price_histories', function (Blueprint $table) {
++        Schema::table('asset_price_histories', function (Blueprint $table): void {
+             $table->foreignUuid('household_id')->nullable()->after('id')->constrained()->onDelete('cascade');
+         });
+
+-        Schema::table('firewall_logs', function (Blueprint $table) {
++        Schema::table('firewall_logs', function (Blueprint $table): void {
+             $table->foreignUuid('household_id')->nullable()->after('id')->constrained()->onDelete('cascade');
+         });
+     }
+@@ Line 19 @@
+
+     public function down(): void
+     {
+-        Schema::table('asset_price_histories', function (Blueprint $table) {
++        Schema::table('asset_price_histories', function (Blueprint $table): void {
+             $table->dropForeign(['household_id']);
+             $table->dropColumn('household_id');
+         });
+
+-        Schema::table('firewall_logs', function (Blueprint $table) {
++        Schema::table('firewall_logs', function (Blueprint $table): void {
+             $table->dropForeign(['household_id']);
+             $table->dropColumn('household_id');
+         });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+8) database/migrations/2026_05_01_150000_harden_household_schema.php:57
+
+    ---------- begin diff ----------
+@@ Line 57 @@
+         }
+
+         // 3. Enforce NOT NULL constraints
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->uuid('household_id')->nullable(false)->change();
+         });
+
+         foreach ($tables as $table) {
+             if (Schema::hasTable($table) && Schema::hasColumn($table, 'household_id')) {
+-                Schema::table($table, function (Blueprint $t) {
++                Schema::table($table, function (Blueprint $t): void {
+                     $t->uuid('household_id')->nullable(false)->change();
+                 });
+             }
+@@ Line 93 @@
+
+         foreach ($tables as $table) {
+             if (Schema::hasTable($table) && Schema::hasColumn($table, 'household_id')) {
+-                Schema::table($table, function (Blueprint $t) {
++                Schema::table($table, function (Blueprint $t): void {
+                     $t->uuid('household_id')->nullable(true)->change();
+                 });
+             }
+         }
+
+-        Schema::table('users', function (Blueprint $table) {
++        Schema::table('users', function (Blueprint $table): void {
+             $table->uuid('household_id')->nullable(true)->change();
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+9) database/migrations/2026_05_02_044632_add_household_id_to_partner_invitations_table.php:11
+
+    ---------- begin diff ----------
+@@ Line 11 @@
+      */
+     public function up(): void
+     {
+-        Schema::table('partner_invitations', function (Blueprint $table) {
++        Schema::table('partner_invitations', function (Blueprint $table): void {
+             $table->uuid('household_id')->nullable()->after('inviter_id')->index();
+         });
+     }
+@@ Line 21 @@
+      */
+     public function down(): void
+     {
+-        Schema::table('partner_invitations', function (Blueprint $table) {
++        Schema::table('partner_invitations', function (Blueprint $table): void {
+             $table->dropColumn('household_id');
+         });
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+10) app/Observers/GoalTransactionObserver.php:64
+
+    ---------- begin diff ----------
+@@ Line 64 @@
+             } elseif ($type === 'withdrawal') {
+                 $goal->decrement('current_amount', $amount);
+             }
+-        } else { // remove
+-            if ($type === 'deposit') {
+-                $goal->decrement('current_amount', $amount);
+-            } elseif ($type === 'withdrawal') {
+-                $goal->increment('current_amount', $amount);
+-            }
++        } elseif ($type === 'deposit') {
++            // remove
++            $goal->decrement('current_amount', $amount);
++        } elseif ($type === 'withdrawal') {
++            $goal->increment('current_amount', $amount);
+         }
+     }
+    ----------- end diff -----------
+
+Applied rules:
+ * ShortenElseIfRector
+
+
+11) app/Observers/TransactionObserver.php:106
+
+    ---------- begin diff ----------
+@@ Line 106 @@
+      */
+     private function reverseAssetAdjustment(?Asset $asset, float $amount, mixed $type): void
+     {
+-        if (! $asset) {
++        if (!$asset instanceof \App\Models\Asset) {
+             return;
+         }
+    ----------- end diff -----------
+
+Applied rules:
+ * ExplicitBoolCompareRector
+
+
+12) app/Observers/UserObserver.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Observers;
+
+ use App\Models\User;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+13) app/Providers/AppServiceProvider.php:142
+
+    ---------- begin diff ----------
+@@ Line 142 @@
+         if (($this->app->environment('production') || $isSecure) && ! $this->app->environment('testing')) {
+             config(['logging.channels.stack.level' => 'info']);
+             URL::forceScheme('https');
+-            if ($appUrl) {
++            if ($appUrl !== '' && $appUrl !== '0') {
+                 URL::useOrigin($appUrl);
+             }
+         }
+    ----------- end diff -----------
+
+Applied rules:
+ * ExplicitBoolCompareRector
+
+
+14) app/Services/AI/GeminiProvider.php:62
+
+    ---------- begin diff ----------
+@@ Line 62 @@
+             $output = [
+                 'text' => $response->text(),
+                 'usage' => [
+-                    'prompt_tokens' => (int) ($usage->promptTokenCount),
++                    'prompt_tokens' => $usage->promptTokenCount,
+                     'completion_tokens' => (int) ($usage->candidatesTokenCount),
+-                    'total_tokens' => (int) ($usage->totalTokenCount),
++                    'total_tokens' => $usage->totalTokenCount,
+                 ],
+             ];
+    ----------- end diff -----------
+
+Applied rules:
+ * RecastingRemovalRector
+
+
+15) app/Actions/System/GetSystemStatusAction.php:83
+
+    ---------- begin diff ----------
+@@ Line 83 @@
+
+         if ($householdId) {
+             $memberIds = User::where('household_id', $householdId)->pluck('id');
+-            $alertsQuery->where(function ($q) use ($memberIds, $householdId) {
++            $alertsQuery->where(function ($q) use ($memberIds, $householdId): void {
+                 $q->whereIn('causer_id', $memberIds)
+                     ->orWhere('properties->household_id', $householdId);
+             });
+    ----------- end diff -----------
+
+Applied rules:
+ * AddClosureVoidReturnTypeWhereNoReturnRector
+
+
+16) app/Console/Commands/CheckLegacyInactivity.php:95
+
+    ---------- begin diff ----------
+@@ Line 95 @@
+             $notificationData = [
+                 'filename' => $filename,
+                 'financial_summary' => $reportData['financial_summary'],
+-                'vault_url' => (string) config('app.frontend_url', '').'/legacy-vault/claim?token='.bin2hex(random_bytes(16)),
++                'vault_url' => config('app.frontend_url', '').'/legacy-vault/claim?token='.bin2hex(random_bytes(16)),
+
+             ];
+    ----------- end diff -----------
+
+Applied rules:
+ * RemoveConcatAutocastRector
+
+
+17) tests/Feature/Finance/InsightDeduplicationTest.php:14
+
+    ---------- begin diff ----------
+@@ Line 14 @@
+ {
+     use RefreshDatabase;
+
+-    private const ENDPOINT = '/api/ai/quantum-insights';
++    private const string ENDPOINT = '/api/ai/quantum-insights';
+
+     public function test_insights_are_deduplicated_at_household_level(): void
+     {
+    ----------- end diff -----------
+
+Applied rules:
+ * AddTypeToConstRector
+
+
+18) tests/Feature/Finance/MultiTenantSecurityTest.php:74
+
+    ---------- begin diff ----------
+@@ Line 74 @@
+         /** @var Expectation $expectation */
+         $expectation = $mockAi->expects('generateText');
+         $expectation->once()
+-            ->with(Mockery::on(function (string $prompt): bool {
++            ->with(Mockery::on(
+                 // The prompt should contain the 1M income but NOT the 50M income
+-                return str_contains($prompt, '1000000') && ! str_contains($prompt, '50000000');
+-            }))
++                fn(string $prompt): bool => str_contains($prompt, '1000000') && ! str_contains($prompt, '50000000')))
+             ->andReturn(json_encode(['findings' => []]));
+
+         $this->app->instance(AiProviderManager::class, $mockAi);
+    ----------- end diff -----------
+
+Applied rules:
+ * ClosureToArrowFunctionRector
+
+
+19) tests/Feature/HouseholdLifecycleTest.php:19
+
+    ---------- begin diff ----------
+@@ Line 19 @@
+
+     protected function enableSudo(User $user)
+     {
+-        $fingerprint = sha1('127.0.0.1' . 'Symfony');
++        $fingerprint = sha1('127.0.0.1Symfony');
+         \Illuminate\Support\Facades\Cache::put("sudo_mode_{$user->id}_default", $fingerprint, now()->addMinutes(10));
+     }
+
+-    public function test_it_prevents_joining_a_household_that_is_already_full()
++    public function test_it_prevents_joining_a_household_that_is_already_full(): void
+     {
+         // 1. Setup a full household (2 members)
+         $inviter = User::factory()->create();
+@@ Line 56 @@
+         $response->assertJsonFragment(['message' => 'Household sudah mencapai kapasitas maksimal.']);
+     }
+
+-    public function test_it_cleans_up_orphaned_households_on_unlink()
++    public function test_it_cleans_up_orphaned_households_on_unlink(): void
+     {
+         // 1. Setup a partnered household
+         /** @var User $user1 */
+@@ Line 87 @@
+         $this->assertDatabaseHas('households', ['id' => $user2->household_id]);
+     }
+
+-    public function test_it_prevents_currency_change_if_assets_exist()
++    public function test_it_prevents_currency_change_if_assets_exist(): void
+     {
+         $household = new Household();
+         $household->id = (string) Str::uuid();
+@@ Line 126 @@
+         $response->assertJsonFragment(['message' => 'Mata uang tidak dapat diubah karena Anda sudah memiliki aset terdaftar.']);
+     }
+
+-    public function test_it_masks_partner_email_in_privacy_mode()
++    public function test_it_masks_partner_email_in_privacy_mode(): void
+     {
+         /** @var User $user1 */
+         $user1 = User::factory()->create(['is_privacy_mode' => true]);
+    ----------- end diff -----------
+
+Applied rules:
+ * JoinStringConcatRector
+ * AddTestsVoidReturnTypeWhereNoReturnRector
+
+
+20) tests/Feature/MultiTenancyIsolationTest.php:86
+
+    ---------- begin diff ----------
+@@ Line 86 @@
+         $household1->update(['owner_id' => $user1->id]);
+
+         // 🛡️ Activate Sudo Mode for User 1 (Matching SudoMode middleware logic)
+-        $fingerprint = sha1('127.0.0.1' . 'Symfony'); // Default IP/UA in tests
++        $fingerprint = sha1('127.0.0.1Symfony'); // Default IP/UA in tests
+         Cache::put("sudo_mode_{$user1->id}_default", $fingerprint, 900);
+
+-        $report1 = LegacyVaultReport::create([
++        LegacyVaultReport::create([
+             'household_id' => $household1->id,
+             'user_id' => $user1->id,
+             'storage_path' => 'test1.pdf',
+    ----------- end diff -----------
+
+Applied rules:
+ * JoinStringConcatRector
+ * RemoveUnusedVariableAssignRector
+
+
+21) tests/Feature/SecurityBugFixTest.php:17
+
+    ---------- begin diff ----------
+@@ Line 17 @@
+ {
+     use RefreshDatabase;
+
+-    private const RESET_EMAIL = 'reset@example.com';
++    private const string RESET_EMAIL = 'reset@example.com';
+
+-    private const SUDO_TEST_ROUTE = '/api/test/ai-health';
++    private const string SUDO_TEST_ROUTE = '/api/test/ai-health';
+
+     public function test_email_verification_code_is_hashed_and_verifiable(): void
+     {
+@@ Line 32 @@
+
+         $user->sendEmailVerificationNotification();
+
+-        Notification::assertSentTo($user, VerifyEmailNotification::class, function ($notification) use ($user) {
++        Notification::assertSentTo($user, VerifyEmailNotification::class, function ($notification) use ($user): true {
+             $code = $notification->code;
+
+             // Verify that it's hashed in DB
+@@ Line 70 @@
+
+         $response->assertStatus(200);
+
+-        Notification::assertSentTo($user, ResetPasswordOTPNotification::class, function ($notification) use ($user) {
++        Notification::assertSentTo($user, ResetPasswordOTPNotification::class, function ($notification) use ($user): true {
+             $code = $notification->code;
+
+             // Verify that it's hashed in DB
+    ----------- end diff -----------
+
+Applied rules:
+ * AddTypeToConstRector
+ * ClosureReturnTypeRector
+
+
+22) app/Services/FinancialIntelligenceService.php:63
+
+    ---------- begin diff ----------
+@@ Line 63 @@
+             ->sum('amount');
+
+         // Total available liquidity is current liquid assets + net flow of this month
+-        $currentMonthNet = (float) $monthlyIncome - (float) $monthlyExpense;
+-        $totalLiquidity = max(0.0, (float) $liquidAssets + $currentMonthNet);
++        $currentMonthNet = $monthlyIncome - $monthlyExpense;
++        $totalLiquidity = max(0.0, $liquidAssets + $currentMonthNet);
+
+         // 4. Calculate Average Daily Expense (Last 30 days) for Burn Rate
+         $thirtyDaysAgo = Carbon::now()->subDays(self::CALCULATION_DAYS);
+@@ Line 77 @@
+
+         $usageDays = is_string($firstTxDate)
+             ? max(1, min(self::CALCULATION_DAYS, (int) Carbon::parse($firstTxDate)->diffInDays(Carbon::now()) + 1))
+-            : (int) self::CALCULATION_DAYS;
++            : self::CALCULATION_DAYS;
+
+         $totalHistoryExpense = (float) Transaction::query()
+             ->withoutGlobalScopes()
+@@ Line 86 @@
+             ->where('date', '>=', $thirtyDaysAgo)
+             ->sum('amount');
+
+-        $dailyBurnRate = (float) ($totalHistoryExpense / $usageDays);
++        $dailyBurnRate = $totalHistoryExpense / $usageDays;
+
+         if ($dailyBurnRate <= 0) {
+             return [
+    ----------- end diff -----------
+
+Applied rules:
+ * RecastingRemovalRector
+
+
+23) app/Services/MarketService.php:52
+
+    ---------- begin diff ----------
+@@ Line 52 @@
+                 $goldPulse = $this->getCryptoPrice('PAXGUSDT');
+
+                 return [
+-                    'currency_rates' => array_map(fn ($val): float => (float) $val, $currencyRates),
++                    'currency_rates' => array_map(fn (float $val): float => $val, $currencyRates),
+                     'gold_antam_gram' => $this->validatePrice($goldAntam, 'gold_antam') ? (float) $goldAntam : (float) config('services.market.failover.gold_antam'),
+                     'gold_global_oz' => $this->validatePrice($goldPulse, 'gold_global') ? (float) $goldPulse : 2400.0,
+                     'inflation_rate' => 0.035, // Default 3.5%
+@@ Line 212 @@
+
+         // Standardized to IDR base for now as per app logic
+         if ($to === 'IDR' && isset($rates['currency_rates'][$from])) {
+-            return (float) $rates['currency_rates'][$from];
++            return $rates['currency_rates'][$from];
+         }
+
+         // Inverse calculation if target is not IDR
+         if ($from === 'IDR' && isset($rates['currency_rates'][$to])) {
+-            return 1.0 / (float) $rates['currency_rates'][$to];
++            return 1.0 / $rates['currency_rates'][$to];
+         }
+
+         return 1.0;
+    ----------- end diff -----------
+
+Applied rules:
+ * RecastingRemovalRector
+ * AddArrayFunctionClosureParamTypeRector
+
+
+24) app/Traits/AccountingJournalist.php:75
+
+    ---------- begin diff ----------
+@@ Line 75 @@
+
+         // Find exact context match, or fallback to the legacy one (which has no context yet)
+         /** @var Transaction|null $transaction */
+-        $transaction = $transactions->first(function (Transaction $t) use ($context) {
+-            return isset($t->metadata['journal_context']) && $t->metadata['journal_context'] === $context;
+-        })
+-            ?? $transactions->first(function (Transaction $t) {
+-                return ! isset($t->metadata['journal_context']);
+-            });
++        $transaction = $transactions->first(fn(Transaction $t) => isset($t->metadata['journal_context']) && $t->metadata['journal_context'] === $context)
++            ?? $transactions->first(fn(Transaction $t) => ! isset($t->metadata['journal_context']));
+
+         $mergedMetadata = array_merge($transaction ? ($transaction->metadata ?? []) : [], $metadata, [
+             'auto_journal' => true,
+@@ Line 147 @@
+                 $query->where('user_id', $model->user_id);
+             }
+
+-            $query->where('metadata->source_type', get_class($model))
++            $query->where('metadata->source_type', $model::class)
+                 ->where('metadata->source_id', $model->id)
+                 ->delete();
+         });
+    ----------- end diff -----------
+
+Applied rules:
+ * ClosureToArrowFunctionRector
+ * ClassOnObjectRector
+
+
+25) app/Http/Controllers/LoanController.php:110
+
+    ---------- begin diff ----------
+@@ Line 110 @@
+         $month = $request->integer('month', now()->month);
+         $year = $request->integer('year', now()->year);
+
+-        $reportData = $this->prepareReportData($user, $month, $year);
++        $reportData = $this->prepareReportData($month, $year);
+
+         // Handle PDF Format
+         if ($request->query('format') === 'pdf') {
+@@ Line 160 @@
+      *   carry_over: array{items: array<int, array<string, mixed>>, total_piutang: float, total_hutang: float}
+      * }
+      */
+-    private function prepareReportData(User $user, int $month, int $year): array
++    private function prepareReportData(int $month, int $year): array
+     {
+         $startDate = Carbon::create($year, $month, 1)?->startOfMonth() ?? now()->startOfMonth();
+         $endDate = $startDate->copy()->endOfMonth();
+    ----------- end diff -----------
+
+Applied rules:
+ * RemoveUnusedPrivateMethodParameterRector
+
+
+26) app/Http/Controllers/TransactionController.php:215
+
+    ---------- begin diff ----------
+@@ Line 215 @@
+
+     public function reportData(Request $request): JsonResponse
+     {
+-        /** @var User $user */
+-        $user = $request->user();
++        $request->user();
+
+         $month = $request->filled('month') ? (int) $request->integer('month') : null;
+         $year = $request->filled('year') ? (int) $request->integer('year') : null;
+    ----------- end diff -----------
+
+Applied rules:
+ * RemoveUnusedVariableAssignRector
+ * RemoveNonExistingVarAnnotationRector
+
+
+27) app/Http/Middleware/UnkeyMiddleware.php:48
+
+    ---------- begin diff ----------
+@@ Line 48 @@
+                     if ($unkeyRes->failed()) {
+                         // Do NOT cache error responses — fail open with a 500
+                         Log::error('UNKEY_VERIFICATION_FAILED', ['status' => $unkeyRes->status()]);
+-                        $response = $this->errorResponse('Terjadi kesalahan pada sistem otentikasi. Silakan coba lagi.', 500);
+
+-                        return $response;
++                        return $this->errorResponse('Terjadi kesalahan pada sistem otentikasi. Silakan coba lagi.', 500);
+                     }
+
+                     $data = $unkeyRes->json();
+    ----------- end diff -----------
+
+Applied rules:
+ * SimplifyUselessVariableRector
+
+
+28) app/Http/Requests/UpdateUserRequest.php:19
+
+    ---------- begin diff ----------
+@@ Line 19 @@
+     /**
+      * Sanitize input to prevent XSS.
+      */
++    #[\Override]
+     protected function prepareForValidation(): void
+     {
+         $this->merge([
+    ----------- end diff -----------
+
+Applied rules:
+ * AddOverrideAttributeToOverriddenMethodsRector
+
+
+29) app/Http/Resources/UserResource.php:1
+
+    ---------- begin diff ----------
+@@ Line 1 @@
+ <?php
+
++declare(strict_types=1);
++
+ namespace App\Http\Resources;
+
+ use App\Models\User;
+    ----------- end diff -----------
+
+Applied rules:
+ * SafeDeclareStrictTypesRector
+
+
+ [OK] 29 files would have been changed (dry-run) by Rector                                                             
 

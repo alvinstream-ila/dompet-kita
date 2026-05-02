@@ -29,6 +29,14 @@ class MarketSyncCommand extends Command
      */
     public function handle(SyncMarketAssetsAction $syncMarketAssetsAction): int
     {
+        // 🛡️ Fix 116: Prevent concurrent sync jobs
+        $lock = \Illuminate\Support\Facades\Cache::lock('market_sync_lock', 600); // 10 minute lock
+
+        if (! $lock->get()) {
+            $this->warn('Supreme Sentinel: Another sync job is already in progress. Skipping pulse.');
+            return 0;
+        }
+
         try {
             $this->info('Starting Proactive Market Sentinel Pulse...');
             $stats = $syncMarketAssetsAction->execute();
@@ -44,6 +52,8 @@ class MarketSyncCommand extends Command
             $this->error("Fatal Error: {$e->getMessage()}");
 
             return 1;
+        } finally {
+            $lock->release();
         }
     }
 }

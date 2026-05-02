@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Database\Factories\GoalFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -24,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Goal extends Model
 {
     /** @use HasFactory<GoalFactory> */
-    use AccountingJournalist, HasFactory, HasHouseholdScope;
+    use AccountingJournalist, HasFactory, HasHouseholdScope, SoftDeletes;
 
     /**
      * @var list<string>
@@ -61,8 +62,8 @@ class Goal extends Model
     {
         return [
             'name' => 'encrypted',
-            'target_amount' => 'decimal:2',
-            'current_amount' => 'decimal:2',
+            'target_amount' => 'decimal:4',
+            'current_amount' => 'decimal:4',
             'deadline' => 'date',
         ];
     }

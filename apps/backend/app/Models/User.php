@@ -90,6 +90,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
         'two_factor_code',
         'otp_reset_code',
+        'email_verification_code',
     ];
 
     public function getActivitylogOptions(): LogOptions

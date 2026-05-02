@@ -65,7 +65,7 @@ class BudgetPrivacyTest extends TestCase
 
         // 4. Check User A's budget usage (Acting as User A)
         $this->actingAs($userA);
-        $usageA = $this->budgetService->getBudgetUsage($userA);
+        $usageA = $this->budgetService->getBudgetUsage();
 
         $foodUsageA = collect($usageA)->firstWhere('category', $category);
         $this->assertNotNull($foodUsageA);
@@ -81,7 +81,7 @@ class BudgetPrivacyTest extends TestCase
             'date' => now(),
         ]);
 
-        $usageAUpdated = $this->budgetService->getBudgetUsage($userA);
+        $usageAUpdated = $this->budgetService->getBudgetUsage();
         $foodUsageAUpdated = collect($usageAUpdated)->firstWhere('category', $category);
         $this->assertNotNull($foodUsageAUpdated);
         $this->assertEquals(200, $foodUsageAUpdated['used']);
@@ -130,7 +130,7 @@ class BudgetPrivacyTest extends TestCase
 
         // 4. Check usage as Ila
         $this->actingAs($ila);
-        $usageIla = $this->budgetService->getBudgetUsage($ila);
+        $usageIla = $this->budgetService->getBudgetUsage();
         $familyUsage = collect($usageIla)->firstWhere('category', $category);
 
         $this->assertNotNull($familyUsage);

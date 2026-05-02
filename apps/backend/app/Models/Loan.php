@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Database\Factories\LoanFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -33,7 +34,16 @@ use Spatie\Activitylog\Support\LogOptions;
 class Loan extends Model
 {
     /** @use HasFactory<LoanFactory> */
-    use AccountingJournalist, HasFactory, HasHouseholdScope, LogsActivity;
+    use AccountingJournalist, HasFactory, HasHouseholdScope, LogsActivity, SoftDeletes;
+    
+    protected static function booted(): void
+    {
+        static::creating(function (Loan $loan) {
+            if ($loan->remaining_amount === null || $loan->remaining_amount == 0) {
+                $loan->remaining_amount = $loan->amount;
+            }
+        });
+    }
 
     /**
      * @var list<string>
@@ -69,8 +79,8 @@ class Loan extends Model
         return [
             'type' => LoanType::class,
             'status' => LoanStatus::class,
-            'amount' => 'decimal:2',
-            'remaining_amount' => 'decimal:2',
+            'amount' => 'decimal:4',
+            'remaining_amount' => 'decimal:4',
             'due_date' => 'date',
             'description' => 'encrypted',
         ];

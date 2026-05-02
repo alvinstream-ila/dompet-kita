@@ -1,22 +1,395 @@
 
 
-   JsonException 
 
-  Syntax error
+[2026-05-02 05:14:16] `C:\Programing alvin\dompet-kita\apps\backend`
 
-  at vendor\nunomaduro\phpinsights\src\Domain\Insights\SyntaxCheck.php:57
-     53▕         }
-     54▕         $configuration = Container::make()->get(Configuration::class);
-     55▕         $process->setTimeout($configuration->getTimeout())->run();
-     56▕ 
-  ➜  57▕         $output = json_decode($process->getOutput(), true, 512, JSON_THROW_ON_ERROR);
-     58▕         $errors = $output['results']['errors'] ?? [];
-     59▕ 
-     60▕         foreach ($errors as $error) {
-     61▕             if (preg_match('/^.*error:(.*) in .* on line [\d]+/m', $error['message'], $matches) === 1) {
+                                                                                                              
+                83.3%                   84.9%                   75.0%                   84.0%                 
+                                                                                                              
+                                                                                                              
+                 Code                 Complexity             Architecture               Style                 
 
-  1   vendor\nunomaduro\phpinsights\src\Domain\Insights\SyntaxCheck.php:57
 
-  2   vendor\nunomaduro\phpinsights\src\Domain\Runner.php:171
-      NunoMaduro\PhpInsights\Domain\Insights\SyntaxCheck::process()
+Score scale: ◼ 1-49 ◼ 50-79 ◼ 80-100
+
+[CODE] 83.3 pts within 8095 lines
+
+Comments ...................................................... 42.1 %
+Classes ....................................................... 38.1 %
+Functions ...................................................... 1.3 %
+Globally ...................................................... 18.4 %
+
+[COMPLEXITY] 84.9 pts with average of 2.39 cyclomatic complexity
+
+[ARCHITECTURE] 75 pts within 228 files
+
+Classes ....................................................... 86.8 %
+Interfaces ..................................................... 0.4 %
+Globally ...................................................... 10.5 %
+Traits ......................................................... 2.2 %
+
+[MISC] 84 pts on coding style and 0 security issues encountered
+
+• [Code] Forbidden public property:
+  app\Models\Household.php:37: Do not use public properties. Use method access instead.
+
+• [Code] Forbidden setter:
+  app\Traits\HasHouseholdScope.php:27: Setters are not allowed. Use constructor injection and behavior naming instead.
+
+• [Code] Modern class name reference:
+  app\Traits\AccountingJournalist.php:150: Class name referenced via call of function get_class().
+
+• [Code] Unused variable:
+  app\Actions\Finance\Asset\FundAssetAction.php:60: Unused variable $journalDescription.
+  app\Actions\Finance\Asset\WithdrawAssetAction.php:66: Unused variable $journalDescription.
+  app\Http\Controllers\TransactionController.php:219: Unused variable $user.
+
+• [Code] Useless variable:
+  app\Http\Middleware\UnkeyMiddleware.php:51: Useless variable $response.
+
+• [Code] Empty statement:
+  app\Actions\System\VerifyCloudConnectivityAction.php:28: Empty CATCH statement detected
+
+• [Code] No silenced errors:
+  app\Actions\System\BackupDatabaseAction.php:47: Silencing errors is discouraged; found: @unlink($tempPath...
+  app\Actions\System\BackupDatabaseAction.php:50: Silencing errors is discouraged; found: @unlink($encryptedPath...
+
+• [Code] Unnecessary string concat:
+  app\Services\Cfo\QuantumInsightEngine.php:129: String concat is not required here; use a single string instead
+  app\Services\Cfo\QuantumInsightEngine.php:130: String concat is not required here; use a single string instead
+  app\Services\Cfo\QuantumInsightEngine.php:131: String concat is not required here; use a single string instead
+  +17 issues omitted
+
+• [Code] Disallow empty:
+  app\Http\Controllers\SocialAuthController.php:133: Use of empty() is disallowed.
+  app\Services\StorageService.php:33: Use of empty() is disallowed.
+  app\Services\StorageService.php:44: Use of empty() is disallowed.
+  +11 issues omitted
+
+• [Code] Disallow short ternary operator:
+  app\Providers\AppServiceProvider.php:130: Use of short ternary operator is disallowed.
+  app\Services\LegacyService.php:28: Use of short ternary operator is disallowed.
+  app\Services\StorageService.php:135: Use of short ternary operator is disallowed.
+  +18 issues omitted
+
+• [Code] Useless parentheses:
+  app\Actions\Security\DeadMansSwitch\GenerateReportAction.php:78: Useless parentheses.
+
+• [Code] New with braces:
+  app\Notifications\VerifyEmailNotification.php: 
+@@ -26,3 +26,3 @@
+ 
+-        return (new MailMessage)
++        return (new MailMessage())
+             ->subject('Kode Verifikasi Dompet Kita')
+  app\Providers\AiServiceProvider.php: 
+@@ -24,5 +24,5 @@
+             fn (): AiProviderManager => new AiProviderManager([
+-                new GroqProvider,
+-                new OpenRouterProvider,
+-                new GeminiProvider,
++                new GroqProvider(),
++                new OpenRouterProvider(),
++                new GeminiProvider(),
+             ]));
+  app\Providers\MailServiceProvider.php: 
+@@ -24,3 +24,3 @@
+         Mail::extend('google', function (array $config): GoogleMailTransport {
+-            $client = new GoogleClient;
++            $client = new GoogleClient();
+             $client->setClientId($config['client_id']);
+  +6 issues omitted
+
+• [Code] Inline doc comment declaration:
+  app\Http\Controllers\WealthHistoryController.php:56: No assignment to $historyData variable before or after the documentation comment.
+  app\Services\LegacyService.php:32: Missing variable $lastActive before or after the documentation comment.
+  app\Services\MarketService.php:35: Invalid inline documentation comment format "@var array{currency_rates: array<string, float>, gold_antam_gram: float, gold_global_oz: float, inflation_rate: float, last_updated: string}", expected "@var type $variableName Optional description".
+  +1 issues omitted
+
+• [Code] Unused parameter:
+  app\Services\AI\OpenRouterProvider.php:170: Unused parameter $prompt.
+  app\Services\BudgetService.php:87: Unused parameter $user.
+  app\Services\Cfo\QuantumInsightEngine.php:108: Unused parameter $userName.
+  +42 issues omitted
+
+• [Code] Return assignment:
+  app\Actions\System\ManagePenpotAction.php: 
+@@ -29,5 +29,3 @@
+         /** @var array<int, array{id: string, name: string}> $projects */
+-        $projects = $response->json() ?: [];
+-
+-        return $projects;
++        return $response->json() ?: [];
+     }
+@@ -49,5 +47,3 @@
+         /** @var array<string, mixed> $project */
+-        $project = $response->json() ?: [];
+-
+-        return $project;
++        return $response->json() ?: [];
+     }
+  app\Http\Resources\WealthHistoryResource.php: 
+@@ -27,5 +27,3 @@
+             /** @var array<string, mixed> $res */
+-            $res = $this->resource;
+-
+-            return $res;
++            return $this->resource;
+         }
+
+• [Complexity] Having `classes` with total cyclomatic complexity more than 5 is prohibited - Consider refactoring:
+  app\Services\StorageService.php: 24 cyclomatic complexity
+  app\Traits\AccountingJournalist.php: 7 cyclomatic complexity
+  app\Traits\HasHouseholdScope.php: 18 cyclomatic complexity
+  +64 issues omitted
+
+• [Complexity] Having `methods` with cyclomatic complexity more than 5 is prohibited - Consider refactoring:
+  C:\Programing alvin\dompet-kita\apps\backend\app\Services\SentinelService.php:notify: 8 cyclomatic complexity
+  C:\Programing alvin\dompet-kita\apps\backend\app\Services\StorageService.php:getFileDataFromRequest: 11 cyclomatic complexity
+  C:\Programing alvin\dompet-kita\apps\backend\app\Services\StorageService.php:tryDownloadFromUrl: 6 cyclomatic complexity
+  +33 issues omitted
+
+• [Architecture] Superfluous interface naming:
+  app\Services\AI\AiProviderInterface.php:7: Superfluous suffix "Interface".
+
+• [Architecture] Superfluous exception naming:
+  app\Exceptions\MailTransportException.php:12: Superfluous suffix "Exception".
+  app\Exceptions\MarketServiceException.php:12: Superfluous suffix "Exception".
+  app\Exceptions\PenpotException.php:12: Superfluous suffix "Exception".
+  +5 issues omitted
+
+• [Architecture] Function length:
+  app\Services\StorageService.php:86: Your function is too long. Currently using 22 lines. Can be up to 20 lines.
+  app\Traits\AccountingJournalist.php:55: Your function is too long. Currently using 42 lines. Can be up to 20 lines.
+  app\Traits\HasHouseholdScope.php:56: Your function is too long. Currently using 42 lines. Can be up to 20 lines.
+  +103 issues omitted
+
+• [Architecture] Method argument space:
+  app\Providers\AiServiceProvider.php: 
+@@ -21,3 +21,4 @@
+     {
+-        $this->app->singleton(AiProviderManager::class,
++        $this->app->singleton(
++            AiProviderManager::class,
+             // Priority order: Groq (Primary) → OpenRouter (Fallback) → Gemini (Emergency)
+@@ -27,3 +28,4 @@
+                 new GeminiProvider,
+-            ]));
++            ])
++        );
+
+• [Style] Scope closing brace:
+  app\Services\GeminiService.php:18: Closing brace must be on a line by itself
+  app\Services\LegacyService.php:17: Closing brace must be on a line by itself
+  app\Services\SelfHealingService.php:19: Closing brace must be on a line by itself
+  +52 issues omitted
+
+• [Style] Line length:
+  routes\api.php:163: Line exceeds 80 characters; contains 83 characters
+  routes\api.php:164: Line exceeds 80 characters; contains 88 characters
+  routes\web.php:8: Line exceeds 80 characters; contains 83 characters
+  +1181 issues omitted
+
+• [Style] Unused uses:
+  app\Services\StorageService.php:6: Type Illuminate\Http\Request is not used in this file.
+
+• [Style] Superfluous whitespace:
+  app\Http\Controllers\MediaController.php:64: Whitespace found at end of line
+  app\Http\Controllers\MediaController.php:137: Whitespace found at end of line
+  app\Http\Middleware\SudoMode.php:25: Whitespace found at end of line
+  +6 issues omitted
+
+• [Style] Doc comment spacing:
+  app\Models\ScheduledTransaction.php:73: Expected 1 line between different annotations types, found 0.
+  app\Models\Transaction.php:79: Expected 1 line between different annotations types, found 0.
+  app\Models\User.php:45: Expected 1 line between different annotations types, found 0.
+  +12 issues omitted
+
+• [Style] Class instantiation:
+  app\Providers\AiServiceProvider.php:26: Parentheses must be used when instantiating a new class
+  app\Providers\AiServiceProvider.php:27: Parentheses must be used when instantiating a new class
+  app\Providers\MailServiceProvider.php:25: Parentheses must be used when instantiating a new class
+  +9 issues omitted
+
+• [Style] Braces:
+  app\Services\GeminiService.php: 
+@@ -17,3 +17,4 @@
+         protected AiProviderManager $manager
+-    ) {}
++    ) {
++    }
+  app\Services\LegacyService.php: 
+@@ -16,3 +16,4 @@
+         protected SentinelService $sentinel
+-    ) {}
++    ) {
++    }
+  app\Services\SelfHealingService.php: 
+@@ -18,3 +18,5 @@
+ {
+-    public function __construct(protected AiProviderManager $aiManager) {}
++    public function __construct(protected AiProviderManager $aiManager)
++    {
++    }
+  +54 issues omitted
+
+• [Style] Class definition:
+  app\Exceptions\MailTransportException.php: 
+@@ -11,2 +11,3 @@
+  */
+-class MailTransportException extends Exception {}
++class MailTransportException extends Exception
++{}
+  app\Exceptions\MarketServiceException.php: 
+@@ -11,2 +11,3 @@
+  */
+-class MarketServiceException extends Exception {}
++class MarketServiceException extends Exception
++{}
+  app\Exceptions\PenpotException.php: 
+@@ -11,2 +11,3 @@
+  */
+-class PenpotException extends Exception {}
++class PenpotException extends Exception
++{}
+  +5 issues omitted
+
+• [Style] No extra blank lines:
+  app\Http\Controllers\GoalController.php: 
+@@ -56,3 +56,2 @@
+ 
+-
+         $goal = Goal::create($validated);
+  app\Http\Controllers\HolidayController.php: 
+@@ -54,3 +54,2 @@
+ 
+-
+         $holiday = Holiday::create($validated);
+  app\Models\Household.php: 
+@@ -32,3 +32,2 @@
+ 
+-
+     /**
+  +4 issues omitted
+
+• [Style] No whitespace in blank line:
+  app\Http\Controllers\MediaController.php: 
+@@ -63,3 +63,3 @@
+             $householdId = preg_replace('/[^a-zA-Z0-9_\-]/', '', $householdId);
+-            
++
+             $folder = "receipts/{$householdId}";
+@@ -136,3 +136,3 @@
+         $diskName = (string) (config('filesystems.disks.storj.key') ? 'storj' : config('filesystems.default', 'public'));
+-        
++
+         if (! Storage::disk($diskName)->exists($path)) {
+  app\Http\Middleware\SudoMode.php: 
+@@ -24,3 +24,3 @@
+             $tokenId = $token instanceof \Laravel\Sanctum\PersonalAccessToken ? $token->id : 'default';
+-            
++
+             $fingerprint = sha1($request->ip().$request->userAgent());
+
+• [Style] Single quote:
+  app\Traits\HasHouseholdScope.php: 
+@@ -87,3 +87,3 @@
+             if (app()->environment('production') && ! $model->household_id && ! app()->runningInConsole()) {
+-                throw new \RuntimeException("Critical Breach: Attempted to create record for model [" . static::class . "] without a household scope.");
++                throw new \RuntimeException('Critical Breach: Attempted to create record for model [' . static::class . '] without a household scope.');
+             }
+
+• [Style] Ordered class elements:
+  app\Services\AI\OpenRouterProvider.php: 
+@@ -31,14 +31,2 @@
+ 
+-    protected function getHttpClient(): PendingRequest
+-    {
+-        return Http::withToken($this->apiKey)
+-            ->timeout(30)
+-            ->retry(3, 100)
+-            ->withHeaders([
+-                'HTTP-Referer' => config('app.url'),
+-                'X-Title' => config('app.name'),
+-                'User-Agent' => 'DompetKita-AI/1.0 (OpenRouter)',
+-            ]);
+-    }
+-
+     public function getName(): string
+@@ -172,2 +160,14 @@
+         throw new \Exception('Audio/Voice processing is handled by Gemini provider.');
++    }
++
++    protected function getHttpClient(): PendingRequest
++    {
++        return Http::withToken($this->apiKey)
++            ->timeout(30)
++            ->retry(3, 100)
++            ->withHeaders([
++                'HTTP-Referer' => config('app.url'),
++                'X-Title' => config('app.name'),
++                'User-Agent' => 'DompetKita-AI/1.0 (OpenRouter)',
++            ]);
+     }
+  app\Services\FinancialIntelligenceService.php: 
+@@ -15,5 +15,2 @@
+ {
+-    public function __construct(
+-        protected BudgetService $budgetService
+-    ) {}
+ 
+@@ -28,2 +25,5 @@
+     private const int HIGH_INCOME_THRESHOLD = 10000000;
++    public function __construct(
++        protected BudgetService $budgetService
++    ) {}
+  app\Services\MarketService.php: 
+@@ -226,2 +226,11 @@
+     /**
++     * Force refresh market data.
++     */
++    public function refresh(): void
++    {
++        Cache::forget(self::CACHE_KEY);
++        $this->getRates();
++    }
++
++    /**
+      * Validate price to prevent corrupting data with outliers or errors.
+@@ -239,11 +248,2 @@
+         };
+-    }
+-
+-    /**
+-     * Force refresh market data.
+-     */
+-    public function refresh(): void
+-    {
+-        Cache::forget(self::CACHE_KEY);
+-        $this->getRates();
+     }
+  +3 issues omitted
+
+• [Style] Ordered imports:
+  app\Models\Goal.php: 
+@@ -10,2 +10,3 @@
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Relations\HasMany;
+ use Illuminate\Database\Eloquent\SoftDeletes;
+@@ -11,3 +12,2 @@
+ use Illuminate\Database\Eloquent\SoftDeletes;
+-use Illuminate\Database\Eloquent\Relations\HasMany;
+  app\Models\Holiday.php: 
+@@ -9,2 +9,3 @@
+ use Illuminate\Database\Eloquent\Model;
++use Illuminate\Database\Eloquent\Relations\HasMany;
+ use Illuminate\Database\Eloquent\SoftDeletes;
+@@ -10,3 +11,2 @@
+ use Illuminate\Database\Eloquent\SoftDeletes;
+-use Illuminate\Database\Eloquent\Relations\HasMany;
+
+ [ERROR] The code quality score is too low                                                                             
+
+ [ERROR] The complexity score is too low                                                                               
+
 

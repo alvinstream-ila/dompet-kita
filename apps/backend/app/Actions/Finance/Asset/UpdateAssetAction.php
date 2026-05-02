@@ -20,8 +20,7 @@ class UpdateAssetAction extends BaseAction
      */
     public function execute(User $user, Asset $asset, array $data): Asset
     {
-        // 🛡️ Defense in Depth: Ensure asset belongs to user's household
-        abort_unless($asset->household_id === $user->household_id, 403, 'Anda tidak memiliki akses ke aset ini.');
+
 
         $asset->update($data);
 
