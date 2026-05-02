@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Enums\AssetType;
 use App\Models\Asset;
 use App\Models\Household;
 use App\Models\PartnerInvitation;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -19,8 +22,8 @@ class HouseholdLifecycleTest extends TestCase
 
     protected function enableSudo(User $user)
     {
-        $fingerprint = sha1('127.0.0.1' . 'Symfony');
-        \Illuminate\Support\Facades\Cache::put("sudo_mode_{$user->id}_default", $fingerprint, now()->addMinutes(10));
+        $fingerprint = sha1('127.0.0.1'.'Symfony');
+        Cache::put("sudo_mode_{$user->id}_default", $fingerprint, now()->addMinutes(10));
     }
 
     public function test_it_prevents_joining_a_household_that_is_already_full()
@@ -43,13 +46,13 @@ class HouseholdLifecycleTest extends TestCase
         ]);
 
         // 3. Create a third user who tries to accept
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $invitee */
+        /** @var User|Authenticatable $invitee */
         $invitee = User::factory()->create(['email' => $inviteeEmail]);
 
         // Bypass Sudo for accept
         $this->enableSudo($invitee);
 
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $invitee */
+        /** @var User|Authenticatable $invitee */
         $response = $this->actingAs($invitee)
             ->postJson('/api/partner/accept', ['token' => 'test-token']);
 
@@ -60,10 +63,10 @@ class HouseholdLifecycleTest extends TestCase
     public function test_it_cleans_up_orphaned_households_on_unlink()
     {
         // 1. Setup a partnered household
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
+        /** @var User|Authenticatable $user1 */
         $user1 = User::factory()->create();
         $household = $user1->household;
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user2 */
+        /** @var User|Authenticatable $user2 */
         $user2 = User::factory()->create(['household_id' => $household->id, 'partner_id' => $user1->id]);
         $user1->update(['partner_id' => $user2->id]);
 
@@ -73,13 +76,13 @@ class HouseholdLifecycleTest extends TestCase
         $this->enableSudo($user1);
 
         // 2. Unlink
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
+        /** @var User|Authenticatable $user1 */
         $response = $this->actingAs($user1)->postJson('/api/partner/unlink');
         $response->assertStatus(200);
 
         // 3. Verify old household is gone
         $this->assertSoftDeleted('households', ['id' => $household->id]);
-        
+
         // 4. Verify users have new households
         $user1->refresh();
         $user2->refresh();
@@ -91,26 +94,26 @@ class HouseholdLifecycleTest extends TestCase
 
     public function test_it_prevents_currency_change_if_assets_exist()
     {
-        $household = new Household();
+        $household = new Household;
         $household->id = (string) Str::uuid();
         $household->name = 'Test Household';
         $household->owner_id = 0;
         $household->save();
 
-        $user = new User();
+        $user = new User;
         $user->name = 'Test User';
-        $user->email = 'test-' . uniqid() . '@example.com';
+        $user->email = 'test-'.uniqid().'@example.com';
         $user->password = bcrypt('password');
         $user->household_id = $household->id;
         $user->currency_format = 'IDR';
         $user->email_verified_at = now();
         $user->save();
-        
-        $asset = new Asset();
+
+        $asset = new Asset;
         $asset->user_id = $user->id;
         $asset->household_id = $user->household_id;
         $asset->name = 'Test Asset';
-        $asset->type = \App\Enums\AssetType::CASH;
+        $asset->type = AssetType::CASH;
         $asset->value = 1000;
         $asset->quantity = 1;
         $asset->save();
@@ -118,7 +121,7 @@ class HouseholdLifecycleTest extends TestCase
         // Bypass Sudo for profile update
         $this->enableSudo($user);
 
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user */
+        /** @var User|Authenticatable $user */
         $response = $this->actingAs($user)->putJson('/api/user/profile', [
             'name' => 'Alvin New',
             'currency_format' => 'USD',
@@ -130,9 +133,9 @@ class HouseholdLifecycleTest extends TestCase
 
     public function test_it_masks_partner_email_in_privacy_mode()
     {
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
+        /** @var User|Authenticatable $user1 */
         $user1 = User::factory()->create(['is_privacy_mode' => true]);
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user2 */
+        /** @var User|Authenticatable $user2 */
         $user2 = User::factory()->create(['email' => 'secret_partner@example.com']);
         $user1->update(['partner_id' => $user2->id]);
         $user2->update(['partner_id' => $user1->id]);
@@ -140,11 +143,11 @@ class HouseholdLifecycleTest extends TestCase
         // Bypass Sudo for profile update (using update to get UserResource)
         $this->enableSudo($user1);
 
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
+        /** @var User|Authenticatable $user1 */
         $response = $this->actingAs($user1)->putJson('/api/user/profile', [
             'name' => $user1->name,
         ]);
-        
+
         $response->assertStatus(200);
         // Expecting something like se**************@example.com
         // Our regex: preg_replace('/(?<=.{2}).(?=.*@)/', '*', ...)

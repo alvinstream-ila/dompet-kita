@@ -7,6 +7,7 @@ use App\Models\TransactionInsight;
 use App\Models\User;
 use App\Services\AI\AiProviderManager;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class QuantumInsightEngine
@@ -19,9 +20,10 @@ class QuantumInsightEngine
     public function generateInsights(User $user): void
     {
         // 🛡️ Fix 128: Per-household Rate Limiting (Once per 12 hours)
-        $rateLimitKey = "quantum_insights_limit_".($user->household_id ?? "u_".$user->id);
-        if (\Illuminate\Support\Facades\Cache::has($rateLimitKey)) {
+        $rateLimitKey = 'quantum_insights_limit_'.($user->household_id ?? 'u_'.$user->id);
+        if (Cache::has($rateLimitKey)) {
             Log::info("Quantum Insight Engine: Rate limit active for {$rateLimitKey}. Skipping.");
+
             return;
         }
 
@@ -35,7 +37,7 @@ class QuantumInsightEngine
         $query = Transaction::query()
             ->whereBetween('date', [$startDate, $endDate]);
 
-        // If household ID is present, we rely on the global scope if possible, 
+        // If household ID is present, we rely on the global scope if possible,
         // but here we manually bind to the specific user's household for double-safety
         if ($user->household_id) {
             $query->where('household_id', $user->household_id);
@@ -104,9 +106,9 @@ class QuantumInsightEngine
                 foreach ($insights['findings'] as $finding) {
                     $this->persistInsight($user, $finding);
                 }
-                
+
                 // Set rate limit after successful generation (Fix 128)
-                \Illuminate\Support\Facades\Cache::put($rateLimitKey, true, now()->addHours(12));
+                Cache::put($rateLimitKey, true, now()->addHours(12));
             } else {
                 Log::info('Quantum Insight Engine: No findings key in AI response.');
             }

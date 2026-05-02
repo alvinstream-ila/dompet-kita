@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Jobs\Cfo\GenerateQuantumInsightsJob;
 use App\Models\TransactionInsight;
 use App\Models\User;
-use App\Services\Cfo\QuantumInsightEngine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +23,7 @@ class InsightController extends Controller
             abort(401);
         }
 
-        \App\Jobs\Cfo\GenerateQuantumInsightsJob::dispatch($user);
+        GenerateQuantumInsightsJob::dispatch($user);
 
         return response()->json([
             'message' => 'Analisis data finansial telah dimulai di latar belakang. Pola baru akan muncul segera.',

@@ -13,22 +13,22 @@ class MarketServiceTest extends TestCase
     public function test_it_calculates_cross_rates_using_usd_pivot()
     {
         Cache::flush();
-        
+
         // Mock Frankfurter API
         Http::fake([
             'api.frankfurter.app/latest?from=USD' => Http::response([
                 'rates' => [
                     'IDR' => 15000.0,
                     'EUR' => 0.9,
-                ]
+                ],
             ], 200),
         ]);
 
-        $service = new MarketService();
-        
+        $service = new MarketService;
+
         // 1 EUR should be (15000 / 0.9) IDR = 16666.666...
         $rate = $service->getRate('EUR', 'IDR');
-        
+
         $this->assertEqualsWithDelta(16666.6667, $rate, 0.001);
     }
 
@@ -44,7 +44,7 @@ class MarketServiceTest extends TestCase
             'www.logammulia.com/*' => Http::response('1 gr</td><td>1.200.000', 200),
         ]);
 
-        $service = new MarketService();
+        $service = new MarketService;
         $rates = $service->getRates();
 
         $this->assertEquals(2400.0, $rates['gold_global_oz']);
@@ -56,7 +56,7 @@ class MarketServiceTest extends TestCase
     public function test_it_uses_stale_cache_on_api_failure()
     {
         Cache::flush();
-        
+
         $staleData = [
             'currency_rates' => ['IDR' => 15000.0],
             'gold_antam_gram' => 1200000.0,
@@ -65,7 +65,7 @@ class MarketServiceTest extends TestCase
             'inflation_rate' => 0.035,
             'last_updated' => now()->toIso8601String(),
         ];
-        
+
         Cache::put('market_rates_stale', $staleData, 86400);
 
         // Mock API failure
@@ -73,7 +73,7 @@ class MarketServiceTest extends TestCase
             '*' => Http::response([], 500),
         ]);
 
-        $service = new MarketService();
+        $service = new MarketService;
         $rates = $service->getRates();
 
         $this->assertEquals(15000.0, $rates['currency_rates']['IDR']);

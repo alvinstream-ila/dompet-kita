@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 /**
  * @property int $id
@@ -45,7 +46,7 @@ class TransactionResource extends JsonResource
                     );
                 } catch (\Exception) {
                     // 🛡️ Security Fallback: Generate a signed URL to our own API
-                    $receiptUrl = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+                    $receiptUrl = URL::temporarySignedRoute(
                         'media.serve',
                         now()->addMinutes(15),
                         ['path' => $this->receipt_url]

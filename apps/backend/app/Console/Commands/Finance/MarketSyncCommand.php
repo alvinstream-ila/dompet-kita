@@ -7,6 +7,7 @@ namespace App\Console\Commands\Finance;
 use App\Actions\Finance\Wealth\SyncMarketAssetsAction;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 
 class MarketSyncCommand extends Command
 {
@@ -30,10 +31,11 @@ class MarketSyncCommand extends Command
     public function handle(SyncMarketAssetsAction $syncMarketAssetsAction): int
     {
         // 🛡️ Fix 116: Prevent concurrent sync jobs
-        $lock = \Illuminate\Support\Facades\Cache::lock('market_sync_lock', 600); // 10 minute lock
+        $lock = Cache::lock('market_sync_lock', 600); // 10 minute lock
 
         if (! $lock->get()) {
             $this->warn('Supreme Sentinel: Another sync job is already in progress. Skipping pulse.');
+
             return 0;
         }
 

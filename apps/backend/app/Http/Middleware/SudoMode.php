@@ -7,6 +7,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
 
 class SudoMode
@@ -21,8 +22,8 @@ class SudoMode
 
         if ($user) {
             $token = $request->user()?->currentAccessToken();
-            $tokenId = $token instanceof \Laravel\Sanctum\PersonalAccessToken ? $token->id : 'default';
-            
+            $tokenId = $token instanceof PersonalAccessToken ? $token->id : 'default';
+
             $fingerprint = sha1($request->ip().$request->userAgent());
             $storedFingerprint = Cache::get("sudo_mode_{$user->id}_{$tokenId}");
 

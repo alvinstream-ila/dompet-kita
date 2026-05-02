@@ -18,7 +18,6 @@ class DeleteAssetAction extends BaseAction
     public function execute(User $user, Asset $asset): ?bool
     {
 
-
         $deleted = $asset->delete();
 
         $this->updateWealthSnapshotAction->execute($user);

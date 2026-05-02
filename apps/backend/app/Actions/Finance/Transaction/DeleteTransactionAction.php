@@ -14,7 +14,6 @@ class DeleteTransactionAction extends BaseAction
     public function execute(User $user, Transaction $transaction): bool
     {
 
-
         return (bool) DB::transaction(function () use ($transaction) {
             return $transaction->delete();
         });

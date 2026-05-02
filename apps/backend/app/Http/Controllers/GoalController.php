@@ -54,7 +54,6 @@ class GoalController extends Controller
             abort(401);
         }
 
-
         $goal = Goal::create($validated);
 
         return $this->success(new GoalResource($goal), 'Objektif finansial strategis baru telah diinisialisasi.', 201);

@@ -7,9 +7,11 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MediaController extends Controller
 {
@@ -61,7 +63,7 @@ class MediaController extends Controller
             $householdId = (string) ($user->household_id ?? $user->id);
             // 🛡️ Sanitize householdId for path safety
             $householdId = preg_replace('/[^a-zA-Z0-9_\-]/', '', $householdId);
-            
+
             $folder = "receipts/{$householdId}";
             $filePath = "{$folder}/{$fileName}";
 
@@ -103,7 +105,7 @@ class MediaController extends Controller
      * Serve a protected file.
      * This method is called via a signed URL to prevent unauthorized access.
      */
-    public function serve(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse|\Illuminate\Http\Response
+    public function serve(Request $request): StreamedResponse|Response
     {
         // 🛡️ Signed URL Verification is handled by middleware, but we double-check path integrity
         $path = (string) $request->query('path');
@@ -134,7 +136,7 @@ class MediaController extends Controller
         }
 
         $diskName = (string) (config('filesystems.disks.storj.key') ? 'storj' : config('filesystems.default', 'public'));
-        
+
         if (! Storage::disk($diskName)->exists($path)) {
             abort(404);
         }

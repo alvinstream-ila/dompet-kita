@@ -7,7 +7,9 @@ namespace App\Actions\Finance\Wealth;
 use App\Actions\BaseAction;
 use App\Enums\AssetType;
 use App\Models\Asset;
+use App\Models\AssetPriceHistory;
 use App\Services\MarketService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -26,9 +28,10 @@ class SyncMarketAssetsAction extends BaseAction
     {
         // 🛡️ Fix 116: Prevent multiple sync jobs from running concurrently
         $lock = Cache::lock('sync_market_assets_lock', 300); // 5 minute lock
-        
-        if (!$lock->get()) {
+
+        if (! $lock->get()) {
             Log::warning('SyncMarketAssetsAction: Sync already in progress, skipping.');
+
             return ['updated' => 0, 'alerts' => 0];
         }
 
@@ -39,7 +42,7 @@ class SyncMarketAssetsAction extends BaseAction
 
             // 🛡️ Fix 105: Bulk lookup of assets that already have today's price history to avoid N+1
             $today = now()->toDateString();
-            $syncedTodayIds = \App\Models\AssetPriceHistory::withoutGlobalScopes()
+            $syncedTodayIds = AssetPriceHistory::withoutGlobalScopes()
                 ->whereDate('recorded_at', $today)
                 ->pluck('asset_id')
                 ->toArray();
@@ -49,7 +52,7 @@ class SyncMarketAssetsAction extends BaseAction
 
             Asset::withoutGlobalScopes()
                 ->marketSynced()
-                ->chunk(100, function (\Illuminate\Database\Eloquent\Collection $assets) use ($market, $syncedTodayIds, $isWeekend, &$stats): void {
+                ->chunk(100, function (Collection $assets) use ($market, $syncedTodayIds, $isWeekend, &$stats): void {
                     foreach ($assets as $asset) {
                         if ($asset->quantity <= 0) {
                             continue;
@@ -100,14 +103,14 @@ class SyncMarketAssetsAction extends BaseAction
 
         // 2. Record Price History (Once Per Day per Asset)
         // Check bulk lookup result instead of N+1 query
-        if (!in_array($asset->id, $syncedTodayIds)) {
+        if (! in_array($asset->id, $syncedTodayIds)) {
             $this->recordDailyHistory($asset, $unitPrice);
         }
     }
 
     /**
      * Resolve the unit price (price per 1 unit) from market data.
-     * 
+     *
      * @param  array<string, mixed>  $market
      */
     private function resolveUnitPrice(Asset $asset, array $market): float

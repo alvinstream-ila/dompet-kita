@@ -14,6 +14,7 @@ use App\Models\ScheduledTransaction;
 use App\Models\TransactionInsight;
 use App\Models\User;
 use App\Models\WealthHistory;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
@@ -34,7 +35,7 @@ class MultiTenancyIsolationTest extends TestCase
         $household2->update(['owner_id' => $user2->id]);
         Asset::factory()->create(['household_id' => $household2->id, 'name' => 'House 2', 'user_id' => $user2->id]);
 
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
+        /** @var User|Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson('/api/assets');
 
         $response->assertStatus(200)
@@ -54,7 +55,7 @@ class MultiTenancyIsolationTest extends TestCase
         $household2->update(['owner_id' => $user2->id]);
         Loan::factory()->create(['household_id' => $household2->id, 'contact_name' => 'Loan 2', 'user_id' => $user2->id]);
 
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
+        /** @var User|Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson('/api/loans');
 
         $response->assertStatus(200)
@@ -74,7 +75,7 @@ class MultiTenancyIsolationTest extends TestCase
         $household2->update(['owner_id' => $user2->id]);
         ScheduledTransaction::factory()->create(['household_id' => $household2->id, 'description' => 'Sched 2', 'user_id' => $user2->id]);
 
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
+        /** @var User|Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson('/api/scheduled-transactions');
 
         $response->assertStatus(200)
@@ -89,7 +90,7 @@ class MultiTenancyIsolationTest extends TestCase
         $household1->update(['owner_id' => $user1->id]);
 
         // 🛡️ Activate Sudo Mode for User 1 (Matching SudoMode middleware logic)
-        $fingerprint = sha1('127.0.0.1' . 'Symfony'); // Default IP/UA in tests
+        $fingerprint = sha1('127.0.0.1'.'Symfony'); // Default IP/UA in tests
         Cache::put("sudo_mode_{$user1->id}_default", $fingerprint, 900);
 
         LegacyVaultReport::create([
@@ -111,7 +112,7 @@ class MultiTenancyIsolationTest extends TestCase
             'disk' => 'local',
         ]);
 
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
+        /** @var User|Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson("/api/legacy/download/{$report2->id}");
         $response->assertStatus(404);
     }
@@ -128,7 +129,7 @@ class MultiTenancyIsolationTest extends TestCase
         $household2->update(['owner_id' => $user2->id]);
         Goal::factory()->create(['household_id' => $household2->id, 'name' => 'Goal 2', 'user_id' => $user2->id]);
 
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
+        /** @var User|Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson('/api/goals');
 
         $response->assertStatus(200)
@@ -148,7 +149,7 @@ class MultiTenancyIsolationTest extends TestCase
         $household2->update(['owner_id' => $user2->id]);
         Holiday::factory()->create(['household_id' => $household2->id, 'destination' => 'Paris', 'user_id' => $user2->id]);
 
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
+        /** @var User|Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson('/api/holidays');
 
         $response->assertStatus(200)
@@ -168,7 +169,7 @@ class MultiTenancyIsolationTest extends TestCase
         $household2->update(['owner_id' => $user2->id]);
         TransactionInsight::factory()->create(['household_id' => $household2->id, 'title' => 'Insight 2', 'user_id' => $user2->id]);
 
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
+        /** @var User|Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson('/api/ai/quantum-insights');
 
         $response->assertStatus(200)
@@ -198,7 +199,7 @@ class MultiTenancyIsolationTest extends TestCase
             'month' => 1,
         ]);
 
-        /** @var \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user1 */
+        /** @var User|Authenticatable $user1 */
         $response = $this->actingAs($user1)->getJson('/api/wealth-history');
 
         $response->assertStatus(200);

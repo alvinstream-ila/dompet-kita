@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Trait HasHouseholdScope
@@ -28,15 +29,15 @@ trait HasHouseholdScope
         static::$forcedHouseholdId = $id;
 
         if ($id && function_exists('activity')) {
-            \Illuminate\Support\Facades\Log::info("Administrative Scope Override: Household scope forced to [{$id}] for model [" . static::class . "].");
-            
+            Log::info("Administrative Scope Override: Household scope forced to [{$id}] for model [".static::class.'].');
+
             activity('sentinel')
                 ->withProperties([
                     'forced_id' => $id,
                     'model' => static::class,
                     'context' => php_sapi_name(),
                 ])
-                ->log("Sovereign Audit: Administrative household scope override activated.");
+                ->log('Sovereign Audit: Administrative household scope override activated.');
         }
     }
 
@@ -96,7 +97,7 @@ trait HasHouseholdScope
 
             // 🛡️ Integrity Check: Every multi-tenant model MUST have a household_id
             if (! $model->household_id) {
-                throw new \RuntimeException("Critical Breach: Attempted to create record for model [" . static::class . "] without a household scope.");
+                throw new \RuntimeException('Critical Breach: Attempted to create record for model ['.static::class.'] without a household scope.');
             }
         });
 
@@ -105,6 +106,7 @@ trait HasHouseholdScope
             // 1. Check forced scope first (CLI/Jobs)
             if (static::$forcedHouseholdId) {
                 $builder->where('household_id', static::$forcedHouseholdId);
+
                 return;
             }
 

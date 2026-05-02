@@ -30,7 +30,6 @@ class Household extends Model
             ->dontLogEmptyChanges();
     }
 
-
     /**
      * Disable auto-incrementing since we use UUIDs.
      */

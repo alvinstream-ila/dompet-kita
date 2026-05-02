@@ -3,6 +3,7 @@
 namespace Tests\Feature\Finance;
 
 use App\Actions\Finance\Wealth\SyncMarketAssetsAction;
+use App\Enums\AssetType;
 use App\Models\Asset;
 use App\Models\AssetPriceHistory;
 use App\Models\Household;
@@ -18,6 +19,7 @@ class SyncMarketAssetsTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected Household $household;
 
     protected function setUp(): void
@@ -33,12 +35,12 @@ class SyncMarketAssetsTest extends TestCase
     {
         // Mock a Sunday
         Carbon::setTestNow(Carbon::parse('2026-05-03 10:00:00')); // Sunday
-        
+
         Asset::create([
             'user_id' => $this->user->id,
             'household_id' => $this->household->id,
             'name' => 'Apple',
-            'type' => \App\Enums\AssetType::STOCK,
+            'type' => AssetType::STOCK,
             'unit' => 'AAPL',
             'quantity' => 10,
             'value' => 1000,
@@ -46,11 +48,11 @@ class SyncMarketAssetsTest extends TestCase
             'is_market_synced' => true,
         ]);
 
-        $action = new SyncMarketAssetsAction(new MarketService());
+        $action = new SyncMarketAssetsAction(new MarketService);
         $action->execute($this->user);
 
         $this->assertEquals(0, AssetPriceHistory::count());
-        
+
         Carbon::setTestNow();
     }
 
@@ -59,12 +61,12 @@ class SyncMarketAssetsTest extends TestCase
     {
         // Mock a Monday
         Carbon::setTestNow(Carbon::parse('2026-05-04 10:00:00')); // Monday
-        
+
         Asset::create([
             'user_id' => $this->user->id,
             'household_id' => $this->household->id,
             'name' => 'Bitcoin',
-            'type' => \App\Enums\AssetType::CRYPTO,
+            'type' => AssetType::CRYPTO,
             'unit' => 'BTC',
             'quantity' => 0.5,
             'value' => 30000,
@@ -86,11 +88,11 @@ class SyncMarketAssetsTest extends TestCase
 
         $history = AssetPriceHistory::withoutGlobalScopes()->first();
         $this->assertNotNull($history, 'Price history should have been created');
-        
+
         // Assert precision is maintained in the history (Price is converted to IDR)
         $expectedPrice = 65432.12345678 * 15000.0;
         $this->assertEquals($expectedPrice, (float) $history->price);
-        
+
         Carbon::setTestNow();
     }
 
@@ -103,7 +105,7 @@ class SyncMarketAssetsTest extends TestCase
             'user_id' => $this->user->id,
             'household_id' => $this->household->id,
             'name' => 'Ethereum',
-            'type' => \App\Enums\AssetType::CRYPTO,
+            'type' => AssetType::CRYPTO,
             'unit' => 'ETH',
             'quantity' => 1,
             'value' => 3000,
@@ -111,12 +113,12 @@ class SyncMarketAssetsTest extends TestCase
             'is_market_synced' => true,
         ]);
 
-        $action = new SyncMarketAssetsAction(new MarketService());
+        $action = new SyncMarketAssetsAction(new MarketService);
         $action->execute($this->user);
 
         // Should skip because lock is present
         $this->assertEquals(0, AssetPriceHistory::count());
-        
+
         Cache::forget('sync_market_assets_lock');
     }
 }

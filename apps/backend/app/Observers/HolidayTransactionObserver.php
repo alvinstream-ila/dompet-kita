@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Models\Holiday;
 use App\Models\HolidayTransaction;
 
 class HolidayTransactionObserver
@@ -43,12 +44,12 @@ class HolidayTransactionObserver
     {
         $amount = $customAmount ?? (float) $transaction->amount;
         $type = $customType ?? $transaction->type;
-        
+
         $holidayId = ($action === 'remove' && $transaction->wasChanged('holiday_id'))
             ? $transaction->getOriginal('holiday_id')
             : $transaction->holiday_id;
 
-        $holiday = \App\Models\Holiday::where('id', $holidayId)->lockForUpdate()->first();
+        $holiday = Holiday::where('id', $holidayId)->lockForUpdate()->first();
 
         if (! $holiday) {
             return;

@@ -28,9 +28,7 @@ class GenerateQuantumInsightsJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(protected User $user)
-    {
-    }
+    public function __construct(protected User $user) {}
 
     /**
      * Execute the job.
@@ -38,7 +36,7 @@ class GenerateQuantumInsightsJob implements ShouldQueue
     public function handle(QuantumInsightEngine $engine): void
     {
         Log::info("GenerateQuantumInsightsJob: Processing for User {$this->user->id}");
-        
+
         $engine->generateInsights($this->user);
     }
 }

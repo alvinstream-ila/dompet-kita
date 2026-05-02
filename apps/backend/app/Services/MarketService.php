@@ -16,8 +16,11 @@ use Illuminate\Support\Facades\Log;
 class MarketService
 {
     private const string CACHE_KEY = 'market_rates';
+
     private const int CACHE_TTL = 900; // 15 minutes (Fix 103)
+
     private const string STALE_CACHE_KEY = 'market_rates_stale';
+
     private const float TROY_OZ_TO_GRAM = 31.1034768;
 
     /**
@@ -41,7 +44,7 @@ class MarketService
         return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () use ($lock): array {
             try {
                 // Attempt to acquire lock, if fails, return stale data if available
-                if (!$lock->get()) {
+                if (! $lock->get()) {
                     return Cache::get(self::STALE_CACHE_KEY) ?? $this->handleGetRatesFailure(new \Exception('Could not acquire update lock.'));
                 }
 
@@ -72,6 +75,7 @@ class MarketService
                 if ($e instanceof RequestException && $e->response?->status() === 429) {
                     Log::warning('MarketService: Rate limit hit (429). Returning stale data.');
                 }
+
                 return $this->handleGetRatesFailure($e);
             } finally {
                 $lock->release();
@@ -111,14 +115,14 @@ class MarketService
         $currencyRates = (array) ($fxData['rates'] ?? []);
 
         // Ensure IDR failover is handled if missing from API
-        if (!isset($currencyRates['IDR'])) {
+        if (! isset($currencyRates['IDR'])) {
             $currencyRates['IDR'] = (float) config('services.market.failover.usd_idr', 15800.0);
         }
 
         // Fix 118: Ensure other minor pairs are supported via failover if missing
         $minorPairs = ['SGD' => 1.34, 'MYR' => 4.7, 'THB' => 35.5, 'SEK' => 10.5];
         foreach ($minorPairs as $code => $default) {
-            if (!isset($currencyRates[$code])) {
+            if (! isset($currencyRates[$code])) {
                 $currencyRates[$code] = (float) $default;
             }
         }
@@ -134,6 +138,7 @@ class MarketService
         // 🛡️ Fix 119: Attempt to return stale data first
         if (Cache::has(self::STALE_CACHE_KEY)) {
             Log::info('MarketService: Using stale data for failover.');
+
             return Cache::get(self::STALE_CACHE_KEY);
         }
 
@@ -161,7 +166,7 @@ class MarketService
                 $response = Http::timeout(15)
                     ->withHeaders(['User-Agent' => config('services.market.user_agent')])
                     ->get('https://www.logammulia.com/id/harga-emas-hari-ini');
-                
+
                 if (! $response->successful()) {
                     return null;
                 }
@@ -282,10 +287,10 @@ class MarketService
     /**
      * Get a specific rate for a currency pair.
      * Uses USD as the pivot (Frankfurter base for our implementation).
-     * 
+     *
      * Definition: How many units of [to] are equal to 1 unit of [from]?
      * Math: 1 [from] = (Rate[to] / Rate[from]) [to]
-     * 
+     *
      * Example: from=EUR, to=IDR.
      * 1 USD = 0.92 EUR -> 1 EUR = 1/0.92 USD.
      * 1 USD = 16000 IDR.
@@ -310,6 +315,7 @@ class MarketService
         // If we know IDR/USD but not EUR, we can't calculate.
         if ($valFrom === null || $valTo === null || $valFrom <= 0) {
             Log::error("MarketService: Calculation failed for {$from} -> {$to} due to missing pivot data.");
+
             return 1.0;
         }
 

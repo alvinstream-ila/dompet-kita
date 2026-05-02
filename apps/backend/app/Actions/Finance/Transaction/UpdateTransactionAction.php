@@ -17,7 +17,6 @@ class UpdateTransactionAction extends BaseAction
     public function execute(User $user, Transaction $transaction, array $data): Transaction
     {
 
-
         return DB::transaction(function () use ($transaction, $data): Transaction {
             $transaction->update($data);
             $transaction->refresh();

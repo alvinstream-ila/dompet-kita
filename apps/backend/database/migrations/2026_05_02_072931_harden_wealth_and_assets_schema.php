@@ -13,7 +13,7 @@ return new class extends Migration
     {
         // 1. Add currency to assets
         Schema::table('assets', function (Blueprint $table) {
-            if (!Schema::hasColumn('assets', 'currency')) {
+            if (! Schema::hasColumn('assets', 'currency')) {
                 $table->string('currency', 3)->default('IDR')->after('type');
             }
         });

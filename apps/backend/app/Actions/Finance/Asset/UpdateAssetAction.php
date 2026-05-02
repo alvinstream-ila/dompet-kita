@@ -21,7 +21,6 @@ class UpdateAssetAction extends BaseAction
     public function execute(User $user, Asset $asset, array $data): Asset
     {
 
-
         $asset->update($data);
 
         $this->updateWealthSnapshotAction->execute($user);

@@ -52,7 +52,6 @@ class HolidayController extends Controller
             $validated['image_url'] = $this->generateImageUrl((string) $request->string('destination'));
         }
 
-
         $holiday = Holiday::create($validated);
 
         return new HolidayResource($holiday);

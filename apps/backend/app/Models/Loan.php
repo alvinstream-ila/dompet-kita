@@ -35,7 +35,7 @@ class Loan extends Model
 {
     /** @use HasFactory<LoanFactory> */
     use AccountingJournalist, HasFactory, HasHouseholdScope, LogsActivity, SoftDeletes;
-    
+
     protected static function booted(): void
     {
         static::creating(function (Loan $loan) {

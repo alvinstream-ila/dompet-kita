@@ -37,7 +37,7 @@ class BudgetService
     public function getBudgetCycleDates(?int $month = null, ?int $year = null, int $startDay = 1): array
     {
         $now = Carbon::now();
-        
+
         // Use a Carbon instance to handle arithmetic safely across year boundaries
         $targetDate = Carbon::createFromDate(
             $year ?? (int) $now->year,
@@ -59,7 +59,7 @@ class BudgetService
         $actualStartDay = min($startDay, $daysInTargetMonth);
         $start = Carbon::createFromDate($year, $targetMonth, $actualStartDay)->startOfDay();
 
-        // 🛡️ Fix 61/84: To prevent "lost days", the end of the cycle is the second before 
+        // 🛡️ Fix 61/84: To prevent "lost days", the end of the cycle is the second before
         // the start of the NEXT cycle.
         $nextMonth = $targetMonth + 1;
         $nextYear = $year;
@@ -71,7 +71,7 @@ class BudgetService
         $daysInNextMonth = (int) Carbon::createFromDate($nextYear, $nextMonth, 1)->daysInMonth;
         $actualNextStartDay = min($startDay, $daysInNextMonth);
         $nextStart = Carbon::createFromDate($nextYear, $nextMonth, $actualNextStartDay)->startOfDay();
-        
+
         $end = $nextStart->copy()->subSecond();
 
         // If startDay is 1, we still want to ensure it's a clean calendar month
