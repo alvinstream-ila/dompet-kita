@@ -46,9 +46,11 @@ class UserFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (User $user) {
-            if ($user->household->owner_id === -1) {
-                Schema::withoutForeignKeyConstraints(function () use ($user) {
-                    $user->household->update(['owner_id' => $user->id]);
+            $household = $user->household;
+
+            if ($household && $household->owner_id === -1) {
+                Schema::withoutForeignKeyConstraints(function () use ($user, $household) {
+                    $household->update(['owner_id' => $user->id]);
                 });
             }
         });
