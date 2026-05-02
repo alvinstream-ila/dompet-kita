@@ -3,7 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\Household;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 /**
@@ -21,7 +23,7 @@ class HouseholdFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => (string) \Illuminate\Support\Str::uuid(),
+            'id' => (string) Str::uuid(),
             'name' => $this->faker->lastName.' Household',
             'owner_id' => 0, // Placeholder
         ];
@@ -34,8 +36,8 @@ class HouseholdFactory extends Factory
     {
         return $this->afterCreating(function (Household $household) {
             if ($household->owner_id === 0) {
-                \Illuminate\Support\Facades\Schema::withoutForeignKeyConstraints(function () use ($household) {
-                    $owner = \App\Models\User::factory()->create([
+                Schema::withoutForeignKeyConstraints(function () use ($household) {
+                    $owner = User::factory()->create([
                         'household_id' => $household->id,
                     ]);
                     $household->update(['owner_id' => $owner->id]);
