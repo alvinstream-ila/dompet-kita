@@ -11,6 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Skip if running on SQLite (Testing/Local)
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         // Supabase uses 'supabase_realtime' as the default publication for their Listeners.
         // We add our core tables to this publication so any change triggers a WS event.
 
@@ -44,6 +49,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         $tables = [
             'transactions',
             'assets',
