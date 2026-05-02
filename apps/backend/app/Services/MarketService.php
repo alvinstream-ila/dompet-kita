@@ -150,6 +150,7 @@ class MarketService
             Log::info('MarketService: Stale cache FOUND.');
             /** @var array{currency_rates: array<string, float>, gold_antam_gram: float, gold_global_oz: float, gold_global_gram: float, inflation_rate: float, last_updated: string} $staleData */
             $staleData = Cache::get(self::STALE_CACHE_KEY);
+
             return $staleData;
         }
         Log::warning('MarketService: Stale cache NOT FOUND.');

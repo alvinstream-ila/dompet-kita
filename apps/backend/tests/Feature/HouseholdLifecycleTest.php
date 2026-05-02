@@ -10,7 +10,6 @@ use App\Models\Household;
 use App\Models\PartnerInvitation;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
