@@ -19,7 +19,7 @@ class GoalTransactionObserver
         $this->syncGoalBalance($transaction, 'add');
         $this->syncGoalJournal($transaction);
 
-        $this->invalidateFinancialCache($transaction->household_id);
+        $this->invalidateFinancialCache($transaction->household_id ?? (string) $transaction->user_id);
     }
 
     /**
@@ -37,7 +37,7 @@ class GoalTransactionObserver
 
         $this->syncGoalJournal($transaction);
 
-        $this->invalidateFinancialCache($transaction->household_id);
+        $this->invalidateFinancialCache($transaction->household_id ?? (string) $transaction->user_id);
     }
 
     /**
@@ -47,7 +47,7 @@ class GoalTransactionObserver
     {
         $this->syncGoalBalance($transaction, 'remove');
 
-        $this->invalidateFinancialCache($transaction->household_id);
+        $this->invalidateFinancialCache($transaction->household_id ?? (string) $transaction->user_id);
     }
 
     /**

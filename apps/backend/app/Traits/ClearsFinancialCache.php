@@ -46,7 +46,7 @@ trait ClearsFinancialCache
             // 🤖 Clear AI Insights (Household or User level).
             Cache::forget("ai_insight_{$scopeId}");
 
-            Log::info("Financial cache invalidated for scope [{$scopeId}]. Version: ".Cache::get($versionKey));
+            Log::info("Financial cache invalidated for scope [{$scopeId}]. Version: ".(string) Cache::get($versionKey));
         } catch (\Exception $e) {
             Log::error("Failed to invalidate financial cache for scope [{$scopeId}]: ".$e->getMessage());
         }

@@ -17,7 +17,7 @@ class HolidayTransactionObserver
     {
         $this->syncHolidayBalance($transaction, 'add');
 
-        $this->invalidateFinancialCache($transaction->household_id);
+        $this->invalidateFinancialCache($transaction->household_id ?? (string) $transaction->user_id);
     }
 
     /**
@@ -33,7 +33,7 @@ class HolidayTransactionObserver
         // 2. Apply new amount
         $this->syncHolidayBalance($transaction, 'add');
 
-        $this->invalidateFinancialCache($transaction->household_id);
+        $this->invalidateFinancialCache($transaction->household_id ?? (string) $transaction->user_id);
     }
 
     /**
@@ -43,7 +43,7 @@ class HolidayTransactionObserver
     {
         $this->syncHolidayBalance($transaction, 'remove');
 
-        $this->invalidateFinancialCache($transaction->household_id);
+        $this->invalidateFinancialCache($transaction->household_id ?? (string) $transaction->user_id);
     }
 
     /**

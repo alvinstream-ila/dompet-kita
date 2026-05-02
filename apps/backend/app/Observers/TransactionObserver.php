@@ -18,7 +18,7 @@ class TransactionObserver
      */
     public function created(Transaction $transaction): void
     {
-        $this->invalidateFinancialCache($transaction->household_id);
+        $this->invalidateFinancialCache($transaction->household_id ?? (string) $transaction->user_id);
 
         if ($transaction->asset_id) {
             $this->adjustAssetBalance($transaction, $transaction->amount);
@@ -44,7 +44,7 @@ class TransactionObserver
      */
     public function updated(Transaction $transaction): void
     {
-        $this->invalidateFinancialCache($transaction->household_id);
+        $this->invalidateFinancialCache($transaction->household_id ?? (string) $transaction->user_id);
 
         // Handle Asset balance changes if amount, type, or asset_id changed
         if ($transaction->wasChanged(['amount', 'type', 'asset_id'])) {
@@ -75,7 +75,7 @@ class TransactionObserver
      */
     public function deleted(Transaction $transaction): void
     {
-        $this->invalidateFinancialCache($transaction->household_id);
+        $this->invalidateFinancialCache($transaction->household_id ?? (string) $transaction->user_id);
 
         if ($transaction->asset_id) {
             $this->reverseAssetAdjustment($transaction->asset, $transaction->amount, $transaction->type);
