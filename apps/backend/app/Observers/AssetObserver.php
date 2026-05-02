@@ -17,7 +17,7 @@ class AssetObserver
     {
         $this->syncAssetJournal($asset);
 
-        $this->invalidateFinancialCache($asset->user_id);
+        $this->invalidateFinancialCache($asset->household_id);
     }
 
     /**
@@ -32,7 +32,7 @@ class AssetObserver
             $this->syncAssetJournal($asset);
         }
 
-        $this->invalidateFinancialCache($asset->user_id);
+        $this->invalidateFinancialCache($asset->household_id);
     }
 
     /**
@@ -71,6 +71,6 @@ class AssetObserver
         // Without this, a phantom EXPENSE entry would remain in the user's transaction history.
         $asset->removeJournal('asset_creation');
 
-        $this->invalidateFinancialCache($asset->user_id);
+        $this->invalidateFinancialCache($asset->household_id);
     }
 }

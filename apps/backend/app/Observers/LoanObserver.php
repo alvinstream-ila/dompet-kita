@@ -32,7 +32,7 @@ class LoanObserver
             $loan->created_at
         );
 
-        $this->invalidateFinancialCache($loan->user_id);
+        $this->invalidateFinancialCache($loan->household_id);
     }
 
     /**
@@ -75,7 +75,7 @@ class LoanObserver
             $loan->removeJournal('loan_settlement');
         }
 
-        $this->invalidateFinancialCache($loan->user_id);
+        $this->invalidateFinancialCache($loan->household_id);
     }
 
     /**
@@ -88,6 +88,6 @@ class LoanObserver
         $loan->removeJournal('loan_creation');
         $loan->removeJournal('loan_settlement');
 
-        $this->invalidateFinancialCache($loan->user_id);
+        $this->invalidateFinancialCache($loan->household_id);
     }
 }

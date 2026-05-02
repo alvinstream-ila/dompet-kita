@@ -14,10 +14,8 @@ class HouseholdObserver
      */
     public function updated(Household $household): void
     {
-        // When household name or other details change, invalidate cache for all members
-        foreach ($household->users as $user) {
-            $this->invalidateFinancialCache($user);
-        }
+        // When household name or other details change, invalidate cache for the whole household scope.
+        $this->invalidateFinancialCache($household->id);
     }
 
     /**
@@ -25,9 +23,7 @@ class HouseholdObserver
      */
     public function deleted(Household $household): void
     {
-        // Handle cache cleanup for deleted household
-        foreach ($household->users as $user) {
-            $this->invalidateFinancialCache($user);
-        }
+        // Handle cache cleanup for deleted household.
+        $this->invalidateFinancialCache($household->id);
     }
 }

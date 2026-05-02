@@ -4,15 +4,20 @@ namespace App\Observers;
 
 use App\Models\Holiday;
 use App\Models\HolidayTransaction;
+use App\Traits\ClearsFinancialCache;
 
 class HolidayTransactionObserver
 {
+    use ClearsFinancialCache;
+
     /**
      * Handle the HolidayTransaction "created" event.
      */
     public function created(HolidayTransaction $transaction): void
     {
         $this->syncHolidayBalance($transaction, 'add');
+
+        $this->invalidateFinancialCache($transaction->household_id);
     }
 
     /**
@@ -27,6 +32,8 @@ class HolidayTransactionObserver
 
         // 2. Apply new amount
         $this->syncHolidayBalance($transaction, 'add');
+
+        $this->invalidateFinancialCache($transaction->household_id);
     }
 
     /**
@@ -35,6 +42,8 @@ class HolidayTransactionObserver
     public function deleted(HolidayTransaction $transaction): void
     {
         $this->syncHolidayBalance($transaction, 'remove');
+
+        $this->invalidateFinancialCache($transaction->household_id);
     }
 
     /**
