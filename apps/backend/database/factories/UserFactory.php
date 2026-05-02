@@ -31,8 +31,26 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'household_id' => Household::factory(),
+            'household_id' => function () {
+                return \Illuminate\Support\Facades\Schema::withoutForeignKeyConstraints(function () {
+                    return Household::factory()->create(['owner_id' => -1])->id;
+                });
+            },
         ];
+    }
+
+    /**
+     * Configure the model factory.
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            if ($user->household->owner_id === -1) {
+                \Illuminate\Support\Facades\Schema::withoutForeignKeyConstraints(function () use ($user) {
+                    $user->household->update(['owner_id' => $user->id]);
+                });
+            }
+        });
     }
 
     /**
