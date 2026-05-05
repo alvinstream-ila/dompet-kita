@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Enums\TransactionType;
 use App\Models\Holiday;
 use App\Models\HolidayTransaction;
 use App\Traits\ClearsFinancialCache;
@@ -92,7 +93,7 @@ class HolidayTransactionObserver
             $transaction->syncJournal(
                 'holiday_transaction',
                 (float) $transaction->amount,
-                \App\Enums\TransactionType::EXPENSE,
+                TransactionType::EXPENSE,
                 'Liburan',
                 "Penyisihan Dana Liburan: {$destination}",
                 $transaction->transaction_date
@@ -103,7 +104,7 @@ class HolidayTransactionObserver
             // but usually, it's already "spent" from the main balance when funded.
             // If the user is spending money that was ALREADY funded, we don't want to double count.
             // However, if they fund and spend simultaneously (e.g. paying direct), it should be recorded.
-            
+
             // Logic: If it's a direct expense (not from funded amount), it should be a journal entry.
             // But usually, HolidayTransaction is used for tracking the fund itself.
             // Let's remove any existing journal for non-funding types to avoid confusion.
