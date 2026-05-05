@@ -34,7 +34,7 @@ class JournalSynchronizationTest extends TestCase
         // Expect exactly 1 journal entry (loan_creation)
         $journals = Transaction::where('user_id', $user->id)
             ->where('metadata->source_type', Loan::class)
-            ->where('metadata->source_id', $loan->id)
+            ->where('metadata->source_id', (string) $loan->id)
             ->get();
 
         $this->assertCount(1, $journals);
@@ -49,7 +49,7 @@ class JournalSynchronizationTest extends TestCase
 
         $journals = Transaction::where('user_id', $user->id)
             ->where('metadata->source_type', Loan::class)
-            ->where('metadata->source_id', $loan->id)
+            ->where('metadata->source_id', (string) $loan->id)
             ->get();
 
         // Still 1 entry, but amount updated
@@ -63,7 +63,7 @@ class JournalSynchronizationTest extends TestCase
 
         $journals = Transaction::where('user_id', $user->id)
             ->where('metadata->source_type', Loan::class)
-            ->where('metadata->source_id', $loan->id)
+            ->where('metadata->source_id', (string) $loan->id)
             ->get();
 
         // Now we expect 2 entries (creation and settlement)
@@ -76,7 +76,7 @@ class JournalSynchronizationTest extends TestCase
 
         $journals = Transaction::where('user_id', $user->id)
             ->where('metadata->source_type', Loan::class)
-            ->where('metadata->source_id', $loan->id)
+            ->where('metadata->source_id', (string) $loan->id)
             ->get();
 
         // Back to 1 entry (settlement removed)

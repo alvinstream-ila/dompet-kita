@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $user_id
  *
+ * @method static void deleted(\Closure $callback)
+ *
  * @mixin Model
  */
 trait AccountingJournalist
@@ -42,7 +44,7 @@ trait AccountingJournalist
             'metadata' => array_merge($metadata, [
                 'auto_journal' => true,
                 'source_type' => static::class,
-                'source_id' => $this->id,
+                'source_id' => (string) $this->id,
             ]),
         ]);
     }
@@ -70,7 +72,7 @@ trait AccountingJournalist
         }
 
         $transactions = $query->where('metadata->source_type', static::class)
-            ->where('metadata->source_id', $this->id)
+            ->where('metadata->source_id', (string) $this->id)
             ->get();
 
         // Find exact context match, or fallback to the legacy one (which has no context yet)
@@ -85,7 +87,7 @@ trait AccountingJournalist
         $mergedMetadata = array_merge($transaction ? ($transaction->metadata ?? []) : [], $metadata, [
             'auto_journal' => true,
             'source_type' => static::class,
-            'source_id' => $this->id,
+            'source_id' => (string) $this->id,
             'journal_context' => $context,
         ]);
 
@@ -128,7 +130,7 @@ trait AccountingJournalist
         }
 
         $query->where('metadata->source_type', static::class)
-            ->where('metadata->source_id', $this->id)
+            ->where('metadata->source_id', (string) $this->id)
             ->where('metadata->journal_context', $context)
             ->delete();
     }
@@ -148,7 +150,7 @@ trait AccountingJournalist
             }
 
             $query->where('metadata->source_type', get_class($model))
-                ->where('metadata->source_id', $model->id)
+                ->where('metadata->source_id', (string) $model->id)
                 ->delete();
         });
     }

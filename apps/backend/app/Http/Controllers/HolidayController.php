@@ -131,7 +131,21 @@ class HolidayController extends Controller
             if (! empty($validated['asset_id']) && $user instanceof User) {
                 /** @var Asset $asset */
                 $asset = Asset::findOrFail($validated['asset_id']);
+
+                // Record the withdrawal in asset history
+                $asset->transactions()->create([
+                    'user_id' => $user->id,
+                    'amount' => $validated['amount'],
+                    'type' => 'withdrawal',
+                    'description' => "Alokasi dana liburan: {$holiday->destination}",
+                    'transaction_date' => $validated['date'],
+                ]);
+
                 $asset->decrement('value', (float) $validated['amount']);
+
+                // Capital adjustment: reducing capital proportionally
+                $capitalReduction = min($asset->invested_capital, (float) $validated['amount']);
+                $asset->decrement('invested_capital', $capitalReduction);
             }
 
             return \response()->json([

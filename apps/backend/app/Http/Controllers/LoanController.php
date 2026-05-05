@@ -110,7 +110,7 @@ class LoanController extends Controller
         $month = $request->integer('month', now()->month);
         $year = $request->integer('year', now()->year);
 
-        $reportData = $this->prepareReportData($user, $month, $year);
+        $reportData = $this->prepareReportData($month, $year);
 
         // Handle PDF Format
         if ($request->query('format') === 'pdf') {
@@ -160,7 +160,7 @@ class LoanController extends Controller
      *   carry_over: array{items: array<int, array<string, mixed>>, total_piutang: float, total_hutang: float}
      * }
      */
-    private function prepareReportData(User $user, int $month, int $year): array
+    private function prepareReportData(int $month, int $year): array
     {
         $startDate = Carbon::create($year, $month, 1)?->startOfMonth() ?? now()->startOfMonth();
         $endDate = $startDate->copy()->endOfMonth();
@@ -177,14 +177,8 @@ class LoanController extends Controller
         // 2. Fetch all transactions linked to loans in this month (Automated Scoping)
         $transactions = Transaction::query()
             ->whereBetween('date', [$startDate, $endDate])
-            ->whereNotNull('metadata')
-            ->get()
-            ->filter(function (Transaction $t): bool {
-                /** @var array<string, mixed>|null $metadata */
-                $metadata = $t->metadata;
-
-                return is_array($metadata) && ($metadata['source_type'] ?? null) === Loan::class;
-            });
+            ->where('metadata->source_type', Loan::class)
+            ->get();
 
         // 3. Calculate Opening Balances (Snapshot at start of month)
         $opening = $this->calculateBalancesAt($loans, $startDate->copy()->subDay());

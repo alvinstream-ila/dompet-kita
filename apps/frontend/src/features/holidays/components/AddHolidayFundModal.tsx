@@ -1,8 +1,15 @@
-import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Loader2, Plane, Sparkles, Wallet, X } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -40,7 +47,7 @@ export const AddHolidayFundModal: React.FC<AddHolidayFundModalProps> = ({
     setAmount(formatToRupiah(val.toString()));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!amount) return;
 
@@ -62,54 +69,45 @@ export const AddHolidayFundModal: React.FC<AddHolidayFundModalProps> = ({
     setDescription('');
   };
 
-  if (!isOpen) return null;
-
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="absolute inset-0 bg-slate-900/60 backdrop-blur-xl"
-        />
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-lg overflow-hidden rounded-[48px] border border-white/20 bg-white shadow-2xl"
-        >
-          {/* Decorative Header */}
-          <div className="relative h-40 bg-linear-to-br from-pink-500 to-rose-600 p-8">
-            <div className="absolute top-0 right-0 p-8 opacity-20">
-              <Plane size={120} className="-rotate-12 text-white" />
+    <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
+      <DialogContent
+        showCloseButton={false}
+        className="overflow-hidden rounded-[32px] border-none p-0 shadow-2xl sm:max-w-md"
+      >
+        <DialogHeader className="relative h-40 overflow-hidden bg-linear-to-br from-pink-500 to-rose-600 p-8 text-white">
+          <div className="absolute top-0 right-0 p-8 opacity-20">
+            <Plane size={120} className="-rotate-12 text-white" />
+          </div>
+          <div className="relative z-10 flex items-center justify-between">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md">
+              <Sparkles className="text-white" size={28} />
             </div>
-            <div className="flex items-center justify-between">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md">
-                <Sparkles className="text-white" size={28} />
-              </div>
+            <DialogClose asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={onClose}
-                className="rounded-full text-white hover:bg-white/10"
+                className="rounded-full text-white transition-all hover:bg-white/10 hover:text-white"
               >
                 <X size={24} />
               </Button>
-            </div>
-            <div className="mt-4">
-              <h2 className="text-2xl font-black tracking-tight text-white">
-                Isi Dana Liburan ✨
-              </h2>
-              <p className="text-sm font-bold tracking-widest text-rose-100 uppercase opacity-80">
-                Tujuan: {holiday.destination}
-              </p>
-            </div>
+            </DialogClose>
           </div>
+          <div className="relative z-10 mt-4">
+            <DialogTitle className="text-2xl font-black tracking-tight text-white">
+              Isi Dana Liburan ✨
+            </DialogTitle>
+            <DialogDescription className="text-sm font-bold tracking-widest text-rose-100 uppercase opacity-80">
+              Tujuan: {holiday.destination}
+            </DialogDescription>
+          </div>
+        </DialogHeader>
 
-          <form onSubmit={handleSubmit} className="space-y-8 p-8">
+        <form
+          onSubmit={handleSubmit}
+          className="relative z-20 -mt-6 space-y-6 px-6 pb-8"
+        >
+          <div className="rounded-[28px] bg-white p-6 shadow-xl ring-1 ring-black/5">
             {/* Amount Input */}
             <div className="space-y-3">
               <label
@@ -128,17 +126,17 @@ export const AddHolidayFundModal: React.FC<AddHolidayFundModalProps> = ({
                   value={amount}
                   onChange={(e) => setAmount(formatToRupiah(e.target.value))}
                   placeholder="0"
-                  className="h-20 rounded-[28px] border-none bg-slate-50 pl-16 text-3xl font-black text-slate-800 placeholder:text-slate-200 focus:ring-4 focus:ring-rose-100"
+                  className="h-20 rounded-[24px] border-none bg-slate-50 pl-16 text-3xl font-black text-slate-800 placeholder:text-slate-200 focus:ring-4 focus:ring-rose-100"
                   required
                 />
               </div>
-              <div className="flex flex-wrap gap-2 pt-2">
+              <div className="flex flex-wrap gap-2 pt-1">
                 {PRESET_AMOUNTS.map((val) => (
                   <button
                     key={val}
                     type="button"
                     onClick={() => handlePresetClick(val)}
-                    className="rounded-xl border border-slate-100 bg-white px-4 py-2 text-[11px] font-black text-slate-500 transition-all hover:border-rose-200 hover:text-rose-600 active:scale-95"
+                    className="rounded-xl border border-slate-100 bg-white px-3 py-1.5 text-[10px] font-black text-slate-500 transition-all hover:border-rose-200 hover:text-rose-600 active:scale-95"
                   >
                     +{formatToRupiah(val.toString())}
                   </button>
@@ -147,12 +145,12 @@ export const AddHolidayFundModal: React.FC<AddHolidayFundModalProps> = ({
             </div>
 
             {/* Source Asset Selection */}
-            <div className="space-y-3">
+            <div className="mt-6 space-y-3">
               <label
                 htmlFor="fund-source"
                 className="ml-2 text-[10px] font-black tracking-[0.2em] text-slate-400 uppercase"
               >
-                Sumber Dana (Ambil Dari)
+                Sumber Dana
               </label>
               <Select
                 value={selectedAssetId}
@@ -160,7 +158,7 @@ export const AddHolidayFundModal: React.FC<AddHolidayFundModalProps> = ({
               >
                 <SelectTrigger
                   id="fund-source"
-                  className="h-16 rounded-[24px] border-none bg-slate-50 px-6 font-bold text-slate-700 focus:ring-4 focus:ring-rose-100"
+                  className="h-16 rounded-[20px] border-none bg-slate-50 px-6 font-bold text-slate-700 focus:ring-4 focus:ring-rose-100"
                 >
                   <SelectValue placeholder="Pilih Sumber" />
                 </SelectTrigger>
@@ -188,30 +186,30 @@ export const AddHolidayFundModal: React.FC<AddHolidayFundModalProps> = ({
                   ))}
                 </SelectContent>
               </Select>
-              <p className="px-2 text-center text-[10px] font-bold text-slate-300 italic">
+              <p className="px-2 text-center text-[9px] font-bold text-slate-300 italic">
                 {selectedAssetId === 'none'
-                  ? 'Dana akan dicatat sebagai uang baru khusus liburan.'
+                  ? 'Dana akan dicatat sebagai pengeluaran baru khusus liburan.'
                   : 'Saldo aset akan dipindahkan otomatis ke kas liburan ini.'}
               </p>
             </div>
+          </div>
 
-            <Button
-              type="submit"
-              disabled={fundMutation.isPending}
-              className="group h-18 w-full rounded-[28px] bg-linear-to-r from-pink-500 to-rose-600 text-sm font-black tracking-[0.2em] text-white uppercase shadow-2xl shadow-rose-500/30 transition-all hover:scale-[1.02] active:scale-95"
-            >
-              {fundMutation.isPending ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <>
-                  Konfirmasi Setoran
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </>
-              )}
-            </Button>
-          </form>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+          <Button
+            type="submit"
+            disabled={fundMutation.isPending}
+            className="group h-16 w-full rounded-[24px] bg-linear-to-r from-pink-500 to-rose-600 text-sm font-black tracking-[0.2em] text-white uppercase shadow-2xl shadow-rose-500/30 transition-all hover:scale-[1.02] active:scale-95"
+          >
+            {fundMutation.isPending ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <>
+                Konfirmasi Setoran
+                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </>
+            )}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };

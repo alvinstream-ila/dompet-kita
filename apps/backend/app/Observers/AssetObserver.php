@@ -15,11 +15,6 @@ class AssetObserver
      */
     public function created(Asset $asset): void
     {
-        // Avoid heavy side effects during testing if not explicitly requested
-        if (app()->environment('testing')) {
-            return;
-        }
-
         $this->syncAssetJournal($asset);
 
         $this->invalidateFinancialCache($asset->household_id ?? (string) $asset->user_id);
@@ -30,9 +25,7 @@ class AssetObserver
      */
     public function updated(Asset $asset): void
     {
-        if (app()->environment('testing')) {
-            return;
-        }
+
 
         // Only sync journal if core investment data changed.
         // Value changes (often from transactions) should NOT trigger journal re-sync
@@ -76,9 +69,7 @@ class AssetObserver
      */
     public function deleted(Asset $asset): void
     {
-        if (app()->environment('testing')) {
-            return;
-        }
+
 
         // Remove the journal entry that was created when this asset was first recorded.
         // Without this, a phantom EXPENSE entry would remain in the user's transaction history.

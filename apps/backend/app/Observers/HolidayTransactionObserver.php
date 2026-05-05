@@ -16,6 +16,7 @@ class HolidayTransactionObserver
     public function created(HolidayTransaction $transaction): void
     {
         $this->syncHolidayBalance($transaction, 'add');
+        $this->syncHolidayJournal($transaction);
 
         $this->invalidateFinancialCache($transaction->household_id ?? (string) $transaction->user_id);
     }
@@ -33,6 +34,8 @@ class HolidayTransactionObserver
         // 2. Apply new amount
         $this->syncHolidayBalance($transaction, 'add');
 
+        $this->syncHolidayJournal($transaction);
+
         $this->invalidateFinancialCache($transaction->household_id ?? (string) $transaction->user_id);
     }
 
@@ -42,6 +45,7 @@ class HolidayTransactionObserver
     public function deleted(HolidayTransaction $transaction): void
     {
         $this->syncHolidayBalance($transaction, 'remove');
+        $this->syncHolidayJournal($transaction); // This will remove the journal
 
         $this->invalidateFinancialCache($transaction->household_id ?? (string) $transaction->user_id);
     }
@@ -70,6 +74,42 @@ class HolidayTransactionObserver
             $holiday->increment($column, $amount);
         } else { // remove
             $holiday->decrement($column, $amount);
+        }
+    }
+
+    /**
+     * Synchronizes the journal based on transaction type.
+     */
+    protected function syncHolidayJournal(HolidayTransaction $transaction): void
+    {
+        if ($transaction->type === 'funding') {
+            // Ensure holiday relationship is loaded
+            $holiday = $transaction->holiday ?: Holiday::find($transaction->holiday_id);
+            $destination = $holiday ? $holiday->destination : 'Liburan';
+
+            // When funding a holiday, it is recorded as an EXPENSE
+            // because that money is now "locked" for the trip.
+            $transaction->syncJournal(
+                'holiday_transaction',
+                (float) $transaction->amount,
+                \App\Enums\TransactionType::EXPENSE,
+                'Liburan',
+                "Penyisihan Dana Liburan: {$destination}",
+                $transaction->transaction_date
+            );
+        } elseif ($transaction->type === 'spending') {
+            // When spending from the holiday fund, we might record it as an expense too
+            // or just a descriptive record. For now, let's keep it as an expense
+            // but usually, it's already "spent" from the main balance when funded.
+            // If the user is spending money that was ALREADY funded, we don't want to double count.
+            // However, if they fund and spend simultaneously (e.g. paying direct), it should be recorded.
+            
+            // Logic: If it's a direct expense (not from funded amount), it should be a journal entry.
+            // But usually, HolidayTransaction is used for tracking the fund itself.
+            // Let's remove any existing journal for non-funding types to avoid confusion.
+            $transaction->removeJournal('holiday_transaction');
+        } else {
+            $transaction->removeJournal('holiday_transaction');
         }
     }
 }
