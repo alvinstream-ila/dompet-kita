@@ -2,15 +2,13 @@
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Mail;
 
 uses(RefreshDatabase::class);
 
 test('new user can register and triggers verification', function (): void {
     Mail::fake();
-    
+
     $response = $this->postJson('/api/register', [
         'name' => 'Alvin Test',
         'email' => 'alvin.test@example.com',
@@ -25,7 +23,7 @@ test('new user can register and triggers verification', function (): void {
     ]);
 
     $user = User::where('email', 'alvin.test@example.com')->first();
-    
+
     // Check if verification code was generated
     expect($user->email_verification_code)->not->toBeNull();
     expect($user->email_verification_expires_at)->not->toBeNull();

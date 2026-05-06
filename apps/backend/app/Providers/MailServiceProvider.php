@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\Services\Security\GoogleMailTransport;
 use Google\Client as GoogleClient;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\ServiceProvider;
 
 class MailServiceProvider extends ServiceProvider
