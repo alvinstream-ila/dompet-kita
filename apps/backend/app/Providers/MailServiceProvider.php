@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Services\Security\GoogleMailTransport;
 use Google\Client as GoogleClient;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 
 class MailServiceProvider extends ServiceProvider
@@ -25,12 +26,18 @@ class MailServiceProvider extends ServiceProvider
             $client = new GoogleClient;
             $client->setClientId($config['client_id']);
             $client->setClientSecret($config['client_secret']);
-            $client->refreshToken($config['refresh_token']);
 
-            $accessTokenResponse = $client->getAccessToken();
-            $accessToken = $accessTokenResponse['access_token'];
+            // Fetch a fresh access token using the refresh token
+            $accessTokenResponse = $client->fetchAccessTokenWithRefreshToken($config['refresh_token']);
 
-            return new GoogleMailTransport($accessToken);
+            if (! isset($accessTokenResponse['access_token'])) {
+                Log::error('GMAIL-AUTH-ERROR: Failed to retrieve access token.', [
+                    'response' => $accessTokenResponse,
+                ]);
+                throw new \RuntimeException('Failed to retrieve Gmail access token. Check GOOGLE_MAIL_REFRESH_TOKEN.');
+            }
+
+            return new GoogleMailTransport($accessTokenResponse['access_token']);
         });
 
         // Force 'Dompet Kita' Branding for Mail

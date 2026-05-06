@@ -7,6 +7,7 @@ namespace App\Services\Security;
 use App\Exceptions\MailTransportException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mailer\Transport\AbstractTransport;
 use Symfony\Component\Mime\Message;
@@ -56,7 +57,13 @@ class GoogleMailTransport extends AbstractTransport
             ]);
 
         if (! $response->successful()) {
+            Log::error('GMAIL-HTTP-API-ERROR: Failed to send email.', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
             throw new MailTransportException('Gmail HTTP API Error: '.$response->body());
         }
+
+        Log::info('GMAIL-HTTP-API-SUCCESS: Email sent successfully via HTTP API.');
     }
 }

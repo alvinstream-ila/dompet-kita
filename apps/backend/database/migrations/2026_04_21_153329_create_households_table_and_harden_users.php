@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('households', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
+            $table->uuid('owner_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });

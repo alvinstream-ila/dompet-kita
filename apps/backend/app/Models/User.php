@@ -14,6 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
@@ -163,6 +164,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verification_expires_at' => now()->addMinutes(60),
         ]);
 
+        Log::info('USER-NOTIFICATION: Triggering VerifyEmailNotification for user: '.$this->email);
         $this->notify(new VerifyEmailNotification($code));
     }
 
