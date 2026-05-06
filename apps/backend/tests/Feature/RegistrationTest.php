@@ -22,7 +22,7 @@ test('new user can register and triggers verification', function (): void {
         'email' => 'alvin.test@example.com',
     ]);
 
-    $user = User::where('email', 'alvin.test@example.com')->first();
+    $user = User::where('email', 'alvin.test@example.com')->firstOrFail();
 
     // Check if verification code was generated
     expect($user->email_verification_code)->not->toBeNull();
