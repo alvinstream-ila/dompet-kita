@@ -125,4 +125,47 @@ class SecurityBugFixTest extends TestCase
         $timeoutResponse = $this->actingAs($user)->getJson(self::SUDO_TEST_ROUTE);
         $timeoutResponse->assertStatus(403);
     }
+
+    public function test_sudo_mode_fails_with_wrong_password(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        // 1. Attempt sudo with WRONG password
+        $response = $this->actingAs($user)->postJson('/api/sudo/confirm', [
+            'password' => 'wrong-password',
+        ]);
+
+        $response->assertStatus(401)
+            ->assertJsonFragment(['remaining' => 2]);
+
+        // 2. Verify access to sensitive route is STILL blocked
+        $blockedResponse = $this->actingAs($user)->getJson(self::SUDO_TEST_ROUTE);
+        $blockedResponse->assertStatus(403)
+            ->assertJson(['sudo_required' => true]);
+    }
+
+    public function test_sudo_mode_throttling_after_3_failures(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        // 1. First failure
+        $this->actingAs($user)->postJson('/api/sudo/confirm', ['password' => 'wrong'])
+            ->assertStatus(401)
+            ->assertJsonFragment(['remaining' => 2]);
+
+        // 2. Second failure
+        $this->actingAs($user)->postJson('/api/sudo/confirm', ['password' => 'wrong'])
+            ->assertStatus(401)
+            ->assertJsonFragment(['remaining' => 1]);
+
+        // 3. Third failure -> Should trigger FORCE LOGOUT
+        $response = $this->actingAs($user)->postJson('/api/sudo/confirm', ['password' => 'wrong']);
+        $response->assertStatus(401)
+            ->assertJson(['action' => 'force_logout']);
+
+        // 4. Verify tokens are DELETED in database
+        $this->assertEquals(0, $user->tokens()->count());
+    }
 }

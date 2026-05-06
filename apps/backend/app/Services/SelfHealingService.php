@@ -42,7 +42,7 @@ class SelfHealingService
         }
 
         // 3. Check for specific application-level anomalies (e.g., negative assets)
-        $negativeAssets = Asset::where('value', '<', 0)->count();
+        $negativeAssets = Asset::whereRaw('CAST(value AS NUMERIC) < 0')->count();
         if ($negativeAssets > 0) {
             $issues[] = ['type' => 'data_anomaly', 'details' => "Found {$negativeAssets} negative assets."];
         }

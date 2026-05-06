@@ -73,6 +73,14 @@ class SocialAuthController extends Controller
                     $sourceName = $socialUser->getName() ?? $socialUser->getNickname() ?? 'user';
                     $username = $this->generateUniqueUsername((string) $sourceName);
 
+                    // 1. Create Solo Household first with owner_id as null
+                    $household = Household::create([
+                        'id' => (string) Str::uuid(),
+                        'name' => "Household of {$username}",
+                        'owner_id' => null,
+                    ]);
+
+                    // 2. Create User linked to the household
                     $user = User::create([
                         'name' => $username,
                         'email' => $socialUser->getEmail(),
@@ -81,16 +89,11 @@ class SocialAuthController extends Controller
                         'avatar_url' => $socialUser->getAvatar(),
                         'password' => null,
                         'email_verified_at' => \now(),
+                        'household_id' => $household->id,
                     ]);
 
-                    // 🛡️ Create Solo Household immediately to ensure data sovereignty
-                    $household = Household::create([
-                        'id' => (string) Str::uuid(),
-                        'name' => "Household of {$user->name}",
-                        'owner_id' => $user->id,
-                    ]);
-
-                    $user->update(['household_id' => $household->id]);
+                    // 3. Update Household with the actual owner_id
+                    $household->update(['owner_id' => $user->id]);
                 }
 
                 return $user;

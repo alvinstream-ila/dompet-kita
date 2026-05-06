@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -56,20 +57,23 @@ class AuthController extends Controller
 
         /** @var User $user */
         $user = DB::transaction(function () use ($request) {
+            // 1. Create Solo Household first with owner_id as null
+            $household = Household::create([
+                'id' => (string) Str::uuid(),
+                'name' => "Household of {$request->string('name')}",
+                'owner_id' => null,
+            ]);
+
+            // 2. Create User linked to the household
             $user = User::create([
                 'name' => (string) $request->string('name'),
                 'email' => (string) $request->string('email'),
                 'password' => Hash::make((string) $request->string('password')),
+                'household_id' => $household->id,
             ]);
 
-            // 🛡️ Create Solo Household immediately to ensure data sovereignty
-            $household = Household::create([
-                'id' => (string) Str::uuid(),
-                'name' => "Household of {$user->name}",
-                'owner_id' => $user->id,
-            ]);
-
-            $user->update(['household_id' => $household->id]);
+            // 3. Update Household with the actual owner_id
+            $household->update(['owner_id' => $user->id]);
 
             return $user;
         });
@@ -350,17 +354,50 @@ class AuthController extends Controller
             return \response()->json(['message' => 'Unauthenticated'], 401);
         }
 
+        $throttleKey = 'sudo_attempts:'.$user->id;
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            return \response()->json([
+                'message' => "Terlalu banyak kegagalan verifikasi. Akses dibatasi sementara. Silakan coba lagi dalam {$seconds} detik.",
+            ], 429);
+        }
+
         if (! Hash::check((string) $request->string('password'), (string) $user->password)) {
+            RateLimiter::hit($throttleKey, 300); // 5 minute penalty
+            $remaining = RateLimiter::remaining($throttleKey, 3);
+
+            if ($remaining === 0) {
+                // 🚀 Aggressive Security: Force Logout
+                $user->tokens()->delete();
+                RateLimiter::clear($throttleKey);
+
+                $this->sentinel->notify(
+                    "PROTOKOL DARURAT: User `{$user->email}` dipaksa log out setelah 3 kegagalan Sudo berturut-turut. IP: `{$request->ip()}`",
+                    'critical',
+                    ['title' => 'Security: Forced Logout Triggered']
+                );
+
+                return \response()->json([
+                    'message' => 'Terlalu banyak kegagalan verifikasi. Demi keamanan, Anda telah dikeluarkan dari sistem. Silakan login kembali.',
+                    'action' => 'force_logout',
+                ], 401);
+            }
+
             $this->sentinel->notify(
-                "Pelanggaran protokol Sudo terdeteksi: Kegagalan otentikasi kata sandi dari IP: `{$request->ip()}`",
+                "Pelanggaran protokol Sudo terdeteksi: Kegagalan otentikasi kata sandi. Sisa percobaan: {$remaining}. IP: `{$request->ip()}`",
                 'critical',
                 ['title' => 'Security: Sudo Verification Failed']
             );
 
             return \response()->json([
-                'message' => 'Verifikasi gagal. Hak akses administratif ditolak.',
+                'message' => "Verifikasi gagal. Hak akses administratif ditolak. Sisa percobaan: {$remaining}.",
+                'remaining' => $remaining,
             ], 401);
         }
+
+        RateLimiter::clear($throttleKey);
 
         $token = $user->currentAccessToken();
         $tokenId = $token instanceof PersonalAccessToken ? $token->id : 'default';
