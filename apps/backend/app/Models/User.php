@@ -6,6 +6,7 @@ use App\Notifications\VerifyEmailNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,7 +19,7 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
 /**
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property string $email
  * @property string|null $tax_status
@@ -28,7 +29,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property Carbon|null $legacy_grace_start_at
  * @property int|null $legacy_threshold_months
  * @property bool $is_legacy_triggered
- * @property int|null $partner_id
+ * @property string|null $partner_id
  * @property User|null $partner
  * @property string|null $household_id
  * @property Household|null $household
@@ -51,7 +52,7 @@ use Spatie\Activitylog\Support\LogOptions;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, LogsActivity, Notifiable;
+    use HasApiTokens, HasFactory, HasUuids, LogsActivity, Notifiable;
 
     /**
      * The attributes that are mass assignable.

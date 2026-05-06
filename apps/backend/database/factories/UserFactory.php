@@ -34,7 +34,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'household_id' => function () {
                 return Schema::withoutForeignKeyConstraints(function () {
-                    return Household::factory()->create(['owner_id' => -1])->id;
+                    return Household::factory()->create(['owner_id' => null])->id;
                 });
             },
         ];
@@ -48,7 +48,7 @@ class UserFactory extends Factory
         return $this->afterCreating(function (User $user) {
             $household = $user->household;
 
-            if ($household && $household->owner_id === -1) {
+            if ($household && is_null($household->owner_id)) {
                 Schema::withoutForeignKeyConstraints(function () use ($user, $household) {
                     $household->update(['owner_id' => $user->id]);
                 });
