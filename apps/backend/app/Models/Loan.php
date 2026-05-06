@@ -18,7 +18,7 @@ use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property int $id
- * @property int $user_id
+ * @property string $user_id
  * @property string $household_id
  * @property LoanType $type
  * @property float $amount

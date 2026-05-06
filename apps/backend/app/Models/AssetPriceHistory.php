@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
- * @property int $user_id
- * @property int $household_id
+ * @property string $user_id
+ * @property string $household_id
  * @property int $asset_id
  * @property float $price
  * @property Carbon $recorded_at

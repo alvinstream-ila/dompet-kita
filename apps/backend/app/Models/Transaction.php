@@ -17,7 +17,7 @@ use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property int $id
- * @property int $user_id
+ * @property string $user_id
  * @property string $household_id
  * @property string|null $reference_number
  * @property Carbon $date

@@ -16,6 +16,7 @@ parameters:
     # Level 9 - Zero-Tolerance Mode (Expert Absolute Standard)
     level: 9
     treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
 
     ignoreErrors:
         - '#Cannot access offset .* on mixed#'

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
- * @property int $user_id
+ * @property string $user_id
  * @property string $household_id
  * @property string $destination
  * @property float $budget

@@ -14,7 +14,7 @@ use Spatie\Activitylog\Support\LogOptions;
 /**
  * @property string $id (UUID)
  * @property string $name
- * @property int $owner_id
+ * @property string|null $owner_id
  * @property-read Collection<int, User> $users
  */
 class Household extends Model

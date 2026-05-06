@@ -12,7 +12,6 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class HouseholdLifecycleTest extends TestCase
@@ -93,24 +92,12 @@ class HouseholdLifecycleTest extends TestCase
 
     public function test_it_prevents_currency_change_if_assets_exist(): void
     {
-        $household = new Household;
-        $household->id = (string) Str::uuid();
-        $household->name = 'Test Household';
-        $household->owner_id = 0;
-        $household->save();
-
-        $user = new User;
-        $user->name = 'Test User';
-        $user->email = 'test-'.uniqid().'@example.com';
-        $user->password = bcrypt('password');
-        $user->household_id = $household->id;
-        $user->currency_format = 'IDR';
-        $user->email_verified_at = now();
-        $user->save();
+        $user = User::factory()->create(['currency_format' => 'IDR']);
+        assert($user instanceof User);
 
         $asset = new Asset;
-        $asset->user_id = $user->id;
-        $asset->household_id = $user->household_id;
+        $asset->user_id = (string) $user->id;
+        $asset->household_id = (string) $user->household_id;
         $asset->name = 'Test Asset';
         $asset->type = AssetType::CASH;
         $asset->value = 1000;

@@ -246,7 +246,7 @@ class PartnerController extends Controller
     /**
      * Reassign all finance records of a user to a specific household.
      */
-    private function reassignUserRecordsToHousehold(int $userId, string $householdId): void
+    private function reassignUserRecordsToHousehold(string $userId, string $householdId): void
     {
         $financeTables = [
             'transactions',

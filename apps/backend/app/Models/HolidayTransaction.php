@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
- * @property int $user_id
+ * @property string $user_id
  * @property string|null $household_id
  * @property int $holiday_id
  * @property int|null $asset_id

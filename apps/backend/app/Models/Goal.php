@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int $user_id
+ * @property string $user_id
  * @property string $household_id
  * @property string $name
  * @property float $target_amount
