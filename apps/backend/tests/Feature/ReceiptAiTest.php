@@ -11,7 +11,7 @@ class ReceiptAiTest extends TestCase
     /**
      * Test that the receipt analyzer can handle a real (or mocked) AI response.
      */
-    public function test_receipt_analyzer_works_with_current_config()
+    public function test_receipt_analyzer_works_with_current_config(): void
     {
         /** @var AiProviderManager $manager */
         $manager = app(AiProviderManager::class);
