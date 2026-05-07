@@ -31,7 +31,7 @@ class CloudflareAIProvider implements AiProviderInterface
 
     public function isAvailable(): bool
     {
-        return ! empty($this->token) && ! empty($this->accountId) && $this->token !== '0';
+        return ! empty($this->token) && ! empty($this->accountId);
     }
 
     public function supportsVision(): bool
