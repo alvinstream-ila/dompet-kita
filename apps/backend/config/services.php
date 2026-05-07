@@ -37,10 +37,6 @@ return [
         ],
     ],
 
-    'gemini' => [
-        'key' => env('GEMINI_API_KEY'),
-    ],
-
     'ai' => [
         'primary' => env('AI_PRIMARY_PROVIDER', 'groq'),
         'groq' => [
@@ -49,8 +45,12 @@ return [
         ],
         'openrouter' => [
             'key' => env('OPENROUTER_API_KEY'),
-            'model_text' => env('OPENROUTER_MODEL_TEXT', 'meta-llama/llama-3.3-70b-instruct:free'),
-            'model_vision' => env('OPENROUTER_MODEL_VISION', 'google/gemini-flash-1.5-exp:free'),
+            'model_text' => env('OPENROUTER_MODEL_TEXT', 'google/gemini-2.0-flash-001'),
+            'model_vision' => env('OPENROUTER_MODEL_VISION', 'google/gemini-2.0-flash-001'),
+        ],
+        'gemini' => [
+            'key' => env('GEMINI_API_KEY'),
+            'model' => env('GEMINI_MODEL', 'gemini-2.0-flash'),
         ],
     ],
 

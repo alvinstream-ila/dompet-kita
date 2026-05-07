@@ -20,8 +20,9 @@ class GeminiProvider implements AiProviderInterface
         $apiKey = \config('services.ai.gemini.key');
         $this->apiKey = is_string($apiKey) ? $apiKey : '';
 
-        $model = \config('services.ai.gemini.model', 'gemini-1.5-flash');
-        $this->model = is_string($model) ? $model : 'gemini-1.5-flash';
+        // Standardized model name
+        $model = \config('services.ai.gemini.model', 'gemini-2.0-flash');
+        $this->model = is_string($model) ? $model : 'gemini-2.0-flash';
     }
 
     public function getName(): string
@@ -54,17 +55,46 @@ class GeminiProvider implements AiProviderInterface
         ]);
 
         try {
-            $client = Gemini::client($this->apiKey);
-            $response = $client->generativeModel($this->model)->generateContent($prompt);
+            $url = "https://generativelanguage.googleapis.com/v1beta/models/{$this->model}:generateContent?key={$this->apiKey}";
 
-            $usage = $response->usageMetadata;
+            $payload = [
+                'contents' => [
+                    [
+                        'parts' => [
+                            ['text' => $prompt],
+                        ],
+                    ],
+                ],
+                'generationConfig' => [
+                    'temperature' => 0.1,
+                ],
+            ];
+
+            $response = Http::timeout(60)
+                ->retry(3, 100)
+                ->withHeaders(['User-Agent' => 'DompetKita-AI/1.0 (Gemini)'])
+                ->post($url, $payload);
+
+            if (! $response->successful()) {
+                throw new \RuntimeException('Gemini API Error: '.$response->body());
+            }
+
+            /** @var array<string, mixed> $data */
+            $data = $response->json();
+
+            /** @var array<int, array{content: array{parts: array<int, array{text: string}>}}> $candidates */
+            $candidates = $data['candidates'] ?? [];
+            $text = $candidates[0]['content']['parts'][0]['text'] ?? '';
+
+            /** @var array{promptTokenCount?: int, candidatesTokenCount?: int, totalTokenCount?: int} $usage */
+            $usage = $data['usageMetadata'] ?? [];
 
             $output = [
-                'text' => $response->text(),
+                'text' => $text,
                 'usage' => [
-                    'prompt_tokens' => (int) ($usage->promptTokenCount),
-                    'completion_tokens' => (int) ($usage->candidatesTokenCount),
-                    'total_tokens' => (int) ($usage->totalTokenCount),
+                    'prompt_tokens' => $usage['promptTokenCount'] ?? 0,
+                    'completion_tokens' => $usage['candidatesTokenCount'] ?? 0,
+                    'total_tokens' => $usage['totalTokenCount'] ?? 0,
                 ],
             ];
 
@@ -73,7 +103,7 @@ class GeminiProvider implements AiProviderInterface
             return $output;
         } catch (Exception $e) {
             $message = str_replace($this->apiKey, '***HIDDEN***', $e->getMessage());
-            Log::error('Gemini generateText error: '.$message);
+            Log::error('Gemini generateText HTTP error: '.$message);
             $tracer->updateRun($runId, [], $e);
             throw $e;
         }

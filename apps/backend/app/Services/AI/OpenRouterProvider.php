@@ -25,8 +25,14 @@ class OpenRouterProvider implements AiProviderInterface
         $apiKey = \config('services.ai.openrouter.key');
         $this->apiKey = is_string($apiKey) ? $apiKey : '';
 
-        $model = \config('services.ai.openrouter.model', 'google/gemini-flash-1.5');
-        $this->model = is_string($model) ? $model : 'google/gemini-flash-1.5';
+        $modelText = \config('services.ai.openrouter.model_text', 'google/gemini-2.0-flash-001');
+        $this->modelText = is_string($modelText) ? $modelText : 'google/gemini-2.0-flash-001';
+
+        $modelVision = \config('services.ai.openrouter.model_vision', 'google/gemini-2.0-flash-001');
+        $this->modelVision = is_string($modelVision) ? $modelVision : 'google/gemini-2.0-flash-001';
+
+        // Legacy support/default
+        $this->model = $this->modelText;
     }
 
     protected function getHttpClient(): PendingRequest
@@ -67,13 +73,13 @@ class OpenRouterProvider implements AiProviderInterface
         $tracer = app(LangSmithTracer::class);
         $runId = $tracer->createRun('OpenRouter:generateText', [
             'prompt' => $prompt,
-            'model' => $this->model,
+            'model' => $this->modelText,
         ]);
 
         try {
             $response = $this->getHttpClient()
                 ->post($this->baseUrl, [
-                    'model' => $this->model,
+                    'model' => $this->modelText,
                     'messages' => [
                         ['role' => 'user', 'content' => $prompt],
                     ],
@@ -114,14 +120,14 @@ class OpenRouterProvider implements AiProviderInterface
         $tracer = app(LangSmithTracer::class);
         $runId = $tracer->createRun('OpenRouter:generateFromImage', [
             'prompt' => $prompt,
-            'model' => $this->model,
+            'model' => $this->modelVision,
             'mime_type' => $mimeType,
         ]);
 
         try {
             $response = $this->getHttpClient()
                 ->post($this->baseUrl, [
-                    'model' => $this->model,
+                    'model' => $this->modelVision,
                     'messages' => [
                         [
                             'role' => 'user',

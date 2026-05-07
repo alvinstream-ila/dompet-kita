@@ -7,6 +7,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,6 +29,15 @@ class SudoMode
             $storedFingerprint = Cache::get("sudo_mode_{$user->id}_{$tokenId}");
 
             if (! $storedFingerprint || $storedFingerprint !== $fingerprint) {
+                Log::warning('SUDO_MODE_FAILURE: Fingerprint mismatch or missing.', [
+                    'user_id' => $user->id,
+                    'token_id' => $tokenId,
+                    'stored' => $storedFingerprint,
+                    'current' => $fingerprint,
+                    'ip' => $request->ip(),
+                    'ua' => $request->userAgent()
+                ]);
+
                 if ($request->expectsJson()) {
                     return response()->json([
                         'message' => 'Konfirmasi keamanan diperlukan untuk melanjutkan aksi ini. Silakan lakukan otentikasi ulang.',

@@ -27,13 +27,14 @@ class AiProviderManager
     public function generateText(string $prompt): string
     {
         $prompt = $this->sanitizePrompt($prompt);
-        $errors = [];
-
+        $skipReasons = [];
         foreach ($this->providers as $provider) {
             if (! $provider->isAvailable()) {
+                $skipReasons[] = "{$provider->getName()} (Unavailable: Key missing)";
                 continue;
             }
             if ($this->isQuarantined($provider)) {
+                $skipReasons[] = "{$provider->getName()} (Quarantined)";
                 continue;
             }
             try {
@@ -60,7 +61,14 @@ class AiProviderManager
             }
         }
 
-        throw new AiServiceException('Layanan AI sedang tidak tersedia saat ini. Silakan coba lagi beberapa saat lagi. ['.implode(' | ', $errors).']');
+        $finalMsg = 'Layanan AI sedang tidak tersedia saat ini. Silakan coba lagi beberapa saat lagi.';
+        if (! empty($errors)) {
+            $finalMsg .= ' ['.implode(' | ', $errors).']';
+        } elseif (! empty($skipReasons)) {
+            $finalMsg .= ' [Skipped: '.implode(', ', $skipReasons).']';
+        }
+
+        throw new AiServiceException($finalMsg);
     }
 
     /**
@@ -69,18 +77,24 @@ class AiProviderManager
     public function generateFromImage(string $prompt, string $base64Image, string $mimeType): string
     {
         $prompt = $this->sanitizePrompt($prompt);
-        $errors = [];
-
+        $skipReasons = [];
         foreach ($this->providers as $provider) {
             if (! $provider->isAvailable()) {
+                Log::info("Provider {$provider->getName()} is NOT available.");
+                $skipReasons[] = "{$provider->getName()} (Unavailable: Key missing)";
                 continue;
             }
             if ($this->isQuarantined($provider)) {
+                Log::info("Provider {$provider->getName()} is quarantined.");
+                $skipReasons[] = "{$provider->getName()} (Quarantined)";
                 continue;
             }
             if (! $provider->supportsVision()) {
+                Log::info("Provider {$provider->getName()} does not support vision.");
+                $skipReasons[] = "{$provider->getName()} (No vision support)";
                 continue;
             }
+            Log::info("Attempting Vision with Provider: {$provider->getName()}");
             try {
                 $startTime = microtime(true);
                 Log::info('Trying AI Provider (Vision): '.$provider->getName());
@@ -102,7 +116,14 @@ class AiProviderManager
             }
         }
 
-        throw new AiServiceException('Gagal memproses dokumen/gambar melalui AI. Silakan unggah ulang atau gunakan format lain. ['.implode(' | ', $errors).']');
+        $finalMsg = 'Gagal memproses dokumen/gambar melalui AI. Silakan unggah ulang atau gunakan format lain.';
+        if (! empty($errors)) {
+            $finalMsg .= ' ['.implode(' | ', $errors).']';
+        } elseif (! empty($skipReasons)) {
+            $finalMsg .= ' [Skipped: '.implode(', ', $skipReasons).']';
+        }
+
+        throw new AiServiceException($finalMsg);
     }
 
     /**

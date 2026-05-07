@@ -225,6 +225,9 @@ class MarketService
             $endpoints = [
                 "https://api.binance.com/api/v3/ticker/price?symbol={$symbol}",
                 "https://api1.binance.com/api/v3/ticker/price?symbol={$symbol}",
+                "https://api2.binance.com/api/v3/ticker/price?symbol={$symbol}",
+                "https://api3.binance.com/api/v3/ticker/price?symbol={$symbol}",
+                "https://api4.binance.com/api/v3/ticker/price?symbol={$symbol}",
             ];
 
             foreach ($endpoints as $url) {
@@ -236,7 +239,11 @@ class MarketService
                         return (float) $response->json('price');
                     }
                 } catch (\Exception $e) {
-                    Log::warning("Binance Fetch Failed for {$symbol} on {$url}: ".$e->getMessage());
+                    if (str_contains($e->getMessage(), 'Could not resolve host')) {
+                        Log::warning("MarketService: DNS resolution failed for Binance on {$url}. This is likely an ISP block.");
+                    } else {
+                        Log::warning("Binance Fetch Failed for {$symbol} on {$url}: ".$e->getMessage());
+                    }
                 }
             }
 
