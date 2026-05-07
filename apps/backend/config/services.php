@@ -52,6 +52,11 @@ return [
             'key' => env('GEMINI_API_KEY'),
             'model' => env('GEMINI_MODEL', 'gemini-2.0-flash'),
         ],
+        'cloudflare' => [
+            'token' => env('CLOUDFLARE_AI_TOKEN'),
+            'account_id' => env('CLOUDFLARE_ACCOUNT_ID'),
+            'model' => env('CLOUDFLARE_AI_MODEL', '@cf/meta/llama-3.2-11b-vision-instruct'),
+        ],
     ],
 
     'google' => [

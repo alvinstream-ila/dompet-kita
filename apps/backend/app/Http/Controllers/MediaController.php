@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\AI\OCRService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -47,7 +48,7 @@ class MediaController extends Controller
      *     )
      * )
      */
-    public function upload(Request $request): JsonResponse
+    public function upload(Request $request, OCRService $ocr): JsonResponse
     {
         // 🛡️ Strict Validation: Only allow professional formats and limit to 10MB
         $request->validate([
@@ -67,8 +68,8 @@ class MediaController extends Controller
             $folder = "receipts/{$householdId}";
             $filePath = "{$folder}/{$fileName}";
 
-            // Default to 'storj' (high reliability) if available, otherwise fallback to local/public
-            $diskName = (string) (config('filesystems.disks.storj.key') ? 'storj' : config('filesystems.default', 'public'));
+            // Determine the best available disk for media (R2 -> Storj -> Default)
+            $diskName = $this->getMediaDisk();
 
             // ⛔ SECURITY FIX: Set visibility to 'private' (default for secure apps)
             // We use putFileAs with 'private' to ensure the cloud bucket doesn't expose it
@@ -82,11 +83,21 @@ class MediaController extends Controller
                 $url = Storage::disk($diskName)->url($filePath);
             }
 
+            // 👁️ OCR ANALYSIS: If the file is an image, attempt to extract receipt data
+            $ocrData = null;
+            $mimeType = $file->getMimeType();
+            if (is_string($mimeType) && str_starts_with($mimeType, 'image/')) {
+                /** @var string $rawContents */
+                $rawContents = file_get_contents($file->path());
+                $ocrData = $ocr->scanReceipt(base64_encode($rawContents), $mimeType);
+            }
+
             return response()->json([
                 'success' => true,
                 'path' => $filePath, // Root path to save in Database
                 'url' => $url,       // Temporary URL to display in Frontend
                 'disk' => $diskName,
+                'ocr_data' => $ocrData,
             ]);
         } catch (\Exception $e) {
             Log::error('🛡️ Security Leak Prevented / Upload failed: '.$e->getMessage(), [
@@ -135,12 +146,29 @@ class MediaController extends Controller
             abort(403, 'Akses ditolak: File ini bukan milik Household Anda.');
         }
 
-        $diskName = (string) (config('filesystems.disks.storj.key') ? 'storj' : config('filesystems.default', 'public'));
+        $diskName = $this->getMediaDisk();
 
         if (! Storage::disk($diskName)->exists($path)) {
             abort(404);
         }
 
         return Storage::disk($diskName)->response($path);
+    }
+
+    /**
+     * Determine the primary storage disk for media based on availability.
+     * Order of preference: Cloudflare R2 > Storj > App Default.
+     */
+    private function getMediaDisk(): string
+    {
+        if (config('filesystems.disks.r2.key')) {
+            return 'r2';
+        }
+
+        if (config('filesystems.disks.storj.key')) {
+            return 'storj';
+        }
+
+        return (string) config('filesystems.default', 'public');
     }
 }

@@ -47,7 +47,7 @@ class StorageManage extends Command
     {
         $this->info('### 📦 Files in Cloud Storage (Storj)');
 
-        $files = $action->listFiles('s3'); // Disk configured as 's3' for Storj
+        $files = $action->listFiles('storj'); // Disk configured as 'storj' in filesystems.php
 
         if ($files === []) {
             $this->info('Storage is empty.');

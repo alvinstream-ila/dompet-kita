@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Services\AI\AiProviderManager;
+use App\Services\AI\CloudflareAIProvider;
 use App\Services\AI\GeminiProvider;
 use App\Services\AI\GroqProvider;
 use App\Services\AI\OpenRouterProvider;
@@ -23,6 +24,7 @@ class AiServiceProvider extends ServiceProvider
             // Priority order: Groq (Primary) → OpenRouter (Fallback) → Gemini (Emergency)
             fn (): AiProviderManager => new AiProviderManager([
                 new GroqProvider,
+                new CloudflareAIProvider,
                 new OpenRouterProvider,
                 new GeminiProvider,
             ]));
