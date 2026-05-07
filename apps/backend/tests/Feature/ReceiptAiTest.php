@@ -13,9 +13,22 @@ class ReceiptAiTest extends TestCase
      */
     public function test_receipt_analyzer_works_with_current_config(): void
     {
-        /** @var AiProviderManager $manager */
-        $manager = app(AiProviderManager::class);
-        $action = new AnalyzeReceiptAction($manager);
+        $mockManager = $this->mock(AiProviderManager::class);
+        $mockManager->shouldReceive('generateFromImage')
+            ->once()
+            ->andReturn(json_encode([
+                'amount' => 150000,
+                'merchant' => 'Indomaret',
+                'date' => '2024-05-01',
+                'category' => 'Belanja',
+                'currency' => 'IDR',
+                'items' => [
+                    ['name' => 'Susu', 'qty' => 1, 'price' => 25000],
+                    ['name' => 'Roti', 'qty' => 1, 'price' => 15000],
+                ],
+            ]));
+
+        $action = new AnalyzeReceiptAction($mockManager);
 
         // Dummy base64 1x1 white pixel
         $dummyImage = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=';
@@ -27,8 +40,10 @@ class ReceiptAiTest extends TestCase
             $this->assertArrayHasKey('amount', $result);
             $this->assertArrayHasKey('merchant', $result);
             $this->assertArrayHasKey('category', $result);
+            $this->assertEquals(150000, $result['amount']);
+            $this->assertEquals('Indomaret', $result['merchant']);
 
-            echo "Receipt AI Analysis Result:\n";
+            echo "Receipt AI Analysis Result (Mocked):\n";
             print_r($result);
         } catch (\Exception $e) {
             $this->fail('Receipt analysis failed: '.$e->getMessage());
