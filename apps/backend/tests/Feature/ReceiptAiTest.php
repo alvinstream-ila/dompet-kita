@@ -14,8 +14,8 @@ class ReceiptAiTest extends TestCase
     public function test_receipt_analyzer_works_with_current_config(): void
     {
         $mockManager = $this->mock(AiProviderManager::class);
-        /** @phpstan-ignore-next-line */
         $mockManager->shouldReceive('generateFromImage')
+            /** @phpstan-ignore-next-line */
             ->once()
             ->andReturn(json_encode([
                 'amount' => 150000,
