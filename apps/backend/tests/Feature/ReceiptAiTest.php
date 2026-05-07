@@ -21,9 +21,9 @@ class ReceiptAiTest extends TestCase
         $dummyImage = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=';
 
         try {
-            $result = $action->execute($dummyImage, 'image/png');
+            /** @var array<string, mixed> $result */
+            $result = $action->execute((string) $dummyImage, 'image/png');
 
-            $this->assertIsArray($result);
             $this->assertArrayHasKey('amount', $result);
             $this->assertArrayHasKey('merchant', $result);
             $this->assertArrayHasKey('category', $result);
