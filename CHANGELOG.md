@@ -2,6 +2,24 @@
 
 ---
 
+## [7.6.0] — 2026-05-07 (AI Vision & Cloudflare R2 Integration)
+
+### 🤖 ARTIFICIAL INTELLIGENCE
+- **Cloudflare AI Vision**: Integrated `CloudflareAIProvider` utilizing the `Llama 3.2 Vision` model for high-performance, cost-effective receipt OCR.
+- **Sovereign OCR Service**: Implemented `OCRService` with robust JSON extraction and error failover (Cloudflare → OpenRouter → Gemini).
+- **Self-Healing AI**: Added circuit breaker logic and automated failover for AI vision tasks.
+
+### 📦 STORAGE & INFRASTRUCTURE
+- **Cloudflare R2 Storage**: Successfully migrated storage to Cloudflare R2 with native S3 compatibility for improved performance and cost efficiency.
+- **Failover Storage Flow**: Configured multi-disk support for receipt image handling.
+
+### 🚀 CI/CD & DEPLOYMENT
+- **PHPStan Level 9 Hardening**: Resolved strict type-safety issues in AI providers and feature tests.
+- **Mocked AI Testing**: Implemented Mockery-based testing for AI actions to ensure CI/CD reliability without external API dependency.
+- **Elite Security Gate**: Successfully pushed verified changes to the `main` branch after passing 100/100 security audits.
+
+---
+
 ## [7.5.5] — 2026-04-29 (Transaction Visibility & API Standardization)
 
 ### 🚀 CI/CD & DEPLOYMENT
