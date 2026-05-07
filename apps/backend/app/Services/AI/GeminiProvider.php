@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services\AI;
 
 use Exception;
-use Gemini;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 

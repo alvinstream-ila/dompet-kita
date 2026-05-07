@@ -31,10 +31,12 @@ class AiProviderManager
         foreach ($this->providers as $provider) {
             if (! $provider->isAvailable()) {
                 $skipReasons[] = "{$provider->getName()} (Unavailable: Key missing)";
+
                 continue;
             }
             if ($this->isQuarantined($provider)) {
                 $skipReasons[] = "{$provider->getName()} (Quarantined)";
+
                 continue;
             }
             try {
@@ -82,16 +84,19 @@ class AiProviderManager
             if (! $provider->isAvailable()) {
                 Log::info("Provider {$provider->getName()} is NOT available.");
                 $skipReasons[] = "{$provider->getName()} (Unavailable: Key missing)";
+
                 continue;
             }
             if ($this->isQuarantined($provider)) {
                 Log::info("Provider {$provider->getName()} is quarantined.");
                 $skipReasons[] = "{$provider->getName()} (Quarantined)";
+
                 continue;
             }
             if (! $provider->supportsVision()) {
                 Log::info("Provider {$provider->getName()} does not support vision.");
                 $skipReasons[] = "{$provider->getName()} (No vision support)";
+
                 continue;
             }
             Log::info("Attempting Vision with Provider: {$provider->getName()}");

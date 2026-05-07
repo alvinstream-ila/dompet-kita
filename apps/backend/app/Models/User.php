@@ -164,7 +164,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verification_expires_at' => now()->addMinutes(60),
         ]);
 
-        \Illuminate\Support\Facades\Log::info('USER-NOTIFICATION: Triggering VerifyEmailNotification for user: '.$this->email);
+        Log::info('USER-NOTIFICATION: Triggering VerifyEmailNotification for user: '.$this->email);
         $this->notify(new VerifyEmailNotification($code));
     }
 

@@ -35,7 +35,7 @@ class SudoMode
                     'stored' => $storedFingerprint,
                     'current' => $fingerprint,
                     'ip' => $request->ip(),
-                    'ua' => $request->userAgent()
+                    'ua' => $request->userAgent(),
                 ]);
 
                 if ($request->expectsJson()) {
