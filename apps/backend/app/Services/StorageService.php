@@ -30,13 +30,6 @@ class StorageService
         $filePath = is_string($requestData['receipt_path'] ?? null) ? $requestData['receipt_path'] : null;
         $fileContents = null;
 
-        if (! $filePath && ! empty($requestData['receipt_url'])) {
-            $receiptUrl = $requestData['receipt_url'];
-            if (is_string($receiptUrl)) {
-                $filePath = $this->tryExtractPathFromUrl($receiptUrl);
-            }
-        }
-
         if ($filePath) {
             $fileContents = $this->tryReadFromDisk($filePath);
         }
@@ -57,21 +50,16 @@ class StorageService
         return $this->formatFileData($fileContents, $filePath, is_string($finalReceiptUrl) ? $finalReceiptUrl : null);
     }
 
-    private function tryExtractPathFromUrl(string $url): ?string
-    {
-        if (str_contains($url, 'gateway.storjshare.io')) {
-            $bucket = config('filesystems.disks.storj.bucket');
-            $bucketStr = is_string($bucket) ? $bucket : '';
-
-            return str_replace("https://gateway.storjshare.io/{$bucketStr}/", '', $url);
-        }
-
-        return null;
-    }
-
     private function tryReadFromDisk(string $path): ?string
     {
-        $disk = config('filesystems.disks.storj.key') ? 'storj' : config('filesystems.default', 'local');
+        // 🛡️ Sovereign Disk Selection: Order of preference must match MediaController
+        $disk = 'local';
+        if (config('filesystems.disks.r2.key')) {
+            $disk = 'r2';
+        } else {
+            $disk = config('filesystems.default', 'local');
+        }
+
         $diskStr = is_string($disk) ? $disk : 'local';
 
         try {
@@ -89,9 +77,18 @@ class StorageService
         $parsedHost = parse_url($url, PHP_URL_HOST);
         $appUrl = config('app.url');
         $appUrlStr = is_string($appUrl) ? $appUrl : 'http://localhost';
-        $safeHosts = ['localhost', '127.0.0.1', 'gateway.storjshare.io', parse_url($appUrlStr, PHP_URL_HOST)];
 
-        if (! in_array($parsedHost, array_filter($safeHosts), true)) {
+        // 🛡️ Whitelist of trusted storage providers and local system
+        $safeHosts = ['localhost', '127.0.0.1', parse_url($appUrlStr, PHP_URL_HOST)];
+
+        $isSafe = in_array($parsedHost, array_filter($safeHosts), true);
+
+        // 🛡️ Dynamic Whitelist: Allow Cloudflare R2 bucket domains
+        if (! $isSafe && $parsedHost && str_ends_with($parsedHost, '.r2.cloudflarestorage.com')) {
+            $isSafe = true;
+        }
+
+        if (! $isSafe) {
             $hostStr = is_string($parsedHost) ? $parsedHost : 'unknown';
             Log::warning("🛡️ SSRF BLOCKED: Domain {$hostStr} is not whitelisted.");
 

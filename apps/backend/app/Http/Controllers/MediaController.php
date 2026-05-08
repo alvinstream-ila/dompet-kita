@@ -165,10 +165,6 @@ class MediaController extends Controller
             return 'r2';
         }
 
-        if (config('filesystems.disks.storj.key')) {
-            return 'storj';
-        }
-
         return (string) config('filesystems.default', 'public');
     }
 }
