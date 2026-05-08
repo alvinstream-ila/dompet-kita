@@ -64,7 +64,6 @@ class PerformAiSelfAuditAction extends BaseAction
 
             $content = File::get($file->getPathname());
 
-
         }
 
         return $debt;
