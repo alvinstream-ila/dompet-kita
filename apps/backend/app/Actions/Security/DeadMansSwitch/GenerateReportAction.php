@@ -83,8 +83,8 @@ class GenerateReportAction extends BaseAction
         $hashedId = substr(hash('sha256', (string) $user->id), 0, 16);
         $filename = "legacy/vault_{$hashedId}_{$timestamp}_{$random}.pdf";
 
-        // Save to Storj (Sovereign Cloud)
-        Storage::disk('storj')->put($filename, $mpdf->Output('', 'S'));
+        // Save to R2 (Sovereign Cloud)
+        Storage::disk('r2')->put($filename, $mpdf->Output('', 'S'));
 
         // Record in database archive
         LegacyVaultReport::create([
@@ -92,11 +92,11 @@ class GenerateReportAction extends BaseAction
             'household_id' => $user->household_id,
             'filename' => 'Snapshot Finansial #'.(LegacyVaultReport::where('user_id', $user->id)->count() + 101),
             'storage_path' => $filename,
-            'disk' => 'storj',
+            'disk' => 'r2',
             'summary_data' => $data['financial_summary'],
         ]);
 
-        Log::info("Legacy PDF report successfully archived to Storj for user {$user->id}");
+        Log::info("Legacy PDF report successfully archived to R2 for user {$user->id}");
 
         return [
             'filename' => $filename,

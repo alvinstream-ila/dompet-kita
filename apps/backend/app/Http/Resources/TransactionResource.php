@@ -38,7 +38,7 @@ class TransactionResource extends JsonResource
             if (str_starts_with($this->receipt_url, 'http')) {
                 $receiptUrl = $this->receipt_url;
             } else {
-                $diskName = (string) (config('filesystems.disks.storj.key') ? 'storj' : config('filesystems.default', 'public'));
+                $diskName = (string) (config('filesystems.disks.r2.key') ? 'r2' : config('filesystems.default', 'public'));
                 try {
                     $receiptUrl = Storage::disk($diskName)->temporaryUrl(
                         $this->receipt_url,

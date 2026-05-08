@@ -14,7 +14,7 @@ class CheckCloudStatusAction extends BaseAction
      * @return array{
      *     railway: array{env: string, service: string, deployment: string, status: string},
      *     supabase: array{region: string, database: string, connections: string, status: string},
-     *     storj: array{status: string},
+     *     r2: array{status: string},
      *     vercel: array{service: string, deployment: string, build_engine: string, status: string}
      * }
      */
@@ -34,8 +34,8 @@ class CheckCloudStatusAction extends BaseAction
                 'connections' => '4/100',
                 'status' => 'Operational',
             ],
-            'storj' => [
-                'status' => 'Optimal',
+            'r2' => [
+                'status' => 'Operational',
             ],
             'vercel' => [
                 'service' => 'frontend-main',

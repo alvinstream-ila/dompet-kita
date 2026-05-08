@@ -14,7 +14,7 @@ class VerifyCloudConnectivityAction extends BaseAction
      *
      * @return array{
      *     supabase: bool,
-     *     storj: bool,
+     *     r2: bool,
      *     gemini: bool
      * }
      */
@@ -28,15 +28,15 @@ class VerifyCloudConnectivityAction extends BaseAction
         } catch (\Exception) {
         }
 
-        // 2. Storj Check
-        $storj = ! empty(config('filesystems.disks.storj.key')) && ! empty(config('filesystems.disks.storj.secret'));
+        // 2. Cloudflare R2 Check
+        $r2 = ! empty(config('filesystems.disks.r2.key')) && ! empty(config('filesystems.disks.r2.secret'));
 
         // 3. Gemini AI Check
         $gemini = ! empty(config('services.gemini.key'));
 
         return [
             'supabase' => $supabase,
-            'storj' => $storj,
+            'r2' => $r2,
             'gemini' => $gemini,
         ];
     }

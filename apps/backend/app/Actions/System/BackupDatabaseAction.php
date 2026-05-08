@@ -93,7 +93,7 @@ class BackupDatabaseAction extends BaseAction
         }
 
         try {
-            Storage::disk('storj')->put($remotePath, $stream);
+            Storage::disk('r2')->put($remotePath, $stream);
         } finally {
             fclose($stream);
         }

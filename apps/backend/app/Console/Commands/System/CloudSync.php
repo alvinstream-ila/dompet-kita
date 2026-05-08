@@ -22,7 +22,7 @@ class CloudSync extends Command
      *
      * @var string
      */
-    protected $description = 'Verify connectivity between Local, Supabase, and Storj Cloud';
+    protected $description = 'Verify connectivity between Local, Supabase, and R2 Cloud';
 
     /**
      * Execute the console command.
@@ -41,11 +41,11 @@ class CloudSync extends Command
                 $this->error('❌ SUPABASE: Connection failed!');
             }
 
-            // 2. Storj Check
-            if ($results['storj']) {
-                $this->info('✅ STORJ CLOUD: Configuration detected and keys verified.');
+            // 2. R2 Check
+            if ($results['r2']) {
+                $this->info('✅ R2 CLOUD: Configuration detected and keys verified.');
             } else {
-                $this->warn('⚠️ STORJ CLOUD: Keys are missing in configuration.');
+                $this->warn('⚠️ R2 CLOUD: Keys are missing in configuration.');
             }
 
             // 3. Gemini AI Check

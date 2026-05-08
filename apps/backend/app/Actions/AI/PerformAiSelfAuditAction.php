@@ -64,9 +64,7 @@ class PerformAiSelfAuditAction extends BaseAction
 
             $content = File::get($file->getPathname());
 
-            if (str_contains($content, "config('services.storj")) {
-                $debt[] = 'Found legacy Storj config in '.$file->getRelativePathname();
-            }
+
         }
 
         return $debt;

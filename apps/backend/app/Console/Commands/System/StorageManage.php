@@ -22,7 +22,7 @@ class StorageManage extends Command
      *
      * @var string
      */
-    protected $description = 'Manage files in Storj Cloud Object Storage';
+    protected $description = 'Manage files in Cloudflare R2 Object Storage';
 
     /**
      * Execute the console command.
@@ -45,9 +45,9 @@ class StorageManage extends Command
 
     private function handleList(ManageStorageAction $action): int
     {
-        $this->info('### 📦 Files in Cloud Storage (Storj)');
+        $this->info('### 📦 Files in Cloud Storage (R2)');
 
-        $files = $action->listFiles('storj'); // Disk configured as 'storj' in filesystems.php
+        $files = $action->listFiles('r2'); // Disk configured as 'r2' in filesystems.php
 
         if ($files === []) {
             $this->info('Storage is empty.');

@@ -140,7 +140,7 @@ class LegacyController extends Controller
             $result = $this->generateReportAction->execute($user);
             $filename = (string) $result['filename'];
 
-            $stream = Storage::disk('storj')->readStream($filename);
+            $stream = Storage::disk('r2')->readStream($filename);
             if ($stream) {
                 fpassthru($stream);
                 if (is_resource($stream)) {

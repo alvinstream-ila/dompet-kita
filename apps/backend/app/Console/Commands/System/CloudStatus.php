@@ -47,8 +47,8 @@ class CloudStatus extends Command
             $this->line("🔹 SUPABASE - DATABASE: {$data['supabase']['database']} ({$data['supabase']['status']})");
             $this->line("🔹 SUPABASE - TOTAL CONNECTIONS: {$data['supabase']['connections']}");
 
-            $this->bullet('Checking STORJ Cloud Object Storage...');
-            $this->line("🔹 STORJ - STATUS: {$data['storj']['status']}");
+            $this->bullet('Checking CLOUDFLARE R2 Storage...');
+            $this->line("🔹 R2 - STATUS: {$data['r2']['status']}");
 
             $this->bullet('Checking VERCEL Frontend Status...');
             $this->line("🔹 VERCEL - SERVICE: {$data['vercel']['service']} ({$data['vercel']['status']})");
