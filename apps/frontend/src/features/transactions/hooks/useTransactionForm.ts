@@ -186,7 +186,7 @@ export const useTransactionForm = ({
 
       if (isEditMode) {
         await updateTransactionMutation.mutateAsync({
-          id: transactionId.toString(),
+          id: transactionId!.toString(),
           ...payload,
         });
       } else {
