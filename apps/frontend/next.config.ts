@@ -28,8 +28,32 @@ const nextConfig: NextConfig = {
 				hostname: "images.unsplash.com",
 			},
 			{
-				protocol: "https",
-				hostname: "flagsapi.com",
+				protocol: 'https',
+				hostname: '**.cloudflarestorage.com',
+			},
+			{
+				protocol: 'https',
+				hostname: '**.railway.app',
+			},
+			{
+				protocol: 'https',
+				hostname: '**.up.railway.app',
+			},
+			{
+				protocol: 'http',
+				hostname: 'localhost',
+			},
+			{
+				protocol: 'https',
+				hostname: 'localhost',
+			},
+			{
+				protocol: 'http',
+				hostname: '127.0.0.1',
+			},
+			{
+				protocol: 'https',
+				hostname: '127.0.0.1',
 			},
 		],
 	},

@@ -10,7 +10,7 @@ import {
   Target,
 } from 'lucide-react';
 import Image from 'next/image';
-import React, { type SyntheticEvent, useEffect, useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
@@ -28,13 +28,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  useAddTransaction,
-  useUpdateTransaction,
-} from '@/features/transactions/hooks/useTransactions';
-import api from '@/lib/axios';
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/constants';
-import { cn, formatToRupiah, getTerbilang } from '@/lib/utils';
+import { useTransactionForm } from '@/features/transactions/hooks/useTransactionForm';
+import { cn, getTerbilang } from '@/lib/utils';
 
 export interface TransactionFormProps {
   readonly onSuccess?: () => void;
@@ -50,6 +45,7 @@ export interface TransactionFormProps {
     readonly sub_category?: string | null;
     readonly date?: string;
     readonly receipt_url?: string | null;
+    readonly receipt_path?: string | null;
   };
 }
 
@@ -63,41 +59,36 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
   transactionId,
   initialData,
 }) => {
-  const addTransactionMutation = useAddTransaction();
-  const updateTransactionMutation = useUpdateTransaction();
-
-  const [loading, setLoading] = useState(false);
-  const [type, setType] = useState<'expense' | 'income'>(
-    initialData?.type || 'expense'
-  );
-  const [amount, setAmount] = useState(
-    initialData?.amount ? formatToRupiah(initialData.amount.toString()) : ''
-  );
-  const [description, setDescription] = useState(
-    initialData?.description || ''
-  );
-  const [category, setCategory] = useState(
-    initialData?.category ||
-      (type === 'expense' ? EXPENSE_CATEGORIES[0] : INCOME_CATEGORIES[0])
-  );
-  const [subCategory, setSubCategory] = useState(
-    initialData?.sub_category || 'Pribadi'
-  );
-  const [date, setDate] = useState<Date>(
-    initialData?.date ? new Date(initialData.date) : new Date()
-  );
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(
-    initialData?.receipt_url || null
-  );
-  const [uploading, setUploading] = useState(false);
-  const [scanning, setScanning] = useState(false);
-
-  const isPending =
-    loading ||
-    uploading ||
-    addTransactionMutation.isPending ||
-    updateTransactionMutation.isPending;
+  const {
+    type,
+    setType,
+    amount,
+    description,
+    setDescription,
+    category,
+    setCategory,
+    subCategory,
+    setSubCategory,
+    date,
+    setDate,
+    file,
+    preview,
+    scanning,
+    isPending,
+    categoriesToDisplay,
+    handleAmountChange,
+    handleScan,
+    handleSubmit,
+    handleFileChange,
+    handleFileRemove,
+  } = useTransactionForm({
+    onSuccess,
+    onCancel,
+    onTypeChange,
+    mode,
+    transactionId,
+    initialData,
+  });
 
   const modeLabel = mode === 'create' ? 'SIMPAN' : 'PERBARUI';
   const submitLabel = isPending ? (
@@ -109,167 +100,6 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
   const receiptDisplayLabel = mode === 'edit' ? 'STRUK ADA' : 'STRUK';
   const receiptStatusLabel = file ? file.name : receiptDisplayLabel;
   const scanStatusLabel = scanning ? 'SCANNING...' : 'SCAN AI';
-
-  // Sync initialData with local state (Adjusting state while rendering)
-  const [prevInitialData, setPrevInitialData] = useState(initialData);
-  if (initialData !== prevInitialData) {
-    setPrevInitialData(initialData);
-    if (initialData) {
-      const newType = initialData.type || 'expense';
-      setType(newType);
-      setAmount(
-        initialData.amount ? formatToRupiah(initialData.amount.toString()) : ''
-      );
-      setDescription(initialData.description || '');
-      setCategory(
-        initialData.category ||
-          (newType === 'expense' ? EXPENSE_CATEGORIES[0] : INCOME_CATEGORIES[0])
-      );
-      setSubCategory(initialData.sub_category || 'Pribadi');
-      setDate(initialData.date ? new Date(initialData.date) : new Date());
-      setPreview(initialData.receipt_url || null);
-    }
-  }
-
-  useEffect(() => {
-    if (onTypeChange) onTypeChange(type);
-  }, [type, onTypeChange]);
-
-  const handleFileUpload = async (selectedFile: File) => {
-    try {
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-
-      const response = await api.post('/media/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      if (response.data.success) {
-        return response.data.url;
-      }
-      throw new Error(response.data.message || 'Gagal mengunggah struk');
-    } catch (error) {
-      console.error('Error uploading via backend:', error);
-      throw new Error('Gagal mengunggah struk ke cloud storage');
-    }
-  };
-
-  const handleScan = async () => {
-    if (!file && !preview) return;
-    setScanning(true);
-
-    try {
-      let base64Data = preview?.startsWith('data:')
-        ? preview.split(',')[1]
-        : null;
-
-      if (!base64Data && file) {
-        const reader = new FileReader();
-        const b64 = await new Promise((resolve) => {
-          reader.onload = () => resolve(reader.result);
-          reader.readAsDataURL(file);
-        });
-        base64Data = (b64 as string).split(',')[1];
-      }
-
-      if (!base64Data) throw new Error('Preview data not available');
-
-      const response = await api.post('/ai/analyze-receipt', {
-        image: base64Data,
-        mime_type: file?.type || 'image/jpeg',
-      });
-
-      if (response.data.success) {
-        const {
-          amount: extractedAmount,
-          merchant,
-          category: extractedCategory,
-          message,
-        } = response.data.data;
-
-        if (extractedAmount)
-          setAmount(formatToRupiah(extractedAmount.toString()));
-        if (merchant) setDescription(merchant);
-        if (extractedCategory) setCategory(extractedCategory);
-
-        alert(
-          message ||
-            'AI Berhasil membaca struk! Nominal otomatis terisi ya Sayang! ❤️'
-        );
-      } else {
-        throw new Error(response.data.message || 'Gagal scan struk');
-      }
-    } catch (error) {
-      console.error('Scan error via backend:', error);
-      alert(
-        'Maaf, AI gagal membaca struk ini. Coba ketik manual ya Sayang! 🥺'
-      );
-    } finally {
-      setScanning(false);
-    }
-  };
-
-  const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      let receipt_url = initialData?.receipt_url || null;
-      if (file) {
-        setUploading(true);
-        receipt_url = await handleFileUpload(file);
-        setUploading(false);
-      }
-
-      const payload = {
-        amount: Number.parseInt(amount.replaceAll('.', ''), 10),
-        description,
-        category,
-        sub_category: subCategory,
-        type,
-        date: format(date, 'yyyy-MM-dd'),
-        receipt_url,
-        note: null,
-      };
-
-      if (mode === 'edit' && transactionId) {
-        await updateTransactionMutation.mutateAsync({
-          id: transactionId.toString(),
-          ...payload,
-        });
-      } else {
-        await addTransactionMutation.mutateAsync(payload);
-      }
-
-      onSuccess?.();
-      if (mode === 'create') {
-        setAmount('');
-        setDescription('');
-        setFile(null);
-        setPreview(null);
-      }
-    } catch (error) {
-      alert(
-        error instanceof Error
-          ? error.message
-          : 'Terjadi kesalahan saat menyimpan transaksi'
-      );
-    } finally {
-      setLoading(false);
-      setUploading(false);
-    }
-  };
-
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const formatted = formatToRupiah(value);
-    setAmount(formatted);
-  };
-
-  const categoriesToDisplay =
-    type === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -424,16 +254,8 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         file={file}
         receiptStatusLabel={receiptStatusLabel}
         scanStatusLabel={scanStatusLabel}
-        onFileSelect={(f) => {
-          setFile(f);
-          const reader = new FileReader();
-          reader.onloadend = () => setPreview(reader.result as string);
-          reader.readAsDataURL(f);
-        }}
-        onFileRemove={() => {
-          setFile(null);
-          setPreview(null);
-        }}
+        onFileSelect={handleFileChange}
+        onFileRemove={handleFileRemove}
         onScan={handleScan}
       />
 
@@ -534,6 +356,7 @@ const ReceiptSection: React.FC<ReceiptSectionProps> = ({
             alt="Receipt preview"
             width={600}
             height={400}
+            unoptimized
             className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">

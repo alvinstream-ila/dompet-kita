@@ -123,7 +123,7 @@ export function useTransactions({
         params: {
           month: targetMonth,
           year: targetYear,
-          category: category !== 'Semua' ? category : undefined,
+          category: category === 'Semua' ? undefined : category,
           search: search || undefined,
           page: pageParam,
           budget_cycle_start: budgetCycleStart,

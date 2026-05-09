@@ -30,6 +30,7 @@ export default function CreateTransactionPage() {
         description: searchParams.get('description') || '',
         category: searchParams.get('category') || '',
         receipt_url: searchParams.get('receipt_url') || '',
+        receipt_path: searchParams.get('receipt_path') || '',
         type: (searchParams.get('type') as 'income' | 'expense') || 'expense',
         date:
           searchParams.get('date') || new Date().toISOString().split('T')[0],

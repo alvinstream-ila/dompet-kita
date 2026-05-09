@@ -78,9 +78,13 @@ class MediaController extends Controller
             // 🔑 Generate dynamic signed URL for immediate frontend preview (Valid for 15 minutes)
             try {
                 $url = Storage::disk($diskName)->temporaryUrl($filePath, now()->addMinutes(15));
-            } catch (\Exception $e) {
-                // Fallback for disks that don't support temporary URLs (e.g. local)
-                $url = Storage::disk($diskName)->url($filePath);
+            } catch (\Exception) {
+                // 🛡️ Security Fallback: Generate a signed URL to our own API
+                $url = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+                    'media.serve',
+                    now()->addMinutes(15),
+                    ['path' => $filePath]
+                );
             }
 
             // 👁️ OCR ANALYSIS: If the file is an image, attempt to extract receipt data

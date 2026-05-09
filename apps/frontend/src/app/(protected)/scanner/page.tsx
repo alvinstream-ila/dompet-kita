@@ -37,6 +37,7 @@ export default function ReceiptScannerPage() {
     merchant: string;
     category: string;
     receipt_url?: string;
+    receipt_path?: string;
   } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -68,18 +69,20 @@ export default function ReceiptScannerPage() {
 
       if (!uploadResponse.data.success)
         throw new Error('Gagal upload ke cloud.');
+      const receipt_path = uploadResponse.data.path;
       const receipt_url = uploadResponse.data.url;
 
       // 2. Analyze using AI
       const aiResponse = await api.post('/ai/analyze-receipt', {
         receipt_url: receipt_url,
-        receipt_path: uploadResponse.data.path,
+        receipt_path: receipt_path,
       });
 
       if (aiResponse.data.success) {
         setScanResult({
           ...aiResponse.data.data,
           receipt_url: receipt_url,
+          receipt_path: receipt_path,
         });
       } else {
         throw new Error(aiResponse.data.message || 'Gagal menganalisis struk.');
@@ -111,6 +114,7 @@ export default function ReceiptScannerPage() {
       description: scanResult.merchant,
       category: scanResult.category,
       receipt_url: scanResult.receipt_url || '',
+      receipt_path: scanResult.receipt_path || '',
       type: 'expense',
       date: new Date().toISOString().split('T')[0],
     });
@@ -146,9 +150,9 @@ export default function ReceiptScannerPage() {
                 <Image
                   src={image}
                   alt="Receipt preview"
-                  width={600}
-                  height={800}
-                  className="h-full w-full object-cover"
+                  fill
+                  unoptimized
+                  className="object-cover"
                 />
                 <button
                   onClick={() => {
