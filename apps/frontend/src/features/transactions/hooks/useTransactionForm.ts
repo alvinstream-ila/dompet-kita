@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { type SyntheticEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   useAddTransaction,
   useUpdateTransaction,
@@ -48,6 +48,8 @@ export const useTransactionForm = ({
   );
   const [uploading, setUploading] = useState(false);
   const [scanning, setScanning] = useState(false);
+
+  const isEditMode = mode === 'edit' && Boolean(transactionId);
 
   const isPending =
     loading ||
@@ -158,7 +160,7 @@ export const useTransactionForm = ({
     }
   };
 
-  const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
@@ -182,7 +184,7 @@ export const useTransactionForm = ({
         note: null,
       };
 
-      if (mode === 'edit' && transactionId) {
+      if (isEditMode) {
         await updateTransactionMutation.mutateAsync({
           id: transactionId.toString(),
           ...payload,
