@@ -4,8 +4,6 @@ namespace App\Console\Commands\System;
 
 use App\Models\Transaction;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class FixExpiredReceiptUrls extends Command
 {
@@ -34,6 +32,7 @@ class FixExpiredReceiptUrls extends Command
 
         if ($transactions->isEmpty()) {
             $this->info('✅ No malformed URLs found. System integrity is optimal.');
+
             return 0;
         }
 
@@ -42,7 +41,7 @@ class FixExpiredReceiptUrls extends Command
         $count = 0;
         foreach ($transactions as $transaction) {
             $oldUrl = $transaction->receipt_url;
-            
+
             // Extract path from URL
             // Pattern: https://.../bucket-name/receipts/...
             // We want to keep from 'receipts/' onwards
@@ -53,8 +52,8 @@ class FixExpiredReceiptUrls extends Command
 
             if ($path) {
                 $this->line("Fixing [ID: {$transaction->id}]: {$path}");
-                
-                if (!$this->option('dry-run')) {
+
+                if (! $this->option('dry-run')) {
                     $transaction->update(['receipt_url' => $path]);
                 }
                 $count++;

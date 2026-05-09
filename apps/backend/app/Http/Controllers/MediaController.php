@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -80,7 +81,7 @@ class MediaController extends Controller
                 $url = Storage::disk($diskName)->temporaryUrl($filePath, now()->addMinutes(15));
             } catch (\Exception) {
                 // 🛡️ Security Fallback: Generate a signed URL to our own API
-                $url = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+                $url = URL::temporarySignedRoute(
                     'media.serve',
                     now()->addMinutes(15),
                     ['path' => $filePath]
